@@ -1,0 +1,94 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+{% load quiz_extras %}
+
+{% block title %}{{ library.name }} - {{ block.super }}{% endblock %}
+
+{% block quiz_breadcrumb %}
+<div class="quiz-breadcrumb"><a href="{% url 'knowledge_app:quiz_dashboard' %}">🏠 个人题库</a><span class="quiz-breadcrumb-separator">></span><a href="{% url 'knowledge_app:quiz_library_list' %}">📚 题库列表</a><span class="quiz-breadcrumb-separator">></span><span>{{ library.name }}</span></div>
+{% endblock %}
+
+{% block quiz_content %}
+<!-- 题库信息 --><div class="quiz-card"><div class="quiz-card-header"><h1 class="quiz-card-title">📚 {{ library.name }}</h1><p class="quiz-card-subtitle">{{ library.description|default:"暂无描述" }}</p></div><div class="quiz-card-body"><!-- 统计信息 --><div class="quiz-grid quiz-grid-4"><div class="quiz-stat-card"><span class="quiz-stat-icon">📝</span><div class="quiz-stat-value">{{ stats.total_questions }}</div><div class="quiz-stat-label">总题目数</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">📅</span><div class="quiz-stat-value">{{ library.created_at|date:"m-d" }}</div><div class="quiz-stat-label">创建时间</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">🔄</span><div class="quiz-stat-value">{{ library.updated_at|date:"m-d" }}</div><div class="quiz-stat-label">更新时间</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">✅</span><div class="quiz-stat-value">{{ stats.avg_accuracy|floatformat:1 }}%</div><div class="quiz-stat-label">平均正确率</div></div></div><!-- 快速操作 --><div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;"><a href="{% url 'knowledge_app:quiz_start' library.id %}" class="quiz-btn quiz-btn-success" style="color: white;"><span>🎯</span><span>开始练习</span></a><a href="{% url 'knowledge_app:quiz_create_question' library.id %}" class="quiz-btn quiz-btn-primary" style="color: white;"><span>➕</span><span>添加题目</span></a><a href="{% url 'knowledge_app:quiz_export_library_pdf' library.id %}"
+               class="quiz-btn quiz-btn-warning"
+               style="color: white;"
+               target="_blank"
+               onclick="return handlePdfExport(this)"><span>📄</span><span>导出PDF</span></a><a href="{% url 'knowledge_app:share_library' library.id %}" class="quiz-btn quiz-btn-success" style="color: white;"><span>📤</span><span>分享题库</span></a><button class="quiz-btn quiz-btn-outline" onclick="showEditModal()" style="color: var(--quiz-primary);"><span>✏️</span><span>编辑题库</span></button></div></div></div><!-- 题目筛选 --><div class="quiz-card"><div class="quiz-card-body"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;"><h2 style="margin: 0; color: var(--quiz-gray-800);">📋 题目列表</h2><form method="get" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;"><select name="type" class="quiz-form-control" style="width: auto;"><option value="">所有类型</option><option value="single_choice" {% if current_filters.type == 'single_choice' %}selected{% endif %}>单选题</option><option value="multiple_choice" {% if current_filters.type == 'multiple_choice' %}selected{% endif %}>多选题</option><option value="fill_blank" {% if current_filters.type == 'fill_blank' %}selected{% endif %}>填空题</option><option value="short_answer" {% if current_filters.type == 'short_answer' %}selected{% endif %}>简答题</option></select><select name="difficulty" class="quiz-form-control" style="width: auto;"><option value="">所有难度</option><option value="1" {% if current_filters.difficulty == '1' %}selected{% endif %}>简单</option><option value="2" {% if current_filters.difficulty == '2' %}selected{% endif %}>中等</option><option value="3" {% if current_filters.difficulty == '3' %}selected{% endif %}>困难</option></select><select name="tag" class="quiz-form-control" style="width: auto;"><option value="">所有标签</option>
+                    {% for tag in tags %}
+                    <option value="{{ tag.id }}" {% if current_filters.tag == tag.id|stringformat:"s" %}selected{% endif %}>{{ tag.name }}</option>
+                    {% endfor %}
+                </select><button type="submit" class="quiz-btn quiz-btn-primary">筛选</button>
+                {% if current_filters.type or current_filters.difficulty or current_filters.tag %}
+                <a href="{% url 'knowledge_app:quiz_library_detail' library.id %}" class="quiz-btn quiz-btn-outline">清除</a>
+                {% endif %}
+            </form></div><!-- 题目列表 -->
+        {% if page_obj %}
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for question in page_obj %}
+            <div style="border: 1px solid var(--quiz-gray-200); border-radius: var(--quiz-radius-lg); padding: 1.5rem; background: var(--quiz-gray-50);"><div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;"><div style="flex: 1;"><h3 style="margin: 0 0 0.5rem 0; color: var(--quiz-gray-800);">{{ question.title }}</h3><p style="color: var(--quiz-gray-600); margin: 0 0 1rem 0; line-height: 1.5;">
+                            {{ question.content|truncatechars:150 }}
+                        </p><!-- 题目图片预览 -->
+                        {% if question.question_image %}
+                        <div style="margin: 0.5rem 0;"><img src="{{ question.question_image.url }}"
+                                 style="max-width: 150px; max-height: 100px; border-radius: var(--quiz-radius); box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                 alt="题目图片"></div>
+                        {% endif %}
+                    </div><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;"><span class="quiz-tag quiz-tag-primary">{{ question.get_question_type_display }}</span><span class="quiz-tag {% if question.difficulty == 1 %}quiz-tag-success{% elif question.difficulty == 2 %}quiz-tag-warning{% else %}quiz-tag-danger{% endif %}">
+                            {{ question.get_difficulty_display }}
+                        </span></div></div><div style="display: flex; justify-content: space-between; align-items: center;"><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        {% for tag in question.tags.all %}
+                        <span class="quiz-tag">{{ tag.name }}</span>
+                        {% endfor %}
+                        {% if not question.tags.all %}
+                        <span style="color: var(--quiz-gray-400); font-size: 0.9rem;">无标签</span>
+                        {% endif %}
+                    </div><div style="display: flex; gap: 0.5rem; align-items: center;"><span style="color: var(--quiz-gray-500); font-size: 0.9rem;">
+                            正确率: {{ question.accuracy_rate }}%
+                        </span><button class="quiz-btn quiz-btn-outline" style="font-size: 0.8rem; padding: 0.4rem 0.8rem;" onclick="editQuestion({{ question.id }})">
+                            编辑
+                        </button></div></div></div>
+            {% endfor %}
+        </div><!-- 分页 -->
+        {% if page_obj.has_other_pages %}
+        <div style="display: flex; justify-content: center; margin-top: 2rem;"><div style="display: flex; gap: 0.5rem; align-items: center;">
+                {% if page_obj.has_previous %}
+                <a href="?page=1{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="quiz-btn quiz-btn-outline">首页</a><a href="?page={{ page_obj.previous_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="quiz-btn quiz-btn-outline">上一页</a>
+                {% endif %}
+                
+                <span style="padding: 0.75rem 1rem; color: var(--quiz-gray-600);">
+                    第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+                </span>
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="quiz-btn quiz-btn-outline">下一页</a><a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in current_filters.items %}{% if value %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="quiz-btn quiz-btn-outline">末页</a>
+                {% endif %}
+            </div></div>
+        {% endif %}
+
+        {% else %}
+        <!-- 空状态 --><div style="text-align: center; padding: 4rem 2rem;"><div style="font-size: 4rem; margin-bottom: 2rem; opacity: 0.5;">📝</div><h2 style="color: var(--quiz-gray-600); margin-bottom: 1rem;">还没有题目</h2><p style="color: var(--quiz-gray-500); margin-bottom: 2rem;">添加第一道题目，开始构建你的题库吧！</p><a href="{% url 'knowledge_app:quiz_create_question' library.id %}" class="quiz-btn quiz-btn-primary"><span>➕</span><span>添加第一道题目</span></a></div>
+        {% endif %}
+    </div></div><!-- 题型统计 -->
+{% if stats.by_type %}
+<div class="quiz-card"><div class="quiz-card-body"><h2 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800);">📊 题型分布</h2><div class="quiz-grid quiz-grid-4">
+            {% for type_stat in stats.by_type %}
+            <div class="quiz-stat-card"><span class="quiz-stat-icon">
+                    {% if type_stat.question_type == 'single_choice' %}🔘
+                    {% elif type_stat.question_type == 'multiple_choice' %}☑️
+                    {% elif type_stat.question_type == 'fill_blank' %}📝
+                    {% elif type_stat.question_type == 'short_answer' %}💬
+                    {% else %}❓{% endif %}
+                </span><div class="quiz-stat-value">{{ type_stat.count }}</div><div class="quiz-stat-label">
+                    {% if type_stat.question_type == 'single_choice' %}单选题
+                    {% elif type_stat.question_type == 'multiple_choice' %}多选题
+                    {% elif type_stat.question_type == 'fill_blank' %}填空题
+                    {% elif type_stat.question_type == 'short_answer' %}简答题
+                    {% else %}其他{% endif %}
+                </div></div>
+            {% endfor %}
+        </div></div></div>
+{% endif %}
+
+<!-- 编辑题库模态框 --><div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;"><div style="background: white; border-radius: var(--quiz-radius-xl); max-width: 500px; width: 90%; padding: 2rem;"><h3 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800);">✏️ 编辑题库</h3><form id="editForm" method="post">
+            {% csrf_token %}
+            <div class="quiz-form-group"><label class="quiz-form-label">题库名称</label><input type="text" name="name" value="{{ library.name }}" class="quiz-form-control" required></div><div class="quiz-form-group"><label class="quiz-form-label">题库描述</label><textarea name="description" class="quiz-form-control" rows="3">{{ library.description }}</textarea></div><div style="display: flex; gap: 1rem; justify-content: end;"><button type="button" class="quiz-btn quiz-btn-outline" onclick="hideEditModal()">取消</button><button type="submit" class="quiz-btn quiz-btn-primary">保存</button></div></form></div></div><script>function showEditModal() { document.getElementById('editModal').style.display = 'flex'; } function hideEditModal() { document.getElementById('editModal').style.display = 'none'; } function editQuestion(questionId) { alert('编辑题目功能开发中...'); } document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === this) { hideEditModal(); } }); function handlePdfExport(element) { console.log('PDF导出按钮被点击'); console.log('导出URL:', element.href); const originalText = element.innerHTML; element.innerHTML = '<span>⏳</span><span>导出中...</span>'; element.style.pointerEvents = 'none'; setTimeout(() => { element.innerHTML = originalText; element.style.pointerEvents = 'auto'; }, 2000); return true; }</script>
+{% endblock %}

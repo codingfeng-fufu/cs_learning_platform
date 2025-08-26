@@ -1,0 +1,1604 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"二叉搜索树(BST)" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>{{ breadcrumb_category|default:"数据结构" }}</span>
+        <span>></span>
+        <span>{{ page_title|default:"二叉搜索树(BST)" }}</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">{{ page_icon|default:"🌳" }}</span>
+            {{ page_title|default:"二叉搜索树(BST)" }}
+        </h1>
+        <p>{{ page_description|default:"掌握最重要的树形数据结构，理解搜索、插入、删除的高效实现" }}</p>
+    </div>
+
+    <!-- 📋 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                知识点概述
+            </h2>
+            <div class="overview-content">
+                <div class="concept-intro">
+                    <p><strong>核心概念：</strong>二叉搜索树是一种特殊的二叉树，就像一个智能的图书管理系统，左边放较小的数，右边放较大的数，让查找变得超级快！</p>
+                </div>
+
+                <div class="unified-grid unified-grid-2">
+                    <div class="info-box info-box-info">
+                        <h3>🏷️ 关键术语</h3>
+                        <ul>
+                            <li><strong>节点(Node)：</strong>存储数据的基本单元</li>
+                            <li><strong>根节点(Root)：</strong>树的顶点，没有父节点</li>
+                            <li><strong>叶子节点(Leaf)：</strong>没有子节点的节点</li>
+                            <li><strong>中序遍历：</strong>按升序输出所有节点</li>
+                            <li><strong>平衡性：</strong>左右子树高度差不超过1</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box info-box-success">
+                        <h3>📊 学习指标</h3>
+                        <p><strong>难度等级：</strong> <span class="badge badge-medium">进阶</span></p>
+                        <p><strong>前置知识：</strong></p>
+                        <ul>
+                            <li>递归思想 ✓</li>
+                            <li>二叉树基础 ✓</li>
+                            <li>指针/引用概念 ✓</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 概念详解 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🔍</span>
+                概念详解
+            </h2>
+
+            <div class="concept-details">
+                <div class="concept-item">
+                    <h3>🏗️ BST的核心性质</h3>
+                    <p>想象一个智能图书馆：</p>
+                    <ul>
+                        <li>每个书架(节点)只能放一本特定编号的书</li>
+                        <li>编号小的书永远在左边的书架</li>
+                        <li>编号大的书永远在右边的书架</li>
+                        <li>找书时，只需要比较编号就知道往哪边走！</li>
+                    </ul>
+                </div>
+
+                <div class="concept-item">
+                    <h3>🔄 三大基本操作</h3>
+                    <div class="operations-grid">
+                        <div class="operation-card">
+                            <span class="op-icon">🔍</span>
+                            <h4>查找(Search)</h4>
+                            <p>从根节点开始，小了往左，大了往右，相等就找到了！</p>
+                        </div>
+                        <div class="operation-card">
+                            <span class="op-icon">➕</span>
+                            <h4>插入(Insert)</h4>
+                            <p>找到合适位置(叶子节点)，按照BST性质放入新节点</p>
+                        </div>
+                        <div class="operation-card">
+                            <span class="op-icon">🗑️</span>
+                            <h4>删除(Delete)</h4>
+                            <p>最复杂的操作，需要考虑0个、1个、2个子节点的情况</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-item">
+                    <h3>⚠️ 容易混淆的概念</h3>
+                    <div class="comparison-table">
+                        <table>
+                            <tr>
+                                <th>概念</th>
+                                <th>BST</th>
+                                <th>普通二叉树</th>
+                            </tr>
+                            <tr>
+                                <td>节点排列</td>
+                                <td>有序(左小右大)</td>
+                                <td>无序</td>
+                            </tr>
+                            <tr>
+                                <td>查找效率</td>
+                                <td>O(log n) 最好</td>
+                                <td>O(n)</td>
+                            </tr>
+                            <tr>
+                                <td>中序遍历</td>
+                                <td>升序输出</td>
+                                <td>无序输出</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 可视化展示 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                可视化展示
+            </h2>
+
+            <!-- 静态结构图 -->
+            <div class="visualization-container">
+                <h3>🏛️ BST基本结构</h3>
+                <div class="static-diagram">
+                    <svg width="100%" height="300" viewBox="0 0 800 300">
+                        <!-- 节点 -->
+                        <circle cx="400" cy="50" r="25" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+                        <text x="400" y="55" text-anchor="middle" fill="white" font-weight="bold">50</text>
+
+                        <circle cx="250" cy="130" r="25" fill="#2196F3" stroke="#1976D2" stroke-width="2"/>
+                        <text x="250" y="135" text-anchor="middle" fill="white" font-weight="bold">30</text>
+
+                        <circle cx="550" cy="130" r="25" fill="#2196F3" stroke="#1976D2" stroke-width="2"/>
+                        <text x="550" y="135" text-anchor="middle" fill="white" font-weight="bold">70</text>
+
+                        <circle cx="150" cy="210" r="25" fill="#FF9800" stroke="#F57C00" stroke-width="2"/>
+                        <text x="150" y="215" text-anchor="middle" fill="white" font-weight="bold">20</text>
+
+                        <circle cx="350" cy="210" r="25" fill="#FF9800" stroke="#F57C00" stroke-width="2"/>
+                        <text x="350" y="215" text-anchor="middle" fill="white" font-weight="bold">40</text>
+
+                        <circle cx="650" cy="210" r="25" fill="#FF9800" stroke="#F57C00" stroke-width="2"/>
+                        <text x="650" y="215" text-anchor="middle" fill="white" font-weight="bold">80</text>
+
+                        <!-- 连线 -->
+                        <line x1="380" y1="65" x2="270" y2="115" stroke="#666" stroke-width="2"/>
+                        <line x1="420" y1="65" x2="530" y2="115" stroke="#666" stroke-width="2"/>
+                        <line x1="230" y1="145" x2="170" y2="195" stroke="#666" stroke-width="2"/>
+                        <line x1="270" y1="145" x2="330" y2="195" stroke="#666" stroke-width="2"/>
+                        <line x1="570" y1="145" x2="630" y2="195" stroke="#666" stroke-width="2"/>
+
+                        <!-- 标注 -->
+                        <text x="400" y="20" text-anchor="middle" font-size="14" fill="#2E7D32">根节点</text>
+                        <text x="100" y="250" text-anchor="middle" font-size="12" fill="#F57C00">叶子节点</text>
+                        <text x="80" y="130" text-anchor="middle" font-size="12" fill="#1976D2">左子树 &lt; 50</text>
+                        <text x="720" y="130" text-anchor="middle" font-size="12" fill="#1976D2">右子树 &gt; 50</text>
+                    </svg>
+                </div>
+
+                <!-- 动态操作演示 -->
+                <h3>🎬 动态操作演示</h3>
+                <div class="animation-controls">
+                    <div class="control-panel">
+                        <button id="insertBtn" class="unified-btn unified-btn-primary">插入节点</button>
+                        <button id="searchBtn" class="unified-btn unified-btn-secondary">查找节点</button>
+                        <button id="deleteBtn" class="unified-btn unified-btn-warning">删除节点</button>
+                        <input type="number" id="nodeValue" placeholder="输入数值" min="1" max="100">
+                        <button id="resetBtn" class="unified-btn">重置</button>
+                    </div>
+                    <div class="step-info" id="stepInfo">点击操作按钮开始演示</div>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="bstCanvas" width="800" height="400"></canvas>
+                </div>
+
+                <!-- 删除操作详解 -->
+                <div class="delete-explanation">
+                    <h3>🔍 删除操作详解</h3>
+                    <div class="delete-cases">
+                        <div class="case-card">
+                            <h4>案例1: 删除叶子节点</h4>
+                            <p><strong>例如删除节点20：</strong></p>
+                            <p>直接移除节点20，不影响其他节点。最简单的情况。</p>
+                        </div>
+
+                        <div class="case-card">
+                            <h4>案例2: 删除只有一个子节点的节点</h4>
+                            <p><strong>例如删除节点30（只有左子节点20）：</strong></p>
+                            <p>用节点20替代节点30的位置，保持父子关系不变。</p>
+                        </div>
+
+                        <div class="case-card complex">
+                            <h4>案例3: 删除有两个子节点的节点 ⭐</h4>
+                            <p><strong>例如删除根节点50：</strong></p>
+                            <ol style="font-size: 14px; margin: 10px 0;">
+                                <li>在右子树(70)中找最小值 → 找到60</li>
+                                <li>用60替换50的位置</li>
+                                <li>删除原来位置的60（此时60最多只有右子节点）</li>
+                                <li>结果：新的根节点变成60，BST性质保持</li>
+                            </ol>
+                            <div style="background: #e8f5e8; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 13px;">
+                                <strong>🤔 为什么选择中序后继？</strong><br>
+                                因为它是比删除节点大的最小值，放在删除节点位置后能保证左边都小于它，右边都大于它！
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="operation-steps">
+                    <div class="step-card">
+                        <h4>🔍 查找步骤</h4>
+                        <ol>
+                            <li>从根节点开始比较</li>
+                            <li>目标值 < 当前节点 → 往左子树</li>
+                            <li>目标值 > 当前节点 → 往右子树</li>
+                            <li>相等 → 找到！</li>
+                            <li>到达空节点 → 不存在</li>
+                        </ol>
+                    </div>
+
+                    <div class="step-card">
+                        <h4>➕ 插入步骤</h4>
+                        <ol>
+                            <li>像查找一样找到插入位置</li>
+                            <li>在空节点位置创建新节点</li>
+                            <li>连接到父节点</li>
+                            <li>保持BST性质不变</li>
+                        </ol>
+                    </div>
+
+                    <div class="step-card">
+                        <h4>🗑️ 删除步骤</h4>
+                        <ol>
+                            <li><strong>情况1 - 叶子节点：</strong>直接删除</li>
+                            <li><strong>情况2 - 一个子节点：</strong>子节点替代父节点</li>
+                            <li><strong>情况3 - 两个子节点：</strong>
+                                <ul style="margin: 5px 0 5px 20px; font-size: 14px;">
+                                    <li>① 找到右子树最小值（中序后继）</li>
+                                    <li>② 用后继值替换删除节点</li>
+                                    <li>③ 递归删除原后继节点</li>
+                                </ul>
+                            </li>
+                            <li>保持BST性质不变</li>
+                        </ol>
+                        <div style="background: #fff3cd; padding: 10px; margin-top: 10px; border-radius: 4px; font-size: 13px;">
+                            <strong>💡 提示：</strong>删除两个子节点的情况最复杂，需要用中序后继保证删除后仍满足BST性质！
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 实际应用 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🌟</span>
+                实际应用
+            </h2>
+
+            <div class="applications">
+                <div class="application-item">
+                    <h3>💾 数据库索引</h3>
+                    <p>数据库使用BST(特别是B+树)来快速查找记录，就像图书馆的索引系统！</p>
+                </div>
+
+                <div class="application-item">
+                    <h3>🔍 搜索引擎</h3>
+                    <p>搜索引擎用BST存储网页关键词，实现毫秒级的搜索响应。</p>
+                </div>
+
+                <div class="application-item">
+                    <h3>🎯 表达式解析</h3>
+                    <p>编译器使用BST构建语法树，将代码转换为机器能理解的指令。</p>
+                </div>
+            </div>
+
+            <!-- 代码示例 -->
+            <div class="code-examples">
+                <h3>💻 代码实现</h3>
+                <div class="code-tabs">
+                    <button class="tab-btn active" data-lang="cpp">C++</button>
+                    <button class="tab-btn" data-lang="java">Java</button>
+                    <button class="tab-btn" data-lang="python">Python</button>
+                </div>
+
+                <!-- C++ 代码 -->
+                <div class="code-content active" data-lang="cpp">
+                    <div class="code-header">
+                        <span>BST节点结构和基本操作 - C++</span>
+                        <button class="copy-btn" data-clipboard-target="cpp-code">📋 复制</button>
+                    </div>
+                    <pre id="cpp-code"><code>
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+class BST {
+public:
+    TreeNode* root;
+
+    BST() : root(nullptr) {}
+
+    // 插入节点
+    TreeNode* insert(TreeNode* node, int val) {
+        if (node == nullptr) {
+            return new TreeNode(val);
+        }
+
+        if (val < node->val) {
+            node->left = insert(node->left, val);
+        } else if (val > node->val) {
+            node->right = insert(node->right, val);
+        }
+
+        return node;
+    }
+
+    // 查找节点
+    bool search(TreeNode* node, int val) {
+        if (node == nullptr) return false;
+        if (node->val == val) return true;
+
+        if (val < node->val) {
+            return search(node->left, val);
+        } else {
+            return search(node->right, val);
+        }
+    }
+
+    // 中序遍历
+    void inorder(TreeNode* node, vector&lt;int&gt;& result) {
+        if (node != nullptr) {
+            inorder(node->left, result);
+            result.push_back(node->val);
+            inorder(node->right, result);
+        }
+    }
+};
+                    </code></pre>
+                </div>
+
+                <!-- Java 代码 -->
+                <div class="code-content" data-lang="java">
+                    <div class="code-header">
+                        <span>BST节点结构和基本操作 - Java</span>
+                        <button class="copy-btn" data-clipboard-target="java-code">📋 复制</button>
+                    </div>
+                    <pre id="java-code"><code>
+class TreeNode {
+    int val;
+    TreeNode left;
+    TreeNode right;
+
+    TreeNode(int val) {
+        this.val = val;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+public class BST {
+    private TreeNode root;
+
+    public BST() {
+        this.root = null;
+    }
+
+    // 插入节点
+    public TreeNode insert(TreeNode node, int val) {
+        if (node == null) {
+            return new TreeNode(val);
+        }
+
+        if (val < node.val) {
+            node.left = insert(node.left, val);
+        } else if (val > node.val) {
+            node.right = insert(node.right, val);
+        }
+
+        return node;
+    }
+
+    // 查找节点
+    public boolean search(TreeNode node, int val) {
+        if (node == null) return false;
+        if (node.val == val) return true;
+
+        if (val < node.val) {
+            return search(node.left, val);
+        } else {
+            return search(node.right, val);
+        }
+    }
+
+    // 中序遍历
+    public void inorder(TreeNode node, List&lt;Integer&gt; result) {
+        if (node != null) {
+            inorder(node.left, result);
+            result.add(node.val);
+            inorder(node.right, result);
+        }
+    }
+}
+                    </code></pre>
+                </div>
+
+                <!-- Python 代码 -->
+                <div class="code-content" data-lang="python">
+                    <div class="code-header">
+                        <span>BST节点结构和基本操作 - Python</span>
+                        <button class="copy-btn" data-clipboard-target="python-code">📋 复制</button>
+                    </div>
+                    <pre id="python-code"><code>
+class TreeNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.left = None
+        self.right = None
+
+class BST:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, node, val):
+        """插入节点"""
+        if node is None:
+            return TreeNode(val)
+
+        if val < node.val:
+            node.left = self.insert(node.left, val)
+        elif val > node.val:
+            node.right = self.insert(node.right, val)
+
+        return node
+
+    def search(self, node, val):
+        """查找节点"""
+        if node is None:
+            return False
+        if node.val == val:
+            return True
+
+        if val < node.val:
+            return self.search(node.left, val)
+        else:
+            return self.search(node.right, val)
+
+    def inorder(self, node, result):
+        """中序遍历"""
+        if node is not None:
+            self.inorder(node.left, result)
+            result.append(node.val)
+            self.inorder(node.right, result)
+
+    def insert_public(self, val):
+        """公共插入接口"""
+        self.root = self.insert(self.root, val)
+
+    def search_public(self, val):
+        """公共查找接口"""
+        return self.search(self.root, val)
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 学习检验 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                学习检验
+            </h2>
+
+            <div class="quiz-container">
+                <div class="quiz-item">
+                    <h3>🤔 思考题1：BST性质判断</h3>
+                    <p><strong>问题：</strong>给定序列 [20, 10, 30, 5, 15, 25, 35]，按顺序插入空的BST中，最终的中序遍历结果是什么？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer1')">点击查看答案</button>
+                    <div class="answer-content" id="answer1">
+                        <p><strong>答案：</strong>[5, 10, 15, 20, 25, 30, 35]</p>
+                        <p><strong>解释：</strong>BST的中序遍历总是按升序输出所有元素，这是BST最重要的性质之一！</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题2：时间复杂度分析</h3>
+                    <p><strong>问题：</strong>在最坏情况下，BST的查找时间复杂度是多少？什么时候会出现这种情况？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer2')">点击查看答案</button>
+                    <div class="answer-content" id="answer2">
+                        <p><strong>答案：</strong>O(n)，当BST退化成链表时。</p>
+                        <p><strong>解释：</strong>例如按升序插入 [1,2,3,4,5]，会形成一条右偏链，此时查找效率等同于线性搜索。这就是为什么需要平衡二叉搜索树（如AVL树）的原因。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题3：删除操作理解</h3>
+                    <p><strong>问题：</strong>在BST中删除有两个子节点的节点时，为什么通常选择用"中序后继"来替代？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer3')">点击查看答案</button>
+                    <div class="answer-content" id="answer3">
+                        <p><strong>答案：</strong>因为中序后继是右子树中的最小值，它能保持BST性质。</p>
+                        <p><strong>解释：</strong>中序后继比左子树所有节点都大，比右子树除它之外的所有节点都小，用它替代删除节点正好维持BST的左小右大性质。当然也可以用中序前驱（左子树最大值）。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题4：实际应用</h3>
+                    <p><strong>问题：</strong>为什么数据库索引经常使用树结构而不是哈希表？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer4')">点击查看答案</button>
+                    <div class="answer-content" id="answer4">
+                        <p><strong>答案：</strong>因为树结构支持范围查询，而哈希表不支持。</p>
+                        <p><strong>解释：</strong>BST支持高效的范围查询（如查找18-25岁的用户），排序输出，而哈希表只能做精确查找。数据库经常需要 BETWEEN、ORDER BY 等操作，这些都是BST的强项。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题5：算法优化</h3>
+                    <p><strong>问题：</strong>如何判断一个二叉树是否为有效的BST？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer5')">点击查看答案</button>
+                    <div class="answer-content" id="answer5">
+                        <p><strong>答案：</strong>使用范围检查：每个节点都要在特定范围内。</p>
+                        <p><strong>解释：</strong>不能只比较父子关系！要保证每个节点都在允许的范围内。根节点范围是(-∞, +∞)，左子节点范围是(-∞, parent.val)，右子节点范围是(parent.val, +∞)。递归检查即可。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 进阶学习建议 -->
+            <div class="learning-progress">
+                <h3>📚 进阶学习路径</h3>
+                <div class="progress-steps">
+                    <div class="progress-step completed">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <h4>BST基础</h4>
+                            <p>掌握增删查改操作</p>
+                        </div>
+                    </div>
+                    <div class="progress-step next">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <h4>平衡二叉树</h4>
+                            <p>学习AVL树、红黑树</p>
+                        </div>
+                    </div>
+                    <div class="progress-step">
+                        <span class="step-number">3</span>
+                        <div class="step-content">
+                            <h4>多路搜索树</h4>
+                            <p>B树、B+树原理</p>
+                        </div>
+                    </div>
+                    <div class="progress-step">
+                        <span class="step-number">4</span>
+                        <div class="step-content">
+                            <h4>实际应用</h4>
+                            <p>数据库、文件系统</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航按钮 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<!-- CSS样式 -->
+<style>
+.overview-content {
+    margin-top: 20px;
+}
+
+.concept-intro {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2196F3;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.badge-medium {
+    background: #FF9800;
+}
+
+.concept-details {
+    margin-top: 20px;
+}
+
+.concept-item {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+}
+
+.operations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.operation-card {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.operation-card:hover {
+    transform: translateY(-5px);
+}
+
+.op-icon {
+    font-size: 2em;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.comparison-table th,
+.comparison-table td {
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.comparison-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+}
+
+.visualization-container {
+    margin-top: 20px;
+}
+
+.static-diagram {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.animation-controls {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.control-panel {
+    margin-bottom: 15px;
+}
+
+.control-panel button,
+.control-panel input {
+    margin: 5px;
+}
+
+#nodeValue {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 120px;
+}
+
+.step-info {
+    padding: 10px;
+    background: #e3f2fd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.canvas-container {
+    text-align: center;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 15px 0;
+}
+
+#bstCanvas {
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.operation-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.step-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #2196F3;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.step-card h4 {
+    margin-top: 0;
+    color: #1976D2;
+}
+
+.step-card ol {
+    margin: 10px 0 0 20px;
+}
+
+.applications {
+    margin-top: 20px;
+}
+
+.application-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #FF5722;
+}
+
+.code-examples {
+    margin-top: 30px;
+}
+
+.code-tabs {
+    display: flex;
+    margin-bottom: 0;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: #f5f5f5;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background: #2196F3;
+    color: white;
+    border-bottom-color: #2196F3;
+}
+
+.code-content {
+    display: none;
+    background: #1e1e1e;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+.code-content.active {
+    display: block;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #333;
+    color: white;
+    font-size: 14px;
+}
+
+.copy-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.copy-btn:hover {
+    background: #45a049;
+}
+
+pre {
+    margin: 0;
+    overflow-x: auto;
+}
+
+code {
+    color: #f8f8f2;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    display: block;
+    padding: 20px;
+}
+
+.quiz-container {
+    margin-top: 20px;
+}
+
+.quiz-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.quiz-item h3 {
+    color: #1976D2;
+    margin-top: 0;
+}
+
+.answer-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.answer-btn:hover {
+    background: #45a049;
+}
+
+.answer-content {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: #e8f5e8;
+    border-radius: 5px;
+    border-left: 4px solid #4CAF50;
+}
+
+.answer-content.show {
+    display: block;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.learning-progress {
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 10px;
+}
+
+.progress-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    opacity: 0.6;
+    transition: all 0.3s;
+}
+
+.progress-step.completed {
+    opacity: 1;
+    border-left: 4px solid #4CAF50;
+}
+
+.progress-step.next {
+    opacity: 1;
+    border-left: 4px solid #FF9800;
+    transform: scale(1.05);
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #e0e0e0;
+    color: white;
+    border-radius: 50%;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.progress-step.completed .step-number {
+    background: #4CAF50;
+}
+
+.progress-step.next .step-number {
+    background: #FF9800;
+}
+
+.step-content h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.step-content p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.delete-explanation {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #FF5722;
+}
+
+.delete-cases {
+    display: grid;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.case-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 3px solid #4CAF50;
+}
+
+.case-card.complex {
+    border-left-color: #FF9800;
+    background: linear-gradient(135deg, #fff8e1, #ffffff);
+}
+
+.case-card h4 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.case-card p {
+    margin: 5px 0;
+    color: #555;
+    font-size: 14px;
+}
+
+.case-card ol {
+    margin: 10px 0 10px 20px;
+    color: #555;
+}
+
+@media (max-width: 768px) {
+    .operations-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .operation-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .code-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        flex: 1;
+        min-width: 80px;
+    }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+// BST动画相关变量
+let canvas, ctx;
+let bstNodes = [];
+let animationStep = 0;
+let currentOperation = '';
+let targetValue = null;
+let animationPath = [];
+
+// 初始化BST演示
+document.addEventListener('DOMContentLoaded', function() {
+    canvas = document.getElementById('bstCanvas');
+    ctx = canvas.getContext('2d');
+
+    // 初始化一个示例BST
+    initializeSampleBST();
+    drawBST();
+
+    // 绑定事件
+    document.getElementById('insertBtn').addEventListener('click', () => {
+        const value = parseInt(document.getElementById('nodeValue').value);
+        if (value) {
+            startAnimation('insert', value);
+        } else {
+            alert('请输入一个数值');
+        }
+    });
+
+    document.getElementById('searchBtn').addEventListener('click', () => {
+        const value = parseInt(document.getElementById('nodeValue').value);
+        if (value) {
+            startAnimation('search', value);
+        } else {
+            alert('请输入一个数值');
+        }
+    });
+
+    document.getElementById('deleteBtn').addEventListener('click', () => {
+        const value = parseInt(document.getElementById('nodeValue').value);
+        if (value) {
+            startAnimation('delete', value);
+        } else {
+            alert('请输入一个数值');
+        }
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        bstNodes = [];
+        animationPath = [];
+        animationStep = 0;
+        document.getElementById('stepInfo').textContent = '已重置，点击操作按钮开始演示';
+        initializeSampleBST();
+        drawBST();
+    });
+});
+
+// 初始化示例BST
+function initializeSampleBST() {
+    bstNodes = [
+        {value: 50, x: 400, y: 80, left: null, right: null, id: 1},
+        {value: 30, x: 280, y: 160, left: null, right: null, id: 2},
+        {value: 70, x: 520, y: 160, left: null, right: null, id: 3},
+        {value: 20, x: 220, y: 240, left: null, right: null, id: 4},
+        {value: 40, x: 340, y: 240, left: null, right: null, id: 5},
+        {value: 60, x: 460, y: 240, left: null, right: null, id: 6},
+        {value: 80, x: 580, y: 240, left: null, right: null, id: 7}
+    ];
+
+    // 建立父子关系（仅用于绘制连线）
+    bstNodes[0].left = bstNodes[1];
+    bstNodes[0].right = bstNodes[2];
+    bstNodes[1].left = bstNodes[3];
+    bstNodes[1].right = bstNodes[4];
+    bstNodes[2].left = bstNodes[5];
+    bstNodes[2].right = bstNodes[6];
+}
+
+// 绘制BST
+function drawBST() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制连线
+    bstNodes.forEach(node => {
+        if (node.left) {
+            drawLine(node.x, node.y, node.left.x, node.left.y, '#666');
+        }
+        if (node.right) {
+            drawLine(node.x, node.y, node.right.x, node.right.y, '#666');
+        }
+    });
+
+    // 绘制节点
+    bstNodes.forEach((node, index) => {
+        let color = '#4CAF50';
+        let strokeColor = '#2E7D32';
+
+        if (animationPath.includes(index)) {
+            if (currentOperation === 'delete' && index === animationPath[0]) {
+                color = '#f44336'; // 红色表示要删除的节点
+                strokeColor = '#d32f2f';
+            } else if (currentOperation === 'search' && index === animationPath[animationPath.length - 1]) {
+                color = '#FF5722'; // 橙色表示当前搜索位置
+                strokeColor = '#E64A19';
+            } else {
+                color = '#FF9800'; // 黄色表示路径上的节点
+                strokeColor = '#F57C00';
+            }
+        }
+
+        drawNode(node.x, node.y, node.value, color, strokeColor);
+    });
+
+    // 添加操作说明
+    if (animationPath.length > 0 && currentOperation) {
+        ctx.fillStyle = '#333';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'left';
+
+        let instructions = '';
+        switch(currentOperation) {
+            case 'search':
+                instructions = '🔍 橙色节点：当前搜索位置';
+                break;
+            case 'insert':
+                instructions = '➕ 黄色节点：搜索路径，橙色节点：插入位置';
+                break;
+            case 'delete':
+                instructions = '🗑️ 红色节点：要删除的节点，黄色节点：操作路径';
+                break;
+        }
+
+        if (instructions) {
+            ctx.fillText(instructions, 10, canvas.height - 20);
+        }
+    }
+}
+
+// 绘制单个节点
+function drawNode(x, y, value, color = '#4CAF50', strokeColor = '#2E7D32') {
+    // 绘制圆圈
+    ctx.beginPath();
+    ctx.arc(x, y, 25, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // 绘制数值
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(value.toString(), x, y);
+}
+
+// 绘制连线
+function drawLine(x1, y1, x2, y2, color = '#666') {
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+}
+
+// 开始动画
+function startAnimation(operation, value) {
+    currentOperation = operation;
+    targetValue = value;
+    animationStep = 0;
+    animationPath = [];
+
+    if (operation === 'search') {
+        animateSearch(value);
+    } else if (operation === 'insert') {
+        animateInsert(value);
+    } else if (operation === 'delete') {
+        animateDelete(value);
+    }
+}
+
+// 搜索动画
+function animateSearch(value) {
+    let currentIndex = 0; // 从根节点开始
+    let step = 1;
+
+    const searchStep = () => {
+        if (currentIndex >= bstNodes.length) {
+            document.getElementById('stepInfo').textContent = `步骤${step}: 节点不存在，搜索失败`;
+            return;
+        }
+
+        const currentNode = bstNodes[currentIndex];
+        animationPath.push(currentIndex);
+        drawBST();
+
+        if (currentNode.value === value) {
+            document.getElementById('stepInfo').textContent = `步骤${step}: 找到目标值 ${value}！搜索成功`;
+            return;
+        } else if (value < currentNode.value) {
+            document.getElementById('stepInfo').textContent = `步骤${step}: ${value} < ${currentNode.value}，往左子树搜索`;
+            currentIndex = bstNodes.findIndex(node => node === currentNode.left);
+        } else {
+            document.getElementById('stepInfo').textContent = `步骤${step}: ${value} > ${currentNode.value}，往右子树搜索`;
+            currentIndex = bstNodes.findIndex(node => node === currentNode.right);
+        }
+
+        step++;
+        if (currentIndex !== -1) {
+            setTimeout(searchStep, 1500);
+        } else {
+            setTimeout(() => {
+                document.getElementById('stepInfo').textContent = `步骤${step}: 到达空节点，值 ${value} 不存在于BST中`;
+            }, 1500);
+        }
+    };
+
+    searchStep();
+}
+
+// 插入动画
+function animateInsert(value) {
+    // 检查值是否已存在
+    if (bstNodes.find(node => node.value === value)) {
+        document.getElementById('stepInfo').textContent = `值 ${value} 已存在于BST中，无需插入`;
+        return;
+    }
+
+    let currentIndex = 0;
+    let step = 1;
+    let parentIndex = -1;
+    let isLeftChild = false;
+
+    const insertStep = () => {
+        if (currentIndex >= bstNodes.length || currentIndex === -1) {
+            // 找到插入位置，创建新节点
+            let newX, newY;
+            if (parentIndex !== -1) {
+                const parent = bstNodes[parentIndex];
+                if (isLeftChild) {
+                    newX = parent.x - 60;
+                    newY = parent.y + 80;
+                } else {
+                    newX = parent.x + 60;
+                    newY = parent.y + 80;
+                }
+            } else {
+                newX = 400;
+                newY = 80;
+            }
+
+            const newNode = {
+                value: value,
+                x: newX,
+                y: newY,
+                left: null,
+                right: null,
+                id: bstNodes.length + 1
+            };
+
+            bstNodes.push(newNode);
+
+            // 建立父子关系
+            if (parentIndex !== -1) {
+                if (isLeftChild) {
+                    bstNodes[parentIndex].left = newNode;
+                } else {
+                    bstNodes[parentIndex].right = newNode;
+                }
+            }
+
+            animationPath.push(bstNodes.length - 1);
+            drawBST();
+            document.getElementById('stepInfo').textContent = `步骤${step}: 在空位置插入新节点 ${value}`;
+            return;
+        }
+
+        const currentNode = bstNodes[currentIndex];
+        animationPath.push(currentIndex);
+        drawBST();
+
+        if (value < currentNode.value) {
+            document.getElementById('stepInfo').textContent = `步骤${step}: ${value} < ${currentNode.value}，往左子树`;
+            parentIndex = currentIndex;
+            isLeftChild = true;
+            currentIndex = bstNodes.findIndex(node => node === currentNode.left);
+        } else {
+            document.getElementById('stepInfo').textContent = `步骤${step}: ${value} > ${currentNode.value}，往右子树`;
+            parentIndex = currentIndex;
+            isLeftChild = false;
+            currentIndex = bstNodes.findIndex(node => node === currentNode.right);
+        }
+
+        step++;
+        setTimeout(insertStep, 1500);
+    };
+
+    insertStep();
+}
+
+// 删除动画（完整版，处理所有情况）
+function animateDelete(value) {
+    const nodeIndex = bstNodes.findIndex(node => node.value === value);
+    if (nodeIndex === -1) {
+        document.getElementById('stepInfo').textContent = `值 ${value} 不存在于BST中`;
+        return;
+    }
+
+    const nodeToDelete = bstNodes[nodeIndex];
+    let step = 1;
+
+    // 高亮要删除的节点
+    animationPath = [nodeIndex];
+    drawBST();
+
+    setTimeout(() => {
+        // 情况1：叶子节点（无子节点）
+        if (!nodeToDelete.left && !nodeToDelete.right) {
+            document.getElementById('stepInfo').textContent = `步骤${step}: 删除叶子节点 ${value}`;
+            deleteLeafNode(nodeIndex, value);
+        }
+        // 情况2：只有一个子节点
+        else if (!nodeToDelete.left || !nodeToDelete.right) {
+            document.getElementById('stepInfo').textContent = `步骤${step}: 删除只有一个子节点的节点 ${value}`;
+            deleteNodeWithOneChild(nodeIndex, value, step);
+        }
+        // 情况3：有两个子节点
+        else {
+            document.getElementById('stepInfo').textContent = `步骤${step}: 删除有两个子节点的节点 ${value}，需要找到中序后继`;
+            deleteNodeWithTwoChildren(nodeIndex, value, step);
+        }
+    }, 1500);
+}
+
+// 删除叶子节点
+function deleteLeafNode(nodeIndex, value) {
+    const nodeToDelete = bstNodes[nodeIndex];
+
+    setTimeout(() => {
+        // 从父节点中移除引用
+        bstNodes.forEach(node => {
+            if (node.left === nodeToDelete) {
+                node.left = null;
+            }
+            if (node.right === nodeToDelete) {
+                node.right = null;
+            }
+        });
+
+        // 从数组中移除节点
+        bstNodes.splice(nodeIndex, 1);
+        animationPath = [];
+        drawBST();
+        document.getElementById('stepInfo').textContent = `删除完成！叶子节点 ${value} 已被移除`;
+    }, 1000);
+}
+
+// 删除只有一个子节点的节点
+function deleteNodeWithOneChild(nodeIndex, value, step) {
+    const nodeToDelete = bstNodes[nodeIndex];
+    const child = nodeToDelete.left || nodeToDelete.right;
+    const childIndex = bstNodes.findIndex(node => node === child);
+
+    setTimeout(() => {
+        step++;
+        document.getElementById('stepInfo').textContent = `步骤${step}: 用子节点 ${child.value} 替代删除节点 ${value}`;
+
+        // 高亮子节点
+        animationPath = [nodeIndex, childIndex];
+        drawBST();
+
+        setTimeout(() => {
+            // 找到父节点并更新引用
+            let parentFound = false;
+            bstNodes.forEach(node => {
+                if (node.left === nodeToDelete) {
+                    node.left = child;
+                    parentFound = true;
+                } else if (node.right === nodeToDelete) {
+                    node.right = child;
+                    parentFound = true;
+                }
+            });
+
+            // 如果删除的是根节点，需要特殊处理
+            if (!parentFound) {
+                // 将子节点移动到根节点位置
+                child.x = nodeToDelete.x;
+                child.y = nodeToDelete.y;
+            }
+
+            // 从数组中移除被删除的节点
+            bstNodes.splice(nodeIndex, 1);
+            animationPath = [];
+            drawBST();
+
+            step++;
+            document.getElementById('stepInfo').textContent = `步骤${step}: 删除完成！节点 ${value} 已被其子节点替代`;
+        }, 1500);
+    }, 1000);
+}
+
+// 删除有两个子节点的节点
+function deleteNodeWithTwoChildren(nodeIndex, value, step) {
+    const nodeToDelete = bstNodes[nodeIndex];
+
+    setTimeout(() => {
+        step++;
+        document.getElementById('stepInfo').textContent = `步骤${step}: 在右子树中查找最小值（中序后继）`;
+
+        // 找到中序后继（右子树的最小值）
+        let successor = nodeToDelete.right;
+        let successorPath = [nodeIndex];
+
+        // 添加右子树根节点到路径
+        const rightChildIndex = bstNodes.findIndex(node => node === successor);
+        successorPath.push(rightChildIndex);
+
+        // 一直往左走找最小值
+        while (successor.left) {
+            successor = successor.left;
+            const successorIndex = bstNodes.findIndex(node => node === successor);
+            successorPath.push(successorIndex);
+        }
+
+        const successorIndex = bstNodes.findIndex(node => node === successor);
+        animationPath = successorPath;
+        drawBST();
+
+        setTimeout(() => {
+            step++;
+            document.getElementById('stepInfo').textContent = `步骤${step}: 找到中序后继 ${successor.value}，用它替换要删除的节点`;
+
+            // 高亮后继节点
+            animationPath = [nodeIndex, successorIndex];
+            drawBST();
+
+            setTimeout(() => {
+                // 保存后继节点的值
+                const successorValue = successor.value;
+
+                // 用后继节点的值替换要删除节点的值
+                nodeToDelete.value = successorValue;
+
+                step++;
+                document.getElementById('stepInfo').textContent = `步骤${step}: 值已替换，现在删除原来的中序后继节点`;
+
+                // 重新绘制，显示值已经被替换
+                animationPath = [nodeIndex];
+                drawBST();
+
+                setTimeout(() => {
+                    // 删除原来的后继节点（它最多只有右子节点）
+                    deleteSuccessorNode(successor, successorIndex, step + 1);
+                }, 1500);
+            }, 1500);
+        }, 1500);
+    }, 1000);
+}
+
+// 删除中序后继节点（最多只有右子节点）
+function deleteSuccessorNode(successor, successorIndex, step) {
+    document.getElementById('stepInfo').textContent = `步骤${step}: 删除中序后继节点 ${successor.value}`;
+
+    animationPath = [successorIndex];
+    drawBST();
+
+    setTimeout(() => {
+        // 找到后继节点的父节点
+        let successorParent = null;
+        bstNodes.forEach(node => {
+            if (node.left === successor || node.right === successor) {
+                successorParent = node;
+            }
+        });
+
+        if (successorParent) {
+            // 如果后继节点有右子节点，用右子节点替代
+            if (successor.right) {
+                if (successorParent.left === successor) {
+                    successorParent.left = successor.right;
+                } else {
+                    successorParent.right = successor.right;
+                }
+            } else {
+                // 如果后继节点是叶子节点，直接删除
+                if (successorParent.left === successor) {
+                    successorParent.left = null;
+                } else {
+                    successorParent.right = null;
+                }
+            }
+        }
+
+        // 从数组中移除后继节点
+        bstNodes.splice(successorIndex, 1);
+        animationPath = [];
+        drawBST();
+
+        step++;
+        document.getElementById('stepInfo').textContent = `步骤${step}: 删除操作完成！节点已被成功删除并保持BST性质`;
+    }, 1500);
+}
+
+// 代码标签页切换
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // 移除所有active类
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.code-content').forEach(c => c.classList.remove('active'));
+
+        // 添加active类到当前标签
+        this.classList.add('active');
+        const lang = this.getAttribute('data-lang');
+        document.querySelector(`.code-content[data-lang="${lang}"]`).classList.add('active');
+    });
+});
+
+// 复制代码功能
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-clipboard-target');
+        const codeElement = document.getElementById(targetId);
+
+        if (codeElement) {
+            // 创建临时文本区域
+            const textarea = document.createElement('textarea');
+            textarea.value = codeElement.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            // 显示复制成功提示
+            const originalText = this.textContent;
+            this.textContent = '✅ 已复制';
+            setTimeout(() => {
+                this.textContent = originalText;
+            }, 2000);
+        }
+    });
+});
+
+// 答案切换功能
+function toggleAnswer(answerId) {
+    const answerElement = document.getElementById(answerId);
+    const button = answerElement.previousElementSibling;
+
+    if (answerElement.classList.contains('show')) {
+        answerElement.classList.remove('show');
+        button.textContent = '点击查看答案';
+    } else {
+        answerElement.classList.add('show');
+        button.textContent = '隐藏答案';
+    }
+}
+</script>
+
+{% endblock %}t

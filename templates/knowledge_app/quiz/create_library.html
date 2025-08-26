@@ -1,0 +1,28 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+
+{% block title %}创建题库 - {{ block.super }}{% endblock %}
+
+{% block quiz_breadcrumb %}
+<div class="quiz-breadcrumb"><a href="{% url 'knowledge_app:quiz_dashboard' %}">🏠 个人题库</a><span class="quiz-breadcrumb-separator">></span><a href="{% url 'knowledge_app:quiz_library_list' %}">📚 题库列表</a><span class="quiz-breadcrumb-separator">></span><span>➕ 创建题库</span></div>
+{% endblock %}
+
+{% block quiz_content %}
+<div class="quiz-card"><div class="quiz-card-header"><h1 class="quiz-card-title">➕ 创建新题库</h1><p class="quiz-card-subtitle">开始你的个性化学习之旅</p></div><div class="quiz-card-body"><form method="post" style="max-width: 600px; margin: 0 auto;">
+            {% csrf_token %}
+            
+            <!-- 题库名称 --><div class="quiz-form-group"><label for="name" class="quiz-form-label"><span>📚</span><span>题库名称 *</span></label><input type="text" 
+                       id="name" 
+                       name="name" 
+                       class="quiz-form-control" 
+                       placeholder="例如：计算机基础知识、算法练习、英语词汇..."
+                       required
+                       maxlength="200"><div style="font-size: 0.9rem; color: var(--quiz-gray-500); margin-top: 0.5rem;">
+                    给你的题库起一个有意义的名称，方便后续管理
+                </div></div><!-- 题库描述 --><div class="quiz-form-group"><label for="description" class="quiz-form-label"><span>📝</span><span>题库描述</span></label><textarea id="description" 
+                          name="description" 
+                          class="quiz-form-control" 
+                          rows="4"
+                          placeholder="描述这个题库的内容、用途和学习目标...&#10;例如：这个题库包含计算机科学基础知识，适合初学者系统学习，涵盖数据结构、算法、操作系统等核心概念。"></textarea><div style="font-size: 0.9rem; color: var(--quiz-gray-500); margin-top: 0.5rem;">
+                    详细描述有助于你更好地管理和使用题库
+                </div></div><!-- 创建提示 --><div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1)); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--quiz-radius-lg); padding: 1.5rem; margin-bottom: 2rem;"><h3 style="color: var(--quiz-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"><span>💡</span><span>创建提示</span></h3><ul style="color: var(--quiz-gray-600); margin: 0; padding-left: 1.5rem; line-height: 1.6;"><li>题库创建后，你可以添加多种类型的题目：单选题、多选题、填空题、简答题</li><li>支持为题目添加标签，方便分类管理和筛选</li><li>可以设置题目难度等级，系统会提供相应的学习建议</li><li>练习过程中的错题会自动收集，支持AI智能分析</li></ul></div><!-- 操作按钮 --><div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;"><button type="submit" class="quiz-btn quiz-btn-primary" style="min-width: 120px; color: white;"><span>✨</span><span>创建题库</span></button><a href="{% url 'knowledge_app:quiz_library_list' %}" class="quiz-btn quiz-btn-outline" style="min-width: 120px; color: var(--quiz-primary);"><span>↩️</span><span>返回列表</span></a></div></form></div></div><!-- 创建后的下一步 --><div class="quiz-card"><div class="quiz-card-body"><h2 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800); text-align: center;">🚀 创建后你可以</h2><div class="quiz-grid quiz-grid-3"><div style="text-align: center; padding: 1.5rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">📝</div><h3 style="color: var(--quiz-gray-800); margin-bottom: 0.5rem;">添加题目</h3><p style="color: var(--quiz-gray-600); font-size: 0.9rem;">支持多种题型，灵活设置难度和标签</p></div><div style="text-align: center; padding: 1.5rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div><h3 style="color: var(--quiz-gray-800); margin-bottom: 0.5rem;">开始练习</h3><p style="color: var(--quiz-gray-600); font-size: 0.9rem;">多种练习模式，个性化学习体验</p></div><div style="text-align: center; padding: 1.5rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">📊</div><h3 style="color: var(--quiz-gray-800); margin-bottom: 0.5rem;">查看统计</h3><p style="color: var(--quiz-gray-600); font-size: 0.9rem;">详细的学习数据分析和进度跟踪</p></div></div></div></div><script>document.addEventListener('DOMContentLoaded', function() { const form = document.querySelector('form'); const nameInput = document.getElementById('name'); form.addEventListener('submit', function(e) { const name = nameInput.value.trim(); if (!name) { e.preventDefault(); alert('请输入题库名称'); nameInput.focus(); return; } if (name.length < 2) { e.preventDefault(); alert('题库名称至少需要2个字符'); nameInput.focus(); return; } }); nameInput.addEventListener('input', function() { const length = this.value.length; const maxLength = 200; if (length > maxLength - 20) { this.style.borderColor = 'var(--quiz-warning)'; } else { this.style.borderColor = 'var(--quiz-gray-200)'; } }); });</script>
+{% endblock %}

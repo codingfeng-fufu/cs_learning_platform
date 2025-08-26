@@ -1,0 +1,39 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}数据库系统 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>计算机科学</span><span>></span><span>数据库系统</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🗄️</span>
+            数据库系统
+        </h1><p>掌握数据存储与管理的核心技术，从关系型到NoSQL数据库</p></div><!-- 领域概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📖</span>
+                什么是数据库系统
+            </h2><div class="section-content"><p>数据库系统是用于存储、管理和检索大量数据的软件系统。它不仅包括数据库本身，还包括数据库管理系统(DBMS)、应用程序和数据库管理员。现代数据库系统是信息系统的核心，支撑着从简单的个人应用到复杂的企业级系统。</p><p>学习数据库系统需要掌握数据建模、查询优化、事务处理、并发控制等核心技术，以及各种数据库产品的特点和应用场景。</p></div></div><!-- 核心概念 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                核心概念
+            </h2><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🏗️</span><h4 class="card-title">数据建模</h4><p class="card-description">实体关系模型、范式理论、数据库设计方法</p></div><div class="grid-card"><span class="card-icon">🔍</span><h4 class="card-title">查询处理</h4><p class="card-description">SQL语言、查询优化、索引技术</p></div><div class="grid-card"><span class="card-icon">🔒</span><h4 class="card-title">事务管理</h4><p class="card-description">ACID特性、并发控制、故障恢复</p></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">存储管理</h4><p class="card-description">存储结构、缓冲区管理、文件组织</p></div></div></div><!-- 数据库类型 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🗂️</span>
+                数据库类型
+            </h2><div class="subsection-title"><span class="subsection-icon">📊</span>
+                关系型数据库 (RDBMS)
+            </div><div class="section-content"><p>基于关系模型的数据库，使用表格存储数据，支持SQL查询语言，具有强一致性和ACID特性。</p><ul class="unified-list"><li><span class="list-icon">🐘</span><strong>PostgreSQL</strong>：功能强大的开源关系数据库，支持复杂查询和扩展</li><li><span class="list-icon">🐬</span><strong>MySQL</strong>：流行的开源数据库，广泛用于Web应用</li><li><span class="list-icon">🏢</span><strong>Oracle</strong>：企业级商业数据库，功能全面性能优异</li><li><span class="list-icon">🪟</span><strong>SQL Server</strong>：微软的关系数据库管理系统</li></ul></div><div class="subsection-title"><span class="subsection-icon">📄</span>
+                NoSQL数据库
+            </div><div class="section-content"><p>非关系型数据库，为特定数据模型和访问模式而设计，具有高可扩展性和灵活性。</p><ul class="unified-list"><li><span class="list-icon">📋</span><strong>文档数据库</strong>：MongoDB、CouchDB，存储JSON/BSON文档</li><li><span class="list-icon">🔑</span><strong>键值数据库</strong>：Redis、DynamoDB，简单的键值对存储</li><li><span class="list-icon">📊</span><strong>列族数据库</strong>：Cassandra、HBase，按列存储数据</li><li><span class="list-icon">🕸️</span><strong>图数据库</strong>：Neo4j、ArangoDB，存储图形结构数据</li></ul></div><div class="subsection-title"><span class="subsection-icon">🔄</span>
+                NewSQL数据库
+            </div><div class="section-content"><p>结合关系型数据库的ACID特性和NoSQL的可扩展性，适用于现代分布式应用。</p><ul class="unified-list"><li><span class="list-icon">🌐</span><strong>分布式SQL</strong>：TiDB、CockroachDB、Spanner</li><li><span class="list-icon">⚡</span><strong>内存数据库</strong>：SAP HANA、MemSQL、VoltDB</li><li><span class="list-icon">📈</span><strong>时序数据库</strong>：InfluxDB、TimescaleDB、OpenTSDB</li></ul></div></div><!-- 核心技术 --><div class="content-section"><h2 class="section-title"><span class="section-icon">⚙️</span>
+                核心技术
+            </h2><div class="subsection-title"><span class="subsection-icon">🔍</span>
+                查询优化
+            </div><div class="section-content"><ul class="unified-list"><li><span class="list-icon">📋</span><strong>执行计划</strong>：查询解析、优化器、执行引擎</li><li><span class="list-icon">📚</span><strong>索引技术</strong>：B+树、哈希索引、位图索引、全文索引</li><li><span class="list-icon">📊</span><strong>统计信息</strong>：数据分布统计、成本估算模型</li></ul></div><div class="subsection-title"><span class="subsection-icon">🔒</span>
+                事务处理
+            </div><div class="section-content"><ul class="unified-list"><li><span class="list-icon">⚡</span><strong>ACID特性</strong>：原子性、一致性、隔离性、持久性</li><li><span class="list-icon">🔄</span><strong>并发控制</strong>：锁机制、MVCC、时间戳排序</li><li><span class="list-icon">🛡️</span><strong>故障恢复</strong>：日志记录、检查点、回滚恢复</li></ul></div><div class="subsection-title"><span class="subsection-icon">🌐</span>
+                分布式数据库
+            </div><div class="section-content"><ul class="unified-list"><li><span class="list-icon">🔀</span><strong>数据分片</strong>：水平分片、垂直分片、分片策略</li><li><span class="list-icon">🔄</span><strong>数据复制</strong>：主从复制、主主复制、一致性协议</li><li><span class="list-icon">⚖️</span><strong>CAP理论</strong>：一致性、可用性、分区容错性的权衡</li></ul></div></div><!-- 实际应用 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🚀</span>
+                实际应用
+            </h2><div class="section-content"><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🛒</span><h4 class="card-title">电子商务</h4><p class="card-description">商品管理、订单处理、用户数据、支付系统</p></div><div class="grid-card"><span class="card-icon">🏦</span><h4 class="card-title">金融服务</h4><p class="card-description">交易记录、风险管理、合规报告、实时分析</p></div><div class="grid-card"><span class="card-icon">🏥</span><h4 class="card-title">医疗健康</h4><p class="card-description">电子病历、医学影像、药物管理、健康监测</p></div><div class="grid-card"><span class="card-icon">📱</span><h4 class="card-title">社交媒体</h4><p class="card-description">用户关系、内容管理、推荐系统、实时消息</p></div><div class="grid-card"><span class="card-icon">🎮</span><h4 class="card-title">游戏行业</h4><p class="card-description">玩家数据、游戏状态、排行榜、虚拟物品</p></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">商业智能</h4><p class="card-description">数据仓库、OLAP分析、报表系统、数据挖掘</p></div></div></div></div><!-- 学习建议 --><div class="content-section"><h2 class="section-title"><span class="section-icon">💡</span>
+                学习建议
+            </h2><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">理论基础</h4><p class="card-description">掌握关系理论、范式设计、查询优化原理</p></div><div class="grid-card"><span class="card-icon">💻</span><h4 class="card-title">实践操作</h4><p class="card-description">熟练使用SQL，掌握主流数据库产品</p></div><div class="grid-card"><span class="card-icon">🏗️</span><h4 class="card-title">系统设计</h4><p class="card-description">学习数据库架构设计和性能调优</p></div><div class="grid-card"><span class="card-icon">🌐</span><h4 class="card-title">新技术</h4><p class="card-description">关注大数据、云数据库、AI数据库发展</p></div></div></div><!-- 学习路径 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🛤️</span>
+                学习路径建议
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">1️⃣</span><h4 class="card-title">基础入门</h4><p class="card-description">关系模型、SQL语言、数据库设计</p></div><div class="grid-card"><span class="card-icon">2️⃣</span><h4 class="card-title">深入理解</h4><p class="card-description">事务处理、查询优化、存储引擎</p></div><div class="grid-card"><span class="card-icon">3️⃣</span><h4 class="card-title">高级应用</h4><p class="card-description">分布式数据库、NoSQL、大数据技术</p></div></div></div><!-- 返回按钮 --><div class="content-section"><div class="action-buttons"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+                    返回首页
+                </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+                    知识宇宙
+                </a></div></div></div></div><style>.action-buttons {display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:30px}@media (max-width:768px) {.action-buttons {flex-direction:column;align-items:center}.unified-btn {width:200px}}</style>
+{% endblock %}

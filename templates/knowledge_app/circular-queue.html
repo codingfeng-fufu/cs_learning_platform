@@ -1,0 +1,287 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}循环队列 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>.page-container {max-width:1200px;margin:0 auto;padding:20px;font-family:'Arial', sans-serif}.knowledge-section {background:white;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.1);margin-bottom:30px;padding:30px;border-left:5px solid #3498db}.section-header {display:flex;align-items:center;margin-bottom:25px;border-bottom:2px solid #ecf0f1;padding-bottom:15px}.section-icon {font-size:2em;margin-right:15px}.section-title {font-size:1.8em;color:#2c3e50;margin:0}.concept-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:20px;margin:20px 0}.concept-card {background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:20px;text-align:center;transition:transform 0.3s ease}.concept-card:hover {transform:translateY(-5px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}.canvas-container {background:#f8f9fa;border:2px solid #dee2e6;border-radius:8px;padding:20px;margin:20px 0;text-align:center}.canvas-controls {margin:15px 0}.btn {background:#3498db;color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;margin:0 8px;font-size:14px;font-weight:bold;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(52, 152, 219, 0.3);position:relative;overflow:hidden}.btn:hover {transform:translateY(-2px);box-shadow:0 6px 20px rgba(52, 152, 219, 0.4)}.btn:active {transform:translateY(0);box-shadow:0 2px 10px rgba(52, 152, 219, 0.2)}.btn:disabled {background:#95a5a6;cursor:not-allowed;transform:none;box-shadow:none}.btn-enqueue {background:linear-gradient(135deg, #27ae60, #2ecc71)}.btn-enqueue:hover {background:linear-gradient(135deg, #229954, #27ae60)}.btn-dequeue {background:linear-gradient(135deg, #e74c3c, #ec7063)}.btn-dequeue:hover {background:linear-gradient(135deg, #c0392b, #e74c3c)}.btn-reset {background:linear-gradient(135deg, #f39c12, #f7dc6f)}.btn-reset:hover {background:linear-gradient(135deg, #d68910, #f39c12)}.btn-demo {background:linear-gradient(135deg, #9b59b6, #bb8fce)}.btn-demo:hover {background:linear-gradient(135deg, #8e44ad, #9b59b6)}.btn::before {content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);transition:left 0.5s}.btn:hover::before {left:100%}.code-container {background:#2c3e50;color:#ecf0f1;border-radius:8px;margin:20px 0;overflow:hidden}.code-tabs {display:flex;background:#34495e}.code-tab {padding:12px 20px;cursor:pointer;border:none;background:transparent;color:#bdc3c7;font-weight:bold;transition:all 0.3s ease}.code-tab.active {background:#3498db;color:white}.code-content {position:relative;padding:20px;font-family:'Courier New', monospace;line-height:1.6;overflow-x:auto}.copy-btn {position:absolute;top:10px;right:10px;background:#27ae60;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px}.copy-btn:hover {background:#229954}.quiz-question {background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px;padding:20px;margin:15px 0}.quiz-answer {background:#d1ecf1;border:1px solid #bee5eb;border-radius:8px;padding:15px;margin-top:10px;display:none}.show-answer-btn {background:#17a2b8;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;margin-top:10px}.analogy-box {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:25px;border-radius:12px;margin:20px 0}.highlight {background:#ffffcc;padding:2px 4px;border-radius:3px;font-weight:bold}.difficulty-badge {display:inline-block;padding:5px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;color:white;background:#e74c3c}.key-point {border-left:4px solid #e74c3c;background:#fdf2f2;padding:15px;margin:15px 0;border-radius:0 8px 8px 0}.comparison-grid {display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}.comparison-card {padding:20px;border-radius:8px;border:2px solid}.vs-problem {border-color:#e74c3c;background:#fdf2f2}.vs-solution {border-color:#27ae60;background:#eafaf1}.formula-box {background:#e8f4fd;border:2px solid #3498db;border-radius:8px;padding:20px;margin:20px 0;text-align:center}.formula {font-family:'Courier New', monospace;font-size:18px;font-weight:bold;color:#2c3e50;margin:10px 0}</style><div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>循环队列</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔄</span>
+            循环队列 (Circular Queue)
+        </h1><p>解决假溢出问题的智能队列，充分利用数组空间</p></div><!-- 📋 知识点概述 --><div class="knowledge-section slide-in-right"><div class="section-header"><span class="section-icon">📋</span><h2 class="section-title">知识点概述</h2></div><div class="key-point"><strong>核心概念：</strong>循环队列是顺序队列的改进版本，通过将数组首尾相连形成环形结构，使用取模运算实现指针的循环移动，彻底解决了"假溢出"问题。
+        </div><div class="concept-grid"><div class="concept-card"><h3>🔄 循环特性</h3><p>指针到达数组末尾后自动回到开头</p></div><div class="concept-card"><h3>📐 取模运算</h3><p>index = (index + 1) % capacity</p></div><div class="concept-card"><h3>❌ 假溢出解决</h3><p>充分利用所有可用空间</p></div><div class="concept-card"><h3>🎯 满空判断</h3><p>预留一个空位区分满和空状态</p></div></div><div class="formula-box"><h3>🧮 核心公式</h3><div class="formula">入队：rear = (rear + 1) % maxSize</div><div class="formula">出队：front = (front + 1) % maxSize</div><div class="formula">队满：(rear + 1) % maxSize == front</div><div class="formula">队空：front == rear</div></div><p><span class="difficulty-badge">高级</span><strong>前置知识：</strong>顺序队列、取模运算、数组操作</p></div><!-- 🔍 概念详解 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">概念详解</h2></div><div class="analogy-box"><h3>🎠 生活类比：旋转木马</h3><p>想象一个旋转木马游乐设施：</p><ul><li><strong>木马座位</strong> = 数组元素（固定数量的位置）</li><li><strong>上马点</strong> = rear指针（新游客上马的位置）</li><li><strong>下马点</strong> = front指针（游客结束游戏下马的位置）</li><li><strong>旋转</strong> = 循环特性（到最后一个位置后回到第一个）</li><li><strong>预留位置</strong> = 空余座位（区分满载和空转状态）</li></ul><p>💡 关键：<span class="highlight">木马永远在转，没有"死角"或浪费的位置！</span></p></div><h3>⚡ 问题与解决方案</h3><div class="comparison-grid"><div class="comparison-card vs-problem"><h4>❌ 顺序队列的假溢出</h4><ul><li>数组前面有空位</li><li>rear指针已到末尾</li><li>无法继续入队</li><li>空间利用率低</li></ul><p style="text-align: center; margin-top: 15px;"><code>[_, _, 3, 4, 5] ← rear已满？</code></p></div><div class="comparison-card vs-solution"><h4>✅ 循环队列的解决</h4><ul><li>指针循环移动</li><li>充分利用空间</li><li>真正的满才停止</li><li>空间利用率高</li></ul><p style="text-align: center; margin-top: 15px;"><code>[6, 7, 3, 4, 5] ← 循环利用</code></p></div></div><div class="key-point"><strong>🔑 关键理解点：</strong><ul><li><strong>为什么预留一位？</strong> 如果不预留，当front==rear时无法区分是空还是满</li><li><strong>实际容量</strong> = 数组大小 - 1（牺牲一个位置换取清晰的状态判断）</li><li><strong>取模运算</strong> 是实现循环的核心，确保指针在有效范围内循环</li><li><strong>状态判断</strong> 比顺序队列复杂，需要理解循环逻辑</li></ul></div></div><!-- 📊 可视化展示 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">📊</span><h2 class="section-title">可视化展示</h2></div><div class="canvas-container"><h3>🎠 循环队列动态演示</h3><canvas id="queueCanvas" width="800" height="500" style="border: 2px solid #3498db; border-radius: 8px; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);"></canvas><div class="canvas-controls"><input type="number" id="inputValue" placeholder="输入数字" min="1" max="99" style="padding: 12px; margin-right: 10px; border-radius: 8px; border: 2px solid #3498db; font-size: 16px; outline: none; transition: all 0.3s ease;"><button class="btn btn-enqueue" onclick="enqueue()">📥 入队</button><button class="btn btn-dequeue" onclick="dequeue()">📤 出队</button><button class="btn btn-reset" onclick="resetQueue()">🔄 重置</button><button class="btn btn-demo" onclick="startDemo()">✨ 演示假溢出解决</button></div><div id="queueStatus" style="margin-top: 15px; font-weight: bold; color: #2c3e50; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;"></div></div></div><!-- 💻 代码实现 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">💻</span><h2 class="section-title">代码实现</h2></div><div class="code-container"><div class="code-tabs"><button class="code-tab active" onclick="showCode('cpp')">C++</button><button class="code-tab" onclick="showCode('java')">Java</button><button class="code-tab" onclick="showCode('python')">Python</button></div><div id="cpp-code" class="code-content"><button class="copy-btn" onclick="copyCode('cpp', this)">📋 复制</button><pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+class CircularQueue {
+private:
+    int* arr;
+    int front, rear;
+    int maxSize;      // 数组实际大小
+    int capacity;     // 可用容量 = maxSize - 1
+
+public:
+    CircularQueue(int size) {
+        maxSize = size + 1;  // 多分配一位用于区分满空
+        capacity = size;
+        arr = new int[maxSize];
+        front = rear = 0;
+    }
+
+    ~CircularQueue() {
+        delete[] arr;
+    }
+
+    // 入队操作
+    bool enqueue(int data) {
+        if (isFull()) {
+            cout << "队列已满!" << endl;
+            return false;
+        }
+
+        arr[rear] = data;
+        rear = (rear + 1) % maxSize;  // 循环移动
+        cout << "入队成功: " << data << endl;
+        return true;
+    }
+
+    // 出队操作
+    int dequeue() {
+        if (isEmpty()) {
+            cout << "队列为空!" << endl;
+            return -1;
+        }
+
+        int data = arr[front];
+        front = (front + 1) % maxSize;  // 循环移动
+        cout << "出队成功: " << data << endl;
+        return data;
+    }
+
+    // 查看队头元素
+    int peek() {
+        if (isEmpty()) {
+            cout << "队列为空!" << endl;
+            return -1;
+        }
+        return arr[front];
+    }
+
+    // 判断队列是否为空
+    bool isEmpty() {
+        return front == rear;
+    }
+
+    // 判断队列是否已满
+    bool isFull() {
+        return (rear + 1) % maxSize == front;
+    }
+
+    // 获取队列大小
+    int size() {
+        return (rear - front + maxSize) % maxSize;
+    }
+
+    // 显示队列状态
+    void display() {
+        if (isEmpty()) {
+            cout << "队列为空" << endl;
+            return;
+        }
+
+        cout << "队列内容: ";
+        int i = front;
+        while (i != rear) {
+            cout << arr[i] << " ";
+            i = (i + 1) % maxSize;
+        }
+        cout << endl;
+        cout << "front=" << front << ", rear=" << rear << endl;
+    }
+
+    // 获取实际容量
+    int getCapacity() {
+        return capacity;
+    }
+};</code></pre></div><div id="java-code" class="code-content" style="display: none;"><button class="copy-btn" onclick="copyCode('java', this)">📋 复制</button><pre><code>public class CircularQueue {
+    private int[] arr;
+    private int front, rear;
+    private int maxSize;      // 数组实际大小
+    private int capacity;     // 可用容量
+
+    public CircularQueue(int size) {
+        this.maxSize = size + 1;  // 多分配一位用于区分满空
+        this.capacity = size;
+        this.arr = new int[maxSize];
+        this.front = this.rear = 0;
+    }
+
+    // 入队操作
+    public boolean enqueue(int data) {
+        if (isFull()) {
+            System.out.println("队列已满!");
+            return false;
+        }
+
+        arr[rear] = data;
+        rear = (rear + 1) % maxSize;  // 循环移动
+        System.out.println("入队成功: " + data);
+        return true;
+    }
+
+    // 出队操作
+    public int dequeue() {
+        if (isEmpty()) {
+            System.out.println("队列为空!");
+            return -1;
+        }
+
+        int data = arr[front];
+        front = (front + 1) % maxSize;  // 循环移动
+        System.out.println("出队成功: " + data);
+        return data;
+    }
+
+    // 查看队头元素
+    public int peek() {
+        if (isEmpty()) {
+            System.out.println("队列为空!");
+            return -1;
+        }
+        return arr[front];
+    }
+
+    // 判断队列是否为空
+    public boolean isEmpty() {
+        return front == rear;
+    }
+
+    // 判断队列是否已满
+    public boolean isFull() {
+        return (rear + 1) % maxSize == front;
+    }
+
+    // 获取队列大小
+    public int size() {
+        return (rear - front + maxSize) % maxSize;
+    }
+
+    // 显示队列状态
+    public void display() {
+        if (isEmpty()) {
+            System.out.println("队列为空");
+            return;
+        }
+
+        System.out.print("队列内容: ");
+        int i = front;
+        while (i != rear) {
+            System.out.print(arr[i] + " ");
+            i = (i + 1) % maxSize;
+        }
+        System.out.println();
+        System.out.println("front=" + front + ", rear=" + rear);
+    }
+
+    // 获取实际容量
+    public int getCapacity() {
+        return capacity;
+    }
+}</code></pre></div><div id="python-code" class="code-content" style="display: none;"><button class="copy-btn" onclick="copyCode('python', this)">📋 复制</button><pre><code>class CircularQueue:
+    """循环队列类"""
+
+    def __init__(self, size):
+        self.max_size = size + 1  # 多分配一位用于区分满空
+        self.capacity = size      # 实际可用容量
+        self.arr = [None] * self.max_size
+        self.front = 0
+        self.rear = 0
+
+    def enqueue(self, data):
+        """入队操作"""
+        if self.is_full():
+            print("队列已满!")
+            return False
+
+        self.arr[self.rear] = data
+        self.rear = (self.rear + 1) % self.max_size  # 循环移动
+        print(f"入队成功: {data}")
+        return True
+
+    def dequeue(self):
+        """出队操作"""
+        if self.is_empty():
+            print("队列为空!")
+            return None
+
+        data = self.arr[self.front]
+        self.front = (self.front + 1) % self.max_size  # 循环移动
+        print(f"出队成功: {data}")
+        return data
+
+    def peek(self):
+        """查看队头元素"""
+        if self.is_empty():
+            print("队列为空!")
+            return None
+        return self.arr[self.front]
+
+    def is_empty(self):
+        """判断队列是否为空"""
+        return self.front == self.rear
+
+    def is_full(self):
+        """判断队列是否已满"""
+        return (self.rear + 1) % self.max_size == self.front
+
+    def size(self):
+        """获取队列大小"""
+        return (self.rear - self.front + self.max_size) % self.max_size
+
+    def display(self):
+        """显示队列状态"""
+        if self.is_empty():
+            print("队列为空")
+            return
+
+        result = []
+        i = self.front
+        while i != self.rear:
+            result.append(str(self.arr[i]))
+            i = (i + 1) % self.max_size
+
+        print("队列内容:", " ".join(result))
+        print(f"front={self.front}, rear={self.rear}")
+
+    def get_capacity(self):
+        """获取实际容量"""
+        return self.capacity
+
+# 使用示例
+if __name__ == "__main__":
+    # 创建容量为5的循环队列
+    queue = CircularQueue(5)
+
+    # 测试入队
+    for i in range(1, 6):
+        queue.enqueue(i * 10)
+
+    queue.display()
+
+    # 测试出队
+    queue.dequeue()
+    queue.dequeue()
+
+    # 测试循环特性
+    queue.enqueue(60)
+    queue.enqueue(70)
+
+    queue.display()
+
+    print(f"队列大小: {queue.size()}")
+    print(f"队头元素: {queue.peek()}")
+    print(f"是否已满: {queue.is_full()}")
+    print(f"是否为空: {queue.is_empty()}")</code></pre></div></div></div><!-- 🌟 实际应用 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">🌟</span><h2 class="section-title">实际应用</h2></div><div class="concept-grid"><div class="concept-card"><h3>🖥️ 操作系统</h3><p><strong>缓冲区管理</strong></p><p>键盘缓冲区、网络数据包缓冲，循环使用固定大小的内存</p></div><div class="concept-card"><h3>🎵 音频处理</h3><p><strong>音频缓冲环</strong></p><p>实时音频流处理，防止数据丢失和延迟</p></div><div class="concept-card"><h3>🎮 游戏开发</h3><p><strong>帧缓冲管理</strong></p><p>游戏帧数据的循环缓存，保证流畅渲染</p></div></div><div class="key-point"><h3>🔍 深度案例：生产者-消费者问题</h3><p>循环队列是解决生产者-消费者问题的经典数据结构：</p><ul><li>🏭 <strong>生产者</strong>：不断向队列添加产品（入队操作）</li><li>🛒 <strong>消费者</strong>：不断从队列取出产品（出队操作）</li><li>🔄 <strong>循环特性</strong>：充分利用有限的缓冲区空间</li><li>⚡ <strong>高效处理</strong>：O(1)的操作时间，适合高频访问</li><li>🎯 <strong>状态控制</strong>：清晰的满/空状态判断，避免竞态条件</li></ul></div><h3>💡 选择指南</h3><div class="comparison-grid"><div class="comparison-card vs-problem"><h4>🎯 适用场景</h4><ul><li>缓冲区大小固定且已知</li><li>需要高效的空间利用率</li><li>频繁的入队出队操作</li><li>实时系统对性能要求高</li></ul></div><div class="comparison-card vs-solution"><h4>⚠️ 不适用场景</h4><ul><li>队列大小变化很大且不可预测</li><li>需要随机访问队列中的元素</li><li>对内存使用极度敏感的场景</li><li>需要动态扩容的应用</li></ul></div></div></div><!-- ✅ 学习检验 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">✅</span><h2 class="section-title">学习检验</h2></div><div class="quiz-question"><h4>🤔 问题1：为什么循环队列需要预留一个空位？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer1')">显示答案</button><div id="answer1" class="quiz-answer"><strong>答案：</strong>为了区分队列满和队列空的状态<br><strong>详细解析：</strong><ul><li>如果不预留：当数组完全填满时，front == rear</li><li>队列为空时：front == rear</li><li>无法区分：同样是front == rear，但含义完全不同</li><li>预留一位后：满队列时 (rear+1)%maxSize == front，空队列时 front == rear</li></ul></div></div><div class="quiz-question"><h4>🤔 问题2：循环队列中如何计算实际元素个数？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer2')">显示答案</button><div id="answer2" class="quiz-answer"><strong>答案：</strong>size = (rear - front + maxSize) % maxSize<br><strong>解析：</strong><ul><li><strong>为什么加maxSize？</strong> 防止rear < front时出现负数</li><li><strong>情况1：</strong>rear >= front，如front=2, rear=5, size=3</li><li><strong>情况2：</strong>rear < front（循环了），如front=7, rear=2, size=3</li><li><strong>公式验证：</strong>(2-7+8)%8=3 ✓</li></ul></div></div><div class="quiz-question"><h4>🤔 问题3：给定maxSize=6的循环队列，依次入队1,2,3,4,5，然后出队2次，再入队6,7，此时front和rear的值？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer3')">显示答案</button><div id="answer3" class="quiz-answer"><strong>答案：</strong>front = 2, rear = 1<br><strong>步骤分析：</strong><ul><li>初始：front = 0, rear = 0</li><li>入队1,2,3,4,5后：front = 0, rear = 5，数组[1,2,3,4,5,_]</li><li>出队2次后：front = 2, rear = 5，数组[_,_,3,4,5,_]</li><li>入队6：rear = (5+1)%6 = 0，数组[6,_,3,4,5,_]</li><li>入队7：rear = (0+1)%6 = 1，数组[6,7,3,4,5,_]</li><li>最终：front = 2, rear = 1</li></ul></div></div><div class="quiz-question"><h4>🤔 问题4：循环队列相比顺序队列的主要优势是什么？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer4')">显示答案</button><div id="answer4" class="quiz-answer"><strong>主要优势：</strong><ul><li><strong>解决假溢出</strong>：充分利用数组的每个位置</li><li><strong>空间效率高</strong>：不会因为front指针前移而浪费空间</li><li><strong>操作一致</strong>：入队出队时间复杂度都是O(1)</li><li><strong>适合缓冲</strong>：固定大小的缓冲区应用场景理想</li></ul><strong>代价：</strong>实现稍复杂，需要理解取模运算和状态判断
+            </div></div><div class="quiz-question"><h4>🤔 问题5：什么情况下应该选择循环队列而不是链队列？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer5')">显示答案</button><div id="answer5" class="quiz-answer"><strong>选择循环队列的场景：</strong><ul><li><strong>固定容量</strong>：队列大小上限明确且稳定</li><li><strong>高频操作</strong>：需要极高的入队出队性能</li><li><strong>内存连续</strong>：缓存友好，提高访问效率</li><li><strong>无动态分配</strong>：避免频繁的内存分配和释放</li><li><strong>嵌入式系统</strong>：内存受限，需要精确控制内存使用</li></ul><strong>选择链队列的场景：</strong>队列大小变化大、需要动态扩容
+            </div></div><h3>📚 进一步学习建议</h3><ul><li>🔄 <strong>双端循环队列</strong>：两端都可以插入删除的循环队列</li><li>🧵 <strong>线程安全循环队列</strong>：多线程环境下的实现</li><li>⚡ <strong>无锁循环队列</strong>：使用原子操作的高性能实现</li><li>🎯 <strong>生产者消费者模式</strong>：循环队列在并发编程中的应用</li></ul></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><script>class Particle { constructor(x, y, color) { this.x = x; this.y = y; this.vx = (Math.random() - 0.5) * 4; this.vy = (Math.random() - 0.5) * 4; this.life = 1.0; this.decay = 0.02; this.color = color; this.size = Math.random() * 3 + 2; } update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; this.size *= 0.98; } draw(ctx) { ctx.save(); ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore(); } isDead() { return this.life <= 0 || this.size <= 0.1; } } class CircularQueueVisual { constructor(canvasId, capacity = 8) { this.canvas = document.getElementById(canvasId); this.ctx = this.canvas.getContext('2d'); this.maxSize = capacity + 1; this.capacity = capacity; this.queue = new Array(this.maxSize); this.front = 0; this.rear = 0; this.animating = false; this.particles = []; this.centerX = this.canvas.width / 2; this.centerY = this.canvas.height / 2 + 20; this.radius = 120; this.cellRadius = 25; this.hoveredIndex = -1; this.glowIntensity = 0; this.glowDirection = 1; this.startAnimationLoop(); this.draw(); this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e)); this.canvas.addEventListener('mouseleave', () => this.hoveredIndex = -1); } handleMouseMove(e) { const rect = this.canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; this.hoveredIndex = -1; for (let i = 0; i < this.maxSize; i++) { const angle = (i / this.maxSize) * 2 * Math.PI - Math.PI / 2; const cellX = this.centerX + Math.cos(angle) * this.radius; const cellY = this.centerY + Math.sin(angle) * this.radius; const distance = Math.sqrt((x - cellX) ** 2 + (y - cellY) ** 2); if (distance <= this.cellRadius + 5) { this.hoveredIndex = i; break; } } } startAnimationLoop() { const animate = () => { this.glowIntensity += this.glowDirection * 0.02; if (this.glowIntensity >= 1) { this.glowIntensity = 1; this.glowDirection = -1; } else if (this.glowIntensity <= 0) { this.glowIntensity = 0; this.glowDirection = 1; } this.particles = this.particles.filter(particle => { particle.update(); return !particle.isDead(); }); if (!this.animating) { this.draw(); } requestAnimationFrame(animate); }; animate(); } createParticles(x, y, color, count = 10) { for (let i = 0; i < count; i++) { this.particles.push(new Particle(x, y, color)); } } draw() { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); const gradient = this.ctx.createRadialGradient( this.centerX, this.centerY, 0, this.centerX, this.centerY, this.radius + 100 ); gradient.addColorStop(0, '#f8f9fa'); gradient.addColorStop(1, '#e9ecef'); this.ctx.fillStyle = gradient; this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); this.ctx.fillStyle = '#2c3e50'; this.ctx.font = 'bold 20px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText('🔄 循环队列可视化 - 解决假溢出问题', this.centerX, 30); this.ctx.font = '14px Arial'; this.ctx.fillStyle = '#7f8c8d'; this.ctx.fillText('圆形布局展示循环特性 | 绿色=队头 | 橙色=队尾 | 灰色=预留位', this.centerX, 55); this.drawCircularFramework(); this.drawPointers(); this.particles.forEach(particle => particle.draw(this.ctx)); this.drawStatusInfo(); this.updateStatus(); } drawCircularFramework() { this.ctx.strokeStyle = '#bdc3c7'; this.ctx.lineWidth = 2; this.ctx.setLineDash([10, 5]); this.ctx.beginPath(); this.ctx.arc(this.centerX, this.centerY, this.radius + 30, 0, 2 * Math.PI); this.ctx.stroke(); this.ctx.setLineDash([]); for (let i = 0; i < this.maxSize; i++) { this.drawCell(i); } this.drawConnectionLines(); } drawCell(index) { const angle = (index / this.maxSize) * 2 * Math.PI - Math.PI / 2; const x = this.centerX + Math.cos(angle) * this.radius; const y = this.centerY + Math.sin(angle) * this.radius; const isInQueue = this.isIndexInQueue(index); const isHovered = this.hoveredIndex === index; const isReserved = this.isReservedPosition(index); let fillColor, strokeColor; if (isReserved) { fillColor = '#95a5a6'; strokeColor = '#7f8c8d'; } else if (index === this.front && index === this.rear && this.size() > 0) { fillColor = '#e74c3c'; strokeColor = '#c0392b'; } else if (index === this.front && this.size() > 0) { fillColor = '#27ae60'; strokeColor = '#229954'; } else if (index === this.rear) { fillColor = '#f39c12'; strokeColor = '#d68910'; } else if (isInQueue) { fillColor = '#3498db'; strokeColor = '#2980b9'; } else { fillColor = '#ffffff'; strokeColor = '#bdc3c7'; } if (isHovered || isInQueue) { this.ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'; this.ctx.shadowBlur = isHovered ? 20 : 10; this.ctx.shadowOffsetX = 3; this.ctx.shadowOffsetY = 3; } this.ctx.fillStyle = fillColor; this.ctx.strokeStyle = strokeColor; this.ctx.lineWidth = isHovered ? 4 : 2; this.ctx.beginPath(); this.ctx.arc(x, y, this.cellRadius, 0, 2 * Math.PI); this.ctx.fill(); this.ctx.stroke(); this.ctx.shadowBlur = 0; this.ctx.shadowOffsetX = 0; this.ctx.shadowOffsetY = 0; if ((isInQueue || isReserved) && this.glowIntensity > 0) { this.ctx.save(); this.ctx.globalAlpha = this.glowIntensity * 0.3; this.ctx.strokeStyle = fillColor; this.ctx.lineWidth = 6; this.ctx.beginPath(); this.ctx.arc(x, y, this.cellRadius + 3, 0, 2 * Math.PI); this.ctx.stroke(); this.ctx.restore(); } this.ctx.fillStyle = isReserved ? '#ffffff' : (isInQueue ? '#ffffff' : '#7f8c8d'); this.ctx.font = 'bold 16px Arial'; this.ctx.textAlign = 'center'; if (isReserved) { this.ctx.fillText('预留', x, y + 5); } else if (isInQueue && this.queue[index] !== undefined) { this.ctx.fillText(this.queue[index].toString(), x, y + 5); } else { this.ctx.fillText('空', x, y + 5); } this.ctx.fillStyle = '#7f8c8d'; this.ctx.font = 'bold 12px Arial'; const labelAngle = angle; const labelX = this.centerX + Math.cos(labelAngle) * (this.radius + 50); const labelY = this.centerY + Math.sin(labelAngle) * (this.radius + 50); this.ctx.fillText(`[${index}]`, labelX, labelY); if (isHovered) { this.drawTooltip(x, y, index); } } drawConnectionLines() { this.ctx.strokeStyle = 'rgba(52, 152, 219, 0.3)'; this.ctx.lineWidth = 2; this.ctx.setLineDash([5, 5]); for (let i = 0; i < this.maxSize; i++) { const angle1 = (i / this.maxSize) * 2 * Math.PI - Math.PI / 2; const angle2 = ((i + 1) % this.maxSize / this.maxSize) * 2 * Math.PI - Math.PI / 2; const x1 = this.centerX + Math.cos(angle1) * this.radius; const y1 = this.centerY + Math.sin(angle1) * this.radius; const x2 = this.centerX + Math.cos(angle2) * this.radius; const y2 = this.centerY + Math.sin(angle2) * this.radius; this.ctx.beginPath(); this.ctx.moveTo(x1, y1); this.ctx.lineTo(x2, y2); this.ctx.stroke(); } this.ctx.setLineDash([]); } drawPointers() { if (this.size() === 0) return; const frontAngle = (this.front / this.maxSize) * 2 * Math.PI - Math.PI / 2; const frontX = this.centerX + Math.cos(frontAngle) * (this.radius - 60); const frontY = this.centerY + Math.sin(frontAngle) * (this.radius - 60); const frontTargetX = this.centerX + Math.cos(frontAngle) * (this.radius - this.cellRadius); const frontTargetY = this.centerY + Math.sin(frontAngle) * (this.radius - this.cellRadius); this.ctx.fillStyle = '#27ae60'; this.ctx.font = 'bold 14px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText('Front', frontX, frontY); this.drawArrow(frontX + 15, frontY, frontTargetX, frontTargetY, '#27ae60'); const rearAngle = (this.rear / this.maxSize) * 2 * Math.PI - Math.PI / 2; const rearX = this.centerX + Math.cos(rearAngle) * (this.radius + 80); const rearY = this.centerY + Math.sin(rearAngle) * (this.radius + 80); const rearTargetX = this.centerX + Math.cos(rearAngle) * (this.radius + this.cellRadius); const rearTargetY = this.centerY + Math.sin(rearAngle) * (this.radius + this.cellRadius); this.ctx.fillStyle = '#f39c12'; this.ctx.fillText('Rear', rearX, rearY); this.drawArrow(rearX - 15, rearY, rearTargetX, rearTargetY, '#f39c12'); } drawArrow(fromX, fromY, toX, toY, color) { this.ctx.strokeStyle = color; this.ctx.fillStyle = color; this.ctx.lineWidth = 3; this.ctx.beginPath(); this.ctx.moveTo(fromX, fromY); this.ctx.lineTo(toX, toY); this.ctx.stroke(); const headSize = 8; const angle = Math.atan2(toY - fromY, toX - fromX); this.ctx.beginPath(); this.ctx.moveTo(toX, toY); this.ctx.lineTo(toX - headSize * Math.cos(angle - Math.PI/6), toY - headSize * Math.sin(angle - Math.PI/6)); this.ctx.lineTo(toX - headSize * Math.cos(angle + Math.PI/6), toY - headSize * Math.sin(angle + Math.PI/6)); this.ctx.closePath(); this.ctx.fill(); } drawTooltip(x, y, index) { const isInQueue = this.isIndexInQueue(index); const isReserved = this.isReservedPosition(index); let text = `位置 ${index}`; if (isReserved) { text += '\n状态: 预留位置\n作用: 区分满空状态'; } else if (isInQueue) { text += `\n数据: ${this.queue[index]}`; if (index === this.front && index === this.rear) { text += '\n状态: 队头队尾重合'; } else if (index === this.front) { text += '\n状态: 队头'; } else if (index === this.rear) { text += '\n状态: 队尾(下一个入队位置)'; } else { text += '\n状态: 队列元素'; } } else { text += '\n状态: 空闲位置'; } const lines = text.split('\n'); const padding = 10; const lineHeight = 16; const tooltipWidth = 160; const tooltipHeight = lines.length * lineHeight + padding * 2; let tooltipX = x - tooltipWidth/2; let tooltipY = y - tooltipHeight - 40; if (tooltipX < 0) tooltipX = 0; if (tooltipX + tooltipWidth > this.canvas.width) tooltipX = this.canvas.width - tooltipWidth; if (tooltipY < 0) tooltipY = y + 40; this.ctx.fillStyle = 'rgba(44, 62, 80, 0.95)'; this.ctx.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight); this.ctx.fillStyle = '#ffffff'; this.ctx.font = '12px Arial'; this.ctx.textAlign = 'center'; lines.forEach((line, i) => { this.ctx.fillText(line, tooltipX + tooltipWidth/2, tooltipY + padding + (i + 1) * lineHeight); }); } drawStatusInfo() { const statusY = this.centerY + this.radius + 150; this.ctx.fillStyle = '#2c3e50'; this.ctx.font = 'bold 16px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(`当前队列大小: ${this.size()} / ${this.capacity}`, this.centerX, statusY); this.ctx.font = '14px Arial'; this.ctx.fillStyle = '#7f8c8d'; this.ctx.fillText(`front=${this.front}, rear=${this.rear}`, this.centerX, statusY + 25); this.ctx.fillText(`队满判断: (rear+1)%${this.maxSize} == front = ${(this.rear + 1) % this.maxSize == this.front}`, this.centerX, statusY + 45); } isIndexInQueue(index) { if (this.size() === 0) return false; if (this.front <= this.rear) { return index >= this.front && index < this.rear; } else { return index >= this.front || index < this.rear; } } isReservedPosition(index) { return this.isFull() && index === this.rear; } size() { return (this.rear - this.front + this.maxSize) % this.maxSize; } isEmpty() { return this.front === this.rear; } isFull() { return (this.rear + 1) % this.maxSize === this.front; } async enqueue(value) { if (this.animating) return false; if (this.isFull()) { this.showMessage('队列已满！无法入队', '#e74c3c'); return false; } this.animating = true; const angle = (this.rear / this.maxSize) * 2 * Math.PI - Math.PI / 2; const x = this.centerX + Math.cos(angle) * this.radius; const y = this.centerY + Math.sin(angle) * this.radius; this.createParticles(x, y, '#27ae60', 15); await this.animateEnqueue(value); this.queue[this.rear] = value; this.rear = (this.rear + 1) % this.maxSize; this.animating = false; this.showMessage(`成功入队: ${value}`, '#27ae60'); return true; } async dequeue() { if (this.animating) return null; if (this.isEmpty()) { this.showMessage('队列为空！无法出队', '#e74c3c'); return null; } this.animating = true; const value = this.queue[this.front]; const angle = (this.front / this.maxSize) * 2 * Math.PI - Math.PI / 2; const x = this.centerX + Math.cos(angle) * this.radius; const y = this.centerY + Math.sin(angle) * this.radius; this.createParticles(x, y, '#e74c3c', 15); await this.animateDequeue(); delete this.queue[this.front]; this.front = (this.front + 1) % this.maxSize; this.animating = false; this.showMessage(`成功出队: ${value}`, '#f39c12'); return value; } async animateEnqueue(value) { return new Promise(resolve => { let step = 0; const maxSteps = 40; const animate = () => { this.draw(); const targetAngle = (this.rear / this.maxSize) * 2 * Math.PI - Math.PI / 2; const progress = this.easeOutCubic(step / maxSteps); const startX = this.centerX; const startY = this.centerY - 100; const targetX = this.centerX + Math.cos(targetAngle) * this.radius; const targetY = this.centerY + Math.sin(targetAngle) * this.radius; const currentX = startX + (targetX - startX) * progress; const currentY = startY + (targetY - startY) * progress; this.ctx.save(); this.ctx.globalAlpha = Math.min(1, step / 10); this.ctx.shadowColor = 'rgba(39, 174, 96, 0.5)'; this.ctx.shadowBlur = 15; this.ctx.shadowOffsetX = 3; this.ctx.shadowOffsetY = 3; this.ctx.fillStyle = '#27ae60'; this.ctx.strokeStyle = '#229954'; this.ctx.lineWidth = 3; this.ctx.beginPath(); this.ctx.arc(currentX, currentY, this.cellRadius, 0, 2 * Math.PI); this.ctx.fill(); this.ctx.stroke(); this.ctx.shadowBlur = 0; this.ctx.shadowOffsetX = 0; this.ctx.shadowOffsetY = 0; this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 16px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(value.toString(), currentX, currentY + 5); this.ctx.restore(); step++; if (step <= maxSteps) { setTimeout(animate, 30); } else { resolve(); } }; animate(); }); } async animateDequeue() { return new Promise(resolve => { let step = 0; const maxSteps = 40; const animate = () => { this.draw(); const startAngle = (this.front / this.maxSize) * 2 * Math.PI - Math.PI / 2; const progress = this.easeInCubic(step / maxSteps); const startX = this.centerX + Math.cos(startAngle) * this.radius; const startY = this.centerY + Math.sin(startAngle) * this.radius; const targetX = this.centerX; const targetY = this.centerY + 100; const currentX = startX + (targetX - startX) * progress; const currentY = startY + (targetY - startY) * progress; this.ctx.save(); this.ctx.globalAlpha = 1 - progress; this.ctx.shadowColor = 'rgba(231, 76, 60, 0.5)'; this.ctx.shadowBlur = 15; this.ctx.shadowOffsetX = 3; this.ctx.shadowOffsetY = 3; this.ctx.fillStyle = '#e74c3c'; this.ctx.strokeStyle = '#c0392b'; this.ctx.lineWidth = 3; this.ctx.beginPath(); this.ctx.arc(currentX, currentY, this.cellRadius, 0, 2 * Math.PI); this.ctx.fill(); this.ctx.stroke(); this.ctx.shadowBlur = 0; this.ctx.shadowOffsetX = 0; this.ctx.shadowOffsetY = 0; this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 16px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(this.queue[this.front].toString(), currentX, currentY + 5); this.ctx.restore(); step++; if (step <= maxSteps) { setTimeout(animate, 30); } else { resolve(); } }; animate(); }); } easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); } easeInCubic(t) { return t * t * t; } showMessage(message, color) { const statusDiv = document.getElementById('queueStatus'); statusDiv.innerHTML += `<div style="color: ${color}; margin-top: 5px;">🔔 ${message}</div>`; setTimeout(() => { this.updateStatus(); }, 3000); } updateStatus() { const statusDiv = document.getElementById('queueStatus'); const status = this.isEmpty() ? '空' : this.isFull() ? '满' : '正常'; const statusColor = this.isEmpty() ? '#e74c3c' : this.isFull() ? '#f39c12' : '#27ae60'; statusDiv.innerHTML = ` <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;"><span><strong>队列大小:</strong> ${this.size()}/${this.capacity}</span><span><strong>Front位置:</strong> ${this.front}</span><span><strong>Rear位置:</strong> ${this.rear}</span><span style="color: ${statusColor}; font-weight: bold;"><strong>状态:</strong> ${status}</span></div><div style="margin-top: 10px; font-size: 14px; color: #7f8c8d;"><strong>循环特性:</strong> 当指针到达位置${this.maxSize-1}后，下次移动到位置0，形成环形结构 </div> `; } reset() { this.queue = new Array(this.maxSize); this.front = 0; this.rear = 0; this.particles = []; this.showMessage('队列已重置', '#3498db'); } async demo() { if (this.animating) return; this.reset(); await new Promise(resolve => setTimeout(resolve, 500)); this.showMessage('演示开始：展示假溢出解决方案', '#9b59b6'); const demoData1 = [10, 20, 30, 40, 50, 60, 70, 80]; for (let i = 0; i < demoData1.length; i++) { await this.enqueue(demoData1[i]); await new Promise(resolve => setTimeout(resolve, 600)); } this.showMessage('队列已满，观察循环结构', '#f39c12'); await new Promise(resolve => setTimeout(resolve, 1500)); for (let i = 0; i < 3; i++) { await this.dequeue(); await new Promise(resolve => setTimeout(resolve, 600)); } this.showMessage('front指针循环移动，前面空出位置', '#3498db'); await new Promise(resolve => setTimeout(resolve, 1000)); const demoData2 = [90, 100, 110]; for (let value of demoData2) { await this.enqueue(value); await new Promise(resolve => setTimeout(resolve, 800)); } this.showMessage('循环队列成功利用前面的空位！解决假溢出', '#27ae60'); } } let circularQueue = new CircularQueueVisual('queueCanvas', 8); async function enqueue() { const input = document.getElementById('inputValue'); const value = parseInt(input.value); if (isNaN(value) || value < 1 || value > 99) { alert('请输入1-99之间的有效数字！'); return; } const success = await circularQueue.enqueue(value); if (success) { input.value = ''; } } async function dequeue() { await circularQueue.dequeue(); } function resetQueue() { circularQueue.reset(); } async function startDemo() { await circularQueue.demo(); } function showCode(language) { document.querySelectorAll('.code-content').forEach(el => el.style.display = 'none'); document.querySelectorAll('.code-tab').forEach(el => el.classList.remove('active')); document.getElementById(language + '-code').style.display = 'block'; event.target.classList.add('active'); } function copyCode(language, button) { const codeElement = document.querySelector(`#${language}-code pre code`); const text = codeElement.textContent; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => { showCopySuccess(button); }).catch(() => { fallbackCopyText(text, button); }); } else { fallbackCopyText(text, button); } } function fallbackCopyText(text, button) { const textArea = document.createElement('textarea'); textArea.value = text; textArea.style.position = 'fixed'; textArea.style.left = '-999999px'; textArea.style.top = '-999999px'; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { document.execCommand('copy'); showCopySuccess(button); } catch (err) { console.error('复制失败:', err); alert('复制失败，请手动复制代码'); } document.body.removeChild(textArea); } function showCopySuccess(button) { const originalText = button.textContent; const originalBg = button.style.background; button.textContent = '✅ 已复制'; button.style.background = '#27ae60'; button.style.transform = 'scale(1.1)'; setTimeout(() => { button.textContent = originalText; button.style.background = originalBg; button.style.transform = 'scale(1)'; }, 2000); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); const btn = event.target; if (answer.style.display === 'none' || answer.style.display === '') { answer.style.display = 'block'; btn.textContent = '隐藏答案'; btn.style.background = '#e74c3c'; } else { answer.style.display = 'none'; btn.textContent = '显示答案'; btn.style.background = '#17a2b8'; } } document.getElementById('inputValue').addEventListener('keypress', function(e) { if (e.key === 'Enter') { enqueue(); } }); document.getElementById('inputValue').addEventListener('focus', function() { this.style.borderColor = '#3498db'; this.style.boxShadow = '0 0 10px rgba(52, 152, 219, 0.3)'; }); document.getElementById('inputValue').addEventListener('blur', function() { this.style.borderColor = '#3498db'; this.style.boxShadow = 'none'; });</script>
+{% endblock %}

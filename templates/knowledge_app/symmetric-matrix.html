@@ -1,0 +1,204 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"对称矩阵" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>{{ breadcrumb_category|default:"数据结构" }}</span><span>></span><span>{{ page_title|default:"对称矩阵" }}</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔢</span>
+            对称矩阵（Symmetric Matrix）
+        </h1><p>深入理解对称矩阵的概念、性质和应用</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>对称矩阵是一个方阵，其中任意位置的元素都等于其关于主对角线对称位置的元素，即 A[i][j] = A[j][i]。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>主对角线：</strong>从左上角到右下角的对角线</li><li><strong>转置矩阵：</strong>行列互换后得到的矩阵</li><li><strong>方阵：</strong>行数和列数相等的矩阵</li><li><strong>对称性质：</strong>A = A^T（矩阵等于其转置）</li></ul></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">学习指南</h4><div style="text-align: left;"><p><strong>难度级别：</strong><span style="color: #4CAF50;">入门</span></p><p><strong>前置知识：</strong></p><ul><li>矩阵的基本概念</li><li>矩阵的转置运算</li><li>二维数组操作</li></ul></div></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">🎯</span><strong>对称性质：</strong>想象一面镜子放在矩阵的主对角线上，镜子两边的数字应该完全一样。就像照镜子时，左手对应右手的位置。
+                </div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易混淆点：</strong>不要将对称矩阵与反对称矩阵混淆。反对称矩阵满足 A[i][j] = -A[j][i]，且主对角线元素必须为0。
+                </div></div><div style="margin: 20px 0;"><h3>🏠 生活中的类比</h3><p>对称矩阵就像一栋完全对称的建筑物：</p><ul><li><strong>建筑对称：</strong>如果你站在建筑物的中轴线上，左边有一扇窗户，右边对应位置也必须有一扇窗户</li><li><strong>矩阵对称：</strong>如果矩阵在(i,j)位置有一个数字，那么在(j,i)位置必须有相同的数字</li><li><strong>中轴线：</strong>建筑物的中轴线就像矩阵的主对角线</li></ul></div><div style="margin: 20px 0;"><h3>🔄 与相似概念对比</h3><div class="unified-grid unified-grid-3"><div class="grid-card"><h4>对称矩阵</h4><p>A[i][j] = A[j][i]</p><p style="color: #4CAF50;">关于主对角线镜像对称</p></div><div class="grid-card"><h4>反对称矩阵</h4><p>A[i][j] = -A[j][i]</p><p style="color: #FF9800;">关于主对角线反向对称</p></div><div class="grid-card"><h4>普通矩阵</h4><p>无特殊对称关系</p><p style="color: #9E9E9E;">元素位置无特殊约束</p></div></div></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><!-- 静态结构图 --><div style="margin: 20px 0;"><h3>🏗️ 对称矩阵结构</h3><div style="text-align: center; margin: 20px 0;"><canvas id="staticStructure" width="400" height="300" style="border: 2px solid #ddd; border-radius: 8px;"></canvas></div></div><!-- 动态验证过程 --><div style="margin: 20px 0;"><h3>🔄 对称性验证动画</h3><div style="text-align: center; margin: 20px 0;"><canvas id="symmetryAnimation" width="500" height="400" style="border: 2px solid #ddd; border-radius: 8px;"></canvas><div style="margin: 10px 0;"><button id="startAnimation" class="unified-btn unified-btn-primary">开始验证动画</button><button id="resetAnimation" class="unified-btn unified-btn-secondary">重置</button></div><div id="animationStatus" style="margin: 10px 0; font-weight: bold; color: #2196F3;"></div></div></div><!-- 交互式矩阵编辑器 --><div style="margin: 20px 0;"><h3>🎮 交互式矩阵编辑器</h3><div style="text-align: center; margin: 20px 0;"><div><button id="generateSymmetric" class="unified-btn unified-btn-success">生成对称矩阵</button><button id="generateRandom" class="unified-btn unified-btn-warning">生成随机矩阵</button><button id="checkSymmetry" class="unified-btn unified-btn-info">检查对称性</button></div><canvas id="interactiveMatrix" width="400" height="400" style="border: 2px solid #ddd; border-radius: 8px; margin: 20px 0; cursor: pointer;"></canvas><div id="matrixResult" style="margin: 10px 0; font-size: 18px; font-weight: bold;"></div><p style="color: #666; font-size: 14px;">💡 提示：点击矩阵单元格可以编辑数值</p></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🌐</span><h4 class="card-title">图论应用</h4><p class="card-description">无向图的邻接矩阵总是对称的，因为如果节点A连接到节点B，那么节点B也连接到节点A。</p></div><div class="grid-card"><span class="card-icon">🧮</span><h4 class="card-title">数值计算</h4><p class="card-description">协方差矩阵、相关矩阵等统计量矩阵都是对称的，广泛应用于机器学习和数据分析。</p></div><div class="grid-card"><span class="card-icon">🔬</span><h4 class="card-title">物理建模</h4><p class="card-description">刚体的惯性张量矩阵是对称的，用于描述物体的旋转特性。</p></div></div><!-- 代码示例 --><div style="margin: 30px 0;"><h3>💻 代码实现</h3><div class="code-tabs"><button class="tab-button active" onclick="showCode('cpp')">C++</button><button class="tab-button" onclick="showCode('java')">Java</button><button class="tab-button" onclick="showCode('python')">Python</button></div><div id="cpp-code" class="code-container active"><div class="code-header"><span>C++ 实现</span><button class="copy-btn" onclick="copyCode('cpp')">📋 复制代码</button></div><pre><code id="cpp-content">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class SymmetricMatrix {
+private:
+    vector&lt;vector&lt;int&gt;&gt; matrix;
+    int size;
+
+public:
+    SymmetricMatrix(int n) : size(n) {
+        matrix.resize(n, vector&lt;int&gt;(n, 0));
+    }
+
+    // 检查矩阵是否对称
+    bool isSymmetric() {
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                if (matrix[i][j] != matrix[j][i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // 设置对称元素
+    void setElement(int i, int j, int value) {
+        if (i &lt; size && j &lt; size) {
+            matrix[i][j] = value;
+            matrix[j][i] = value; // 保持对称性
+        }
+    }
+
+    // 显示矩阵
+    void display() {
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                cout &lt;&lt; matrix[i][j] &lt;&lt; " ";
+            }
+            cout &lt;&lt; endl;
+        }
+    }
+};
+
+int main() {
+    SymmetricMatrix sm(3);
+    sm.setElement(0, 1, 5);
+    sm.setElement(1, 2, 3);
+    sm.setElement(0, 2, 7);
+
+    cout &lt;&lt; "对称矩阵:" &lt;&lt; endl;
+    sm.display();
+    cout &lt;&lt; "是否对称: " &lt;&lt; (sm.isSymmetric() ? "是" : "否") &lt;&lt; endl;
+
+    return 0;
+}</code></pre></div><div id="java-code" class="code-container"><div class="code-header"><span>Java 实现</span><button class="copy-btn" onclick="copyCode('java')">📋 复制代码</button></div><pre><code id="java-content">public class SymmetricMatrix {
+    private int[][] matrix;
+    private int size;
+
+    public SymmetricMatrix(int n) {
+        this.size = n;
+        this.matrix = new int[n][n];
+    }
+
+    // 检查矩阵是否对称
+    public boolean isSymmetric() {
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                if (matrix[i][j] != matrix[j][i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    // 设置对称元素
+    public void setElement(int i, int j, int value) {
+        if (i &lt; size && j &lt; size) {
+            matrix[i][j] = value;
+            matrix[j][i] = value; // 保持对称性
+        }
+    }
+
+    // 获取元素
+    public int getElement(int i, int j) {
+        if (i &lt; size && j &lt; size) {
+            return matrix[i][j];
+        }
+        return 0;
+    }
+
+    // 显示矩阵
+    public void display() {
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        SymmetricMatrix sm = new SymmetricMatrix(3);
+        sm.setElement(0, 1, 5);
+        sm.setElement(1, 2, 3);
+        sm.setElement(0, 2, 7);
+
+        System.out.println("对称矩阵:");
+        sm.display();
+        System.out.println("是否对称: " + (sm.isSymmetric() ? "是" : "否"));
+    }
+}</code></pre></div><div id="python-code" class="code-container"><div class="code-header"><span>Python 实现</span><button class="copy-btn" onclick="copyCode('python')">📋 复制代码</button></div><pre><code id="python-content">import numpy as np
+
+class SymmetricMatrix:
+    def __init__(self, size):
+        self.size = size
+        self.matrix = np.zeros((size, size), dtype=int)
+
+    def is_symmetric(self):
+        """检查矩阵是否对称"""
+        return np.array_equal(self.matrix, self.matrix.T)
+
+    def set_element(self, i, j, value):
+        """设置对称元素"""
+        if 0 &lt;= i &lt; self.size and 0 &lt;= j &lt; self.size:
+            self.matrix[i][j] = value
+            self.matrix[j][i] = value  # 保持对称性
+
+    def get_element(self, i, j):
+        """获取元素"""
+        if 0 &lt;= i &lt; self.size and 0 &lt;= j &lt; self.size:
+            return self.matrix[i][j]
+        return 0
+
+    def display(self):
+        """显示矩阵"""
+        print("对称矩阵:")
+        for row in self.matrix:
+            print(" ".join(map(str, row)))
+
+    def from_array(self, arr):
+        """从数组创建对称矩阵"""
+        if len(arr) == self.size and len(arr[0]) == self.size:
+            # 确保矩阵对称
+            for i in range(self.size):
+                for j in range(self.size):
+                    self.matrix[i][j] = arr[i][j]
+                    self.matrix[j][i] = arr[i][j]
+
+# 使用示例
+if __name__ == "__main__":
+    sm = SymmetricMatrix(3)
+    sm.set_element(0, 1, 5)
+    sm.set_element(1, 2, 3)
+    sm.set_element(0, 2, 7)
+
+    sm.display()
+    print(f"是否对称: {'是' if sm.is_symmetric() else '否'}")
+
+    # 使用NumPy验证
+    print(f"\n使用NumPy验证: {np.allclose(sm.matrix, sm.matrix.T)}")</code></pre></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div class="quiz-container"><div class="quiz-item"><h4>🤔 问题 1：基础概念</h4><p>一个3×3的对称矩阵最少需要存储多少个不同的元素值？</p><button class="quiz-btn" onclick="toggleAnswer('answer1')">💡 查看答案</button><div id="answer1" class="quiz-answer"><strong>答案：6个元素</strong><br>
+                        解释：对称矩阵只需要存储上三角（或下三角）部分和主对角线。对于3×3矩阵，需要存储的位置是：(0,0), (0,1), (0,2), (1,1), (1,2), (2,2)，共6个元素。其余元素可以通过对称性质得到。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 2：性质判断</h4><p>如果矩阵A和B都是对称矩阵，那么A+B一定是对称矩阵吗？A×B呢？</p><button class="quiz-btn" onclick="toggleAnswer('answer2')">💡 查看答案</button><div id="answer2" class="quiz-answer"><strong>答案：A+B是对称的，A×B不一定</strong><br>
+                        解释：<br>
+                        • A+B：(A+B)ᵀ = Aᵀ + Bᵀ = A + B，所以A+B是对称的<br>
+                        • A×B：(A×B)ᵀ = BᵀAᵀ = BA，只有当AB = BA时（即A和B可交换），A×B才对称<br>
+                        一般情况下，两个对称矩阵的乘积不一定对称。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 3：应用理解</h4><p>为什么无向图的邻接矩阵一定是对称矩阵？</p><button class="quiz-btn" onclick="toggleAnswer('answer3')">💡 查看答案</button><div id="answer3" class="quiz-answer"><strong>答案：因为无向图的边是双向的</strong><br>
+                        解释：在无向图中，如果节点i和节点j之间有边连接，那么从i到j有边，从j到i也有边。因此邻接矩阵中A[i][j] = 1当且仅当A[j][i] = 1，满足对称性质。这与有向图不同，有向图的邻接矩阵通常不对称。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 4：算法分析</h4><p>判断一个n×n矩阵是否对称的时间复杂度是多少？能否优化？</p><button class="quiz-btn" onclick="toggleAnswer('answer4')">💡 查看答案</button><div id="answer4" class="quiz-answer"><strong>答案：O(n²)，可以优化到O(n²/2)</strong><br>
+                        解释：朴素算法需要比较所有n²个元素对，但由于对称性，我们只需要比较上三角部分（或下三角部分），即大约n²/2个比较。更精确地说，需要比较n(n-1)/2个元素对，时间复杂度仍是O(n²)，但常数因子减半。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 5：存储优化</h4><p>设计一种数据结构，用一维数组存储对称矩阵，节省一半的存储空间。</p><button class="quiz-btn" onclick="toggleAnswer('answer5')">💡 查看答案</button><div id="answer5" class="quiz-answer"><strong>答案：压缩存储上三角矩阵</strong><br>
+                        解释：只存储上三角部分（包括主对角线）。对于n×n矩阵的元素A[i][j]（其中i≤j），可以映射到一维数组的索引：<br><code>index = i * n - i * (i - 1) / 2 + (j - i)</code><br>
+                        这样只需要n(n+1)/2个存储单元，节省了近一半空间。访问下三角元素A[i][j]（i>j）时，返回A[j][i]即可。
+                    </div></div></div><div style="margin-top: 30px;"><h3>📚 进阶学习建议</h3><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">📖</span><strong>后续学习：</strong>特征值与特征向量、正定矩阵、矩阵分解（如Cholesky分解）
+                    </div><div class="info-box info-box-success"><span class="info-icon">🛠️</span><strong>实践建议：</strong>实现矩阵类库、解决图论问题、学习数值计算方法
+                    </div></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.code-tabs {display:flex;border-bottom:2px solid #e0e0e0;margin-bottom:0}.tab-button {background:#f5f5f5;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.3s ease;border-top-left-radius:8px;border-top-right-radius:8px}.tab-button:hover {background:#e0e0e0}.tab-button.active {background:#2196F3;color:white}.code-container {display:none;background:#1e1e1e;border-radius:0 8px 8px 8px;overflow:hidden}.code-container.active {display:block}.code-header {background:#2d2d2d;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:500}.copy-btn {background:#4CAF50;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;transition:background 0.3s ease}.copy-btn:hover {background:#45a049}.code-container pre {margin:0;padding:20px;overflow-x:auto;background:#1e1e1e}.code-container code {color:#f8f8f2;font-family:'Consolas', 'Monaco', 'Courier New', monospace;font-size:14px;line-height:1.6}.quiz-container {max-width:800px;margin:0 auto}.quiz-item {background:#f8f9fa;border:2px solid #e9ecef;border-radius:12px;padding:20px;margin-bottom:20px;transition:all 0.3s ease}.quiz-item:hover {border-color:#2196F3;box-shadow:0 4px 12px rgba(33, 150, 243, 0.1)}.quiz-item h4 {color:#2196F3;margin-bottom:15px;font-size:18px}.quiz-btn {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;padding:10px 20px;border-radius:25px;cursor:pointer;font-weight:500;margin-top:15px;transition:all 0.3s ease}.quiz-btn:hover {transform:translateY(-2px);box-shadow:0 4px 12px rgba(102, 126, 234, 0.4)}.quiz-answer {display:none;background:#e3f2fd;border:1px solid #bbdefb;border-radius:8px;padding:15px;margin-top:15px;line-height:1.6}.quiz-answer.show {display:block;animation:fadeIn 0.5s ease}@keyframes fadeIn {from {opacity:0;transform:translateY(-10px)}to {opacity:1;transform:translateY(0)}}canvas {box-shadow:0 4px 12px rgba(0, 0, 0, 0.1)}#animationStatus {min-height:24px}#matrixResult {min-height:24px}</style><script>function showCode(language) { const containers = document.querySelectorAll('.code-container'); containers.forEach(container => container.classList.remove('active')); const buttons = document.querySelectorAll('.tab-button'); buttons.forEach(button => button.classList.remove('active')); document.getElementById(language + '-code').classList.add('active'); event.target.classList.add('active'); } function copyCode(language) { const code = document.getElementById(language + '-content').textContent; navigator.clipboard.writeText(code).then(() => { const btn = event.target; const originalText = btn.textContent; btn.textContent = '✅ 已复制!'; btn.style.background = '#4CAF50'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#4CAF50'; }, 2000); }); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); answer.classList.toggle('show'); } function drawStaticStructure() { const canvas = document.getElementById('staticStructure'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); const matrix = [ [1, 2, 3], [2, 4, 5], [3, 5, 6] ]; const cellSize = 80; const startX = 80; const startY = 60; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = startX + j * cellSize; const y = startY + i * cellSize; if (i === j) { ctx.fillStyle = '#e3f2fd'; } else if (i < j) { ctx.fillStyle = '#f3e5f5'; } else { ctx.fillStyle = '#e8f5e8'; } ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.strokeRect(x, y, cellSize, cellSize); ctx.fillStyle = '#333'; ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(matrix[i][j], x + cellSize/2, y + cellSize/2); } } ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 3; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(startX, startY); ctx.lineTo(startX + 3 * cellSize, startY + 3 * cellSize); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#666'; ctx.font = '14px Arial'; ctx.textAlign = 'left'; ctx.fillText('主对角线', startX + 250, startY + 20); ctx.fillText('A[i][j] = A[j][i]', startX + 250, startY + 50); } let animationStep = 0; let animationInterval; function startSymmetryAnimation() { const canvas = document.getElementById('symmetryAnimation'); const ctx = canvas.getContext('2d'); const status = document.getElementById('animationStatus'); const matrix = [ [1, 2, 3], [2, 4, 5], [3, 5, 6] ]; const cellSize = 60; const startX = 100; const startY = 80; animationStep = 0; function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = startX + j * cellSize; const y = startY + i * cellSize; ctx.fillStyle = '#f5f5f5'; ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.strokeRect(x, y, cellSize, cellSize); ctx.fillStyle = '#333'; ctx.font = '20px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(matrix[i][j], x + cellSize/2, y + cellSize/2); } } const pairs = [ [{i:0,j:1}, {i:1,j:0}], [{i:0,j:2}, {i:2,j:0}], [{i:1,j:2}, {i:2,j:1}] ]; if (animationStep < pairs.length) { const pair = pairs[animationStep]; pair.forEach((pos, index) => { const x = startX + pos.j * cellSize; const y = startY + pos.i * cellSize; ctx.fillStyle = index === 0 ? '#ffeb3b' : '#4caf50'; ctx.fillRect(x + 2, y + 2, cellSize - 4, cellSize - 4); ctx.fillStyle = '#333'; ctx.font = '20px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(matrix[pos.i][pos.j], x + cellSize/2, y + cellSize/2); }); const pos1 = pair[0]; const pos2 = pair[1]; const x1 = startX + pos1.j * cellSize + cellSize/2; const y1 = startY + pos1.i * cellSize + cellSize/2; const x2 = startX + pos2.j * cellSize + cellSize/2; const y2 = startY + pos2.i * cellSize + cellSize/2; ctx.strokeStyle = '#f44336'; ctx.lineWidth = 3; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]); status.textContent = `正在检查: A[${pos1.i}][${pos1.j}] = ${matrix[pos1.i][pos1.j]} 与 A[${pos2.i}][${pos2.j}] = ${matrix[pos2.i][pos2.j]} ${matrix[pos1.i][pos1.j] === matrix[pos2.i][pos2.j] ? '✓' : '✗'}`; } else { status.textContent = '✅ 验证完成：这是一个对称矩阵！'; clearInterval(animationInterval); } } animationInterval = setInterval(() => { animate(); animationStep++; if (animationStep > pairs.length) { clearInterval(animationInterval); } }, 1500); animate(); } let editMatrix = [[0,0,0],[0,0,0],[0,0,0]]; let selectedCell = null; function drawInteractiveMatrix() { const canvas = document.getElementById('interactiveMatrix'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); const cellSize = 80; const startX = 60; const startY = 60; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = startX + j * cellSize; const y = startY + i * cellSize; if (selectedCell && selectedCell.i === i && selectedCell.j === j) { ctx.fillStyle = '#ffeb3b'; } else { ctx.fillStyle = '#f5f5f5'; } ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.strokeRect(x, y, cellSize, cellSize); ctx.fillStyle = '#333'; ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(editMatrix[i][j], x + cellSize/2, y + cellSize/2); } } } function setupInteractiveMatrix() { const canvas = document.getElementById('interactiveMatrix'); canvas.addEventListener('click', (e) => { const rect = canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; const cellSize = 80; const startX = 60; const startY = 60; const j = Math.floor((x - startX) / cellSize); const i = Math.floor((y - startY) / cellSize); if (i >= 0 && i < 3 && j >= 0 && j < 3) { const newValue = prompt(`输入新值 (当前值: ${editMatrix[i][j]}):`); if (newValue !== null && !isNaN(newValue)) { editMatrix[i][j] = parseInt(newValue); drawInteractiveMatrix(); } } }); drawInteractiveMatrix(); } function generateSymmetricMatrix() { for (let i = 0; i < 3; i++) { for (let j = i; j < 3; j++) { const value = Math.floor(Math.random() * 9) + 1; editMatrix[i][j] = value; editMatrix[j][i] = value; } } drawInteractiveMatrix(); document.getElementById('matrixResult').textContent = ''; } function generateRandomMatrix() { for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { editMatrix[i][j] = Math.floor(Math.random() * 9) + 1; } } drawInteractiveMatrix(); document.getElementById('matrixResult').textContent = ''; } function checkMatrixSymmetry() { let isSymmetric = true; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (editMatrix[i][j] !== editMatrix[j][i]) { isSymmetric = false; break; } } if (!isSymmetric) break; } const result = document.getElementById('matrixResult'); if (isSymmetric) { result.textContent = '✅ 这是一个对称矩阵！'; result.style.color = '#4caf50'; } else { result.textContent = '❌ 这不是对称矩阵'; result.style.color = '#f44336'; } } document.addEventListener('DOMContentLoaded', function() { drawStaticStructure(); setupInteractiveMatrix(); document.getElementById('startAnimation').addEventListener('click', startSymmetryAnimation); document.getElementById('resetAnimation').addEventListener('click', () => { clearInterval(animationInterval); const ctx = document.getElementById('symmetryAnimation').getContext('2d'); ctx.clearRect(0, 0, 500, 400); document.getElementById('animationStatus').textContent = ''; }); document.getElementById('generateSymmetric').addEventListener('click', generateSymmetricMatrix); document.getElementById('generateRandom').addEventListener('click', generateRandomMatrix); document.getElementById('checkSymmetry').addEventListener('click', checkMatrixSymmetry); });</script>
+{% endblock %}

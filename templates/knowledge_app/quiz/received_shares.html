@@ -1,0 +1,68 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+
+{% block title %}收到的分享{% endblock %}
+
+{% block content %}
+<div class="quiz-container"><!-- 面包屑导航 --><div class="quiz-breadcrumb"><a href="{% url 'knowledge_app:quiz_dashboard' %}">个人题库</a><span class="quiz-breadcrumb-separator">></span><span>收到的分享</span></div><div class="quiz-card"><div style="text-align: center; margin-bottom: 2rem;"><h1 style="color: black !important; margin-bottom: 0.5rem;">📥 收到的分享</h1><p style="color: black !important;">其他用户分享给你的题库</p></div>
+
+        {% if page_obj %}
+        <div style="display: grid; gap: 1.5rem;">
+            {% for share in page_obj %}
+            <div class="quiz-card" style="border: 1px solid var(--quiz-gray-200); padding: 1.5rem; transition: var(--quiz-transition);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='var(--quiz-shadow-lg)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--quiz-shadow)'"><div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;"><div style="flex: 1;"><div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;"><h3 style="color: black !important; margin: 0;">{{ share.library.name }}</h3>
+                            {% if share.permission == 'view' %}
+                            <span class="quiz-tag">👀 仅查看</span>
+                            {% elif share.permission == 'copy' %}
+                            <span class="quiz-tag quiz-tag-success">📋 可复制</span>
+                            {% elif share.permission == 'edit' %}
+                            <span class="quiz-tag quiz-tag-primary">✏️ 可编辑</span>
+                            {% endif %}
+                            
+                            {% if share.is_expired %}
+                            <span class="quiz-tag quiz-tag-danger">⏰ 已过期</span>
+                            {% endif %}
+                        </div><p style="color: black !important; margin: 0 0 1rem 0;">{{ share.library.description|default:"暂无描述" }}</p>
+                        
+                        {% if share.message %}
+                        <div style="background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: var(--quiz-radius); margin-bottom: 1rem; border-left: 4px solid var(--quiz-primary);"><p style="color: black !important; margin: 0; font-style: italic;">"{{ share.message }}"</p></div>
+                        {% endif %}
+                        
+                        <div style="display: flex; gap: 1rem; font-size: 0.9rem; color: black !important; margin-bottom: 1rem;"><span>👤 来自：{{ share.shared_by.username }}</span><span>📊 {{ share.library.total_questions }} 道题目</span><span>📅 {{ share.created_at|date:"Y-m-d H:i" }}</span>
+                            {% if share.expires_at %}
+                            <span>⏰ 过期：{{ share.expires_at|date:"Y-m-d H:i" }}</span>
+                            {% endif %}
+                        </div><div style="display: flex; gap: 1rem;">
+                            {% if not share.is_expired %}
+                            <a href="{% url 'knowledge_app:quiz_library_detail' share.library.id %}" class="quiz-btn quiz-btn-primary"><span>👀</span><span>查看题库</span></a>
+                            
+                            {% if share.permission in 'copy,edit' %}
+                            <button onclick="copyLibrary({{ share.id }})" class="quiz-btn quiz-btn-success"><span>📋</span><span>复制到我的题库</span></button>
+                            {% endif %}
+                            
+                            <a href="{% url 'knowledge_app:quiz_start' share.library.id %}" class="quiz-btn quiz-btn-warning"><span>🎯</span><span>开始练习</span></a>
+                            {% else %}
+                            <span style="color: var(--quiz-danger); font-weight: 600;">⏰ 分享已过期</span>
+                            {% endif %}
+                        </div></div></div></div>
+            {% endfor %}
+        </div><!-- 分页 -->
+        {% if page_obj.has_other_pages %}
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem;">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="quiz-btn quiz-btn-outline"><span>←</span><span>上一页</span></a>
+            {% endif %}
+            
+            <span style="color: black !important;">
+                第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+            </span>
+            
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="quiz-btn quiz-btn-outline"><span>下一页</span><span>→</span></a>
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div style="text-align: center; padding: 3rem; color: black !important;"><div style="font-size: 4rem; margin-bottom: 1rem;">📥</div><h3 style="color: black !important;">还没有收到分享</h3><p style="color: black !important; margin-bottom: 2rem;">当其他用户分享题库给你时，会在这里显示</p><a href="{% url 'knowledge_app:public_libraries' %}" class="quiz-btn quiz-btn-primary"><span>🌍</span><span>浏览公开题库</span></a></div>
+        {% endif %}
+    </div></div><script>function copyLibrary(shareId) { if (!confirm('确定要复制这个题库到你的个人题库吗？')) { return; } const button = event.target.closest('button'); const originalText = button.innerHTML; button.innerHTML = '<span>⏳</span><span>复制中...</span>'; button.disabled = true; const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken'); console.log('CSRF Token:', csrfToken ? 'Found' : 'Not found'); fetch(`/quiz/shares/${shareId}/copy/`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken } }) .then(response => { console.log('Response status:', response.status); if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } return response.json(); }) .then(data => { console.log('Response data:', data); if (data.success) { alert(data.message); if (data.redirect_url) { window.location.href = data.redirect_url; } } else { alert('复制失败：' + data.error); button.innerHTML = originalText; button.disabled = false; } }) .catch(error => { console.error('Fetch error:', error); alert('复制失败，请重试: ' + error.message); button.innerHTML = originalText; button.disabled = false; }); } function getCookie(name) { let cookieValue = null; if (document.cookie && document.cookie !== '') { const cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i++) { const cookie = cookies[i].trim(); if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; } } } return cookieValue; }</script>
+{% endblock %}

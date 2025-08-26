@@ -1,0 +1,27 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="stylesheet" type="text/css" href="{% static 'admin/css/exercise_admin.css' %}"><script></script>
+{% endblock %}
+
+{% block content %}
+<div class="exercise-admin-wrapper"><!-- 顶部工具栏 --><div class="exercise-toolbar"><div class="toolbar-left"><h2>📝 编辑练习题</h2><span class="exercise-type-badge" id="type-badge">{{ original.get_question_type_display }}</span></div><div class="toolbar-right">
+            {% if original.pk %}
+            <a href="{% url 'knowledge_app:exercise_preview' original.pk %}" target="_blank" class="button preview-btn">
+                🔍 预览题目
+            </a><a href="{% url 'knowledge_app:exercise_test' original.pk %}" target="_blank" class="button test-btn">
+                🧪 测试答题
+            </a>
+            {% endif %}
+            <button type="button" class="button help-btn" onclick="showHelp()">
+                ❓ 帮助
+            </button></div></div><!-- 主要内容 --><div class="exercise-content">
+        {{ block.super }}
+    </div><!-- 实时预览面板 --><div class="preview-panel" id="preview-panel"><div class="preview-header"><h3>📱 实时预览</h3><button type="button" class="close-preview" onclick="togglePreview()">×</button></div><div class="preview-content" id="preview-content"><div class="preview-placeholder"><p>填写题目内容后，这里会显示实时预览</p></div></div></div><!-- 帮助面板 --><div class="help-panel" id="help-panel" style="display: none;"><div class="help-header"><h3>📚 题目编辑帮助</h3><button type="button" class="close-help" onclick="hideHelp()">×</button></div><div class="help-content"><div class="help-section"><h4>🎯 题目类型说明</h4><ul><li><strong>单选题</strong>：只能选择一个正确答案，答案格式：A</li><li><strong>多选题</strong>：可以选择多个正确答案，答案格式：A,C,D</li><li><strong>判断题</strong>：对错判断，答案格式：true 或 false</li><li><strong>填空题</strong>：文本输入，答案格式：准确的文本</li><li><strong>简答题</strong>：长文本回答，答案格式：参考答案</li><li><strong>编程题</strong>：代码编写，答案格式：标准代码</li></ul></div><div class="help-section"><h4>📝 选项编辑技巧</h4><ul><li>使用可视化编辑器添加选项，无需手写JSON</li><li>支持拖拽排序选项</li><li>可以添加图片到选项中</li><li>选项内容支持简单的HTML格式</li></ul></div><div class="help-section"><h4>💡 提示设计原则</h4><ul><li>第一个提示：引导思考方向</li><li>第二个提示：提供关键信息</li><li>第三个提示：接近答案的提示</li><li>提示要循序渐进，不要直接给出答案</li></ul></div><div class="help-section"><h4>🖼️ 图片使用建议</h4><ul><li>图片大小建议不超过2MB</li><li>支持JPG、PNG、GIF格式</li><li>图片会自动压缩和优化</li><li>可以为题目和解析分别添加图片</li></ul></div></div></div></div><!-- 浮动操作按钮 --><div class="floating-actions"><button type="button" class="fab preview-fab" onclick="togglePreview()" title="切换预览">
+        👁️
+    </button><button type="button" class="fab save-fab" onclick="document.querySelector('input[name=_save]').click()" title="保存题目">
+        💾
+    </button></div><script>document.addEventListener('DOMContentLoaded', function() { initializeExerciseEditor(); }); function showHelp() { document.getElementById('help-panel').style.display = 'block'; } function hideHelp() { document.getElementById('help-panel').style.display = 'none'; } function togglePreview() { const panel = document.getElementById('preview-panel'); panel.classList.toggle('active'); updatePreview(); } function updatePreview() { const title = document.querySelector('#id_title').value; const questionText = document.querySelector('#id_question_text').value; const questionType = document.querySelector('#id_question_type').value; if (title || questionText) { const previewContent = document.getElementById('preview-content'); previewContent.innerHTML = generatePreviewHTML(title, questionText, questionType); } } function generatePreviewHTML(title, questionText, questionType) { return ` <div class="preview-exercise"><h4>${title || '题目标题'}</h4><div class="question-type-badge">${getQuestionTypeDisplay(questionType)}</div><div class="question-content"> ${questionText || '题目内容...'} </div></div> `; } function getQuestionTypeDisplay(type) { const types = { 'single_choice': '单选题', 'multiple_choice': '多选题', 'true_false': '判断题', 'fill_blank': '填空题', 'short_answer': '简答题', 'coding': '编程题' }; return types[type] || '未知类型'; }</script>
+{% endblock %}

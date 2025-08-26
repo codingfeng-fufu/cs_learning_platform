@@ -1,0 +1,320 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"链式栈" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>{{ breadcrumb_category|default:"数据结构" }}</span><span>></span><span>{{ page_title|default:"链式栈" }}</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔗</span>
+            链式栈 (Linked Stack)
+        </h1><p>基于链表实现的动态后进先出(LIFO)数据结构</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>链式栈使用链表实现栈结构，每个元素都是一个节点，包含数据和指向下一个节点的指针，就像一串珍珠项链，每颗珍珠都连接着下一颗。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🔑</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>节点(Node)：</strong>包含数据域和指针域的基本单元</li><li><strong>数据域(Data)：</strong>存储实际数据的部分</li><li><strong>指针域(Next)：</strong>指向下一个节点的地址</li><li><strong>栈顶指针(Top)：</strong>指向栈顶节点的指针</li><li><strong>动态分配：</strong>运行时根据需要分配内存</li></ul></div><div class="grid-card"><span class="card-icon">🎯</span><h4 class="card-title">学习信息</h4><p><strong>难度等级：</strong><span style="color: #ffc107;">🟡 进阶级</span></p><p><strong>前置知识：</strong></p><ul style="text-align: left; margin: 10px 0;"><li>指针和引用概念</li><li>动态内存分配</li><li>顺序栈的基本操作</li><li>链表的基本结构</li></ul></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div class="unified-grid unified-grid-1"><div class="info-box info-box-warning"><span class="info-icon">🔄</span><strong>生活类比：</strong>想象一条珍珠项链，每颗珍珠都用线连接着下一颗。你可以随时在项链头部添加或移除珍珠，项链会自动调整长度，不需要预先准备固定大小的盒子！
+                </div></div><h3>🏗️ 核心组成部分</h3><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🧩</span><h4 class="card-title">1. 节点结构</h4><p>每个节点包含数据域和指针域，是链式栈的基本构建块。</p></div><div class="grid-card"><span class="card-icon">📍</span><h4 class="card-title">2. 栈顶指针</h4><p>指向链表头部，即栈顶元素，是唯一的访问入口。</p></div><div class="grid-card"><span class="card-icon">⬆️</span><h4 class="card-title">3. 动态入栈</h4><p>创建新节点，将其连接到原栈顶，更新栈顶指针。</p></div><div class="grid-card"><span class="card-icon">⬇️</span><h4 class="card-title">4. 智能出栈</h4><p>移除栈顶节点，更新指针，释放内存空间。</p></div></div><h3>⚖️ 与顺序栈的对比</h3><div class="unified-grid unified-grid-2"><div class="grid-card" style="border-left: 4px solid #28a745;"><span class="card-icon">✅</span><h4 class="card-title">链式栈优势</h4><ul style="text-align: left;"><li>无容量限制，动态扩展</li><li>内存利用率高，按需分配</li><li>不会出现栈溢出问题</li><li>适合元素数量变化大的场景</li></ul></div><div class="grid-card" style="border-left: 4px solid #dc3545;"><span class="card-icon">❌</span><h4 class="card-title">链式栈劣势</h4><ul style="text-align: left;"><li>需要额外的指针空间开销</li><li>内存访问不如数组连续</li><li>实现相对复杂</li><li>频繁分配释放影响性能</li></ul></div></div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易混淆点：</strong>初学者容易混淆栈顶指针和节点的next指针。记住：栈顶指针指向整个栈的入口，而next指针连接相邻节点。
+            </div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><h3>🏗️ 静态结构图</h3><div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;"><div style="font-family: monospace; font-size: 14px;"><div style="margin-bottom: 15px;"><strong>链式栈结构示意图</strong></div><div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0;"><div style="background: #dc3545; color: white; padding: 8px 12px; border-radius: 5px;">top →</div><div style="border: 2px solid #007bff; padding: 8px; border-radius: 5px; background: #fff;"><div style="display: flex; gap: 5px;"><div style="background: #ffc107; padding: 4px 8px; border-radius: 3px;">30</div><div style="background: #28a745; padding: 4px 8px; border-radius: 3px; color: white;">→</div></div></div><div style="border: 2px solid #007bff; padding: 8px; border-radius: 5px; background: #fff;"><div style="display: flex; gap: 5px;"><div style="background: #ffc107; padding: 4px 8px; border-radius: 3px;">20</div><div style="background: #28a745; padding: 4px 8px; border-radius: 3px; color: white;">→</div></div></div><div style="border: 2px solid #007bff; padding: 8px; border-radius: 5px; background: #fff;"><div style="display: flex; gap: 5px;"><div style="background: #ffc107; padding: 4px 8px; border-radius: 3px;">10</div><div style="background: #6c757d; padding: 4px 8px; border-radius: 3px; color: white;">∅</div></div></div></div><div style="font-size: 12px; color: #666;"><div>栈顶 ← → ← → 栈底</div><div style="margin-top: 5px;"><span style="background: #ffc107; padding: 2px 6px; border-radius: 3px;">数据域</span><span style="margin-left: 10px; background: #28a745; color: white; padding: 2px 6px; border-radius: 3px;">指针域</span></div></div></div></div><h3>🎬 动态操作演示</h3><div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; text-align: center; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"><canvas id="linkedStackCanvas" width="700" height="400" style="border: 3px solid #fff; border-radius: 12px; background: linear-gradient(to bottom, #f8f9ff 0%, #e6f3ff 100%); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);"></canvas><div style="margin-top: 20px;"><button id="pushBtn" onclick="pushNode()" class="animate-btn push-btn">🔗 入栈 Push</button><button id="popBtn" onclick="popNode()" class="animate-btn pop-btn">✂️ 出栈 Pop</button><button id="resetBtn" onclick="resetStack()" class="animate-btn reset-btn">🔄 重置</button></div><div id="stackStatus" style="margin-top: 15px; font-weight: bold; color: #fff; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; display: inline-block;">
+                    栈顶指针: top = null | 栈大小: 0 | 状态: 空栈
+                </div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🔙</span><h4 class="card-title">1. 递归函数调用</h4><p>程序运行时的函数调用栈，每次递归调用都会创建新的栈帧，函数返回时自动销毁。</p></div><div class="grid-card"><span class="card-icon">🧠</span><h4 class="card-title">2. 内存管理</h4><p>编程语言的垃圾回收机制，动态跟踪对象的引用关系，自动清理无用对象。</p></div><div class="grid-card"><span class="card-icon">🔄</span><h4 class="card-title">3. 表达式解析</h4><p>编译器解析复杂表达式时，使用链式栈处理嵌套的括号和运算符优先级。</p></div></div><h3>💻 多语言代码示例</h3><!-- 语言选择器 --><div style="text-align: center; margin: 20px 0;"><button onclick="showCode('python')" id="pythonBtn" class="code-lang-btn active">🐍 Python</button><button onclick="showCode('java')" id="javaBtn" class="code-lang-btn">☕ Java</button><button onclick="showCode('cpp')" id="cppBtn" class="code-lang-btn">⚡ C++</button></div><!-- Python 代码 --><div id="pythonCode" class="code-container"><div class="code-header"><span>🐍 Python 实现</span><button onclick="copyCode('python')" class="copy-btn">📋 复制代码</button></div><pre id="pythonCodeBlock"><code>class Node:
+    """链表节点类"""
+    def __init__(self, data):
+        self.data = data      # 数据域
+        self.next = None      # 指针域
+
+class LinkedStack:
+    """链式栈类"""
+    def __init__(self):
+        self.top = None       # 栈顶指针
+        self.size = 0         # 栈大小
+
+    def push(self, item):
+        """入栈操作"""
+        new_node = Node(item)  # 创建新节点
+        new_node.next = self.top  # 新节点指向原栈顶
+        self.top = new_node    # 更新栈顶指针
+        self.size += 1
+        print(f"元素 {item} 入栈成功")
+
+    def pop(self):
+        """出栈操作"""
+        if self.is_empty():
+            print("栈为空，无法出栈!")
+            return None
+
+        data = self.top.data   # 保存栈顶数据
+        self.top = self.top.next  # 栈顶指针后移
+        self.size -= 1
+        print(f"元素 {data} 出栈成功")
+        return data
+
+    def peek(self):
+        """查看栈顶元素"""
+        if self.is_empty():
+            return None
+        return self.top.data
+
+    def is_empty(self):
+        """判断栈是否为空"""
+        return self.top is None
+
+    def get_size(self):
+        """获取栈的大小"""
+        return self.size
+
+    def display(self):
+        """显示栈内容"""
+        if self.is_empty():
+            print("栈为空")
+            return
+
+        current = self.top
+        elements = []
+        while current:
+            elements.append(str(current.data))
+            current = current.next
+        print("栈内容(栈顶→栈底):", " -> ".join(elements))
+
+# 使用示例
+stack = LinkedStack()
+stack.push(10)  # 入栈: [10]
+stack.push(20)  # 入栈: [20, 10]
+stack.push(30)  # 入栈: [30, 20, 10]
+print("栈顶元素:", stack.peek())    # 输出: 30
+stack.display()  # 显示栈内容
+stack.pop()      # 出栈: [20, 10]
+print("栈大小:", stack.get_size())   # 输出: 2</code></pre></div><!-- Java 代码 --><div id="javaCode" class="code-container" style="display: none;"><div class="code-header"><span>☕ Java 实现</span><button onclick="copyCode('java')" class="copy-btn">📋 复制代码</button></div><pre id="javaCodeBlock"><code>// 节点类
+class Node {
+    int data;        // 数据域
+    Node next;       // 指针域
+
+    public Node(int data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+
+// 链式栈类
+public class LinkedStack {
+    private Node top;    // 栈顶指针
+    private int size;    // 栈大小
+
+    public LinkedStack() {
+        this.top = null;
+        this.size = 0;
+    }
+
+    // 入栈操作
+    public void push(int item) {
+        Node newNode = new Node(item);  // 创建新节点
+        newNode.next = top;             // 新节点指向原栈顶
+        top = newNode;                  // 更新栈顶指针
+        size++;
+        System.out.println("元素 " + item + " 入栈成功");
+    }
+
+    // 出栈操作
+    public Integer pop() {
+        if (isEmpty()) {
+            System.out.println("栈为空，无法出栈!");
+            return null;
+        }
+
+        int data = top.data;    // 保存栈顶数据
+        top = top.next;         // 栈顶指针后移
+        size--;
+        System.out.println("元素 " + data + " 出栈成功");
+        return data;
+    }
+
+    // 查看栈顶元素
+    public Integer peek() {
+        if (isEmpty()) {
+            return null;
+        }
+        return top.data;
+    }
+
+    // 判断栈是否为空
+    public boolean isEmpty() {
+        return top == null;
+    }
+
+    // 获取栈的大小
+    public int size() {
+        return size;
+    }
+
+    // 显示栈内容
+    public void display() {
+        if (isEmpty()) {
+            System.out.println("栈为空");
+            return;
+        }
+
+        System.out.print("栈内容(栈顶→栈底): ");
+        Node current = top;
+        while (current != null) {
+            System.out.print(current.data);
+            if (current.next != null) {
+                System.out.print(" -> ");
+            }
+            current = current.next;
+        }
+        System.out.println();
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        LinkedStack stack = new LinkedStack();
+        stack.push(10);  // 入栈: [10]
+        stack.push(20);  // 入栈: [20, 10]
+        stack.push(30);  // 入栈: [30, 20, 10]
+        System.out.println("栈顶元素: " + stack.peek());  // 输出: 30
+        stack.display(); // 显示栈内容
+        stack.pop();     // 出栈: [20, 10]
+        System.out.println("栈大小: " + stack.size());    // 输出: 2
+    }
+}</code></pre></div><!-- C++ 代码 --><div id="cppCode" class="code-container" style="display: none;"><div class="code-header"><span>⚡ C++ 实现</span><button onclick="copyCode('cpp')" class="copy-btn">📋 复制代码</button></div><pre id="cppCodeBlock"><code>#include &lt;iostream&gt;
+using namespace std;
+
+// 节点结构体
+struct Node {
+    int data;        // 数据域
+    Node* next;      // 指针域
+
+    Node(int value) : data(value), next(nullptr) {}
+};
+
+// 链式栈类
+class LinkedStack {
+private:
+    Node* top;       // 栈顶指针
+    int stackSize;   // 栈大小
+
+public:
+    LinkedStack() : top(nullptr), stackSize(0) {}
+
+    // 析构函数，释放所有节点内存
+    ~LinkedStack() {
+        while (!isEmpty()) {
+            pop();
+        }
+    }
+
+    // 入栈操作
+    void push(int item) {
+        Node* newNode = new Node(item);  // 创建新节点
+        newNode-&gt;next = top;             // 新节点指向原栈顶
+        top = newNode;                   // 更新栈顶指针
+        stackSize++;
+        cout &lt;&lt; "元素 " &lt;&lt; item &lt;&lt; " 入栈成功" &lt;&lt; endl;
+    }
+
+    // 出栈操作
+    bool pop() {
+        if (isEmpty()) {
+            cout &lt;&lt; "栈为空，无法出栈!" &lt;&lt; endl;
+            return false;
+        }
+
+        Node* temp = top;      // 临时保存栈顶节点
+        int data = top-&gt;data;  // 保存栈顶数据
+        top = top-&gt;next;       // 栈顶指针后移
+        delete temp;           // 释放节点内存
+        stackSize--;
+        cout &lt;&lt; "元素 " &lt;&lt; data &lt;&lt; " 出栈成功" &lt;&lt; endl;
+        return true;
+    }
+
+    // 查看栈顶元素
+    bool peek(int&amp; result) {
+        if (isEmpty()) {
+            return false;
+        }
+        result = top-&gt;data;
+        return true;
+    }
+
+    // 判断栈是否为空
+    bool isEmpty() {
+        return top == nullptr;
+    }
+
+    // 获取栈的大小
+    int size() {
+        return stackSize;
+    }
+
+    // 显示栈内容
+    void display() {
+        if (isEmpty()) {
+            cout &lt;&lt; "栈为空" &lt;&lt; endl;
+            return;
+        }
+
+        cout &lt;&lt; "栈内容(栈顶→栈底): ";
+        Node* current = top;
+        while (current != nullptr) {
+            cout &lt;&lt; current-&gt;data;
+            if (current-&gt;next != nullptr) {
+                cout &lt;&lt; " -&gt; ";
+            }
+            current = current-&gt;next;
+        }
+        cout &lt;&lt; endl;
+    }
+};
+
+// 使用示例
+int main() {
+    LinkedStack stack;
+    stack.push(10);  // 入栈: [10]
+    stack.push(20);  // 入栈: [20, 10]
+    stack.push(30);  // 入栈: [30, 20, 10]
+
+    int topElement;
+    if (stack.peek(topElement)) {
+        cout &lt;&lt; "栈顶元素: " &lt;&lt; topElement &lt;&lt; endl;  // 输出: 30
+    }
+
+    stack.display(); // 显示栈内容
+    stack.pop();     // 出栈: [20, 10]
+    cout &lt;&lt; "栈大小: " &lt;&lt; stack.size() &lt;&lt; endl;    // 输出: 2
+
+    return 0;
+}</code></pre></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><h3>🤔 理解检验问题</h3><div class="qa-container"><div class="qa-item"><div class="question" onclick="toggleAnswer('answer1')"><span class="question-icon">❓</span><strong>问题1：</strong>链式栈相比顺序栈的最大优势是什么？请举例说明。
+                        <span class="toggle-icon">▼</span></div><div id="answer1" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>链式栈的最大优势是<strong>动态内存分配，无容量限制</strong>。
+                        <br><br><strong>举例说明：</strong><ul><li><strong>文本编辑器的撤销功能：</strong>用户可能进行成千上万次操作，顺序栈需要预先分配巨大数组，而链式栈可以按需分配</li><li><strong>递归算法：</strong>递归深度无法预知，链式栈可以根据实际需要动态扩展</li><li><strong>Web浏览器历史记录：</strong>用户浏览的页面数量不固定，链式栈更加灵活</li></ul><strong>内存对比：</strong>顺序栈浪费空间（预分配），链式栈按需使用（实时分配）。
+                    </div></div><div class="qa-item"><div class="question" onclick="toggleAnswer('answer2')"><span class="question-icon">❓</span><strong>问题2：</strong>为什么链式栈的入栈操作总是在链表头部进行，而不是尾部？
+                        <span class="toggle-icon">▼</span></div><div id="answer2" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>在链表头部操作的时间复杂度是O(1)，在尾部操作需要O(n)。
+                        <br><br><strong>详细分析：</strong><ul><li><strong>头部插入：</strong>直接修改top指针，新节点指向原头节点，操作简单快速</li><li><strong>尾部插入：</strong>需要遍历整个链表找到尾节点，时间复杂度O(n)</li><li><strong>栈的特性：</strong>只需要访问栈顶，不需要访问中间或底部元素</li></ul><div style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            头部操作: top → [新节点] → [原节点1] → [原节点2] → null<br>
+                            时间: O(1) ✅<br><br>
+                            尾部操作: top → [节点1] → [节点2] → ... → [新节点] → null<br>
+                            时间: O(n) ❌
+                        </div></div></div><div class="qa-item"><div class="question" onclick="toggleAnswer('answer3')"><span class="question-icon">❓</span><strong>问题3：</strong>链式栈的空间开销包括哪些部分？如何计算？
+                        <span class="toggle-icon">▼</span></div><div id="answer3" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>链式栈的空间开销包括数据存储和指针存储两部分。
+                        <br><br><strong>空间组成：</strong><ul><li><strong>数据域：</strong>存储实际数据，大小取决于数据类型</li><li><strong>指针域：</strong>存储下一个节点的地址，通常为4字节(32位)或8字节(64位)</li><li><strong>栈顶指针：</strong>额外的指针变量，指向栈顶节点</li></ul><strong>计算示例：</strong><div style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                            假设存储n个int类型数据(4字节)，在64位系统上：<br>
+                            - 数据域总开销: n × 4字节<br>
+                            - 指针域总开销: n × 8字节<br>
+                            - 栈顶指针: 8字节<br>
+                            - 总开销: n × 12 + 8字节<br><br>
+                            相比顺序栈(n × 4字节)，开销增加200%
+                        </div></div></div><div class="qa-item"><div class="question" onclick="toggleAnswer('answer4')"><span class="question-icon">❓</span><strong>问题4：</strong>什么情况下应该选择链式栈而不是顺序栈？
+                        <span class="toggle-icon">▼</span></div><div id="answer4" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>以下情况优先选择链式栈：
+                        <br><br><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"><div><strong style="color: #28a745;">✅ 选择链式栈的场景：</strong><ul><li>元素数量无法预估或变化很大</li><li>需要处理大量数据，内存紧张</li><li>递归深度不确定的算法</li><li>长时间运行的程序，需要动态管理</li><li>对内存利用率要求高的嵌入式系统</li></ul></div><div><strong style="color: #dc3545;">❌ 不建议链式栈的场景：</strong><ul><li>频繁的入栈出栈操作（性能敏感）</li><li>数据量小且固定的简单应用</li><li>需要随机访问栈中元素</li><li>对cache性能要求高的系统</li><li>内存管理复杂度需要最小化</li></ul></div></div><br><strong>经验法则：</strong>数据量不确定选链式栈，数据量确定且性能优先选顺序栈。
+                    </div></div></div><h3>📚 学习资源推荐</h3><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">🛠️</span><strong>可视化工具：</strong>使用VisuAlgo的链表和栈动画，观察指针变化和内存分配过程。
+                </div><div class="info-box info-box-warning"><span class="info-icon">➡️</span><strong>下一步学习：</strong>掌握链式栈后，建议学习双端队列、链式队列，然后进入树结构的学习。
+                </div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.code-container {background:#f8f9fa;border-radius:12px;margin:20px 0;border:1px solid #dee2e6;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.1);transition:transform 0.3s ease}.code-container:hover {transform:translateY(-2px)}.code-header {background:linear-gradient(135deg, #343a40 0%, #495057 100%);color:white;padding:15px 25px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #007bff}.code-lang-btn {background:linear-gradient(135deg, #6c757d 0%, #495057 100%);color:white;border:none;padding:10px 20px;border-radius:25px;margin:0 8px;cursor:pointer;transition:all 0.3s ease;font-weight:500;box-shadow:0 3px 10px rgba(0,0,0,0.2)}.code-lang-btn.active {background:linear-gradient(135deg, #007bff 0%, #0056b3 100%);transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,123,255,0.4)}.code-lang-btn:hover {background:linear-gradient(135deg, #007bff 0%, #0056b3 100%);transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,123,255,0.4)}.copy-btn {background:linear-gradient(135deg, #28a745 0%, #20c997 100%);color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:500;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(40,167,69,0.3)}.copy-btn:hover {transform:translateY(-1px);box-shadow:0 4px 12px rgba(40,167,69,0.4)}.copy-btn.copied {background:linear-gradient(135deg, #17a2b8 0%, #138496 100%);animation:pulse 0.6s ease-in-out}@keyframes pulse {0% {transform:scale(1)}50% {transform:scale(1.05)}100% {transform:scale(1)}}.code-container pre {margin:0;padding:25px;font-family:'Courier New', 'Monaco', 'Menlo', monospace;font-size:14px;line-height:1.6;overflow-x:auto;background:linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%)}.animate-btn {background:linear-gradient(135deg, #28a745 0%, #20c997 100%);color:white;border:none;padding:12px 25px;border-radius:25px;margin:0 8px;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.2);position:relative;overflow:hidden}.animate-btn:hover {transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}.animate-btn:active {transform:translateY(-1px)}.push-btn {background:linear-gradient(135deg, #28a745 0%, #20c997 100%)}.push-btn:hover {box-shadow:0 8px 25px rgba(40,167,69,0.4)}.pop-btn {background:linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)}.pop-btn:hover {box-shadow:0 8px 25px rgba(220,53,69,0.4)}.reset-btn {background:linear-gradient(135deg, #6c757d 0%, #495057 100%)}.reset-btn:hover {box-shadow:0 8px 25px rgba(108,117,125,0.4)}.animate-btn:disabled {opacity:0.6;cursor:not-allowed;transform:none !important}.qa-container {margin:20px 0}.qa-item {border:1px solid #dee2e6;border-radius:12px;margin-bottom:15px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.08);transition:all 0.3s ease}.qa-item:hover {box-shadow:0 5px 20px rgba(0,0,0,0.12);transform:translateY(-2px)}.question {background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);padding:20px 25px;cursor:pointer;display:flex;align-items:center;transition:all 0.3s ease;user-select:none;border-bottom:1px solid transparent}.question:hover {background:linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%)}.question.active {background:linear-gradient(135deg, #007bff 0%, #0056b3 100%);color:white;border-bottom:1px solid #004085}.question-icon {margin-right:15px;font-size:18px;transition:transform 0.3s ease}.question.active .question-icon {transform:scale(1.2)}.toggle-icon {margin-left:auto;transition:transform 0.4s ease;font-size:14px;opacity:0.7}.question.active .toggle-icon {transform:rotate(180deg);opacity:1}.answer {padding:25px;background:linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);border-top:1px solid #dee2e6;display:none;animation:slideDown 0.4s ease-out}.answer.show {display:block}.answer-icon {color:#28a745;margin-right:10px;font-size:16px}@keyframes slideDown {from {opacity:0;transform:translateY(-20px);max-height:0}to {opacity:1;transform:translateY(0);max-height:500px}}@media (max-width:768px) {.animate-btn {padding:10px 15px;font-size:12px;margin:5px}.code-lang-btn {padding:8px 12px;font-size:12px}#linkedStackCanvas {width:100%;max-width:600px;height:auto}}</style><script>let canvas, ctx; let nodes = []; let animating = false; let elementCounter = 10; let animationFrame = null; let particles = []; class StackNode { constructor(data, x, y) { this.data = data; this.x = x; this.y = y; this.targetX = x; this.targetY = y; this.next = null; this.alpha = 1; this.scale = 1; this.isAnimating = false; } update() { this.x += (this.targetX - this.x) * 0.1; this.y += (this.targetY - this.y) * 0.1; } draw(ctx) { ctx.save(); ctx.globalAlpha = this.alpha; ctx.translate(this.x, this.y); ctx.scale(this.scale, this.scale); const nodeWidth = 80; const nodeHeight = 50; const gradient = ctx.createLinearGradient(-nodeWidth/2, -nodeHeight/2, -nodeWidth/2, nodeHeight/2); gradient.addColorStop(0, '#ffd700'); gradient.addColorStop(0.5, '#ffc107'); gradient.addColorStop(1, '#ffb300'); ctx.fillStyle = gradient; ctx.fillRect(-nodeWidth/2, -nodeHeight/2, nodeWidth, nodeHeight); ctx.strokeStyle = '#ff8f00'; ctx.lineWidth = 3; ctx.strokeRect(-nodeWidth/2, -nodeHeight/2, nodeWidth, nodeHeight); ctx.strokeStyle = '#ff6f00'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-10, -nodeHeight/2); ctx.lineTo(-10, nodeHeight/2); ctx.stroke(); ctx.fillStyle = '#2c3e50'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.fillText(this.data.toString(), -25, 5); if (this.next) { ctx.fillStyle = '#28a745'; ctx.font = 'bold 14px Arial'; ctx.fillText('→', 15, 5); } else { ctx.fillStyle = '#6c757d'; ctx.font = 'bold 14px Arial'; ctx.fillText('∅', 15, 5); } ctx.restore(); if (this.next) { this.drawConnection(ctx); } } drawConnection(ctx) { const startX = this.x + 40; const startY = this.y; const endX = this.next.x - 40; const endY = this.next.y; ctx.strokeStyle = '#007bff'; ctx.lineWidth = 3; ctx.setLineDash([]); ctx.beginPath(); ctx.moveTo(startX, startY); if (Math.abs(startY - endY) < 10) { ctx.lineTo(endX, endY); } else { const controlX = startX + (endX - startX) / 2; ctx.quadraticCurveTo(controlX, startY, endX, endY); } ctx.stroke(); const angle = Math.atan2(endY - startY, endX - startX); const arrowSize = 8; ctx.fillStyle = '#007bff'; ctx.beginPath(); ctx.moveTo(endX, endY); ctx.lineTo(endX - arrowSize * Math.cos(angle - Math.PI / 6), endY - arrowSize * Math.sin(angle - Math.PI / 6)); ctx.lineTo(endX - arrowSize * Math.cos(angle + Math.PI / 6), endY - arrowSize * Math.sin(angle + Math.PI / 6)); ctx.fill(); } } class Particle { constructor(x, y, color) { this.x = x; this.y = y; this.vx = (Math.random() - 0.5) * 6; this.vy = (Math.random() - 0.5) * 6; this.life = 1.0; this.decay = 0.02; this.color = color; this.size = Math.random() * 4 + 2; } update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; this.vx *= 0.98; this.vy *= 0.98; } draw(ctx) { ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; } } window.onload = function() { canvas = document.getElementById('linkedStackCanvas'); if (canvas) { ctx = canvas.getContext('2d'); drawStack(); animate(); } }; function animate() { particles = particles.filter(particle => { particle.update(); return particle.life > 0; }); nodes.forEach(node => node.update()); drawStack(); if (particles.length > 0) { particles.forEach(particle => particle.draw(ctx)); } animationFrame = requestAnimationFrame(animate); } function createParticles(x, y, color, count = 10) { for (let i = 0; i < count; i++) { particles.push(new Particle(x, y, color)); } } function drawGradientBackground() { const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height); gradient.addColorStop(0, '#f8f9ff'); gradient.addColorStop(1, '#e6f3ff'); ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height); } function drawGrid() { ctx.strokeStyle = 'rgba(200, 200, 200, 0.2)'; ctx.lineWidth = 1; for (let i = 0; i < canvas.width; i += 40) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); } for (let i = 0; i < canvas.height; i += 40) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); } } function drawStack() { ctx.clearRect(0, 0, canvas.width, canvas.height); drawGradientBackground(); drawGrid(); if (!animating) { ctx.fillStyle = 'rgba(0, 123, 255, 0.8)'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.fillText('链式栈动态演示 - 节点通过指针连接', canvas.width / 2, 30); } if (nodes.length > 0) { const topNode = nodes[0]; ctx.fillStyle = '#dc3545'; ctx.font = 'bold 18px Arial'; ctx.textAlign = 'right'; ctx.fillText('top →', topNode.x - 50, topNode.y + 6); ctx.strokeStyle = '#dc3545'; ctx.fillStyle = '#dc3545'; ctx.lineWidth = 4; const arrowX = topNode.x - 45; const arrowY = topNode.y; ctx.beginPath(); ctx.moveTo(arrowX, arrowY); ctx.lineTo(topNode.x - 40, arrowY); ctx.stroke(); ctx.beginPath(); ctx.moveTo(topNode.x - 35, arrowY - 8); ctx.lineTo(topNode.x - 35, arrowY + 8); ctx.lineTo(topNode.x - 40, arrowY); ctx.fill(); } else { ctx.fillStyle = '#6c757d'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText('栈为空 (top = null)', canvas.width / 2, canvas.height / 2); ctx.fillStyle = '#dc3545'; ctx.font = 'bold 18px Arial'; ctx.fillText('top → null', canvas.width / 2, canvas.height / 2 + 40); } nodes.forEach(node => node.draw(ctx)); updateStatus(); } function updateStatus() { const statusDiv = document.getElementById('stackStatus'); if (statusDiv) { const topValue = nodes.length > 0 ? nodes[0].data : 'null'; const status = nodes.length === 0 ? '空栈' : '正常'; const statusColor = status === '空栈' ? '#ffc107' : '#28a745'; statusDiv.innerHTML = `栈顶指针: top = ${topValue} | 栈大小: ${nodes.length} | 状态: <span style="color: ${statusColor};">${status}</span>`; } } function repositionNodes() { const startX = 150; const startY = 200; const nodeSpacing = 120; nodes.forEach((node, index) => { node.targetX = startX + index * nodeSpacing; node.targetY = startY; if (index < nodes.length - 1) { node.next = nodes[index + 1]; } else { node.next = null; } }); } function pushNode() { if (animating) return; animating = true; disableButtons(); const element = elementCounter++; const startX = 50; const startY = 100; const newNode = new StackNode(element, startX, startY); newNode.alpha = 0; newNode.scale = 0.5; nodes.unshift(newNode); repositionNodes(); createParticles(startX, startY, '#28a745', 15); let animationStep = 0; const animationDuration = 60; function animateStep() { animationStep++; const progress = animationStep / animationDuration; const easeProgress = 1 - Math.pow(1 - progress, 3); newNode.alpha = easeProgress; newNode.scale = 0.5 + 0.5 * easeProgress; if (progress >= 1) { newNode.alpha = 1; newNode.scale = 1; animating = false; enableButtons(); showMessage(`节点 ${element} 入栈成功！`, '#28a745'); } else { requestAnimationFrame(animateStep); } } animateStep(); } function popNode() { if (animating || nodes.length === 0) { showMessage('栈为空，无法出栈！', '#dc3545'); return; } animating = true; disableButtons(); const topNode = nodes[0]; const element = topNode.data; createParticles(topNode.x, topNode.y, '#dc3545', 20); let animationStep = 0; const animationDuration = 60; function animateStep() { animationStep++; const progress = animationStep / animationDuration; const easeProgress = Math.pow(progress, 2); topNode.y = topNode.targetY - progress * 100; topNode.alpha = Math.max(0, 1 - progress * 1.5); topNode.scale = 1 + progress * 0.3; if (progress >= 1) { nodes.shift(); repositionNodes(); animating = false; enableButtons(); showMessage(`节点 ${element} 出栈成功！`, '#dc3545'); } else { requestAnimationFrame(animateStep); } } animateStep(); } function resetStack() { if (animating) return; nodes.forEach(node => { createParticles(node.x, node.y, '#6c757d', 8); }); nodes = []; elementCounter = 10; showMessage('栈已重置！', '#6c757d'); } function showMessage(message, color) { const messageDiv = document.createElement('div'); messageDiv.style.cssText = ` position: fixed; top: 20px; right: 20px; background: ${color}; color: white; padding: 12px 20px; border-radius: 25px; font-weight: bold; z-index: 1000; animation: slideInRight 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); `; messageDiv.textContent = message; document.body.appendChild(messageDiv); setTimeout(() => { messageDiv.style.animation = 'slideOutRight 0.3s ease-in'; setTimeout(() => messageDiv.remove(), 300); }, 2500); } function disableButtons() { const pushBtn = document.getElementById('pushBtn'); const popBtn = document.getElementById('popBtn'); const resetBtn = document.getElementById('resetBtn'); if (pushBtn) pushBtn.disabled = true; if (popBtn) popBtn.disabled = true; if (resetBtn) resetBtn.disabled = true; } function enableButtons() { const pushBtn = document.getElementById('pushBtn'); const popBtn = document.getElementById('popBtn'); const resetBtn = document.getElementById('resetBtn'); if (pushBtn) pushBtn.disabled = false; if (popBtn) popBtn.disabled = false; if (resetBtn) resetBtn.disabled = false; } function showCode(language) { const pythonCode = document.getElementById('pythonCode'); const javaCode = document.getElementById('javaCode'); const cppCode = document.getElementById('cppCode'); if (pythonCode) pythonCode.style.display = 'none'; if (javaCode) javaCode.style.display = 'none'; if (cppCode) cppCode.style.display = 'none'; const pythonBtn = document.getElementById('pythonBtn'); const javaBtn = document.getElementById('javaBtn'); const cppBtn = document.getElementById('cppBtn'); if (pythonBtn) pythonBtn.classList.remove('active'); if (javaBtn) javaBtn.classList.remove('active'); if (cppBtn) cppBtn.classList.remove('active'); const targetCode = document.getElementById(language + 'Code'); const targetBtn = document.getElementById(language + 'Btn'); if (targetCode) targetCode.style.display = 'block'; if (targetBtn) targetBtn.classList.add('active'); } function copyCode(language) { const codeBlock = document.getElementById(language + 'CodeBlock'); if (!codeBlock) return; const text = codeBlock.textContent || codeBlock.innerText; const btn = event.target; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => { showCopySuccess(btn); }).catch(() => { fallbackCopyToClipboard(text, btn); }); } else { fallbackCopyToClipboard(text, btn); } } function fallbackCopyToClipboard(text, btn) { const textArea = document.createElement('textarea'); textArea.value = text; textArea.style.position = 'fixed'; textArea.style.left = '-999999px'; textArea.style.top = '-999999px'; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { document.execCommand('copy'); showCopySuccess(btn); } catch (err) { console.error('复制失败:', err); showCopyError(btn); } finally { document.body.removeChild(textArea); } } function showCopySuccess(btn) { const originalText = btn.innerHTML; btn.innerHTML = '✅ 已复制！'; btn.classList.add('copied'); setTimeout(() => { btn.innerHTML = originalText; btn.classList.remove('copied'); }, 2000); } function showCopyError(btn) { const originalText = btn.innerHTML; btn.innerHTML = '❌ 复制失败'; btn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)'; setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; }, 2000); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); if (!answer) return; const question = answer.previousElementSibling; if (answer.classList.contains('show')) { answer.classList.remove('show'); question.classList.remove('active'); } else { document.querySelectorAll('.answer').forEach(a => a.classList.remove('show')); document.querySelectorAll('.question').forEach(q => q.classList.remove('active')); answer.classList.add('show'); question.classList.add('active'); } } const style = document.createElement('style'); style.textContent = ` @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } } `; document.head.appendChild(style);</script>
+
+{% endblock %}

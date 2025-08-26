@@ -1,0 +1,144 @@
+{
+  "name": "计算机科学学习平台",
+  "short_name": "CS学习平台",
+  "description": "专业的计算机科学学习平台，提供算法、数据结构、系统设计等全面的学习资源",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "72x72",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "96x96",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "128x128",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "144x144",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "152x152",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "384x384",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23667eea' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🎓</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "练习题库",
+      "short_name": "练习",
+      "description": "浏览和练习算法题目",
+      "url": "/exercises/",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%234ecdc4' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>📝</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "成就系统",
+      "short_name": "成就",
+      "description": "查看学习成就和进度",
+      "url": "/achievements/",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23feca57' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🏆</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "数据结构",
+      "short_name": "数据结构",
+      "description": "学习数据结构知识",
+      "url": "/category/data-structures/",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23ff6b6b' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>🧠</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "个人资料",
+      "short_name": "个人",
+      "description": "查看个人学习资料",
+      "url": "/users/profile/",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%2396ceb4' rx='20'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white'>👤</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 800'><rect width='400' height='800' fill='%23667eea'/><rect x='20' y='100' width='360' height='600' fill='white' rx='20'/><text x='200' y='200' font-size='24' text-anchor='middle' fill='%23333'>计算机科学学习平台</text><text x='200' y='250' font-size='16' text-anchor='middle' fill='%23666'>专业的学习体验</text></svg>",
+      "sizes": "400x800",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "移动端主页截图"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'><rect width='1200' height='800' fill='%23667eea'/><rect x='50' y='100' width='1100' height='600' fill='white' rx='20'/><text x='600' y='200' font-size='32' text-anchor='middle' fill='%23333'>计算机科学学习平台</text><text x='600' y='250' font-size='20' text-anchor='middle' fill='%23666'>桌面端完整体验</text></svg>",
+      "sizes": "1200x800",
+      "type": "image/svg+xml",
+      "form_factor": "wide",
+      "label": "桌面端主页截图"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "capture_links": "existing-client-navigate"
+}

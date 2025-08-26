@@ -1,0 +1,170 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}栈——括号匹配 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>栈——括号匹配</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔄</span>
+            栈——括号匹配
+        </h1><p>学习栈数据结构的经典应用，掌握括号配对检查的算法原理</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">🎯</span><strong>核心概念：</strong>利用栈的"后进先出"特性，检查括号是否正确配对和嵌套，确保每个左括号都有对应的右括号。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>栈(Stack)：</strong>后进先出的线性数据结构</li><li><strong>入栈(Push)：</strong>将元素添加到栈顶</li><li><strong>出栈(Pop)：</strong>从栈顶移除元素</li><li><strong>栈顶(Top)：</strong>栈中最后添加的元素位置</li><li><strong>括号匹配：</strong>检查括号配对是否正确</li></ul></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">学习指标</h4><div style="text-align: left;"><p><strong>难度等级：</strong><span style="color: #28a745;">入门级</span></p><p><strong>前置知识：</strong></p><ul style="margin: 5px 0;"><li>基本的数据结构概念</li><li>数组和字符串操作</li><li>简单的条件判断</li></ul></div></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">🥞</span><strong>栈的生活类比：</strong>想象一叠餐盘，只能从顶部放入或取出盘子。最后放上去的盘子会被最先取走。
+                </div><div class="info-box info-box-warning"><span class="info-icon">🔗</span><strong>括号匹配原理：</strong>左括号入栈等待配对，遇到右括号时从栈顶取出左括号进行匹配。
+                </div></div><h3>🔹 核心子概念分解</h3><div style="margin: 20px 0;"><h4>1️⃣ 栈的基本操作</h4><p>栈只允许在一端（栈顶）进行插入和删除操作，这就像一个只有一个开口的容器。</p><h4>2️⃣ 括号类型识别</h4><p>常见括号包括：小括号()、中括号[]、大括号{}。每种左括号都必须与对应的右括号配对。</p><h4>3️⃣ 配对检查逻辑</h4><p>遇到左括号就入栈，遇到右括号就检查栈顶是否为对应的左括号，是则出栈，否则匹配失败。</p><h4>4️⃣ 最终状态验证</h4><p>处理完所有字符后，栈必须为空才表示所有括号都正确配对。</p></div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易错点提醒：</strong><ul style="text-align: left; margin: 10px 0;"><li>忘记检查栈是否为空就尝试出栈</li><li>处理完成后忘记检查栈中是否还有剩余元素</li><li>括号类型不匹配（如"[)"这种情况）</li></ul></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><div class="demo-container" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;"><h3>🎯 交互式演示：自定义括号匹配检查</h3><!-- 输入区域 --><div style="margin-bottom: 20px;"><label for="customInput" style="display: block; margin-bottom: 8px; font-weight: bold;">输入要检查的字符串：</label><div style="display: flex; gap: 10px; align-items: center;"><input type="text" id="customInput" placeholder="请输入包含括号的字符串，如：({[]})"
+                               style="flex: 1; padding: 10px; border: 2px solid #007bff; border-radius: 5px; font-family: monospace; font-size: 16px;"
+                               value="({[]})" onkeyup="handleInputChange(event)"><button onclick="startDemo()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                            开始检查
+                        </button></div></div><div id="bracketDemo" style="margin: 20px 0;"><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="flex: 1; margin-right: 20px;"><h4>当前检查的字符串</h4><div id="inputString" style="font-family: monospace; font-size: 18px; padding: 10px; background: white; border: 2px solid #007bff; border-radius: 5px; min-height: 40px;">
+                                ({[]})
+                            </div></div><div style="flex: 1;"><h4>栈状态</h4><div id="stackDisplay" style="height: 200px; background: white; border: 2px solid #28a745; border-radius: 5px; position: relative; overflow: hidden;"><div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #6c757d;">栈底</div></div></div></div><div style="text-align: center;"><button id="stepBtn" onclick="nextStep()" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px;">下一步</button><button onclick="autoPlay()" id="autoBtn" style="background: #ffc107; color: #000; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px;">自动演示</button><button onclick="resetDemo()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px;">重置</button></div><div id="stepInfo" style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 5px; min-height: 50px;"><strong>准备开始：</strong>输入字符串，点击"开始检查"进行括号匹配验证
+                    </div></div></div><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">✅</span><strong>匹配成功示例：</strong><ul style="text-align: left;"><li>"()" - 简单配对</li><li>"({[]})" - 正确嵌套</li><li>"[({})]" - 复杂嵌套</li><li>"" - 空字符串</li></ul></div><div class="info-box info-box-danger"><span class="info-icon">❌</span><strong>匹配失败示例：</strong><ul style="text-align: left;"><li>"([)]" - 交叉嵌套</li><li>"(((" - 缺少右括号</li><li>")))" - 缺少左括号</li><li>"()[}" - 类型不匹配</li></ul></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">💻</span><h4 class="card-title">编程语言解析</h4><p class="card-description">编译器使用括号匹配检查代码语法的正确性，确保每个函数、条件语句的括号正确配对。</p></div><div class="grid-card"><span class="card-icon">📝</span><h4 class="card-title">文本编辑器</h4><p class="card-description">代码编辑器实时检查括号匹配，高亮显示配对的括号，帮助程序员编写正确的代码。</p></div><div class="grid-card"><span class="card-icon">🧮</span><h4 class="card-title">数学表达式</h4><p class="card-description">计算器应用使用括号匹配确保数学表达式的运算优先级正确。</p></div></div><h3>💡 多语言代码实现</h3><!-- 代码标签页 --><div style="margin: 20px 0;"><div class="code-tabs" style="display: flex; border-bottom: 2px solid #dee2e6;"><button class="tab-btn active" onclick="showCode('python')" data-lang="python">Python</button><button class="tab-btn" onclick="showCode('java')" data-lang="java">Java</button><button class="tab-btn" onclick="showCode('cpp')" data-lang="cpp">C++</button></div><!-- Python代码 --><div id="python-code" class="code-block"><div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d3748; color: white;"><span>Python 实现</span><button onclick="copyCode('python')" style="background: #4a5568; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            📋 复制代码
+                        </button></div><pre id="python-pre" style="margin: 0; background: #f8f9fa; padding: 15px; overflow-x: auto;"><code>def is_valid_brackets(s):
+    """
+    检查括号是否匹配
+    :param s: 输入字符串
+    :return: True表示匹配，False表示不匹配
+    """
+    stack = []
+    # 括号配对字典
+    pairs = {'(': ')', '[': ']', '{': '}'}
+
+    for char in s:
+        if char in pairs:  # 遇到左括号
+            stack.append(char)
+        elif char in pairs.values():  # 遇到右括号
+            # 栈为空或者括号不匹配
+            if not stack or pairs[stack.pop()] != char:
+                return False
+        # 忽略其他字符
+
+    # 栈为空表示所有括号都匹配
+    return len(stack) == 0
+
+# 测试示例
+test_cases = ["({[]})", "([)]", "(((" , ")", ""]
+for case in test_cases:
+    result = is_valid_brackets(case)
+    print(f"'{case}' -> {result}")
+</code></pre></div><!-- Java代码 --><div id="java-code" class="code-block" style="display: none;"><div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d3748; color: white;"><span>Java 实现</span><button onclick="copyCode('java')" style="background: #4a5568; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            📋 复制代码
+                        </button></div><pre id="java-pre" style="margin: 0; background: #f8f9fa; padding: 15px; overflow-x: auto;"><code>import java.util.*;
+
+public class BracketMatcher {
+    /**
+     * 检查括号是否匹配
+     * @param s 输入字符串
+     * @return true表示匹配，false表示不匹配
+     */
+    public static boolean isValidBrackets(String s) {
+        Stack&lt;Character&gt; stack = new Stack&lt;&gt;();
+        Map&lt;Character, Character&gt; pairs = new HashMap&lt;&gt;();
+
+        // 初始化括号配对
+        pairs.put('(', ')');
+        pairs.put('[', ']');
+        pairs.put('{', '}');
+
+        for (char c : s.toCharArray()) {
+            if (pairs.containsKey(c)) {  // 左括号
+                stack.push(c);
+            } else if (pairs.containsValue(c)) {  // 右括号
+                // 栈为空或者括号不匹配
+                if (stack.isEmpty() || pairs.get(stack.pop()) != c) {
+                    return false;
+                }
+            }
+            // 忽略其他字符
+        }
+
+        // 栈为空表示所有括号都匹配
+        return stack.isEmpty();
+    }
+
+    public static void main(String[] args) {
+        String[] testCases = {"({[]})", "([)]", "(((", ")", ""};
+        for (String testCase : testCases) {
+            boolean result = isValidBrackets(testCase);
+            System.out.println("'" + testCase + "' -> " + result);
+        }
+    }
+}
+</code></pre></div><!-- C++代码 --><div id="cpp-code" class="code-block" style="display: none;"><div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d3748; color: white;"><span>C++ 实现</span><button onclick="copyCode('cpp')" style="background: #4a5568; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            📋 复制代码
+                        </button></div><pre id="cpp-pre" style="margin: 0; background: #f8f9fa; padding: 15px; overflow-x: auto;"><code>#include &lt;iostream&gt;
+#include &lt;stack&gt;
+#include &lt;unordered_map&gt;
+#include &lt;string&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+/**
+ * 检查括号是否匹配
+ * @param s 输入字符串
+ * @return true表示匹配，false表示不匹配
+ */
+bool isValidBrackets(const string&amp; s) {
+    stack&lt;char&gt; st;
+    unordered_map&lt;char, char&gt; pairs = {
+        {'(', ')'},
+        {'[', ']'},
+        {'{', '}'}
+    };
+
+    for (char c : s) {
+        if (pairs.find(c) != pairs.end()) {  // 左括号
+            st.push(c);
+        } else if (c == ')' || c == ']' || c == '}') {  // 右括号
+            // 栈为空或者括号不匹配
+            if (st.empty() || pairs[st.top()] != c) {
+                return false;
+            }
+            st.pop();
+        }
+        // 忽略其他字符
+    }
+
+    // 栈为空表示所有括号都匹配
+    return st.empty();
+}
+
+int main() {
+    vector&lt;string&gt; testCases = {"({[]})", "([)]", "(((", ")", ""};
+
+    for (const string&amp; testCase : testCases) {
+        bool result = isValidBrackets(testCase);
+        cout &lt;&lt; "'" &lt;&lt; testCase &lt;&lt; "' -> " &lt;&lt; (result ? "true" : "false") &lt;&lt; endl;
+    }
+
+    return 0;
+}
+</code></pre></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div class="unified-grid unified-grid-1" style="gap: 15px;"><!-- 题目1 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q1')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目1：</strong>为什么要使用栈而不是队列来解决括号匹配问题？</span><span id="q1-icon">🔽</span></div><div id="q1-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：</strong></p><p>栈的"后进先出"特性与括号匹配的逻辑完美契合：</p><ul style="text-align: left; margin: 10px 0;"><li><strong>匹配顺序：</strong>最近遇到的左括号应该与最先遇到的右括号匹配</li><li><strong>嵌套结构：</strong>括号的嵌套特点符合栈的层级处理方式</li><li><strong>队列问题：</strong>队列的"先进先出"特性无法正确处理嵌套括号，如"({[]})"中的配对关系</li></ul><p>例如：处理"([)]"时，栈能正确识别这是错误的交叉嵌套，而队列无法做到。</p></div></div><!-- 题目2 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q2')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目2：</strong>字符串"a(b[c{d}e]f)g"是否匹配？请说明判断过程。</span><span id="q2-icon">🔽</span></div><div id="q2-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：匹配成功</strong></p><p><strong>详细过程：</strong></p><ol style="text-align: left; margin: 10px 0;"><li>a - 非括号字符，忽略</li><li>( - 左括号入栈，栈：['(']</li><li>b - 非括号字符，忽略</li><li>[ - 左括号入栈，栈：['(', '[']</li><li>c - 非括号字符，忽略</li><li>{ - 左括号入栈，栈：['(', '[', '{']</li><li>d - 非括号字符，忽略</li><li>} - 右括号，与栈顶{匹配，出栈，栈：['(', '[']</li><li>e - 非括号字符，忽略</li><li>] - 右括号，与栈顶[匹配，出栈，栈：['(']</li><li>f - 非括号字符，忽略</li><li>) - 右括号，与栈顶(匹配，出栈，栈：[]</li><li>g - 非括号字符，忽略</li></ol><p>最终栈为空，所以括号匹配成功。</p></div></div><!-- 题目3 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q3')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目3：</strong>如何优化算法以支持自定义的括号类型？</span><span id="q3-icon">🔽</span></div><div id="q3-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：</strong></p><p><strong>设计思路：</strong></p><ul style="text-align: left; margin: 10px 0;"><li><strong>配置化：</strong>将括号对定义为可配置的映射表</li><li><strong>动态扩展：</strong>支持任意字符作为配对括号</li><li><strong>验证机制：</strong>确保配置的括号对不冲突</li></ul><p><strong>实现示例：</strong></p><pre style="background: #2d3748; color: white; padding: 10px; border-radius: 4px; font-size: 12px;">
+def custom_bracket_matcher(s, bracket_pairs):
+    """
+    bracket_pairs: 自定义括号对，如 {'&lt;': '&gt;', '«': '»'}
+    """
+    stack = []
+    for char in s:
+        if char in bracket_pairs:  # 左括号
+            stack.append(char)
+        elif char in bracket_pairs.values():  # 右括号
+            if not stack or bracket_pairs[stack.pop()] != char:
+                return False
+    return len(stack) == 0</pre></div></div><!-- 题目4 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q4')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目4：</strong>分析括号匹配算法的时间复杂度和空间复杂度。</span><span id="q4-icon">🔽</span></div><div id="q4-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：</strong></p><div style="text-align: left;"><p><strong>时间复杂度：O(n)</strong></p><ul style="margin: 5px 0;"><li>遍历字符串一次：O(n)</li><li>每个字符最多入栈和出栈各一次：O(1)</li><li>栈操作（push/pop）时间复杂度：O(1)</li></ul><p><strong>空间复杂度：O(n)</strong></p><ul style="margin: 5px 0;"><li>最坏情况：全是左括号，栈存储n个元素</li><li>最好情况：交替出现配对括号，栈几乎为空</li><li>平均情况：栈深度约为n/2</li></ul><p><strong>优化建议：</strong></p><ul style="margin: 5px 0;"><li>提前返回：遇到不匹配立即返回false</li><li>容量预分配：根据输入长度预分配栈空间</li><li>字符过滤：忽略非括号字符，减少处理开销</li></ul></div></div></div></div><div class="info-box info-box-info" style="margin-top: 20px;"><span class="info-icon">📚</span><strong>进阶学习路径：</strong>
+                掌握括号匹配后，可以学习：表达式求值、函数调用栈、浏览器的前进后退功能、撤销重做操作、深度优先搜索(DFS)等更复杂的栈应用。
+            </div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.code-tabs {background:#f8f9fa}.tab-btn {background:#e9ecef;border:none;padding:12px 24px;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.3s ease}.tab-btn.active {background:#fff;border-bottom-color:#007bff;color:#007bff;font-weight:bold}.tab-btn:hover {background:#fff}.code-block {border:1px solid #dee2e6;border-top:none}.question-card {transition:all 0.3s ease}.question-card:hover {box-shadow:0 2px 8px rgba(0,0,0,0.1)}.question-header {transition:background-color 0.3s ease}.question-header:hover {background:#e9ecef !important}.answer-content {animation:fadeIn 0.3s ease}@keyframes fadeIn {from {opacity:0}to {opacity:1}}</style><script>let currentStep = 0; let currentInput = "({[]})"; let steps = []; let autoInterval; function initializeSteps(input) { steps = [{char: '', stack: [], info: "准备开始检查括号匹配，栈为空状态", success: true}]; const stack = []; const pairs = {'(': ')', '[': ']', '{': '}'}; let success = true; for (let i = 0; i < input.length; i++) { const char = input[i]; let info = ''; if (pairs[char]) { stack.push(char); info = `遇到左括号'${char}'，将其入栈`; } else if (Object.values(pairs).includes(char)) { if (stack.length === 0) { info = `遇到右括号'${char}'，但栈为空！匹配失败`; success = false; steps.push({char, stack: [...stack], info, success, index: i}); break; } else { const top = stack.pop(); if (pairs[top] === char) { info = `遇到右括号'${char}'，与栈顶'${top}'匹配，出栈`; } else { info = `遇到右括号'${char}'，但栈顶是'${top}'！类型不匹配，匹配失败`; success = false; steps.push({char, stack: [...stack], info, success, index: i}); break; } } } else { info = `遇到非括号字符'${char}'，忽略`; } steps.push({char, stack: [...stack], info, success: true, index: i}); } if (success) { if (stack.length === 0) { steps.push({char: '', stack: [], info: "检查完成！栈为空，所有括号匹配成功！", success: true, final: true}); } else { steps.push({char: '', stack: [...stack], info: `检查完成！栈中还有${stack.length}个未匹配的左括号，匹配失败`, success: false, final: true}); } } } function updateDisplay() { const step = steps[currentStep]; const inputDiv = document.getElementById('inputString'); let highlighted = ''; for (let i = 0; i < currentInput.length; i++) { if (i < (step.index !== undefined ? step.index : currentStep - 1)) { highlighted += `<span style="color: #28a745;">${currentInput[i]}</span>`; } else if (i === (step.index !== undefined ? step.index : currentStep - 1) && currentStep > 0) { const color = step.success ? '#ffc107' : '#dc3545'; highlighted += `<span style="background: ${color}; color: #000; padding: 2px 4px; border-radius: 3px;">${currentInput[i]}</span>`; } else { highlighted += currentInput[i]; } } inputDiv.innerHTML = highlighted || currentInput; const stackDiv = document.getElementById('stackDisplay'); stackDiv.innerHTML = '<div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #6c757d;">栈底</div>'; step.stack.forEach((item, index) => { const element = document.createElement('div'); element.style.cssText = ` position: absolute; bottom: ${30 + index * 40}px; left: 50%; transform: translateX(-50%); background: ${step.success ? '#007bff' : '#dc3545'}; color: white; padding: 8px 16px; border-radius: 5px; font-weight: bold; font-size: 18px; animation: slideIn 0.3s ease; `; element.textContent = item; stackDiv.appendChild(element); }); const infoColor = step.success ? '#e3f2fd' : '#ffebee'; document.getElementById('stepInfo').innerHTML = `<strong>第${currentStep}步：</strong>${step.info}`; document.getElementById('stepInfo').style.background = infoColor; const stepBtn = document.getElementById('stepBtn'); if (currentStep >= steps.length - 1) { stepBtn.textContent = '演示完成'; stepBtn.disabled = true; stepBtn.style.background = '#6c757d'; } else { stepBtn.textContent = '下一步'; stepBtn.disabled = false; stepBtn.style.background = '#007bff'; } } function nextStep() { if (currentStep < steps.length - 1) { currentStep++; updateDisplay(); } } function startDemo() { currentInput = document.getElementById('customInput').value.trim(); if (!currentInput) { alert('请输入要检查的字符串！'); return; } currentStep = 0; initializeSteps(currentInput); updateDisplay(); const stepBtn = document.getElementById('stepBtn'); stepBtn.disabled = false; stepBtn.style.background = '#007bff'; stepBtn.textContent = '下一步'; if (autoInterval) { clearInterval(autoInterval); autoInterval = null; document.getElementById('autoBtn').textContent = '自动演示'; } } function autoPlay() { const autoBtn = document.getElementById('autoBtn'); if (autoInterval) { clearInterval(autoInterval); autoInterval = null; autoBtn.textContent = '自动演示'; return; } autoBtn.textContent = '停止自动'; autoInterval = setInterval(() => { if (currentStep < steps.length - 1) { nextStep(); } else { clearInterval(autoInterval); autoInterval = null; autoBtn.textContent = '自动演示'; } }, 1500); } function resetDemo() { currentStep = 0; if (autoInterval) { clearInterval(autoInterval); autoInterval = null; document.getElementById('autoBtn').textContent = '自动演示'; } if (steps.length > 0) { updateDisplay(); } else { currentInput = document.getElementById('customInput').value.trim() || "({[]})"; initializeSteps(currentInput); updateDisplay(); } } function handleInputChange(event) { if (event.key === 'Enter') { startDemo(); } } function showCode(language) { document.querySelectorAll('.code-block').forEach(block => { block.style.display = 'none'; }); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); }); document.getElementById(language + '-code').style.display = 'block'; document.querySelector(`[data-lang="${language}"]`).classList.add('active'); } async function copyCode(language) { const codeElement = document.getElementById(language + '-pre'); const text = codeElement.textContent; try { await navigator.clipboard.writeText(text); const button = document.querySelector(`#${language}-code button`); const originalText = button.innerHTML; button.innerHTML = '✅ 已复制'; button.style.background = '#28a745'; setTimeout(() => { button.innerHTML = originalText; button.style.background = '#4a5568'; }, 2000); } catch (err) { alert('复制失败，请手动选择代码复制'); } } function toggleAnswer(questionId) { const answer = document.getElementById(questionId + '-answer'); const icon = document.getElementById(questionId + '-icon'); if (answer.style.display === 'none') { answer.style.display = 'block'; icon.textContent = '🔼'; } else { answer.style.display = 'none'; icon.textContent = '🔽'; } } document.addEventListener('DOMContentLoaded', function() { initializeSteps(currentInput); updateDisplay(); }); const style = document.createElement('style'); style.textContent = ` @keyframes slideIn { from { transform: translateX(-50%) translateY(20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } } `; document.head.appendChild(style);</script>
+
+{% endblock %}

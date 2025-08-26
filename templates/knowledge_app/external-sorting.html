@@ -1,0 +1,2703 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"外部排序" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>{{ breadcrumb_category|default:"算法设计" }}</span>
+        <span>></span>
+        <span>{{ page_title|default:"外部排序" }}</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">🗂️</span>
+            外部排序 (External Sorting)
+        </h1>
+        <p>掌握处理超大数据集排序的核心算法</p>
+    </div>
+
+    <!-- 📋 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                知识点概述
+            </h2>
+
+            <div class="concept-overview">
+                <div class="core-concept">
+                    <h3>🎯 核心概念</h3>
+                    <p><strong>外部排序</strong>是用于排序无法完全装入内存的大型数据集的算法。它通过分治策略，将大文件分成小块，分别排序后再合并，有效解决内存限制问题。</p>
+                </div>
+
+                <div class="unified-grid unified-grid-3">
+                    <div class="grid-card">
+                        <span class="card-icon">📁</span>
+                        <h4>分块排序 (Block Sort)</h4>
+                        <p>将大文件分成可装入内存的小块进行排序</p>
+                    </div>
+                    <div class="grid-card">
+                        <span class="card-icon">🔄</span>
+                        <h4>多路归并 (K-way Merge)</h4>
+                        <p>同时合并多个已排序的数据块</p>
+                    </div>
+                    <div class="grid-card">
+                        <span class="card-icon">💾</span>
+                        <h4>I/O优化 (I/O Optimization)</h4>
+                        <p>最小化磁盘读写操作，提高整体效率</p>
+                    </div>
+                </div>
+
+                <div class="unified-grid unified-grid-2">
+                    <div class="info-box info-box-info">
+                        <span class="info-icon">📈</span>
+                        <strong>学习难度：</strong>进阶级 - 需要理解分治算法和I/O系统
+                    </div>
+                    <div class="info-box info-box-warning">
+                        <span class="info-icon">📚</span>
+                        <strong>前置知识：</strong>内部排序算法、分治思想、文件系统基础
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 概念详解 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🔍</span>
+                概念详解
+            </h2>
+
+            <div class="concept-breakdown">
+                <div class="concept-item">
+                    <h3>1️⃣ 为什么需要外部排序？</h3>
+                    <p>当数据量超过可用内存时，传统的内部排序算法就无法工作。就像<strong>整理一个巨大的图书馆</strong>，无法同时把所有书搬到桌子上，只能分批处理，每次整理一小部分，最后再按顺序合并。</p>
+                </div>
+
+                <div class="concept-item">
+                    <h3>2️⃣ 分治策略</h3>
+                    <p>外部排序采用<strong>两阶段分治法</strong>：第一阶段将大文件分割成小块并排序，第二阶段将排序好的小块合并。如同<strong>流水线生产</strong>，先在各个工作站完成零件加工，再组装成最终产品。</p>
+                </div>
+
+                <div class="concept-item">
+                    <h3>3️⃣ 多路归并</h3>
+                    <p>同时处理多个已排序的数据流，选择当前最小值输出。类似于<strong>多条高速公路汇合</strong>，需要智能调度确保车流有序合并而不发生拥堵。</p>
+                </div>
+
+                <div class="concept-item">
+                    <h3>4️⃣ I/O优化策略</h3>
+                    <p>合理使用缓冲区，减少磁盘访问次数。就像<strong>批发采购</strong>，一次性买更多商品比频繁小批量采购更经济高效。</p>
+                </div>
+
+                <div class="common-mistakes">
+                    <h4>🚨 常见误区</h4>
+                    <ul>
+                        <li><strong>误区1：</strong>认为分块越小越好 → 过小的块会增加归并复杂度和I/O开销</li>
+                        <li><strong>误区2：</strong>忽略缓冲区管理 → 不合理的缓冲区使用会严重影响性能</li>
+                        <li><strong>误区3：</strong>只考虑时间复杂度 → 外部排序更需要关注I/O复杂度和空间使用</li>
+                        <li><strong>误区4：</strong>归并路数越多越好 → 过多的归并路数会增加内存压力</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 可视化展示 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                可视化展示
+            </h2>
+
+            <!-- 静态结构图 -->
+            <div class="visualization-container">
+                <h3>📈 外部排序流程图</h3>
+                <div class="static-diagram">
+                    <canvas id="sortingCanvas" width="900" height="500" style="border: 1px solid #ddd; border-radius: 8px;"></canvas>
+                </div>
+            </div>
+
+            <!-- 动态演示控制器 -->
+            <div class="demo-controls">
+                <h3>🎮 交互式演示</h3>
+                <div class="data-input-section">
+                    <h4>📝 输入数据配置</h4>
+                    <div class="input-controls">
+                        <label>数据规模：
+                            <select id="dataSize">
+                                <option value="20">小数据集(20个)</option>
+                                <option value="50" selected>中数据集(50个)</option>
+                                <option value="100">大数据集(100个)</option>
+                            </select>
+                        </label>
+                        <label>内存大小：
+                            <select id="memorySize">
+                                <option value="5">5个元素</option>
+                                <option value="10" selected>10个元素</option>
+                                <option value="15">15个元素</option>
+                            </select>
+                        </label>
+                        <label>归并路数：
+                            <select id="mergeWays">
+                                <option value="2" selected>2路归并</option>
+                                <option value="3">3路归并</option>
+                                <option value="4">4路归并</option>
+                            </select>
+                        </label>
+                        <button id="generateData" class="unified-btn unified-btn-secondary">🎲 生成随机数据</button>
+                    </div>
+                </div>
+                <div class="control-panel">
+                    <button id="startDemo" class="unified-btn unified-btn-primary">开始演示</button>
+                    <button id="stepPhase1" class="unified-btn unified-btn-secondary">阶段1：分块排序</button>
+                    <button id="stepPhase2" class="unified-btn unified-btn-secondary">阶段2：多路归并</button>
+                    <button id="showComplexity" class="unified-btn unified-btn-success">复杂度分析</button>
+                    <button id="resetDemo" class="unified-btn unified-btn-warning">重置</button>
+                </div>
+                <div id="stepInfo" class="step-info"></div>
+            </div>
+
+            <!-- 实时状态显示 -->
+            <div class="status-display">
+                <div class="status-grid">
+                    <div class="status-card">
+                        <h4>📁 磁盘状态</h4>
+                        <div id="diskStatus" class="status-content"></div>
+                    </div>
+                    <div class="status-card">
+                        <h4>💾 内存状态</h4>
+                        <div id="memoryStatus" class="status-content"></div>
+                    </div>
+                    <div class="status-card">
+                        <h4>📊 I/O统计</h4>
+                        <div id="ioStats" class="status-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 计算过程展示 -->
+            <div class="calculation-display">
+                <h3>📝 算法执行过程</h3>
+                <div id="calculationSteps" class="calculation-steps"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 实际应用 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🌟</span>
+                实际应用
+            </h2>
+
+            <div class="applications">
+                <div class="app-example">
+                    <h3>🗄️ 大型数据库排序</h3>
+                    <p>在数据库管理系统中，当需要对TB级别的数据进行ORDER BY操作时，DBMS会使用外部排序算法，确保即使数据量远超内存容量也能高效完成排序。</p>
+                </div>
+
+                <div class="app-example">
+                    <h3>📈 大数据分析</h3>
+                    <p>Hadoop MapReduce框架中的Shuffle阶段使用外部排序对中间结果进行排序，使得分布式系统能够处理PB级数据的排序和聚合操作。</p>
+                </div>
+
+                <div class="app-example">
+                    <h3>🔍 搜索引擎索引</h3>
+                    <p>构建搜索引擎的倒排索引时，需要对海量网页词汇进行排序。外部排序确保在内存有限的情况下，能够处理整个互联网的词汇索引。</p>
+                </div>
+            </div>
+
+            <!-- 代码示例 -->
+            <div class="code-examples">
+                <h3>💻 算法实现</h3>
+
+                <!-- 语言选择器 -->
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="python">Python</button>
+                    <button class="lang-btn" data-lang="java">Java</button>
+                    <button class="lang-btn" data-lang="cpp">C++</button>
+                </div>
+
+                <!-- Python代码 -->
+                <div id="code-python" class="code-container active">
+                    <div class="code-header">
+                        <span>Python实现</span>
+                        <button class="copy-btn" data-code="python">📋 复制代码</button>
+                    </div>
+                    <pre><code class="python">import heapq
+import tempfile
+import os
+from typing import List, Iterator, TextIO
+
+class ExternalSort:
+    def __init__(self, memory_size: int = 1000000):
+        """
+        外部排序实现
+        :param memory_size: 可用内存大小（元素个数）
+        """
+        self.memory_size = memory_size
+        self.temp_files = []
+        self.io_operations = 0
+
+    def sort_file(self, input_file: str, output_file: str) -> None:
+        """对大文件进行外部排序"""
+        print(f"开始外部排序：{input_file} -> {output_file}")
+
+        # 阶段1：分块排序
+        sorted_chunks = self._create_sorted_chunks(input_file)
+        print(f"创建了 {len(sorted_chunks)} 个排序块")
+
+        # 阶段2：多路归并
+        self._merge_chunks(sorted_chunks, output_file)
+        print("归并完成，清理临时文件")
+
+        # 清理临时文件
+        self._cleanup_temp_files()
+
+        print(f"排序完成，总I/O操作次数：{self.io_operations}")
+
+    def _create_sorted_chunks(self, input_file: str) -> List[str]:
+        """将输入文件分成排序好的小块"""
+        sorted_chunks = []
+
+        with open(input_file, 'r') as file:
+            while True:
+                # 读取一个内存块大小的数据
+                chunk = []
+                for _ in range(self.memory_size):
+                    line = file.readline()
+                    if not line:
+                        break
+                    chunk.append(int(line.strip()))
+
+                if not chunk:
+                    break
+
+                self.io_operations += len(chunk)  # 记录读操作
+
+                # 在内存中排序
+                chunk.sort()
+
+                # 写入临时文件
+                temp_file = tempfile.NamedTemporaryFile(
+                    mode='w', delete=False, suffix='.tmp'
+                )
+                for num in chunk:
+                    temp_file.write(f"{num}\n")
+                temp_file.close()
+
+                self.io_operations += len(chunk)  # 记录写操作
+                sorted_chunks.append(temp_file.name)
+                self.temp_files.append(temp_file.name)
+
+        return sorted_chunks
+
+    def _merge_chunks(self, chunk_files: List[str], output_file: str) -> None:
+        """使用k路归并合并排序好的块"""
+        # 打开所有块文件
+        file_handles = []
+        for filename in chunk_files:
+            file_handles.append(open(filename, 'r'))
+
+        # 使用最小堆进行k路归并
+        heap = []
+
+        # 初始化堆：从每个文件读取第一个元素
+        for i, file_handle in enumerate(file_handles):
+            line = file_handle.readline()
+            if line:
+                heapq.heappush(heap, (int(line.strip()), i))
+                self.io_operations += 1
+
+        # 执行归并过程
+        with open(output_file, 'w') as output:
+            while heap:
+                # 取出最小元素
+                min_val, file_idx = heapq.heappop(heap)
+                output.write(f"{min_val}\n")
+                self.io_operations += 1
+
+                # 从相应文件读取下一个元素
+                next_line = file_handles[file_idx].readline()
+                if next_line:
+                    heapq.heappush(heap, (int(next_line.strip()), file_idx))
+                    self.io_operations += 1
+
+        # 关闭所有文件句柄
+        for file_handle in file_handles:
+            file_handle.close()
+
+    def _cleanup_temp_files(self) -> None:
+        """清理临时文件"""
+        for temp_file in self.temp_files:
+            try:
+                os.unlink(temp_file)
+            except OSError:
+                pass
+        self.temp_files.clear()
+
+# 使用示例和性能测试
+def generate_test_data(filename: str, size: int) -> None:
+    """生成测试数据"""
+    import random
+    with open(filename, 'w') as file:
+        for _ in range(size):
+            file.write(f"{random.randint(1, 1000000)}\n")
+
+def verify_sorted(filename: str) -> bool:
+    """验证文件是否已排序"""
+    with open(filename, 'r') as file:
+        prev = float('-inf')
+        for line in file:
+            current = int(line.strip())
+            if current < prev:
+                return False
+            prev = current
+    return True
+
+# 性能测试函数
+def benchmark_external_sort():
+    """外部排序性能基准测试"""
+    test_sizes = [10000, 50000, 100000]
+    memory_sizes = [1000, 5000, 10000]
+
+    print("外部排序性能测试")
+    print("=" * 50)
+
+    for data_size in test_sizes:
+        print(f"\n数据规模: {data_size:,} 个元素")
+
+        # 生成测试数据
+        input_file = f"test_input_{data_size}.txt"
+        generate_test_data(input_file, data_size)
+
+        for mem_size in memory_sizes:
+            if mem_size >= data_size:
+                continue
+
+            print(f"  内存大小: {mem_size:,} 个元素")
+
+            # 执行外部排序
+            import time
+            start_time = time.time()
+
+            sorter = ExternalSort(memory_size=mem_size)
+            output_file = f"sorted_output_{data_size}_{mem_size}.txt"
+            sorter.sort_file(input_file, output_file)
+
+            end_time = time.time()
+
+            # 验证结果
+            is_sorted = verify_sorted(output_file)
+
+            print(f"    时间: {end_time - start_time:.2f}s")
+            print(f"    I/O操作: {sorter.io_operations:,}")
+            print(f"    块数: {len(sorter.temp_files)}")
+            print(f"    正确性: {'✓' if is_sorted else '✗'}")
+
+            # 清理文件
+            os.unlink(output_file)
+
+        os.unlink(input_file)
+
+if __name__ == "__main__":
+    # 简单示例
+    sorter = ExternalSort(memory_size=5)  # 内存只能容纳5个元素
+
+    # 创建测试文件
+    generate_test_data("large_input.txt", 20)
+
+    # 执行排序
+    sorter.sort_file("large_input.txt", "sorted_output.txt")
+
+    # 验证结果
+    print("排序结果验证:", "成功" if verify_sorted("sorted_output.txt") else "失败")
+
+    # 运行性能测试
+    benchmark_external_sort()</code></pre>
+                </div>
+
+                <!-- Java代码 -->
+                <div id="code-java" class="code-container">
+                    <div class="code-header">
+                        <span>Java实现</span>
+                        <button class="copy-btn" data-code="java">📋 复制代码</button>
+                    </div>
+                    <pre><code class="java">import java.io.*;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class ExternalSort {
+    private final int memorySize;
+    private final List&lt;String&gt; tempFiles;
+    private final AtomicInteger ioOperations;
+
+    public ExternalSort(int memorySize) {
+        this.memorySize = memorySize;
+        this.tempFiles = new ArrayList&lt;&gt;();
+        this.ioOperations = new AtomicInteger(0);
+    }
+
+    /**
+     * 对大文件进行外部排序
+     */
+    public void sortFile(String inputFile, String outputFile) throws IOException {
+        System.out.println("开始外部排序：" + inputFile + " -> " + outputFile);
+
+        // 阶段1：创建排序块
+        List&lt;String&gt; sortedChunks = createSortedChunks(inputFile);
+        System.out.println("创建了 " + sortedChunks.size() + " 个排序块");
+
+        // 阶段2：多路归并
+        mergeChunks(sortedChunks, outputFile);
+
+        // 清理临时文件
+        cleanupTempFiles();
+
+        System.out.println("排序完成，总I/O操作次数：" + ioOperations.get());
+    }
+
+    /**
+     * 创建排序好的数据块
+     */
+    private List&lt;String&gt; createSortedChunks(String inputFile) throws IOException {
+        List&lt;String&gt; chunks = new ArrayList&lt;&gt;();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
+            List&lt;Integer&gt; buffer = new ArrayList&lt;&gt;();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                buffer.add(Integer.parseInt(line.trim()));
+                ioOperations.incrementAndGet();
+
+                // 当缓冲区满时，排序并写入临时文件
+                if (buffer.size() >= memorySize) {
+                    String chunkFile = writeChunkToFile(buffer);
+                    chunks.add(chunkFile);
+                    buffer.clear();
+                }
+            }
+
+            // 处理剩余数据
+            if (!buffer.isEmpty()) {
+                String chunkFile = writeChunkToFile(buffer);
+                chunks.add(chunkFile);
+            }
+        }
+
+        return chunks;
+    }
+
+    /**
+     * 将缓冲区数据排序并写入文件
+     */
+    private String writeChunkToFile(List&lt;Integer&gt; buffer) throws IOException {
+        // 排序
+        Collections.sort(buffer);
+
+        // 创建临时文件
+        File tempFile = File.createTempFile("chunk_", ".tmp");
+        tempFile.deleteOnExit();
+        tempFiles.add(tempFile.getAbsolutePath());
+
+        // 写入文件
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+            for (Integer num : buffer) {
+                writer.write(num.toString());
+                writer.newLine();
+                ioOperations.incrementAndGet();
+            }
+        }
+
+        return tempFile.getAbsolutePath();
+    }
+
+    /**
+     * 使用k路归并合并所有排序块
+     */
+    private void mergeChunks(List&lt;String&gt; chunkFiles, String outputFile) throws IOException {
+        // 优先队列用于k路归并
+        PriorityQueue&lt;ChunkReader&gt; minHeap = new PriorityQueue&lt;&gt;();
+
+        // 初始化所有块的读取器
+        for (String chunkFile : chunkFiles) {
+            ChunkReader reader = new ChunkReader(chunkFile);
+            if (reader.hasNext()) {
+                minHeap.offer(reader);
+            }
+        }
+
+        // 执行归并
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
+            while (!minHeap.isEmpty()) {
+                ChunkReader minReader = minHeap.poll();
+                int minValue = minReader.getCurrentValue();
+
+                // 写入最小值
+                writer.write(String.valueOf(minValue));
+                writer.newLine();
+                ioOperations.incrementAndGet();
+
+                // 从同一块读取下一个值
+                if (minReader.nextValue()) {
+                    minHeap.offer(minReader);
+                } else {
+                    minReader.close();
+                }
+            }
+        }
+    }
+
+    /**
+     * 数据块读取器
+     */
+    private class ChunkReader implements Comparable&lt;ChunkReader&gt;, Closeable {
+        private final BufferedReader reader;
+        private Integer currentValue;
+
+        public ChunkReader(String filename) throws IOException {
+            this.reader = new BufferedReader(new FileReader(filename));
+            nextValue();
+        }
+
+        public boolean hasNext() {
+            return currentValue != null;
+        }
+
+        public int getCurrentValue() {
+            return currentValue;
+        }
+
+        public boolean nextValue() throws IOException {
+            String line = reader.readLine();
+            if (line != null) {
+                currentValue = Integer.parseInt(line.trim());
+                ioOperations.incrementAndGet();
+                return true;
+            } else {
+                currentValue = null;
+                return false;
+            }
+        }
+
+        @Override
+        public int compareTo(ChunkReader other) {
+            return Integer.compare(this.currentValue, other.currentValue);
+        }
+
+        @Override
+        public void close() throws IOException {
+            reader.close();
+        }
+    }
+
+    /**
+     * 清理临时文件
+     */
+    private void cleanupTempFiles() {
+        for (String tempFile : tempFiles) {
+            new File(tempFile).delete();
+        }
+        tempFiles.clear();
+    }
+
+    // 工具方法
+    public static void generateTestData(String filename, int size) throws IOException {
+        Random random = new Random();
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (int i = 0; i < size; i++) {
+                writer.write(String.valueOf(random.nextInt(1000000)));
+                writer.newLine();
+            }
+        }
+    }
+
+    public static boolean verifySorted(String filename) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line = reader.readLine();
+            if (line == null) return true;
+
+            int prev = Integer.parseInt(line.trim());
+            while ((line = reader.readLine()) != null) {
+                int current = Integer.parseInt(line.trim());
+                if (current < prev) {
+                    return false;
+                }
+                prev = current;
+            }
+        }
+        return true;
+    }
+
+    // 性能测试
+    public static void benchmarkExternalSort() throws IOException {
+        int[] dataSizes = {10000, 50000, 100000};
+        int[] memorySizes = {1000, 5000, 10000};
+
+        System.out.println("外部排序性能测试");
+        System.out.println("=".repeat(50));
+
+        for (int dataSize : dataSizes) {
+            System.out.println("\n数据规模: " + String.format("%,d", dataSize) + " 个元素");
+
+            String inputFile = "test_input_" + dataSize + ".txt";
+            generateTestData(inputFile, dataSize);
+
+            for (int memSize : memorySizes) {
+                if (memSize >= dataSize) continue;
+
+                System.out.println("  内存大小: " + String.format("%,d", memSize) + " 个元素");
+
+                long startTime = System.currentTimeMillis();
+
+                ExternalSort sorter = new ExternalSort(memSize);
+                String outputFile = "sorted_output_" + dataSize + "_" + memSize + ".txt";
+                sorter.sortFile(inputFile, outputFile);
+
+                long endTime = System.currentTimeMillis();
+                boolean isSorted = verifySorted(outputFile);
+
+                System.out.printf("    时间: %.2fs\n", (endTime - startTime) / 1000.0);
+                System.out.println("    I/O操作: " + String.format("%,d", sorter.ioOperations.get()));
+                System.out.println("    块数: " + sorter.tempFiles.size());
+                System.out.println("    正确性: " + (isSorted ? "✓" : "✗"));
+
+                new File(outputFile).delete();
+            }
+
+            new File(inputFile).delete();
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        // 简单示例
+        ExternalSort sorter = new ExternalSort(5);  // 内存只能容纳5个元素
+
+        // 创建测试文件
+        generateTestData("large_input.txt", 20);
+
+        // 执行排序
+        sorter.sortFile("large_input.txt", "sorted_output.txt");
+
+        // 验证结果
+        boolean isSorted = verifySorted("sorted_output.txt");
+        System.out.println("排序结果验证: " + (isSorted ? "成功" : "失败"));
+
+        // 运行性能测试
+        benchmarkExternalSort();
+
+        // 清理测试文件
+        new File("large_input.txt").delete();
+        new File("sorted_output.txt").delete();
+    }
+}</code></pre>
+                </div>
+
+                <!-- C++代码 -->
+                <div id="code-cpp" class="code-container">
+                    <div class="code-header">
+                        <span>C++实现</span>
+                        <button class="copy-btn" data-code="cpp">📋 复制代码</button>
+                    </div>
+                    <pre><code class="cpp">#include &lt;iostream&gt;
+#include &lt;fstream&gt;
+#include &lt;vector&gt;
+#include &lt;queue&gt;
+#include &lt;algorithm&gt;
+#include &lt;string&gt;
+#include &lt;random&gt;
+#include &lt;chrono&gt;
+#include &lt;iomanip&gt;
+
+class ExternalSort {
+private:
+    int memorySize;
+    std::vector&lt;std::string&gt; tempFiles;
+    int ioOperations;
+
+    struct ChunkReader {
+        std::ifstream file;
+        int currentValue;
+        bool hasValue;
+        int chunkId;
+
+        ChunkReader(const std::string&amp; filename, int id) : chunkId(id), hasValue(false) {
+            file.open(filename);
+            if (file.is_open()) {
+                nextValue();
+            }
+        }
+
+        bool nextValue() {
+            if (file &gt;&gt; currentValue) {
+                hasValue = true;
+                return true;
+            } else {
+                hasValue = false;
+                return false;
+            }
+        }
+
+        bool operator&gt;(const ChunkReader&amp; other) const {
+            return currentValue &gt; other.currentValue;
+        }
+
+        ~ChunkReader() {
+            if (file.is_open()) {
+                file.close();
+            }
+        }
+    };
+
+public:
+    ExternalSort(int memSize) : memorySize(memSize), ioOperations(0) {}
+
+    /**
+     * 对大文件进行外部排序
+     */
+    void sortFile(const std::string&amp; inputFile, const std::string&amp; outputFile) {
+        std::cout &lt;&lt; "开始外部排序：" &lt;&lt; inputFile &lt;&lt; " -> " &lt;&lt; outputFile &lt;&lt; std::endl;
+
+        // 阶段1：创建排序块
+        std::vector&lt;std::string&gt; sortedChunks = createSortedChunks(inputFile);
+        std::cout &lt;&lt; "创建了 " &lt;&lt; sortedChunks.size() &lt;&lt; " 个排序块" &lt;&lt; std::endl;
+
+        // 阶段2：多路归并
+        mergeChunks(sortedChunks, outputFile);
+
+        // 清理临时文件
+        cleanupTempFiles();
+
+        std::cout &lt;&lt; "排序完成，总I/O操作次数：" &lt;&lt; ioOperations &lt;&lt; std::endl;
+    }
+
+private:
+    /**
+     * 创建排序好的数据块
+     */
+    std::vector&lt;std::string&gt; createSortedChunks(const std::string&amp; inputFile) {
+        std::vector&lt;std::string&gt; chunks;
+        std::ifstream input(inputFile);
+
+        if (!input.is_open()) {
+            throw std::runtime_error("无法打开输入文件");
+        }
+
+        std::vector&lt;int&gt; buffer;
+        buffer.reserve(memorySize);
+        int value;
+        int chunkIndex = 0;
+
+        while (input &gt;&gt; value) {
+            buffer.push_back(value);
+            ioOperations++;
+
+            if (buffer.size() &gt;= memorySize) {
+                std::string chunkFile = writeChunkToFile(buffer, chunkIndex++);
+                chunks.push_back(chunkFile);
+                buffer.clear();
+            }
+        }
+
+        // 处理剩余数据
+        if (!buffer.empty()) {
+            std::string chunkFile = writeChunkToFile(buffer, chunkIndex);
+            chunks.push_back(chunkFile);
+        }
+
+        input.close();
+        return chunks;
+    }
+
+    /**
+     * 将缓冲区数据排序并写入文件
+     */
+    std::string writeChunkToFile(std::vector&lt;int&gt;&amp; buffer, int chunkIndex) {
+        // 排序
+        std::sort(buffer.begin(), buffer.end());
+
+        // 创建临时文件
+        std::string filename = "temp_chunk_" + std::to_string(chunkIndex) + ".tmp";
+        tempFiles.push_back(filename);
+
+        std::ofstream output(filename);
+        if (!output.is_open()) {
+            throw std::runtime_error("无法创建临时文件");
+        }
+
+        // 写入数据
+        for (int num : buffer) {
+            output &lt;&lt; num &lt;&lt; '\n';
+            ioOperations++;
+        }
+
+        output.close();
+        return filename;
+    }
+
+    /**
+     * 使用k路归并合并所有排序块
+     */
+    void mergeChunks(const std::vector&lt;std::string&gt;&amp; chunkFiles, const std::string&amp; outputFile) {
+        std::priority_queue&lt;ChunkReader*, std::vector&lt;ChunkReader*&gt;,
+                          std::function&lt;bool(ChunkReader*, ChunkReader*)&gt;&gt; minHeap(
+            [](ChunkReader* a, ChunkReader* b) {
+                return a-&gt;currentValue &gt; b-&gt;currentValue;
+            }
+        );
+
+        // 初始化所有块读取器
+        std::vector&lt;std::unique_ptr&lt;ChunkReader&gt;&gt; readers;
+        for (size_t i = 0; i &lt; chunkFiles.size(); ++i) {
+            auto reader = std::make_unique&lt;ChunkReader&gt;(chunkFiles[i], i);
+            if (reader-&gt;hasValue) {
+                minHeap.push(reader.get());
+            }
+            readers.push_back(std::move(reader));
+        }
+
+        // 执行归并
+        std::ofstream output(outputFile);
+        if (!output.is_open()) {
+            throw std::runtime_error("无法创建输出文件");
+        }
+
+        while (!minHeap.empty()) {
+            ChunkReader* minReader = minHeap.top();
+            minHeap.pop();
+
+            // 写入最小值
+            output &lt;&lt; minReader-&gt;currentValue &lt;&lt; '\n';
+            ioOperations++;
+
+            // 从同一块读取下一个值
+            if (minReader-&gt;nextValue()) {
+                ioOperations++;
+                minHeap.push(minReader);
+            }
+        }
+
+        output.close();
+    }
+
+    /**
+     * 清理临时文件
+     */
+    void cleanupTempFiles() {
+        for (const std::string&amp; filename : tempFiles) {
+            std::remove(filename.c_str());
+        }
+        tempFiles.clear();
+    }
+
+public:
+    // 工具方法
+    static void generateTestData(const std::string&amp; filename, int size) {
+        std::ofstream output(filename);
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution&lt;int&gt; dis(1, 1000000);
+
+        for (int i = 0; i &lt; size; ++i) {
+            output &lt;&lt; dis(gen) &lt;&lt; '\n';
+        }
+        output.close();
+    }
+
+    static bool verifySorted(const std::string&amp; filename) {
+        std::ifstream input(filename);
+        if (!input.is_open()) return false;
+
+        int prev = INT_MIN;
+        int current;
+
+        while (input &gt;&gt; current) {
+            if (current &lt; prev) {
+                return false;
+            }
+            prev = current;
+        }
+
+        return true;
+    }
+
+    static void benchmarkExternalSort() {
+        std::vector&lt;int&gt; dataSizes = {10000, 50000, 100000};
+        std::vector&lt;int&gt; memorySizes = {1000, 5000, 10000};
+
+        std::cout &lt;&lt; "外部排序性能测试" &lt;&lt; std::endl;
+        std::cout &lt;&lt; std::string(50, '=') &lt;&lt; std::endl;
+
+        for (int dataSize : dataSizes) {
+            std::cout &lt;&lt; "\n数据规模: " &lt;&lt; dataSize &lt;&lt; " 个元素" &lt;&lt; std::endl;
+
+            std::string inputFile = "test_input_" + std::to_string(dataSize) + ".txt";
+            generateTestData(inputFile, dataSize);
+
+            for (int memSize : memorySizes) {
+                if (memSize &gt;= dataSize) continue;
+
+                std::cout &lt;&lt; "  内存大小: " &lt;&lt; memSize &lt;&lt; " 个元素" &lt;&lt; std::endl;
+
+                auto startTime = std::chrono::high_resolution_clock::now();
+
+                ExternalSort sorter(memSize);
+                std::string outputFile = "sorted_output_" + std::to_string(dataSize)
+                                       + "_" + std::to_string(memSize) + ".txt";
+                sorter.sortFile(inputFile, outputFile);
+
+                auto endTime = std::chrono::high_resolution_clock::now();
+                auto duration = std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(
+                    endTime - startTime
+                );
+
+                bool isSorted = verifySorted(outputFile);
+
+                std::cout &lt;&lt; "    时间: " &lt;&lt; std::fixed &lt;&lt; std::setprecision(2)
+                         &lt;&lt; duration.count() / 1000.0 &lt;&lt; "s" &lt;&lt; std::endl;
+                std::cout &lt;&lt; "    I/O操作: " &lt;&lt; sorter.ioOperations &lt;&lt; std::endl;
+                std::cout &lt;&lt; "    块数: " &lt;&lt; sorter.tempFiles.size() &lt;&lt; std::endl;
+                std::cout &lt;&lt; "    正确性: " &lt;&lt; (isSorted ? "✓" : "✗") &lt;&lt; std::endl;
+
+                std::remove(outputFile.c_str());
+            }
+
+            std::remove(inputFile.c_str());
+        }
+    }
+};
+
+int main() {
+    try {
+        // 简单示例
+        ExternalSort sorter(5);  // 内存只能容纳5个元素
+
+        // 创建测试文件
+        ExternalSort::generateTestData("large_input.txt", 20);
+
+        // 执行排序
+        sorter.sortFile("large_input.txt", "sorted_output.txt");
+
+        // 验证结果
+        bool isSorted = ExternalSort::verifySorted("sorted_output.txt");
+        std::cout &lt;&lt; "排序结果验证: " &lt;&lt; (isSorted ? "成功" : "失败") &lt;&lt; std::endl;
+
+        // 运行性能测试
+        ExternalSort::benchmarkExternalSort();
+
+        // 清理测试文件
+        std::remove("large_input.txt");
+        std::remove("sorted_output.txt");
+
+    } catch (const std::exception&amp; e) {
+        std::cerr &lt;&lt; "错误: " &lt;&lt; e.what() &lt;&lt; std::endl;
+        return 1;
+    }
+
+    return 0;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 学习检验 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                学习检验
+            </h2>
+
+            <div class="quiz-section">
+                <h3>🎯 常见问题解答</h3>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 为什么不能简单地增加内存来解决大数据排序问题？实际应用中有哪些限制？</h4>
+                    </div>
+                    <div class="answer" id="answer1">
+                        <button class="show-answer-btn" onclick="showAnswer(1)">📖 查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>内存限制的现实考量：</strong><br><br>
+                            <strong>1. 经济成本限制：</strong><br>
+                            • 大容量内存价格昂贵，特别是对于TB级数据处理<br>
+                            • 云计算环境中，内存是按使用量计费的重要资源<br>
+                            • 对于批处理作业，长时间占用大量内存不经济<br><br>
+                            <strong>2. 系统架构限制：</strong><br>
+                            • 32位系统的地址空间限制（最多4GB）<br>
+                            • 操作系统对单个进程的内存限制<br>
+                            • 虚拟内存管理的开销会影响性能<br><br>
+                            <strong>3. 并发需求：</strong><br>
+                            • 系统需要为其他进程保留内存<br>
+                            • 数据库系统需要同时处理多个查询<br>
+                            • 分布式系统中每个节点的内存有限<br><br>
+                            <strong>4. 数据持久性：</strong><br>
+                            • 内存是易失性存储，系统崩溃会丢失数据<br>
+                            • 外部排序的中间结果可以持久化，提高可靠性<br><br>
+                            <strong>实际应用示例：</strong><br>
+                            • Hadoop处理PB级数据时，单机内存通常只有几十GB<br>
+                            • 数据库的ORDER BY操作必须考虑内存限制<br>
+                            • 搜索引擎构建索引时数据量远超单机内存容量
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 如何选择最优的内存块大小和归并路数？这两个参数如何影响性能？</h4>
+                    </div>
+                    <div class="answer" id="answer2">
+                        <button class="show-answer-btn" onclick="showAnswer(2)">📖 查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>参数优化的权衡分析：</strong><br><br>
+                            <strong>内存块大小优化：</strong><br>
+                            <table style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                                <tr style="background:#f3f4f6;">
+                                    <th style="border:1px solid #ddd; padding:8px;">块大小</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">优点</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">缺点</th>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>大块</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">• 减少I/O次数<br>• 更好的局部性<br>• 内部排序效率高</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">• 需要更多内存<br>• 增加归并复杂度</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>小块</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">• 内存需求小<br>• 可并行处理<br>• 灵活性高</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">• 增加I/O开销<br>• 更多临时文件</td>
+                                </tr>
+                            </table>
+                            <strong>归并路数选择：</strong><br>
+                            • <strong>理论最优：</strong>k = ⌈M/B⌉ - 1（M=内存页数，B=缓冲区页数）<br>
+                            • <strong>实践考虑：</strong>通常选择2-16路，平衡内存使用和归并效率<br>
+                            • <strong>内存分配：</strong>每路需要一个输入缓冲区 + 一个输出缓冲区<br><br>
+                            <strong>性能影响分析：</strong><br>
+                            • <strong>I/O复杂度：</strong>O((N/B) * log_{k}(N/M)) 次磁盘访问<br>
+                            • <strong>时间复杂度：</strong>O(N log N)，但常数因子受k和块大小影响<br>
+                            • <strong>空间复杂度：</strong>O(k * B + M)<br><br>
+                            <strong>实际调优建议：</strong><br>
+                            • 根据可用内存的80%确定总缓冲区大小<br>
+                            • 块大小 = 总缓冲区大小 / (k + 1)<br>
+                            • 对于SSD存储，可以适当增加k值<br>
+                            • 对于网络文件系统，增大块大小减少网络往返
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 外部排序在分布式环境下如何实现？与单机版本有什么区别？</h4>
+                    </div>
+                    <div class="answer" id="answer3">
+                        <button class="show-answer-btn" onclick="showAnswer(3)">📖 查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>分布式外部排序架构：</strong><br><br>
+                            <strong>1. 数据分片 (Data Partitioning)：</strong><br>
+                            • <strong>范围分片：</strong>根据键值范围将数据分配到不同节点<br>
+                            • <strong>哈希分片：</strong>使用哈希函数均匀分布数据<br>
+                            • <strong>采样分片：</strong>先采样确定分片边界，然后分配数据<br><br>
+                            <strong>2. 分布式排序流程：</strong><br>
+                            <div style="background:#f0f9ff; padding:15px; border-radius:8px; margin:10px 0;">
+                                <strong>Phase 1 - 本地排序：</strong><br>
+                                └ 每个节点对本地数据执行外部排序<br><br>
+                                <strong>Phase 2 - 数据重分布：</strong><br>
+                                ├ 根据全局排序键重新分片<br>
+                                └ 网络传输数据到目标节点<br><br>
+                                <strong>Phase 3 - 最终归并：</strong><br>
+                                └ 每个节点归并收到的已排序数据
+                            </div>
+                            <strong>3. 与单机版本的关键区别：</strong><br>
+                            <table style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                                <tr style="background:#f3f4f6;">
+                                    <th style="border:1px solid #ddd; padding:8px;">方面</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">单机版本</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">分布式版本</th>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>瓶颈</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">磁盘I/O</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">网络通信 + 负载均衡</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>容错性</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">单点故障</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">需要副本和故障恢复机制</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>扩展性</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">受单机资源限制</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">水平扩展，理论上无限</td>
+                                </tr>
+                            </table>
+                            <strong>4. 实际系统实现：</strong><br>
+                            • <strong>Hadoop MapReduce：</strong>使用TeraSort算法<br>
+                            • <strong>Spark：</strong>基于RDD的分布式排序<br>
+                            • <strong>Flink：</strong>流式和批处理统一的排序框架<br><br>
+                            <strong>5. 性能优化技术：</strong><br>
+                            • <strong>预采样：</strong>避免数据倾斜，确保均匀分片<br>
+                            • <strong>流水线处理：</strong>重叠计算、通信和I/O操作<br>
+                            • <strong>压缩传输：</strong>减少网络传输开销<br>
+                            • <strong>本地性优化：</strong>尽量在数据所在节点执行计算
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 如何处理外部排序中的特殊情况，如重复元素很多、数据倾斜、部分有序等？</h4>
+                    </div>
+                    <div class="answer" id="answer4">
+                        <button class="show-answer-btn" onclick="showAnswer(4)">📖 查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>特殊情况优化策略：</strong><br><br>
+                            <strong>1. 处理大量重复元素：</strong><br>
+                            • <strong>计数排序思想：</strong>统计每个值的出现次数，而不是存储重复值<br>
+                            • <strong>压缩存储：</strong>使用(value, count)对减少存储空间<br>
+                            • <strong>三路快排：</strong>内部排序时将相等元素聚集在中间<br>
+                            • <strong>重复值合并：</strong>在归并时合并相同值的计数<br><br>
+                            <div style="background:#f0f9ff; padding:15px; border-radius:8px; margin:10px 0;">
+                                <strong>示例优化：</strong><br>
+                                原始: [5,5,5,5,3,3,7,7,7] → 压缩: [(3,2), (5,4), (7,3)]<br>
+                                存储空间从9个元素减少到3个元组
+                            </div>
+                            <strong>2. 应对数据倾斜：</strong><br>
+                            • <strong>动态分片：</strong>根据实际数据分布调整分片策略<br>
+                            • <strong>二级采样：</strong>先粗采样确定热点，再细化分片<br>
+                            • <strong>倾斜检测：</strong>监控各分片大小，动态调整<br>
+                            • <strong>负载均衡：</strong>将大分片进一步细分<br><br>
+                            <strong>3. 利用部分有序性：</strong><br>
+                            • <strong>运行检测：</strong>识别已经排序的数据段<br>
+                            • <strong>自然归并：</strong>合并相邻的有序段，减少归并层数<br>
+                            • <strong>Tim排序思想：</strong>结合插入排序和归并排序<br>
+                            • <strong>跳跃式归并：</strong>跳过已经有序的部分<br><br>
+                            <div style="background:#fef2f2; padding:15px; border-radius:8px; margin:10px 0;">
+                                <strong>部分有序优化示例：</strong><br>
+                                数据: [1,2,3,8,4,5,6,7] <br>
+                                识别: [1,2,3,8] 和 [4,5,6,7] 两个有序段<br>
+                                直接归并而不需要内部排序
+                            </div>
+                            <strong>4. 内存自适应策略：</strong><br>
+                            • <strong>动态块大小：</strong>根据可用内存动态调整块大小<br>
+                            • <strong>压缩缓冲：</strong>对重复数据使用压缩缓冲区<br>
+                            • <strong>懒加载：</strong>需要时才加载数据到内存<br>
+                            • <strong>LRU淘汰：</strong>智能管理缓冲区内容<br><br>
+                            <strong>5. I/O优化技术：</strong><br>
+                            • <strong>预读策略：</strong>预测需要的数据并提前读取<br>
+                            • <strong>批量写入：</strong>累积到一定量后批量写入磁盘<br>
+                            • <strong>并行I/O：</strong>使用多线程并行读写不同文件<br>
+                            • <strong>SSD优化：</strong>针对SSD随机访问性能好的特点优化<br><br>
+                            <strong>实际应用案例：</strong><br>
+                            • <strong>日志处理：</strong>时间戳数据通常部分有序，可优化归并<br>
+                            • <strong>用户行为数据：</strong>用户ID重复多，适合计数压缩<br>
+                            • <strong>传感器数据：</strong>读数可能集中在某些区间，容易倾斜
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 外部排序的I/O复杂度如何计算？与内部排序的时间复杂度有什么关系？</h4>
+                    </div>
+                    <div class="answer" id="answer5">
+                        <button class="show-answer-btn" onclick="showAnswer(5)">📖 查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>I/O复杂度详细分析：</strong><br><br>
+                            <strong>基本符号定义：</strong><br>
+                            • N = 数据总量（元素个数）<br>
+                            • M = 可用内存大小（元素个数）<br>
+                            • B = 磁盘块大小（每次I/O操作的元素个数）<br>
+                            • k = 归并路数<br><br>
+                            <strong>1. 两阶段I/O复杂度计算：</strong><br>
+                            <div style="background:#f0f9ff; padding:15px; border-radius:8px; margin:10px 0;">
+                                <strong>阶段1 - 创建排序块：</strong><br>
+                                • 读取所有数据: N/B 次磁盘读操作<br>
+                                • 写入排序块: N/B 次磁盘写操作<br>
+                                • 总块数: ⌈N/M⌉<br>
+                                • 阶段1 I/O: 2N/B<br><br>
+                                <strong>阶段2 - 多路归并：</strong><br>
+                                • 归并层数: ⌈log_k(⌈N/M⌉)⌉<br>
+                                • 每层读写所有数据: 2N/B<br>
+                                • 阶段2 I/O: 2N/B * ⌈log_k(⌈N/M⌉)⌉
+                            </div>
+                            <strong>总I/O复杂度：</strong><br>
+                            <span style="background:#dcfce7; padding:8px; border-radius:4px; font-family:monospace;">
+                                <strong>O((N/B) * log_k(N/M))</strong>
+                            </span><br><br>
+                            <strong>2. 与内部排序的关系：</strong><br>
+                            <table style="width:100%; border-collapse: collapse; margin: 15px 0;">
+                                <tr style="background:#f3f4f6;">
+                                    <th style="border:1px solid #ddd; padding:8px;">复杂度类型</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">内部排序</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">外部排序</th>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>时间复杂度</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">O(N log N) 比较</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">O(N log N) 比较 + I/O开销</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>空间复杂度</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">O(N) 或 O(log N)</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">O(M + k*B)</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>瓶颈</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">CPU计算</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">磁盘I/O</td>
+                                </tr>
+                            </table>
+                            <strong>3. 实际性能分析：</strong><br>
+                            假设参数：N=1亿，M=100万，B=1000，k=10<br>
+                            <div style="background:#fef2f2; padding:15px; border-radius:8px; margin:10px 0;">
+                                • 排序块数量: ⌈10^8/10^6⌉ = 100个<br>
+                                • 归并层数: ⌈log_{10}(100)⌉ = 2层<br>
+                                • I/O操作次数: (10^8/1000) * (1 + 2) = 30万次<br>
+                                • 如果磁盘延迟10ms，总I/O时间: 3000秒 ≈ 50分钟
+                            </div>
+                            <strong>4. 优化策略对复杂度的影响：</strong><br>
+                            • <strong>增大内存M：</strong>减少块数量，降低归并层数<br>
+                            • <strong>增大块大小B：</strong>减少I/O操作次数<br>
+                            • <strong>增大归并路数k：</strong>减少归并层数，但增加内存需求<br>
+                            • <strong>使用SSD：</strong>降低每次I/O的时间成本<br><br>
+                            <strong>5. 理论最优配置：</strong><br>
+                            • <strong>最优归并路数：</strong>k* = ⌈(M-1)/2⌉ + 1<br>
+                            • <strong>最小I/O次数：</strong>当 k = N/M 时达到理论下界<br>
+                            • <strong>实际约束：</strong>受内存限制，通常k = 2-16<br><br>
+                            <strong>实际系统性能对比：</strong><br>
+                            • <strong>快速排序：</strong>内存内O(N log N)，几秒完成<br>
+                            • <strong>外部排序：</strong>I/O受限，同样数据可能需要几十分钟<br>
+                            • <strong>性能差距：</strong>主要来自磁盘访问延迟（ms级 vs ns级）
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="learning-path">
+                <h3>🛤️ 渐进式学习建议</h3>
+                <div class="unified-grid unified-grid-2">
+                    <div class="path-card">
+                        <h4>🎯 基础掌握</h4>
+                        <ul>
+                            <li>理解外部排序的必要性和基本原理</li>
+                            <li>掌握两阶段排序的执行流程</li>
+                            <li>实现简单的二路归并外部排序</li>
+                            <li>分析I/O复杂度和性能瓶颈</li>
+                        </ul>
+                    </div>
+                    <div class="path-card">
+                        <h4>📈 进阶应用</h4>
+                        <ul>
+                            <li>学习多路归并和参数优化</li>
+                            <li>处理特殊数据分布情况</li>
+                            <li>实现分布式外部排序算法</li>
+                            <li>研究现代存储设备的优化策略</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resources">
+                <h3>📚 推荐学习资源</h3>
+                <div class="unified-grid unified-grid-3">
+                    <div class="resource-card">
+                        <span class="card-icon">🛠️</span>
+                        <h4>实践工具</h4>
+                        <p>GNU Sort, Hadoop TeraSort, Apache Spark, 自实现外部排序器</p>
+                    </div>
+                    <div class="resource-card">
+                        <span class="card-icon">📖</span>
+                        <h4>相关主题</h4>
+                        <p>分治算法、堆排序、B+树索引、MapReduce模型</p>
+                    </div>
+                    <div class="resource-card">
+                        <span class="card-icon">🎓</span>
+                        <h4>后续学习</h4>
+                        <p>分布式系统、数据库内核、大数据处理框架</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航按钮 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<style>
+/* 基础样式 */
+.concept-overview {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-radius: 15px;
+    padding: 25px;
+    color: #1f2937 !important;
+    margin-bottom: 20px;
+    border: 2px solid #e5e7eb;
+}
+
+.concept-overview * {
+    color: #1f2937 !important;
+}
+
+.core-concept {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.core-concept h3 {
+    margin-bottom: 10px;
+    font-size: 1.3em;
+    color: #1f2937 !important;
+}
+
+.core-concept p {
+    color: #374151 !important;
+    line-height: 1.6;
+}
+
+.core-concept strong {
+    color: #111827 !important;
+}
+
+.concept-breakdown .concept-item {
+    background: #f8f9ff;
+    border-left: 4px solid #4f46e5;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 0 10px 10px 0;
+}
+
+.common-mistakes {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.common-mistakes h4 {
+    color: #dc2626;
+    margin-bottom: 15px;
+}
+
+/* 可视化容器样式 */
+.visualization-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.static-diagram {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+#sortingCanvas {
+    border: 2px solid #e5e7eb;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+#sortingCanvas:hover {
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+}
+
+/* 数据输入控制 */
+.data-input-section {
+    background: #f8f9ff;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #e2e8f0;
+}
+
+.input-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+}
+
+.input-controls label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.input-controls select {
+    padding: 8px 12px;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    min-width: 150px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.input-controls select:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+/* 控制面板增强 */
+.demo-controls {
+    background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+    border-radius: 20px;
+    padding: 30px;
+    margin: 20px 0;
+    text-align: center;
+    border: 2px solid #cbd5e0;
+}
+
+.control-panel {
+    margin-bottom: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.control-panel button {
+    margin: 5px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    min-width: 140px;
+}
+
+.control-panel button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.control-panel button:active {
+    transform: translateY(0);
+}
+
+/* 状态显示面板 */
+.status-display {
+    background: #f9fafb;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    border: 2px solid #e5e7eb;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.status-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 2px solid #e5e7eb;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.status-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.status-card h4 {
+    color: #1f2937;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-content {
+    color: #6b7280;
+    font-family: 'Monaco', 'Menlo', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+    min-height: 80px;
+    background: #f3f4f6;
+    padding: 15px;
+    border-radius: 8px;
+    overflow-y: auto;
+    max-height: 200px;
+}
+
+/* 计算过程展示增强 */
+.calculation-display {
+    background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+    color: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.calculation-steps {
+    font-family: 'Monaco', 'Menlo', monospace;
+    line-height: 1.8;
+}
+
+/* 步骤信息增强 */
+.step-info {
+    background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+    border: 2px solid #0ea5e9;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+    min-height: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-info.calculating::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.step-message {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #1e40af;
+    position: relative;
+    z-index: 1;
+}
+
+/* 应用示例样式 */
+.applications {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.app-example {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.app-example h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    color: white;
+}
+
+.app-example p {
+    color: white;
+    line-height: 1.6;
+}
+
+/* 代码示例样式 */
+.code-examples {
+    margin-top: 30px;
+}
+
+.language-selector {
+    display: flex;
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.lang-btn {
+    flex: 1;
+    max-width: 150px;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.lang-btn.active {
+    background: white;
+    color: #4f46e5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.code-container {
+    display: none;
+    background: #1e1e1e;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.code-container.active {
+    display: block;
+}
+
+.code-header {
+    background: #2d2d2d;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.copy-btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s ease;
+}
+
+.copy-btn:hover {
+    background: #4338ca;
+}
+
+pre {
+    margin: 0;
+    padding: 20px;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-family: 'Monaco', 'Menlo', monospace;
+}
+
+/* 学习检验样式增强 */
+.quiz-section {
+    margin-bottom: 40px;
+}
+
+.quiz-item {
+    background: linear-gradient(135deg, #f8f9ff, #f0f4f8);
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 25px;
+    border: 2px solid #e2e8f0;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.quiz-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    transition: width 0.3s ease;
+}
+
+.quiz-item:hover::before {
+    width: 8px;
+}
+
+.quiz-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.question h4 {
+    color: #1f2937;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    line-height: 1.4;
+}
+
+.show-answer-btn {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+}
+
+.show-answer-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+}
+
+.answer-content {
+    margin-top: 20px;
+    padding: 25px;
+    background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+    border-left: 5px solid #10b981;
+    border-radius: 0 15px 15px 0;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.answer-content table {
+    background: white;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.answer-content th {
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    font-weight: bold;
+    color: #374151;
+}
+
+.answer-content strong {
+    color: #059669;
+}
+
+/* 学习路径样式 */
+.learning-path {
+    margin: 30px 0;
+}
+
+.path-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.path-card h4 {
+    margin-bottom: 15px;
+    color: white;
+}
+
+.path-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.path-card li {
+    padding: 5px 0;
+    position: relative;
+    padding-left: 20px;
+    color: white;
+}
+
+.path-card li:before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+}
+
+/* 资源卡片样式 */
+.resources {
+    margin-top: 30px;
+}
+
+.resource-card {
+    text-align: center;
+    padding: 25px;
+    background: #f8f9ff;
+    border-radius: 15px;
+    border: 2px solid #e5e7eb;
+    transition: transform 0.3s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 动画定义 */
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .unified-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .language-selector {
+        flex-direction: column;
+    }
+
+    .lang-btn {
+        max-width: none;
+        margin: 2px 0;
+    }
+
+    .control-panel {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .control-panel button {
+        width: 100%;
+        max-width: 280px;
+        margin: 5px 0;
+    }
+
+    .input-controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #sortingCanvas {
+        width: 100%;
+        height: 350px;
+    }
+
+    .quiz-item {
+        padding: 20px;
+    }
+
+    .answer-content {
+        padding: 20px;
+    }
+
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Canvas绘图相关变量
+let canvas, ctx;
+let animationFrame;
+let currentStep = 0;
+let isAnimating = false;
+
+// 外部排序相关变量
+let originalData = [];
+let currentData = [];
+let sortedBlocks = [];
+let memorySize = 10;
+let mergeWays = 2;
+let ioOperations = 0;
+let currentPhase = 'idle';
+
+// 可视化元素
+let dataElements = [];
+let mergeTree = [];
+
+// 动画配置
+const COLORS = {
+    unsorted: '#94a3b8',
+    sorting: '#f59e0b',
+    sorted: '#10b981',
+    memory: '#3b82f6',
+    disk: '#6b7280',
+    merging: '#ef4444',
+    background: '#f8fafc'
+};
+
+// 数据元素类
+class DataElement {
+    constructor(value, x, y, type = 'unsorted') {
+        this.value = value;
+        this.x = x;
+        this.y = y;
+        this.targetX = x;
+        this.targetY = y;
+        this.type = type;
+        this.size = 20;
+        this.alpha = 1;
+        this.scale = 1;
+    }
+
+    update() {
+        // 简单的平滑移动
+        if (Math.abs(this.x - this.targetX) > 0.5) {
+            this.x += (this.targetX - this.x) * 0.1;
+        }
+        if (Math.abs(this.y - this.targetY) > 0.5) {
+            this.y += (this.targetY - this.y) * 0.1;
+        }
+    }
+
+    draw(ctx) {
+        if (!ctx) return;
+
+        ctx.save();
+
+        // 选择颜色
+        let color = COLORS.unsorted;
+        switch (this.type) {
+            case 'sorting':
+                color = COLORS.sorting;
+                break;
+            case 'sorted':
+                color = COLORS.sorted;
+                break;
+            case 'merging':
+                color = COLORS.merging;
+                break;
+        }
+
+        // 绘制圆形
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 绘制边框
+        ctx.strokeStyle = '#1f2937';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // 绘制数值
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(this.value.toString(), this.x, this.y);
+
+        ctx.restore();
+    }
+
+    moveTo(x, y) {
+        this.targetX = x;
+        this.targetY = y;
+    }
+
+    setType(type) {
+        this.type = type;
+    }
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('页面加载完成，开始初始化...');
+
+    canvas = document.getElementById('sortingCanvas');
+    if (!canvas) {
+        console.error('Canvas元素未找到！');
+        return;
+    }
+
+    ctx = canvas.getContext('2d');
+    if (!ctx) {
+        console.error('无法获取Canvas上下文！');
+        return;
+    }
+
+    console.log('Canvas初始化成功');
+
+    // 设置Canvas尺寸
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    console.log('Canvas尺寸:', canvas.width, 'x', canvas.height);
+
+    // 初始化数据
+    generateRandomData();
+
+    // 启动动画循环
+    animate();
+
+    // 绑定事件
+    bindEvents();
+
+    // 初始化界面
+    updateInterface();
+
+    console.log('初始化完成');
+});
+
+// 事件绑定
+function bindEvents() {
+    console.log('绑定事件...');
+
+    const generateBtn = document.getElementById('generateData');
+    const startBtn = document.getElementById('startDemo');
+    const phase1Btn = document.getElementById('stepPhase1');
+    const phase2Btn = document.getElementById('stepPhase2');
+    const complexityBtn = document.getElementById('showComplexity');
+    const resetBtn = document.getElementById('resetDemo');
+
+    if (generateBtn) generateBtn.addEventListener('click', generateRandomData);
+    if (startBtn) startBtn.addEventListener('click', startDemo);
+    if (phase1Btn) phase1Btn.addEventListener('click', executePhase1);
+    if (phase2Btn) phase2Btn.addEventListener('click', executePhase2);
+    if (complexityBtn) complexityBtn.addEventListener('click', showComplexityAnalysis);
+    if (resetBtn) resetBtn.addEventListener('click', resetDemo);
+
+    // 参数变化监听
+    const dataSizeSelect = document.getElementById('dataSize');
+    const memorySizeSelect = document.getElementById('memorySize');
+    const mergeWaysSelect = document.getElementById('mergeWays');
+
+    if (dataSizeSelect) dataSizeSelect.addEventListener('change', generateRandomData);
+    if (memorySizeSelect) memorySizeSelect.addEventListener('change', updateParameters);
+    if (mergeWaysSelect) mergeWaysSelect.addEventListener('change', updateParameters);
+
+    // 代码切换
+    setupCodeTabs();
+    setupCopyButtons();
+
+    console.log('事件绑定完成');
+}
+
+// 生成随机数据
+function generateRandomData() {
+    const dataSize = parseInt(document.getElementById('dataSize').value);
+    const memSize = parseInt(document.getElementById('memorySize').value);
+    const mergeWs = parseInt(document.getElementById('mergeWays').value);
+
+    // 更新参数
+    memorySize = memSize;
+    mergeWays = mergeWs;
+
+    // 生成随机数据
+    originalData = [];
+    for (let i = 0; i < dataSize; i++) {
+        originalData.push(Math.floor(Math.random() * 99) + 1);
+    }
+
+    currentData = [...originalData];
+
+    // 重置状态
+    resetState();
+
+    // 创建可视化元素
+    createDataElements();
+
+    updateInterface();
+    updateStepInfo(`生成了 ${dataSize} 个随机数据，内存大小限制为 ${memorySize} 个元素`);
+}
+
+// 更新参数
+function updateParameters() {
+    memorySize = parseInt(document.getElementById('memorySize').value);
+    mergeWays = parseInt(document.getElementById('mergeWays').value);
+    updateInterface();
+}
+
+// 创建数据元素
+function createDataElements() {
+    dataElements = [];
+    const startX = 100;
+    const startY = 80;
+    const spacing = 35;
+    const maxPerRow = Math.floor((canvas.width - 200) / spacing);
+
+    for (let i = 0; i < currentData.length; i++) {
+        const row = Math.floor(i / maxPerRow);
+        const col = i % maxPerRow;
+        const x = startX + col * spacing;
+        const y = startY + row * 40;
+
+        dataElements.push(new DataElement(currentData[i], x, y));
+    }
+}
+
+// 重置状态
+function resetState() {
+    currentStep = 0;
+    currentPhase = 'idle';
+    sortedBlocks = [];
+    ioOperations = 0;
+    isAnimating = false;
+
+    // 清除定时器
+    if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+    }
+}
+
+// 主动画循环
+function animate() {
+    if (!canvas || !ctx) {
+        console.error('Canvas或上下文丢失');
+        return;
+    }
+
+    // 清除画布
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制背景
+    drawBackground();
+
+    // 绘制数据元素
+    if (dataElements && dataElements.length > 0) {
+        dataElements.forEach(element => {
+            element.update();
+            element.draw(ctx);
+        });
+    }
+
+    // 绘制区域标识
+    drawMemoryArea();
+    drawDiskArea();
+
+    // 绘制状态指示器
+    drawPhaseIndicator();
+
+    animationFrame = requestAnimationFrame(animate);
+}
+
+// 绘制背景
+function drawBackground() {
+    ctx.save();
+
+    // 填充背景色
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制网格
+    ctx.globalAlpha = 0.1;
+    ctx.strokeStyle = '#6b7280';
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+// 绘制背景网格
+function drawGrid() {
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.strokeStyle = '#6b7280';
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+// 绘制内存区域
+function drawMemoryArea() {
+    const memoryY = canvas.height - 120;
+    const memoryWidth = Math.min(600, canvas.width - 100);
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(59, 130, 246, 0.1)';
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+
+    ctx.fillRect(50, memoryY, memoryWidth, 60);
+    ctx.strokeRect(50, memoryY, memoryWidth, 60);
+
+    // 标签
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#3b82f6';
+    ctx.font = 'bold 14px Arial';
+    ctx.fillText('内存区域 (Memory)', 60, memoryY - 10);
+
+    ctx.restore();
+}
+
+// 绘制磁盘区域
+function drawDiskArea() {
+    const diskY = canvas.height - 200;
+    const diskWidth = Math.min(600, canvas.width - 100);
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(107, 114, 128, 0.1)';
+    ctx.strokeStyle = '#6b7280';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+
+    ctx.fillRect(50, diskY, diskWidth, 60);
+    ctx.strokeRect(50, diskY, diskWidth, 60);
+
+    // 标签
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#6b7280';
+    ctx.font = 'bold 14px Arial';
+    ctx.fillText('磁盘存储 (Disk)', 60, diskY - 10);
+
+    ctx.restore();
+}
+
+// 绘制归并树
+function drawMergeTree() {
+    if (mergeTree.length === 0) return;
+
+    ctx.save();
+    ctx.strokeStyle = '#ef4444';
+    ctx.lineWidth = 2;
+    ctx.fillStyle = '#ef4444';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+
+    const treeY = 250;
+    const treeWidth = canvas.width - 200;
+
+    // 绘制树结构
+    mergeTree.forEach((level, levelIndex) => {
+        const y = treeY + levelIndex * 50;
+        const nodeWidth = treeWidth / level.length;
+
+        level.forEach((node, nodeIndex) => {
+            const x = 100 + (nodeIndex + 0.5) * nodeWidth;
+
+            // 绘制节点
+            ctx.beginPath();
+            ctx.arc(x, y, 20, 0, Math.PI * 2);
+            ctx.stroke();
+
+            // 绘制文本
+            ctx.fillText(node.toString(), x, y + 4);
+
+            // 绘制连线到下一层
+            if (levelIndex < mergeTree.length - 1) {
+                const nextLevel = mergeTree[levelIndex + 1];
+                const nextNodeIndex = Math.floor(nodeIndex / mergeWays);
+                if (nextNodeIndex < nextLevel.length) {
+                    const nextX = 100 + (nextNodeIndex + 0.5) * (treeWidth / nextLevel.length);
+                    const nextY = treeY + (levelIndex + 1) * 50;
+
+                    ctx.beginPath();
+                    ctx.moveTo(x, y + 20);
+                    ctx.lineTo(nextX, nextY - 20);
+                    ctx.stroke();
+                }
+            }
+        });
+    });
+
+    ctx.restore();
+}
+
+// 绘制阶段指示器
+function drawPhaseIndicator() {
+    ctx.save();
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'left';
+
+    let phaseText = '';
+    switch (currentPhase) {
+        case 'idle':
+            phaseText = '等待开始';
+            break;
+        case 'phase1':
+            phaseText = '阶段1：分块排序';
+            break;
+        case 'phase2':
+            phaseText = '阶段2：多路归并';
+            break;
+        case 'completed':
+            phaseText = '排序完成';
+            break;
+    }
+
+    ctx.fillText(`当前阶段: ${phaseText}`, 20, 30);
+    ctx.restore();
+}
+
+// 开始演示
+async function startDemo() {
+    console.log('开始演示');
+    if (isAnimating) return;
+
+    isAnimating = true;
+    currentStep = 0;
+    currentPhase = 'idle';
+
+    updateStepInfo('开始外部排序演示，数据规模: ' + currentData.length + ' 个元素');
+
+    // 重置所有元素状态
+    if (dataElements) {
+        dataElements.forEach(element => {
+            element.setType('unsorted');
+        });
+    }
+
+    await delay(1000);
+    isAnimating = false;
+    console.log('演示启动完成');
+}
+
+// 执行第一阶段：分块排序
+async function executePhase1() {
+    console.log('执行阶段1');
+    if (isAnimating) return;
+
+    isAnimating = true;
+    currentPhase = 'phase1';
+    sortedBlocks = [];
+
+    updateStepInfo('开始阶段1：将数据分成小块并分别排序');
+    updateCalculationSteps('分块排序开始...\n正在将数据分成' + memorySize + '个元素的小块');
+
+    const blockCount = Math.ceil(currentData.length / memorySize);
+    console.log('需要创建', blockCount, '个块');
+
+    for (let i = 0; i < blockCount; i++) {
+        const blockStart = i * memorySize;
+        const blockEnd = Math.min(blockStart + memorySize, currentData.length);
+        const blockData = currentData.slice(blockStart, blockEnd);
+
+        updateStepInfo(`正在处理第 ${i + 1} 块，包含 ${blockData.length} 个元素`);
+
+        // 高亮当前块
+        for (let j = blockStart; j < blockEnd; j++) {
+            if (dataElements && dataElements[j]) {
+                dataElements[j].setType('sorting');
+            }
+        }
+
+        await delay(800);
+
+        // 排序
+        const sortedBlock = [...blockData].sort((a, b) => a - b);
+        sortedBlocks.push(sortedBlock);
+
+        // 更新为已排序状态
+        for (let j = blockStart; j < blockEnd; j++) {
+            if (dataElements && dataElements[j]) {
+                dataElements[j].value = sortedBlock[j - blockStart];
+                dataElements[j].setType('sorted');
+            }
+        }
+
+        ioOperations += blockData.length * 2; // 读取+写入
+        updateIOStats();
+
+        await delay(600);
+    }
+
+    updateStepInfo(`阶段1完成：创建了 ${blockCount} 个排序块`);
+    updateCalculationSteps(`分块排序完成：
+• 总块数: ${blockCount}
+• 每块大小: ${memorySize} 个元素
+• I/O操作次数: ${ioOperations}
+• 下一步：多路归并`);
+
+    isAnimating = false;
+    console.log('阶段1完成');
+}
+
+// 执行第二阶段：多路归并
+async function executePhase2() {
+    console.log('执行阶段2');
+    if (isAnimating || sortedBlocks.length === 0) {
+        updateStepInfo('请先执行阶段1：分块排序');
+        return;
+    }
+
+    isAnimating = true;
+    currentPhase = 'phase2';
+
+    updateStepInfo(`开始阶段2：${mergeWays}路归并`);
+
+    // 简化的归并过程
+    await performSimpleMerge();
+
+    currentPhase = 'completed';
+    updateStepInfo('外部排序完成！数据已按升序排列');
+
+    isAnimating = false;
+    console.log('阶段2完成');
+}
+
+// 简化的归并过程
+async function performSimpleMerge() {
+    updateCalculationSteps('开始多路归并过程...\n正在合并' + sortedBlocks.length + '个排序块');
+
+    // 创建最终结果
+    const result = [];
+    const blockPointers = new Array(sortedBlocks.length).fill(0);
+
+    // 逐个选择最小元素
+    while (result.length < currentData.length) {
+        let minVal = Infinity;
+        let minBlockIndex = -1;
+
+        // 找到所有块中的最小值
+        for (let i = 0; i < sortedBlocks.length; i++) {
+            if (blockPointers[i] < sortedBlocks[i].length) {
+                const val = sortedBlocks[i][blockPointers[i]];
+                if (val < minVal) {
+                    minVal = val;
+                    minBlockIndex = i;
+                }
+            }
+        }
+
+        if (minBlockIndex !== -1) {
+            result.push(minVal);
+            blockPointers[minBlockIndex]++;
+
+            // 更新可视化
+            const resultIndex = result.length - 1;
+            if (dataElements && dataElements[resultIndex]) {
+                dataElements[resultIndex].value = minVal;
+                dataElements[resultIndex].setType('sorted');
+            }
+
+            ioOperations++;
+
+            // 每处理10个元素更新一次界面
+            if (result.length % 10 === 0) {
+                updateIOStats();
+                updateStepInfo(`归并进度: ${result.length}/${currentData.length}`);
+                await delay(200);
+            }
+        }
+    }
+
+    updateCalculationSteps(`多路归并完成：
+• 最终结果: ${result.length} 个元素
+• 总I/O操作次数: ${ioOperations}
+• 排序完成！`);
+}
+
+// 显示复杂度分析
+function showComplexityAnalysis() {
+    const n = currentData.length;
+    const m = memorySize;
+    const k = mergeWays;
+    const blocks = Math.ceil(n / m);
+    const passes = Math.ceil(Math.log(blocks) / Math.log(k));
+
+    updateCalculationSteps(`外部排序复杂度分析：
+
+    📊 当前参数：
+    • 数据量 (N): ${n}
+    • 内存大小 (M): ${m}
+    • 归并路数 (K): ${k}
+    • 块数量: ${blocks}
+
+    🧮 理论分析：
+    • I/O复杂度: O(N/B × log_k(N/M))
+    • 归并层数: ${passes} 层
+    • 预计I/O次数: ${2 * n * (1 + passes)}
+    • 实际I/O次数: ${ioOperations}
+
+    ⚡ 性能优化建议：
+    • 增大内存大小可减少块数量
+    • 适当增加归并路数可减少层数
+    • 使用SSD可降低I/O延迟
+    • 合理的缓冲区管理很关键`);
+}
+
+// 重置演示
+function resetDemo() {
+    if (isAnimating) return;
+
+    resetState();
+    createDataElements();
+    mergeTree = [];
+
+    updateStepInfo('演示已重置，准备开始新的排序');
+    updateCalculationSteps('');
+    updateInterface();
+}
+
+// 更新界面
+function updateInterface() {
+    // 更新磁盘状态
+    updateDiskStatus();
+    updateMemoryStatus();
+    updateIOStats();
+}
+
+// 更新磁盘状态
+function updateDiskStatus() {
+    const diskStatus = document.getElementById('diskStatus');
+    if (sortedBlocks.length === 0) {
+        diskStatus.innerHTML = '无排序块';
+    } else {
+        let status = `排序块数量: ${sortedBlocks.length}\n`;
+        sortedBlocks.forEach((block, i) => {
+            status += `块${i + 1}: [${block.slice(0, 5).join(',')}${block.length > 5 ? '...' : ''}]\n`;
+        });
+        diskStatus.innerHTML = status;
+    }
+}
+
+// 更新内存状态
+function updateMemoryStatus() {
+    const memoryStatus = document.getElementById('memoryStatus');
+    memoryStatus.innerHTML = `可用内存: ${memorySize} 个元素\n当前阶段: ${currentPhase}\n归并路数: ${mergeWays}`;
+}
+
+// 更新I/O统计
+function updateIOStats() {
+    const ioStats = document.getElementById('ioStats');
+    ioStats.innerHTML = `I/O操作次数: ${ioOperations}\n读操作: ${Math.floor(ioOperations * 0.6)}\n写操作: ${Math.floor(ioOperations * 0.4)}`;
+}
+
+// 更新步骤信息
+function updateStepInfo(message) {
+    const stepInfo = document.getElementById('stepInfo');
+    stepInfo.innerHTML = `<div class="step-message">${message}</div>`;
+
+    if (message.includes('阶段') || message.includes('处理')) {
+        stepInfo.classList.add('calculating');
+    } else {
+        stepInfo.classList.remove('calculating');
+    }
+}
+
+// 更新计算过程
+function updateCalculationSteps(steps) {
+    document.getElementById('calculationSteps').innerHTML = steps.replace(/\n/g, '<br>');
+}
+
+// 代码切换功能
+function setupCodeTabs() {
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const codeContainers = document.querySelectorAll('.code-container');
+
+    langBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+
+            langBtns.forEach(b => b.classList.remove('active'));
+            codeContainers.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(`code-${lang}`).classList.add('active');
+        });
+    });
+}
+
+// 复制代码功能
+function setupCopyButtons() {
+    const copyBtns = document.querySelectorAll('.copy-btn');
+
+    copyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-code');
+            const codeElement = document.querySelector(`#code-${lang} code`);
+            const text = codeElement.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = '✅ 已复制';
+                btn.style.background = '#10b981';
+
+                setTimeout(() => {
+                    btn.textContent = '📋 复制代码';
+                    btn.style.background = '#4f46e5';
+                }, 2000);
+            });
+        });
+    });
+}
+
+// 答案显示功能
+function showAnswer(questionNum) {
+    const answer = document.querySelector(`#answer${questionNum} .answer-content`);
+    const btn = document.querySelector(`#answer${questionNum} .show-answer-btn`);
+
+    if (answer.style.display === 'none') {
+        answer.style.display = 'block';
+        btn.textContent = '🔼 隐藏答案';
+        btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+
+        answer.style.animation = 'slideInUp 0.5s ease-out';
+
+        setTimeout(() => {
+            answer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+
+    } else {
+        answer.style.display = 'none';
+        btn.textContent = '📖 查看答案';
+        btn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+    }
+}
+
+// 辅助函数
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+</script>
+{% endblock %}

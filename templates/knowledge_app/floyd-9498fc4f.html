@@ -1,0 +1,1796 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}Floyd-Warshall全源最短路径算法 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>
+    .visualization-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .concept-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 15px 0;
+        border-left: 4px solid #6f42c1;
+    }
+
+    .key-term {
+        display: inline-block;
+        background: #f3e5f5;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin: 2px;
+        font-weight: 600;
+    }
+
+    .difficulty-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .difficulty-hard {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .code-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .code-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #f5f5f5;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.3s;
+    }
+
+    .code-tab.active {
+        background: #6f42c1;
+        color: white;
+    }
+
+    .code-content {
+        display: none;
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 0 8px 8px 8px;
+        position: relative;
+        font-family: 'Courier New', monospace;
+        overflow-x: auto;
+    }
+
+    .code-content.active {
+        display: block;
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        background: #6f42c1;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .copy-btn:hover {
+        background: #5a32a3;
+    }
+
+    #floydCanvas {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        margin: 20px auto;
+        display: block;
+        background: white;
+    }
+
+    .matrix-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0;
+        flex-wrap: wrap;
+    }
+
+    .matrix-wrapper {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin: 10px;
+    }
+
+    .matrix-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #6f42c1;
+    }
+
+    .distance-matrix {
+        border-collapse: collapse;
+        margin: 0 auto;
+    }
+
+    .distance-matrix td, .distance-matrix th {
+        border: 1px solid #dee2e6;
+        padding: 8px 12px;
+        text-align: center;
+        min-width: 40px;
+    }
+
+    .distance-matrix th {
+        background: #f0f0f0;
+        font-weight: 600;
+    }
+
+    .matrix-cell-updating {
+        background: #fff3cd !important;
+        font-weight: bold;
+        animation: pulse 0.5s;
+    }
+
+    .matrix-cell-updated {
+        background: #d4edda !important;
+        font-weight: bold;
+    }
+
+    .matrix-cell-current-k {
+        background: #cfe2ff !important;
+    }
+
+    .matrix-cell-current-i {
+        background: #f8d7da !important;
+    }
+
+    .matrix-cell-current-j {
+        background: #fff3cd !important;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .control-panel {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .control-btn {
+        padding: 10px 20px;
+        margin: 0 5px;
+        background: #6f42c1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .control-btn:hover {
+        background: #5a32a3;
+        transform: translateY(-2px);
+    }
+
+    .control-btn.danger {
+        background: #dc3545;
+    }
+
+    .control-btn.danger:hover {
+        background: #c82333;
+    }
+
+    .speed-control {
+        display: inline-block;
+        margin: 0 15px;
+    }
+
+    .speed-control label {
+        margin-right: 10px;
+        font-weight: 600;
+    }
+
+    .quiz-item {
+        background: #f8f9fa;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+    }
+
+    .quiz-question {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .show-answer-btn {
+        padding: 8px 16px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .quiz-answer {
+        display: none;
+        background: #d4edda;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 10px;
+        border-left: 4px solid #28a745;
+    }
+
+    .analogy-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .application-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .app-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .app-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .highlight {
+        background: #ffeb3b;
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+
+    .algorithm-step {
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border-left: 4px solid #6f42c1;
+    }
+
+    .step-number {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: #6f42c1;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+
+    .formula-box {
+        background: #f0f0f0;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-family: 'Courier New', monospace;
+        font-size: 16px;
+        margin: 15px 0;
+    }
+</style>
+
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>算法</span>
+        <span>></span>
+        <span>Floyd-Warshall算法</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">🌐</span>
+            Floyd-Warshall全源最短路径算法
+        </h1>
+        <p>一次计算所有路径的动态规划算法 - 让每个节点都成为桥梁</p>
+    </div>
+
+    <!-- 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <h2 class="section-title">
+            <span class="section-icon">📋</span>
+            知识点概述
+        </h2>
+
+        <div class="concept-card">
+            <p style="font-size: 18px; line-height: 1.6;">
+                <strong>核心概念：</strong>Floyd算法就像一个<span class="highlight">全能路线规划师</span>，它通过尝试每个节点作为"中转站"，找出所有地点之间的最短路径，一次性解决所有路径问题！
+            </p>
+
+            <div style="margin: 20px 0;">
+                <h4>🔤 关键术语：</h4>
+                <span class="key-term">全源最短路径</span> - 求所有节点对之间的最短路径<br>
+                <span class="key-term">动态规划</span> - 通过子问题的最优解构建整体最优解<br>
+                <span class="key-term">中间节点</span> - 作为"中转站"的节点<br>
+                <span class="key-term">距离矩阵</span> - 存储所有节点间距离的二维数组<br>
+                <span class="key-term">路径矩阵</span> - 记录最短路径经过的中间节点
+            </div>
+
+            <div class="difficulty-badge difficulty-hard">
+                📊 学习难度：高级
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>前置知识：</strong>图论基础、动态规划、矩阵运算
+            </div>
+        </div>
+    </div>
+
+    <!-- 概念详解 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">🔍</span>
+            概念详解
+        </h2>
+
+        <div class="analogy-box">
+            <h3>✈️ 生活类比：航空中转网络</h3>
+            <p>想象你要规划全球所有机场之间的最短飞行路线：</p>
+            <ul style="list-style: none; padding-left: 0;">
+                <li>🏢 每个机场是一个节点</li>
+                <li>✈️ 直飞航线是边，飞行时间是权重</li>
+                <li>🔄 有些城市之间没有直飞，需要中转</li>
+                <li>📊 你需要一张表记录任意两个城市间的最短飞行时间</li>
+                <li>🎯 Floyd算法会尝试每个城市作为中转站</li>
+                <li>⚡ 如果经过中转更快，就更新路线</li>
+            </ul>
+        </div>
+
+        <div class="concept-card">
+            <h4>1️⃣ 核心思想：动态规划</h4>
+            <p><strong>问题定义：</strong>dist[i][j] = 从节点i到节点j的最短距离</p>
+            <p><strong>状态转移：</strong>考虑是否经过节点k作为中间节点</p>
+
+            <div class="formula-box">
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+            </div>
+
+            <p>这个公式的含义：</p>
+            <ul>
+                <li>要么直接从i到j（不经过k）</li>
+                <li>要么从i先到k，再从k到j</li>
+                <li>选择两者中更短的路径</li>
+            </ul>
+        </div>
+
+        <div class="concept-card">
+            <h4>2️⃣ 三层循环的意义</h4>
+            <pre style="background: #f0f0f0; padding: 10px; border-radius: 5px;">
+for k in range(n):        # 尝试每个节点作为中间节点
+    for i in range(n):    # 对于每个起点
+        for j in range(n):  # 对于每个终点
+            # 检查经过k是否更短
+            </pre>
+            <p><strong>关键：</strong>k必须在最外层！因为我们要确保在考虑k作为中间节点时，所有经过前k-1个节点的最短路径已经计算完毕。</p>
+        </div>
+
+        <div class="concept-card">
+            <h4>3️⃣ 算法执行步骤</h4>
+            <div class="algorithm-step">
+                <span class="step-number">1</span>
+                初始化距离矩阵：直接连接的用边权重，其他设为∞
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">2</span>
+                k=0：尝试通过节点0中转，更新所有路径
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">3</span>
+                k=1：尝试通过节点1中转，更新所有路径
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">4</span>
+                继续增加k，直到所有节点都尝试过
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">5</span>
+                最终矩阵包含所有最短路径
+            </div>
+        </div>
+
+        <div class="concept-card" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h4>⚠️ 初学者易混淆点</h4>
+            <ul>
+                <li>Floyd可以处理<strong>负权边</strong>，但不能有负权环</li>
+                <li>时间复杂度O(n³)，适合小规模图（n<500）</li>
+                <li>空间复杂度O(n²)，需要存储完整距离矩阵</li>
+                <li>与Dijkstra区别：Floyd求所有对，Dijkstra求单源</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 可视化展示 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">📊</span>
+            可视化展示
+        </h2>
+
+        <div class="visualization-container">
+            <h3 style="text-align: center;">🎯 Floyd-Warshall算法动态演示</h3>
+
+            <canvas id="floydCanvas" width="400" height="400"></canvas>
+
+            <div class="control-panel">
+                <button class="control-btn" onclick="startAlgorithm()">▶️ 开始算法</button>
+                <button class="control-btn" onclick="stepAlgorithm()">⏭️ 单步执行</button>
+                <button class="control-btn" onclick="pauseAlgorithm()">⏸️ 暂停</button>
+                <button class="control-btn" onclick="resetGraph()">🔄 重置</button>
+                <button class="control-btn" onclick="generateRandomGraph()">🎲 随机图</button>
+                <button class="control-btn danger" onclick="clearGraph()">🗑️ 清空</button>
+
+                <div class="speed-control">
+                    <label for="speedSlider">动画速度：</label>
+                    <input type="range" id="speedSlider" min="200" max="2000" value="1000" step="100">
+                    <span id="speedValue">1000ms</span>
+                </div>
+            </div>
+
+            <div class="matrix-container">
+                <div class="matrix-wrapper">
+                    <div class="matrix-title">📊 距离矩阵</div>
+                    <table class="distance-matrix" id="distanceMatrix">
+                        <!-- 动态生成 -->
+                    </table>
+                </div>
+
+                <div class="matrix-wrapper">
+                    <div class="matrix-title">🔗 路径矩阵</div>
+                    <table class="distance-matrix" id="pathMatrix">
+                        <!-- 动态生成 -->
+                    </table>
+                </div>
+            </div>
+
+            <div id="operationLog" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; min-height: 60px;">
+                <strong>操作日志：</strong><span id="logText">点击"随机图"生成示例，或"开始算法"运行</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 代码示例 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">💻</span>
+            代码实现
+        </h2>
+
+        <div class="code-tabs">
+            <button class="code-tab active" onclick="switchCode('cpp', event)">C++</button>
+            <button class="code-tab" onclick="switchCode('java', event)">Java</button>
+            <button class="code-tab" onclick="switchCode('python', event)">Python</button>
+        </div>
+
+        <div id="cpp-code" class="code-content active">
+            <button class="copy-btn" onclick="copyCode('cpp', event)">📋 复制代码</button>
+            <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;limits&gt;
+using namespace std;
+
+const int INF = 1e9;  // 表示无穷大
+
+class FloydWarshall {
+private:
+    int n;  // 节点数
+    vector&lt;vector&lt;int&gt;&gt; dist;  // 距离矩阵
+    vector&lt;vector&lt;int&gt;&gt; next;  // 路径矩阵
+
+public:
+    FloydWarshall(int vertices) : n(vertices) {
+        // 初始化矩阵
+        dist.resize(n, vector&lt;int&gt;(n, INF));
+        next.resize(n, vector&lt;int&gt;(n, -1));
+
+        // 对角线设为0（自己到自己距离为0）
+        for (int i = 0; i &lt; n; i++) {
+            dist[i][i] = 0;
+            next[i][i] = i;
+        }
+    }
+
+    // 添加边
+    void addEdge(int u, int v, int weight) {
+        dist[u][v] = weight;
+        next[u][v] = v;  // 直接连接，下一步就是终点
+
+        // 如果是无向图，添加反向边
+        dist[v][u] = weight;
+        next[v][u] = u;
+    }
+
+    // Floyd-Warshall算法核心
+    void floydWarshall() {
+        // k: 中间节点
+        for (int k = 0; k &lt; n; k++) {
+            // i: 起点
+            for (int i = 0; i &lt; n; i++) {
+                // j: 终点
+                for (int j = 0; j &lt; n; j++) {
+                    // 如果经过k的路径更短
+                    if (dist[i][k] != INF && dist[k][j] != INF &&
+                        dist[i][k] + dist[k][j] &lt; dist[i][j]) {
+
+                        // 更新最短距离
+                        dist[i][j] = dist[i][k] + dist[k][j];
+
+                        // 更新路径：从i到j要先从i到k
+                        next[i][j] = next[i][k];
+                    }
+                }
+            }
+        }
+
+        // 检测负权环
+        for (int i = 0; i &lt; n; i++) {
+            if (dist[i][i] &lt; 0) {
+                cout &lt;&lt; "图中存在负权环！" &lt;&lt; endl;
+                return;
+            }
+        }
+    }
+
+    // 重建路径
+    vector&lt;int&gt; getPath(int start, int end) {
+        vector&lt;int&gt; path;
+
+        // 无法到达
+        if (next[start][end] == -1) {
+            return path;
+        }
+
+        // 从起点开始重建路径
+        int current = start;
+        path.push_back(current);
+
+        while (current != end) {
+            current = next[current][end];
+            path.push_back(current);
+        }
+
+        return path;
+    }
+
+    // 打印距离矩阵
+    void printDistanceMatrix() {
+        cout &lt;&lt; "距离矩阵：" &lt;&lt; endl;
+        cout &lt;&lt; "    ";
+        for (int i = 0; i &lt; n; i++) {
+            cout &lt;&lt; i &lt;&lt; "   ";
+        }
+        cout &lt;&lt; endl;
+
+        for (int i = 0; i &lt; n; i++) {
+            cout &lt;&lt; i &lt;&lt; ": ";
+            for (int j = 0; j &lt; n; j++) {
+                if (dist[i][j] == INF) {
+                    cout &lt;&lt; "INF ";
+                } else {
+                    cout &lt;&lt; dist[i][j];
+                    if (dist[i][j] &lt; 10) cout &lt;&lt; "   ";
+                    else if (dist[i][j] &lt; 100) cout &lt;&lt; "  ";
+                    else cout &lt;&lt; " ";
+                }
+            }
+            cout &lt;&lt; endl;
+        }
+    }
+
+    // 打印特定路径
+    void printPath(int start, int end) {
+        vector&lt;int&gt; path = getPath(start, end);
+
+        if (path.empty()) {
+            cout &lt;&lt; "从 " &lt;&lt; start &lt;&lt; " 到 " &lt;&lt; end &lt;&lt; " 无路径" &lt;&lt; endl;
+            return;
+        }
+
+        cout &lt;&lt; "从 " &lt;&lt; start &lt;&lt; " 到 " &lt;&lt; end
+             &lt;&lt; " 的最短路径 (距离: " &lt;&lt; dist[start][end] &lt;&lt; "): ";
+
+        for (int i = 0; i &lt; path.size(); i++) {
+            cout &lt;&lt; path[i];
+            if (i &lt; path.size() - 1) cout &lt;&lt; " -> ";
+        }
+        cout &lt;&lt; endl;
+    }
+};
+
+int main() {
+    // 创建图（4个节点）
+    FloydWarshall graph(4);
+
+    // 添加边
+    graph.addEdge(0, 1, 5);
+    graph.addEdge(0, 3, 10);
+    graph.addEdge(1, 2, 3);
+    graph.addEdge(2, 3, 1);
+
+    // 运行Floyd-Warshall算法
+    graph.floydWarshall();
+
+    // 打印结果
+    graph.printDistanceMatrix();
+    cout &lt;&lt; endl;
+
+    // 打印一些具体路径
+    graph.printPath(0, 2);
+    graph.printPath(0, 3);
+    graph.printPath(1, 3);
+
+    return 0;
+}</code></pre>
+        </div>
+
+        <div id="java-code" class="code-content">
+            <button class="copy-btn" onclick="copyCode('java', event)">📋 复制代码</button>
+            <pre><code>import java.util.*;
+
+public class FloydWarshall {
+    private int n;  // 节点数
+    private int[][] dist;  // 距离矩阵
+    private int[][] next;  // 路径矩阵
+    private static final int INF = Integer.MAX_VALUE / 2;  // 避免溢出
+
+    public FloydWarshall(int vertices) {
+        this.n = vertices;
+        this.dist = new int[n][n];
+        this.next = new int[n][n];
+
+        // 初始化矩阵
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i == j) {
+                    dist[i][j] = 0;
+                    next[i][j] = j;
+                } else {
+                    dist[i][j] = INF;
+                    next[i][j] = -1;
+                }
+            }
+        }
+    }
+
+    // 添加边（无向图）
+    public void addEdge(int u, int v, int weight) {
+        dist[u][v] = weight;
+        next[u][v] = v;
+
+        // 无向图：添加反向边
+        dist[v][u] = weight;
+        next[v][u] = u;
+    }
+
+    // Floyd-Warshall算法实现
+    public void floydWarshall() {
+        // k: 中间节点
+        for (int k = 0; k < n; k++) {
+            // i: 起点
+            for (int i = 0; i < n; i++) {
+                // j: 终点
+                for (int j = 0; j < n; j++) {
+                    // 避免溢出检查
+                    if (dist[i][k] != INF && dist[k][j] != INF) {
+                        // 如果经过k的路径更短
+                        if (dist[i][k] + dist[k][j] < dist[i][j]) {
+                            dist[i][j] = dist[i][k] + dist[k][j];
+                            next[i][j] = next[i][k];
+                        }
+                    }
+                }
+            }
+
+            // 可以在这里打印每一步的状态
+            System.out.println("k = " + k + " 完成");
+        }
+
+        // 检测负权环
+        for (int i = 0; i < n; i++) {
+            if (dist[i][i] < 0) {
+                System.out.println("警告：图中存在负权环！");
+                return;
+            }
+        }
+    }
+
+    // 重建路径
+    public List<Integer> getPath(int start, int end) {
+        List<Integer> path = new ArrayList<>();
+
+        // 无法到达
+        if (next[start][end] == -1) {
+            return path;
+        }
+
+        // 从起点开始重建路径
+        int current = start;
+        path.add(current);
+
+        while (current != end) {
+            current = next[current][end];
+            path.add(current);
+        }
+
+        return path;
+    }
+
+    // 打印距离矩阵
+    public void printDistanceMatrix() {
+        System.out.println("距离矩阵：");
+        System.out.print("     ");
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%3d ", i);
+        }
+        System.out.println();
+
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%2d: ", i);
+            for (int j = 0; j < n; j++) {
+                if (dist[i][j] == INF) {
+                    System.out.print("INF ");
+                } else {
+                    System.out.printf("%3d ", dist[i][j]);
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // 打印路径矩阵
+    public void printNextMatrix() {
+        System.out.println("路径矩阵（next）：");
+        System.out.print("     ");
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%3d ", i);
+        }
+        System.out.println();
+
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%2d: ", i);
+            for (int j = 0; j < n; j++) {
+                if (next[i][j] == -1) {
+                    System.out.print("  - ");
+                } else {
+                    System.out.printf("%3d ", next[i][j]);
+                }
+            }
+            System.out.println();
+        }
+    }
+
+    // 打印特定路径
+    public void printPath(int start, int end) {
+        List<Integer> path = getPath(start, end);
+
+        if (path.isEmpty()) {
+            System.out.println("从 " + start + " 到 " + end + " 无路径");
+            return;
+        }
+
+        System.out.print("从 " + start + " 到 " + end +
+                        " 的最短路径 (距离: " + dist[start][end] + "): ");
+
+        for (int i = 0; i < path.size(); i++) {
+            System.out.print(path.get(i));
+            if (i < path.size() - 1) {
+                System.out.print(" -> ");
+            }
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        // 创建图（4个节点）
+        FloydWarshall graph = new FloydWarshall(4);
+
+        // 添加边
+        graph.addEdge(0, 1, 5);
+        graph.addEdge(0, 3, 10);
+        graph.addEdge(1, 2, 3);
+        graph.addEdge(2, 3, 1);
+
+        System.out.println("初始状态：");
+        graph.printDistanceMatrix();
+        System.out.println();
+
+        // 运行Floyd-Warshall算法
+        graph.floydWarshall();
+
+        System.out.println("\n算法执行后：");
+        graph.printDistanceMatrix();
+        System.out.println();
+        graph.printNextMatrix();
+        System.out.println();
+
+        // 打印一些具体路径
+        graph.printPath(0, 2);
+        graph.printPath(0, 3);
+        graph.printPath(1, 3);
+    }
+}</code></pre>
+        </div>
+
+        <div id="python-code" class="code-content">
+            <button class="copy-btn" onclick="copyCode('python', event)">📋 复制代码</button>
+            <pre><code>import sys
+from typing import List, Optional
+
+class FloydWarshall:
+    def __init__(self, vertices: int):
+        """初始化Floyd-Warshall算法
+        Args:
+            vertices: 节点数量
+        """
+        self.n = vertices
+        self.INF = float('inf')
+
+        # 初始化距离矩阵
+        self.dist = [[self.INF] * self.n for _ in range(self.n)]
+        # 初始化路径矩阵
+        self.next = [[None] * self.n for _ in range(self.n)]
+
+        # 对角线设为0（自己到自己）
+        for i in range(self.n):
+            self.dist[i][i] = 0
+            self.next[i][i] = i
+
+    def add_edge(self, u: int, v: int, weight: int):
+        """添加边（无向图）
+        Args:
+            u: 起点
+            v: 终点
+            weight: 权重
+        """
+        self.dist[u][v] = weight
+        self.next[u][v] = v
+
+        # 无向图：添加反向边
+        self.dist[v][u] = weight
+        self.next[v][u] = u
+
+    def floyd_warshall(self, verbose: bool = False) -> bool:
+        """执行Floyd-Warshall算法
+        Args:
+            verbose: 是否打印详细过程
+        Returns:
+            bool: True表示成功，False表示存在负权环
+        """
+        # 三层循环
+        for k in range(self.n):
+            if verbose:
+                print(f"\n=== k = {k} (尝试通过节点{k}中转) ===")
+
+            for i in range(self.n):
+                for j in range(self.n):
+                    # 计算经过k的路径长度
+                    if self.dist[i][k] != self.INF and self.dist[k][j] != self.INF:
+                        new_dist = self.dist[i][k] + self.dist[k][j]
+
+                        # 如果更短，更新
+                        if new_dist < self.dist[i][j]:
+                            if verbose:
+                                print(f"  更新: [{i}→{j}] 从 {self.dist[i][j]} 改为 {new_dist}")
+                                print(f"        路径: {i}→{k}→{j}")
+
+                            self.dist[i][j] = new_dist
+                            self.next[i][j] = self.next[i][k]
+
+        # 检测负权环
+        for i in range(self.n):
+            if self.dist[i][i] < 0:
+                print("警告：图中存在负权环！")
+                return False
+
+        return True
+
+    def get_path(self, start: int, end: int) -> List[int]:
+        """获取最短路径
+        Args:
+            start: 起点
+            end: 终点
+        Returns:
+            路径列表，如果不可达则返回空列表
+        """
+        # 不可达
+        if self.next[start][end] is None:
+            return []
+
+        # 重建路径
+        path = [start]
+        current = start
+
+        while current != end:
+            current = self.next[current][end]
+            path.append(current)
+
+        return path
+
+    def print_distance_matrix(self):
+        """打印距离矩阵"""
+        print("\n距离矩阵：")
+        print("     ", end="")
+        for i in range(self.n):
+            print(f"{i:4}", end="")
+        print()
+
+        for i in range(self.n):
+            print(f"{i:2}: ", end="")
+            for j in range(self.n):
+                if self.dist[i][j] == self.INF:
+                    print(" INF", end="")
+                else:
+                    print(f"{self.dist[i][j]:4}", end="")
+            print()
+
+    def print_path_matrix(self):
+        """打印路径矩阵"""
+        print("\n路径矩阵（next）：")
+        print("     ", end="")
+        for i in range(self.n):
+            print(f"{i:4}", end="")
+        print()
+
+        for i in range(self.n):
+            print(f"{i:2}: ", end="")
+            for j in range(self.n):
+                if self.next[i][j] is None:
+                    print("   -", end="")
+                else:
+                    print(f"{self.next[i][j]:4}", end="")
+            print()
+
+    def print_path(self, start: int, end: int):
+        """打印具体路径"""
+        path = self.get_path(start, end)
+
+        if not path:
+            print(f"从 {start} 到 {end}: 不可达")
+            return
+
+        distance = self.dist[start][end]
+        path_str = " → ".join(map(str, path))
+        print(f"从 {start} 到 {end}: 距离={distance}, 路径: {path_str}")
+
+    def print_all_shortest_paths(self):
+        """打印所有最短路径"""
+        print("\n所有最短路径：")
+        for i in range(self.n):
+            for j in range(self.n):
+                if i != j:
+                    self.print_path(i, j)
+
+
+def example1_basic():
+    """基础示例"""
+    print("=== 基础示例 ===")
+
+    # 创建4个节点的图
+    graph = FloydWarshall(4)
+
+    # 添加边
+    graph.add_edge(0, 1, 5)
+    graph.add_edge(0, 3, 10)
+    graph.add_edge(1, 2, 3)
+    graph.add_edge(2, 3, 1)
+
+    print("初始图：")
+    print("边: (0,1,5), (0,3,10), (1,2,3), (2,3,1)")
+
+    # 执行算法
+    graph.floyd_warshall(verbose=True)
+
+    # 打印结果
+    graph.print_distance_matrix()
+    graph.print_path_matrix()
+
+    print("\n具体路径：")
+    graph.print_path(0, 2)
+    graph.print_path(0, 3)
+    graph.print_path(1, 3)
+
+
+def example2_negative_edge():
+    """包含负权边的示例"""
+    print("\n=== 负权边示例 ===")
+
+    graph = FloydWarshall(3)
+
+    # 添加边（包含负权）
+    graph.dist[0][1] = 4
+    graph.next[0][1] = 1
+    graph.dist[1][2] = -5
+    graph.next[1][2] = 2
+    graph.dist[2][0] = 2
+    graph.next[2][0] = 0
+
+    print("边: (0→1: 4), (1→2: -5), (2→0: 2)")
+
+    # 执行算法
+    if graph.floyd_warshall():
+        graph.print_distance_matrix()
+        print("\n所有路径：")
+        graph.print_all_shortest_paths()
+
+
+def example3_disconnected():
+    """非连通图示例"""
+    print("\n=== 非连通图示例 ===")
+
+    graph = FloydWarshall(5)
+
+    # 添加边（两个独立的部分）
+    graph.add_edge(0, 1, 1)
+    graph.add_edge(1, 2, 2)
+    graph.add_edge(3, 4, 3)
+
+    print("边: (0,1,1), (1,2,2), (3,4,3)")
+    print("注意：图分为两个独立部分")
+
+    # 执行算法
+    graph.floyd_warshall()
+
+    # 打印结果
+    graph.print_distance_matrix()
+
+    print("\n测试路径：")
+    graph.print_path(0, 2)  # 可达
+    graph.print_path(0, 3)  # 不可达
+    graph.print_path(3, 4)  # 可达
+
+
+if __name__ == "__main__":
+    example1_basic()
+    example2_negative_edge()
+    example3_disconnected()</code></pre>
+        </div>
+    </div>
+
+    <!-- 实际应用 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">🌟</span>
+            实际应用
+        </h2>
+
+        <div class="application-grid">
+            <div class="app-card">
+                <h3>🗺️ 地图服务</h3>
+                <p>Google Maps预计算热门地点间的最短路径，提供快速路线查询</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🌐 网络路由</h3>
+                <p>计算机网络中路由表的构建，找到数据包的最优传输路径</p>
+            </div>
+
+            <div class="app-card">
+                <h3>✈️ 航空调度</h3>
+                <p>航空公司计算所有机场间的最短飞行路线和中转方案</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🎮 游戏AI</h3>
+                <p>策略游戏中计算所有单位间的移动成本，优化AI决策</p>
+            </div>
+
+            <div class="app-card">
+                <h3>📊 关系分析</h3>
+                <p>社交网络中分析用户间的最短关系链，推荐共同好友</p>
+            </div>
+
+            <div class="app-card">
+                <h3>💰 套汇检测</h3>
+                <p>外汇市场检测货币兑换中的套利机会（负权环检测）</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 学习检验 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">✅</span>
+            学习检验
+        </h2>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题1：为什么Floyd算法的三层循环中，k必须在最外层？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(1, event)">查看答案</button>
+            <div id="answer1" class="quiz-answer">
+                <strong>答案：</strong>这是动态规划的要求，确保子问题已经解决。
+                <p><strong>详细解释：</strong></p>
+                <ul>
+                    <li>当我们考虑"是否通过节点k"时，需要知道：
+                        <ul>
+                            <li>不经过k的i到j最短路径（已知）</li>
+                            <li>i到k的最短路径（可能经过0到k-1）</li>
+                            <li>k到j的最短路径（可能经过0到k-1）</li>
+                        </ul>
+                    </li>
+                    <li>如果k不在最外层，我们可能使用还未优化的路径</li>
+                </ul>
+                <p><strong>错误示例：</strong></p>
+                <pre style="background: #f0f0f0; padding: 10px;">
+// 错误！
+for i in range(n):
+    for j in range(n):
+        for k in range(n):  // k在内层
+            dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+// 这样会导致使用未完全优化的路径
+                </pre>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题2：Floyd算法与Dijkstra算法的区别和适用场景？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(2, event)">查看答案</button>
+            <div id="answer2" class="quiz-answer">
+                <strong>答案：</strong>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #f0f0f0;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">特性</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Floyd-Warshall</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Dijkstra</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">问题类型</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">全源最短路径</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">单源最短路径</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">时间复杂度</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(V³)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O((V+E)logV)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">空间复杂度</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(V²)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(V)</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">负权边</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">✅ 支持</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">❌ 不支持</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">适用规模</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">小图（V < 500）</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">大图也可以</td>
+                    </tr>
+                </table>
+                <p><strong>选择建议：</strong></p>
+                <ul>
+                    <li>需要所有点对路径 → Floyd</li>
+                    <li>只需要单源路径 → Dijkstra</li>
+                    <li>有负权边 → Floyd或Bellman-Ford</li>
+                    <li>图很大 → 多次Dijkstra可能比Floyd快</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题3：如何用Floyd算法检测负权环？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(3, event)">查看答案</button>
+            <div id="answer3" class="quiz-answer">
+                <strong>答案：</strong>算法执行后，检查对角线元素是否为负数。
+                <p><strong>原理：</strong></p>
+                <ul>
+                    <li>dist[i][i]表示从i出发回到i的最短距离</li>
+                    <li>正常情况下，不经过任何边回到自己，距离应该是0</li>
+                    <li>如果dist[i][i] < 0，说明存在一个从i出发的负权环</li>
+                </ul>
+                <p><strong>代码实现：</strong></p>
+                <pre style="background: #f0f0f0; padding: 10px;">
+// Floyd算法执行后
+for (int i = 0; i < n; i++) {
+    if (dist[i][i] < 0) {
+        cout << "存在负权环，包含节点 " << i << endl;
+        return false;
+    }
+}
+                </pre>
+                <p><strong>应用：</strong>外汇套汇检测、游戏经济系统漏洞检测等</p>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题4：如何重建Floyd算法找到的最短路径？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(4, event)">查看答案</button>
+            <div id="answer4" class="quiz-answer">
+                <strong>答案：</strong>使用路径矩阵next[i][j]记录从i到j路径上的下一个节点。
+                <p><strong>方法1：next矩阵法</strong></p>
+                <pre style="background: #f0f0f0; padding: 10px;">
+// 初始化
+next[i][j] = j;  // 直接连接
+
+// 更新时
+if (dist[i][k] + dist[k][j] < dist[i][j]) {
+    dist[i][j] = dist[i][k] + dist[k][j];
+    next[i][j] = next[i][k];  // 关键：从i到j要先走到k方向
+}
+
+// 重建路径
+path = [start];
+current = start;
+while (current != end) {
+    current = next[current][end];
+    path.append(current);
+}
+                </pre>
+                <p><strong>方法2：parent矩阵法</strong></p>
+                <p>记录到达j的前驱节点，然后反向重建路径。</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+            <h4>📚 进阶学习建议</h4>
+            <ol>
+                <li><strong>优化实现：</strong>空间优化版本（原地更新）</li>
+                <li><strong>扩展应用：</strong>传递闭包、可达性矩阵</li>
+                <li><strong>变种算法：</strong>Johnson算法（稀疏图的全源最短路径）</li>
+                <li><strong>下一步学习：</strong>最小生成树、网络流、图的连通性</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- 返回导航 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<script>
+// Canvas动画相关代码
+const canvas = document.getElementById('floydCanvas');
+const ctx = canvas.getContext('2d');
+
+// 图数据结构
+class FloydVisualization {
+    constructor() {
+        this.nodes = [];
+        this.n = 0;
+        this.dist = [];      // 距离矩阵
+        this.next = [];      // 路径矩阵
+        this.original = [];  // 原始邻接矩阵
+
+        // 动画状态
+        this.k = -1;         // 当前中间节点
+        this.i = -1;         // 当前起点
+        this.j = -1;         // 当前终点
+        this.animationRunning = false;
+        this.animationPaused = false;
+        this.step = 0;
+        this.INF = 999;
+    }
+
+    init(n) {
+        this.n = n;
+        this.nodes = [];
+
+        // 在画布上均匀分布节点（圆形布局）
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = 120;
+
+        for (let i = 0; i < n; i++) {
+            const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+            const x = centerX + Math.cos(angle) * radius;
+            const y = centerY + Math.sin(angle) * radius;
+            this.nodes.push({
+                x, y,
+                label: String.fromCharCode(65 + i)
+            });
+        }
+
+        // 初始化矩阵
+        this.dist = Array(n).fill().map(() => Array(n).fill(this.INF));
+        this.next = Array(n).fill().map(() => Array(n).fill(-1));
+        this.original = Array(n).fill().map(() => Array(n).fill(this.INF));
+
+        // 对角线设为0
+        for (let i = 0; i < n; i++) {
+            this.dist[i][i] = 0;
+            this.original[i][i] = 0;
+            this.next[i][i] = i;
+        }
+    }
+
+    addEdge(from, to, weight) {
+        this.dist[from][to] = weight;
+        this.dist[to][from] = weight;  // 无向图
+        this.original[from][to] = weight;
+        this.original[to][from] = weight;
+        this.next[from][to] = to;
+        this.next[to][from] = from;
+    }
+
+    clear() {
+        this.nodes = [];
+        this.n = 0;
+        this.dist = [];
+        this.next = [];
+        this.original = [];
+        this.k = -1;
+        this.i = -1;
+        this.j = -1;
+        this.step = 0;
+        this.animationRunning = false;
+        this.animationPaused = false;
+    }
+
+    reset() {
+        // 重置为原始状态
+        for (let i = 0; i < this.n; i++) {
+            for (let j = 0; j < this.n; j++) {
+                this.dist[i][j] = this.original[i][j];
+                if (this.original[i][j] !== this.INF) {
+                    this.next[i][j] = j;
+                } else {
+                    this.next[i][j] = -1;
+                }
+            }
+        }
+        this.k = -1;
+        this.i = -1;
+        this.j = -1;
+        this.step = 0;
+        this.animationRunning = false;
+        this.animationPaused = false;
+    }
+}
+
+const graph = new FloydVisualization();
+let animationSpeed = 1000;
+
+// 绘制节点
+function drawNode(node, index, highlight = '') {
+    const x = node.x;
+    const y = node.y;
+    const radius = 25;
+
+    // 根据高亮类型设置颜色
+    let fillColor = '#e0e0e0';
+    let strokeColor = '#999';
+
+    if (highlight === 'k') {
+        fillColor = '#cfe2ff';
+        strokeColor = '#084298';
+    } else if (highlight === 'i') {
+        fillColor = '#f8d7da';
+        strokeColor = '#842029';
+    } else if (highlight === 'j') {
+        fillColor = '#fff3cd';
+        strokeColor = '#664d03';
+    }
+
+    // 绘制节点
+    ctx.fillStyle = fillColor;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // 节点标签
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(node.label, x, y);
+}
+
+// 绘制边
+function drawEdge(from, to, weight, highlight = false) {
+    ctx.strokeStyle = highlight ? '#ff6b6b' : '#999';
+    ctx.lineWidth = highlight ? 3 : 1;
+
+    ctx.beginPath();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(to.x, to.y);
+    ctx.stroke();
+
+    // 绘制权重
+    const midX = (from.x + to.x) / 2;
+    const midY = (from.y + to.y) / 2;
+
+    ctx.fillStyle = highlight ? '#ffe6e6' : 'white';
+    ctx.strokeStyle = highlight ? '#ff6b6b' : '#999';
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.arc(midX, midY, 15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#333';
+    ctx.font = highlight ? 'bold 12px Arial' : '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(weight, midX, midY);
+}
+
+// 主绘制函数
+function drawGraph() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制标题
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 18px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Floyd-Warshall算法', canvas.width / 2, 30);
+
+    if (graph.k >= 0) {
+        ctx.font = '14px Arial';
+        ctx.fillText(`k=${graph.k} (中间节点: ${graph.nodes[graph.k].label})`, canvas.width / 2, 50);
+    }
+
+    // 绘制边
+    for (let i = 0; i < graph.n; i++) {
+        for (let j = i + 1; j < graph.n; j++) {
+            if (graph.original[i][j] !== graph.INF) {
+                const highlight = (i === graph.i && graph.k === graph.k && j === graph.j) ||
+                                (i === graph.k && j === graph.j) ||
+                                (i === graph.i && j === graph.k);
+                drawEdge(graph.nodes[i], graph.nodes[j], graph.original[i][j], highlight);
+            }
+        }
+    }
+
+    // 绘制节点
+    for (let i = 0; i < graph.n; i++) {
+        let highlight = '';
+        if (i === graph.k) highlight = 'k';
+        else if (i === graph.i) highlight = 'i';
+        else if (i === graph.j) highlight = 'j';
+
+        drawNode(graph.nodes[i], i, highlight);
+    }
+
+    // 绘制当前检查的路径
+    if (graph.i >= 0 && graph.j >= 0 && graph.k >= 0) {
+        ctx.strokeStyle = '#6f42c1';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+
+        // i -> k -> j 路径
+        if (graph.i !== graph.k && graph.k !== graph.j) {
+            ctx.beginPath();
+            ctx.moveTo(graph.nodes[graph.i].x, graph.nodes[graph.i].y);
+            ctx.lineTo(graph.nodes[graph.k].x, graph.nodes[graph.k].y);
+            ctx.lineTo(graph.nodes[graph.j].x, graph.nodes[graph.j].y);
+            ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+    }
+}
+
+// 更新矩阵显示
+function updateMatrices() {
+    // 更新距离矩阵
+    const distTable = document.getElementById('distanceMatrix');
+    let html = '<tr><th></th>';
+    for (let i = 0; i < graph.n; i++) {
+        html += `<th>${graph.nodes[i].label}</th>`;
+    }
+    html += '</tr>';
+
+    for (let i = 0; i < graph.n; i++) {
+        html += `<tr><th>${graph.nodes[i].label}</th>`;
+        for (let j = 0; j < graph.n; j++) {
+            let cellClass = '';
+            if (i === graph.i && j === graph.j) {
+                cellClass = 'matrix-cell-updating';
+            } else if (i === graph.i) {
+                cellClass = 'matrix-cell-current-i';
+            } else if (j === graph.j) {
+                cellClass = 'matrix-cell-current-j';
+            } else if (i === graph.k || j === graph.k) {
+                cellClass = 'matrix-cell-current-k';
+            }
+
+            const value = graph.dist[i][j] === graph.INF ? '∞' : graph.dist[i][j];
+            html += `<td class="${cellClass}">${value}</td>`;
+        }
+        html += '</tr>';
+    }
+    distTable.innerHTML = html;
+
+    // 更新路径矩阵
+    const pathTable = document.getElementById('pathMatrix');
+    html = '<tr><th></th>';
+    for (let i = 0; i < graph.n; i++) {
+        html += `<th>${graph.nodes[i].label}</th>`;
+    }
+    html += '</tr>';
+
+    for (let i = 0; i < graph.n; i++) {
+        html += `<tr><th>${graph.nodes[i].label}</th>`;
+        for (let j = 0; j < graph.n; j++) {
+            const value = graph.next[i][j] === -1 ? '-' : graph.nodes[graph.next[i][j]].label;
+            html += `<td>${value}</td>`;
+        }
+        html += '</tr>';
+    }
+    pathTable.innerHTML = html;
+}
+
+// Floyd算法步进执行
+async function floydStep() {
+    if (graph.k === -1) {
+        graph.k = 0;
+        graph.i = 0;
+        graph.j = 0;
+        updateLog(`🚀 开始算法：k=0，尝试通过节点 ${graph.nodes[0].label} 中转`);
+    } else {
+        // 移动到下一步
+        graph.j++;
+        if (graph.j >= graph.n) {
+            graph.j = 0;
+            graph.i++;
+            if (graph.i >= graph.n) {
+                graph.i = 0;
+                graph.k++;
+                if (graph.k >= graph.n) {
+                    // 算法结束
+                    graph.k = -1;
+                    graph.i = -1;
+                    graph.j = -1;
+                    updateLog('✅ 算法完成！所有最短路径已计算完毕');
+                    return false;
+                }
+                updateLog(`📍 k=${graph.k}，尝试通过节点 ${graph.nodes[graph.k].label} 中转`);
+            }
+        }
+    }
+
+    // 执行当前步骤
+    if (graph.i !== graph.j) {
+        const oldDist = graph.dist[graph.i][graph.j];
+        const newDist = graph.dist[graph.i][graph.k] + graph.dist[graph.k][graph.j];
+
+        if (graph.dist[graph.i][graph.k] !== graph.INF &&
+            graph.dist[graph.k][graph.j] !== graph.INF &&
+            newDist < oldDist) {
+            graph.dist[graph.i][graph.j] = newDist;
+            graph.next[graph.i][graph.j] = graph.next[graph.i][graph.k];
+
+            updateLog(`✅ 更新 [${graph.nodes[graph.i].label}→${graph.nodes[graph.j].label}]: ${oldDist === graph.INF ? '∞' : oldDist} → ${newDist} (经过${graph.nodes[graph.k].label})`);
+        } else {
+            const oldStr = oldDist === graph.INF ? '∞' : oldDist;
+            const newStr = (graph.dist[graph.i][graph.k] === graph.INF || graph.dist[graph.k][graph.j] === graph.INF) ? '∞' : newDist;
+            updateLog(`⏩ 保持 [${graph.nodes[graph.i].label}→${graph.nodes[graph.j].label}]: ${oldStr} (不经过${graph.nodes[graph.k].label}: ${newStr})`);
+        }
+    }
+
+    drawGraph();
+    updateMatrices();
+    return true;
+}
+
+// Floyd算法完整执行
+async function floydWarshall() {
+    graph.reset();
+    graph.animationRunning = true;
+
+    while (await floydStep()) {
+        if (graph.animationPaused) {
+            await new Promise(resolve => {
+                const checkPause = setInterval(() => {
+                    if (!graph.animationPaused) {
+                        clearInterval(checkPause);
+                        resolve();
+                    }
+                }, 100);
+            });
+        }
+        await sleep(animationSpeed);
+    }
+
+    graph.animationRunning = false;
+}
+
+// 生成随机图
+function generateRandomGraph() {
+    graph.clear();
+    graph.init(4);
+
+    // 添加边
+    graph.addEdge(0, 1, 5);
+    graph.addEdge(0, 3, 10);
+    graph.addEdge(1, 2, 3);
+    graph.addEdge(2, 3, 1);
+
+    drawGraph();
+    updateMatrices();
+    updateLog('📊 已生成示例图（4个节点）');
+}
+
+// 控制函数
+function startAlgorithm() {
+    if (graph.n === 0) {
+        updateLog('❌ 请先生成图！');
+        return;
+    }
+
+    if (graph.animationRunning) {
+        updateLog('⚠️ 算法正在运行中...');
+        return;
+    }
+
+    floydWarshall();
+}
+
+function stepAlgorithm() {
+    if (graph.n === 0) {
+        updateLog('❌ 请先生成图！');
+        return;
+    }
+
+    floydStep();
+}
+
+function pauseAlgorithm() {
+    graph.animationPaused = !graph.animationPaused;
+    updateLog(graph.animationPaused ? '⏸️ 已暂停' : '▶️ 继续运行');
+}
+
+function resetGraph() {
+    if (graph.n === 0) {
+        updateLog('❌ 请先生成图！');
+        return;
+    }
+
+    graph.reset();
+    drawGraph();
+    updateMatrices();
+    updateLog('🔄 已重置到初始状态');
+}
+
+function clearGraph() {
+    graph.clear();
+    drawGraph();
+    updateMatrices();
+    updateLog('🗑️ 已清空');
+}
+
+// 辅助函数
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function updateLog(message) {
+    document.getElementById('logText').innerHTML = message;
+}
+
+// 代码切换
+function switchCode(lang, event) {
+    document.querySelectorAll('.code-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.code-content').forEach(content => content.classList.remove('active'));
+
+    event.target.classList.add('active');
+    document.getElementById(`${lang}-code`).classList.add('active');
+}
+
+// 复制代码
+function copyCode(lang, event) {
+    const codeElement = document.getElementById(`${lang}-code`).querySelector('code');
+    const text = codeElement.textContent;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✅ 已复制！';
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 2000);
+    }).catch(err => {
+        // 降级方案
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 已复制！';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        } catch (err) {
+            alert('复制失败，请手动复制代码');
+        }
+
+        document.body.removeChild(textArea);
+    });
+}
+
+// 显示/隐藏答案
+function toggleAnswer(num, event) {
+    const answer = document.getElementById(`answer${num}`);
+    const btn = event.target;
+
+    if (answer.style.display === 'block') {
+        answer.style.display = 'none';
+        btn.textContent = '查看答案';
+    } else {
+        answer.style.display = 'block';
+        btn.textContent = '隐藏答案';
+    }
+}
+
+// 速度控制
+document.getElementById('speedSlider').addEventListener('input', (e) => {
+    animationSpeed = parseInt(e.target.value);
+    document.getElementById('speedValue').textContent = `${animationSpeed}ms`;
+});
+
+// 初始化
+generateRandomGraph();
+</script>
+
+{% endblock %}

@@ -1,0 +1,961 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}广义表——递归的线性表扩展 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>广义表——递归的线性表扩展</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">📋</span>
+            广义表——递归的线性表扩展
+        </h1><p>非线性数据结构，支持递归定义，可包含原子和子表的灵活列表结构</p></div><!-- 📚 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📚</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>广义表是线性表的推广，表中元素可以是原子（不可分割的数据）或子表（另一个广义表）。定义是递归的，支持复杂的层次结构，广泛应用于符号计算和人工智能领域。
+            </div><div class="unified-grid unified-grid-2" style="margin-top: 20px;"><div class="grid-card"><span class="card-icon">📖</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>原子（Atom）：</strong>不可分割的基本数据元素</li><li><strong>子表（Sublist）：</strong>嵌套在表中的另一个广义表</li><li><strong>表头（Head）：</strong>广义表的第一个元素</li><li><strong>表尾（Tail）：</strong>除表头外其余元素组成的表</li><li><strong>长度：</strong>最上层元素的个数</li><li><strong>深度：</strong>括号的最大嵌套层数</li></ul></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">学习信息</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>难度等级：</strong>⭐⭐⭐ 中高级</li><li><strong>前置知识：</strong>线性表、递归、指针</li><li><strong>学习时间：</strong>80-100分钟</li><li><strong>核心特性：</strong>递归性、共享性、灵活性</li></ul></div></div></div></div><!-- 📝 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📝</span>
+                概念详解
+            </h2><div class="concept-explanation"><h3>🎭 生活类比：中国传统文件夹系统</h3><p>想象一个传统的文件管理系统，每个<strong>文件夹</strong>（广义表）可以包含<strong>文件</strong>（原子）和<strong>子文件夹</strong>（子表）。文件夹可以无限嵌套，形成复杂的层次结构。比如"项目文档/设计方案/(草图.jpg, 详细设计/(前端设计, 后端设计))"就是一个典型的广义表结构。</p><div class="structure-detailed"><h3>🗂️ 广义表的递归定义</h3><div style="text-align: center; margin: 30px 0;"><div class="formula-box"><div class="formula-title">标准定义</div><div class="formula-content"><strong>LS = (a₀, a₁, a₂, ..., aₙ₋₁)</strong></div><div class="formula-desc">
+                                其中 aᵢ 可以是原子或广义表
+                            </div></div></div><div class="examples-section"><h4>📋 广义表示例</h4><div class="unified-grid unified-grid-2"><div class="example-card"><h5>基本示例</h5><ul style="text-align: left;"><li><code>A = ()</code> — 空表，长度0，深度1</li><li><code>B = (a)</code> — 单原子表，长度1，深度1</li><li><code>C = (a, b)</code> — 两个原子，长度2，深度1</li><li><code>D = (a, (b, c))</code> — 混合表，长度2，深度2</li></ul></div><div class="example-card"><h5>复杂示例</h5><ul style="text-align: left;"><li><code>E = ((a, b), (c, d))</code> — 子表组成，长度2，深度2</li><li><code>F = (a, (b, (c, d)))</code> — 嵌套结构，长度2，深度3</li><li><code>G = (x, G)</code> — 递归表，深度∞</li></ul></div></div></div><div class="head-tail-demo"><h4>📄 表头表尾分解</h4><div class="decomposition-examples"><div class="decomp-example"><strong>原表：</strong><code>L = (a, (b, c), d)</code><br><strong>表头：</strong><code>Head(L) = a</code><br><strong>表尾：</strong><code>Tail(L) = ((b, c), d)</code></div><div class="decomp-example"><strong>原表：</strong><code>M = ((x, y), z)</code><br><strong>表头：</strong><code>Head(M) = (x, y)</code><br><strong>表尾：</strong><code>Tail(M) = (z)</code></div></div></div></div><div class="properties-detailed"><h3>🎯 广义表的重要特性</h3><div class="unified-grid unified-grid-3" style="margin: 20px 0;"><div class="property-card"><h4>🔄 递归性</h4><p>广义表的定义是递归的，表中可以包含表，理论上可以无限嵌套。这种特性使其能够表示复杂的层次结构。</p><div class="example-box"><strong>示例：</strong><code>L = (a, L)</code> 表示递归表
+                            </div></div><div class="property-card"><h4>🤝 共享性</h4><p>同一个子表可以被多个广义表共享引用，节省存储空间，但需要注意引用计数管理。</p><div class="example-box"><strong>示例：</strong><code>A=(a,b), B=(A,c), C=(A,d)</code></div></div><div class="property-card"><h4>📏 层次性</h4><p>广义表具有明确的层次结构，深度概念描述了嵌套的最大层数，长度描述了最上层元素数量。</p><div class="example-box"><strong>计算：</strong>深度 = max(子表深度) + 1
+                            </div></div></div></div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>关键理解：</strong>广义表的核心在于"递归定义"——表可以包含表，这种自相似的结构使其具有强大的表达能力，但也带来了复杂的存储和操作挑战。理解表头表尾分解是掌握广义表的关键。
+                </div></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><!-- 基本概念展示 --><div class="concept-demo"><h3>基本概念对比</h3><div style="display: flex; justify-content: center; gap: 30px; margin: 30px 0;"><div class="element-box atom"><div>原子 (Atom)</div><div style="font-size: 12px; margin-top: 5px;">不可分割的数据</div><div style="margin-top: 8px;">例: a, b, c</div></div><div class="element-box list"><div>子表 (Sublist)</div><div style="font-size: 12px; margin-top: 5px;">嵌套的广义表</div><div style="margin-top: 8px;">例: (b, c)</div></div></div></div><!-- 示例广义表 --><div class="glist-structure"><h3>📊 广义表结构全解析</h3><div class="example-display"><h4>示例广义表分析</h4><div class="formula-showcase"><div class="formula-main"><strong>L = (a, (b, c), d)</strong></div><div class="formula-metrics"><div class="metric-item"><span class="metric-label">长度</span><span class="metric-value">3</span></div><div class="metric-item"><span class="metric-label">深度</span><span class="metric-value">2</span></div><div class="metric-item"><span class="metric-label">原子数</span><span class="metric-value">3</span></div><div class="metric-item"><span class="metric-label">子表数</span><span class="metric-value">1</span></div></div></div></div><!-- 层次结构可视化 --><div class="level-display"><h4>🏗️ 层次结构可视化</h4><div class="level"><div class="level-label">第1层</div><div class="level-content"><div class="node atom">a</div><div class="node list">(b, c)</div><div class="node atom">d</div></div></div><div class="level"><div class="level-label">第2层</div><div class="level-content"><div style="width: 80px;"></div><div class="node atom" style="transform: scale(0.9);">b</div><div class="node atom" style="transform: scale(0.9);">c</div><div style="width: 80px;"></div></div></div></div><div class="stats-box"><div class="stat">长度: 3</div><div class="stat">深度: 2</div><div class="stat">原子数: 3</div><div class="stat">子表数: 1</div></div></div><!-- 头尾分解可视化 --><div class="head-tail-visual"><h3>✂️ 表头表尾分解可视化</h3><div class="head-tail-demo"><div class="decomp-step"><h4>原始广义表</h4><div class="decomp-expression">
+                            (<span class="highlight-head">a</span>, <span class="highlight-tail">(b, c)</span>, <span class="highlight-tail">d</span>)
+                        </div></div><div class="arrow">⬇️</div><div class="decomp-step"><div class="result-box head-box">表头: a</div><span style="font-size: 24px; margin: 0 20px;">+</span><div class="result-box tail-box">表尾: ((b, c), d)</div></div><div class="arrow">⬇️</div><div class="decomp-step"><h4>继续分解表尾</h4><div class="decomp-expression">
+                            (<span class="highlight-head">(b, c)</span>, <span class="highlight-tail">d</span>)
+                        </div><div style="margin-top: 15px;"><div class="result-box head-box">表头: (b, c)</div><span style="font-size: 24px; margin: 0 20px;">+</span><div class="result-box tail-box">表尾: (d)</div></div></div></div></div><!-- 存储结构图 --><div class="storage-demo"><h3>🔗 头尾链表示法存储结构</h3><div style="text-align: center; margin-bottom: 20px;"><h4>节点类型</h4><div><div class="node-type"><div class="field tag">0</div><div class="field data">data</div></div><span style="margin: 0 20px;">原子节点 (tag=0)</span></div><div style="margin-top: 10px;"><div class="node-type"><div class="field tag">1</div><div class="field hp">hp</div><div class="field tp">tp</div></div><span style="margin: 0 20px;">表节点 (tag=1, hp=表头指针, tp=表尾指针)</span></div></div><div style="text-align: center;"><h4>L = (a, (b, c), d) 的存储结构</h4><svg width="600" height="300" style="border: 1px solid #ccc; background: white; border-radius: 5px;"><!-- 主表节点 --><rect x="250" y="20" width="100" height="40" fill="#3498db" stroke="#2c3e50" stroke-width="2"/><text x="270" y="35" fill="white" font-family="monospace" font-size="12">1</text><text x="285" y="35" fill="white" font-family="monospace" font-size="12">hp</text><text x="310" y="35" fill="white" font-family="monospace" font-size="12">tp</text><text x="300" y="55" text-anchor="middle" font-size="12" fill="#2c3e50">主表L</text><!-- 指向第二层的线 --><line x1="285" y1="60" x2="150" y2="100" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/><line x1="315" y1="60" x2="450" y2="100" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowhead)"/><!-- 第二层节点 --><!-- 原子节点 a --><rect x="100" y="100" width="100" height="40" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/><text x="120" y="115" fill="white" font-family="monospace" font-size="12">0</text><text x="140" y="115" fill="white" font-family="monospace" font-size="12">a</text><text x="150" y="155" text-anchor="middle" font-size="12" fill="#2c3e50">表头</text><!-- 表尾节点 --><rect x="400" y="100" width="100" height="40" fill="#27ae60" stroke="#2c3e50" stroke-width="2"/><text x="420" y="115" fill="white" font-family="monospace" font-size="12">1</text><text x="435" y="115" fill="white" font-family="monospace" font-size="12">hp</text><text x="460" y="115" fill="white" font-family="monospace" font-size="12">tp</text><text x="450" y="155" text-anchor="middle" font-size="12" fill="#2c3e50">表尾</text><!-- 第三层连线 --><line x1="435" y1="140" x2="350" y2="180" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/><line x1="465" y1="140" x2="500" y2="180" stroke="#27ae60" stroke-width="2" marker-end="url(#arrowhead)"/><!-- 第三层节点 --><!-- 子表 (b,c) --><rect x="300" y="180" width="100" height="40" fill="#f39c12" stroke="#2c3e50" stroke-width="2"/><text x="320" y="195" fill="white" font-family="monospace" font-size="12">1</text><text x="335" y="195" fill="white" font-family="monospace" font-size="12">hp</text><text x="360" y="195" fill="white" font-family="monospace" font-size="12">tp</text><text x="350" y="235" text-anchor="middle" font-size="12" fill="#2c3e50">(b,c)</text><!-- 最后元素 d --><rect x="470" y="180" width="100" height="40" fill="#9b59b6" stroke="#2c3e50" stroke-width="2"/><text x="490" y="195" fill="white" font-family="monospace" font-size="12">1</text><text x="505" y="195" fill="white" font-family="monospace" font-size="12">hp</text><text x="530" y="195" fill="white" font-family="monospace" font-size="12">∧</text><text x="520" y="235" text-anchor="middle" font-size="12" fill="#2c3e50">元素d</text><!-- 底层原子 --><rect x="200" y="250" width="60" height="30" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/><text x="215" y="265" fill="white" font-family="monospace" font-size="10">0</text><text x="235" y="265" fill="white" font-family="monospace" font-size="10">b</text><rect x="400" y="250" width="60" height="30" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/><text x="415" y="265" fill="white" font-family="monospace" font-size="10">0</text><text x="435" y="265" fill="white" font-family="monospace" font-size="10">c</text><rect x="500" y="250" width="60" height="30" fill="#e74c3c" stroke="#2c3e50" stroke-width="2"/><text x="515" y="265" fill="white" font-family="monospace" font-size="10">0</text><text x="535" y="265" fill="white" font-family="monospace" font-size="10">d</text><!-- 箭头定义 --><defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#2c3e50"/></marker></defs></svg></div></div></div></div><!-- 💻 代码实现 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><div class="code-tabs"><div class="tab-buttons"><button class="tab-btn active" onclick="showCode('cpp')">C++</button><button class="tab-btn" onclick="showCode('java')">Java</button><button class="tab-btn" onclick="showCode('python')">Python</button></div><div id="cpp-code" class="code-content active"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><h4>C++ 实现（头尾链表示法）</h4><button onclick="copyCode('cpp', this)" class="copy-btn">📋 复制代码</button></div><pre><code id="cpp-source">#include &lt;iostream&gt;
+#include &lt;string&gt;
+#include &lt;stack&gt;
+using namespace std;
+
+// 广义表节点类型枚举
+enum NodeType { ATOM, LIST };
+
+// 广义表节点结构
+struct GLNode {
+    NodeType tag;           // 节点类型标志：ATOM或LIST
+    union {
+        char data;          // 原子节点存储的数据
+        struct {
+            GLNode* hp;     // 表头指针
+            GLNode* tp;     // 表尾指针
+        } ptr;
+    };
+
+    GLNode(NodeType t = ATOM) : tag(t) {
+        if (tag == ATOM) {
+            data = '\0';
+        } else {
+            ptr.hp = ptr.tp = nullptr;
+        }
+    }
+};
+
+class GeneralizedList {
+private:
+    GLNode* head;
+
+public:
+    GeneralizedList() : head(nullptr) {}
+
+    ~GeneralizedList() {
+        destroy(head);
+    }
+
+    // 从字符串创建广义表
+    GLNode* createFromString(const string& str) {
+        int index = 0;
+        head = parseString(str, index);
+        return head;
+    }
+
+private:
+    // 递归解析字符串创建广义表
+    GLNode* parseString(const string& str, int& index) {
+        // 跳过空白字符
+        while (index < str.length() && isspace(str[index])) {
+            index++;
+        }
+
+        if (index >= str.length()) {
+            return nullptr;
+        }
+
+        if (str[index] == '(') {
+            // 创建表节点
+            GLNode* listNode = new GLNode(LIST);
+            index++; // 跳过 '('
+
+            // 跳过空白
+            while (index < str.length() && isspace(str[index])) {
+                index++;
+            }
+
+            // 空表处理
+            if (str[index] == ')') {
+                index++; // 跳过 ')'
+                listNode->ptr.hp = listNode->ptr.tp = nullptr;
+                return listNode;
+            }
+
+            // 解析第一个元素作为表头
+            listNode->ptr.hp = parseString(str, index);
+
+            // 跳过空白和逗号
+            while (index < str.length() && (isspace(str[index]) || str[index] == ',')) {
+                index++;
+            }
+
+            // 解析剩余元素作为表尾
+            if (str[index] != ')') {
+                GLNode* tailNode = new GLNode(LIST);
+                tailNode->ptr.hp = parseString(str, index);
+
+                // 继续解析后续元素
+                while (index < str.length() && str[index] != ')') {
+                    while (index < str.length() && (isspace(str[index]) || str[index] == ',')) {
+                        index++;
+                    }
+
+                    if (str[index] != ')') {
+                        GLNode* nextTail = new GLNode(LIST);
+                        nextTail->ptr.hp = parseString(str, index);
+                        tailNode->ptr.tp = nextTail;
+                        tailNode = nextTail;
+                    }
+                }
+
+                listNode->ptr.tp = tailNode;
+            }
+
+            index++; // 跳过 ')'
+            return listNode;
+
+        } else {
+            // 创建原子节点
+            GLNode* atomNode = new GLNode(ATOM);
+            atomNode->data = str[index];
+            index++;
+            return atomNode;
+        }
+    }
+
+    // 销毁广义表
+    void destroy(GLNode* node) {
+        if (node == nullptr) return;
+
+        if (node->tag == LIST) {
+            destroy(node->ptr.hp);
+            destroy(node->ptr.tp);
+        }
+        delete node;
+    }
+
+public:
+    // 获取表头
+    GLNode* getHead() {
+        if (head == nullptr || head->tag == ATOM) {
+            return nullptr;
+        }
+        return head->ptr.hp;
+    }
+
+    // 获取表尾
+    GLNode* getTail() {
+        if (head == nullptr || head->tag == ATOM) {
+            return nullptr;
+        }
+        return head->ptr.tp;
+    }
+
+    // 计算长度
+    int getLength() {
+        return calculateLength(head);
+    }
+
+    int calculateLength(GLNode* node) {
+        if (node == nullptr) return 0;
+        if (node->tag == ATOM) return 0; // 原子长度为0
+
+        int length = 0;
+        GLNode* current = node;
+
+        while (current != nullptr && current->tag == LIST) {
+            if (current->ptr.hp != nullptr) {
+                length++;
+            }
+            current = current->ptr.tp;
+        }
+
+        return length;
+    }
+
+    // 计算深度
+    int getDepth() {
+        return calculateDepth(head);
+    }
+
+    int calculateDepth(GLNode* node) {
+        if (node == nullptr) return 1; // 空表深度为1
+        if (node->tag == ATOM) return 0; // 原子深度为0
+
+        int maxDepth = 0;
+        GLNode* current = node;
+
+        while (current != nullptr && current->tag == LIST) {
+            if (current->ptr.hp != nullptr) {
+                int subDepth = calculateDepth(current->ptr.hp);
+                maxDepth = max(maxDepth, subDepth);
+            }
+            current = current->ptr.tp;
+        }
+
+        return maxDepth + 1;
+    }
+
+    // 遍历并打印广义表
+    void print() {
+        printNode(head);
+        cout << endl;
+    }
+
+    void printNode(GLNode* node) {
+        if (node == nullptr) {
+            cout << "()";
+            return;
+        }
+
+        if (node->tag == ATOM) {
+            cout << node->data;
+        } else {
+            cout << "(";
+            printListContent(node);
+            cout << ")";
+        }
+    }
+
+    void printListContent(GLNode* node) {
+        bool first = true;
+
+        while (node != nullptr && node->tag == LIST) {
+            if (node->ptr.hp != nullptr) {
+                if (!first) cout << ",";
+                printNode(node->ptr.hp);
+                first = false;
+            }
+            node = node->ptr.tp;
+        }
+    }
+
+    // 复制广义表
+    GLNode* copy() {
+        return copyNode(head);
+    }
+
+    GLNode* copyNode(GLNode* node) {
+        if (node == nullptr) return nullptr;
+
+        GLNode* newNode = new GLNode(node->tag);
+
+        if (node->tag == ATOM) {
+            newNode->data = node->data;
+        } else {
+            newNode->ptr.hp = copyNode(node->ptr.hp);
+            newNode->ptr.tp = copyNode(node->ptr.tp);
+        }
+
+        return newNode;
+    }
+
+    // 判断是否为空表
+    bool isEmpty() {
+        return head == nullptr ||
+               (head->tag == LIST && head->ptr.hp == nullptr && head->ptr.tp == nullptr);
+    }
+
+    // 原子计数
+    int countAtoms() {
+        return countAtomsRecursive(head);
+    }
+
+    int countAtomsRecursive(GLNode* node) {
+        if (node == nullptr) return 0;
+
+        if (node->tag == ATOM) {
+            return 1;
+        } else {
+            return countAtomsRecursive(node->ptr.hp) +
+                   countAtomsRecursive(node->ptr.tp);
+        }
+    }
+};
+
+// 使用示例
+int main() {
+    GeneralizedList gl;
+
+    // 创建广义表: (a,(b,c),d)
+    cout << "创建广义表: (a,(b,c),d)" << endl;
+    gl.createFromString("(a,(b,c),d)");
+
+    cout << "广义表内容: ";
+    gl.print();
+
+    cout << "长度: " << gl.getLength() << endl;
+    cout << "深度: " << gl.getDepth() << endl;
+    cout << "原子个数: " << gl.countAtoms() << endl;
+    cout << "是否为空: " << (gl.isEmpty() ? "是" : "否") << endl;
+
+    return 0;
+}</code></pre></div><div id="java-code" class="code-content"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><h4>Java 实现</h4><button onclick="copyCode('java', this)" class="copy-btn">📋 复制代码</button></div><pre><code id="java-source">// 广义表节点类
+class GLNode {
+    public enum NodeType { ATOM, LIST }
+
+    private NodeType tag;
+    private char data;          // 原子数据
+    private GLNode hp;          // 表头指针
+    private GLNode tp;          // 表尾指针
+
+    public GLNode(NodeType tag) {
+        this.tag = tag;
+        this.data = '\0';
+        this.hp = null;
+        this.tp = null;
+    }
+
+    // Getters and Setters
+    public NodeType getTag() { return tag; }
+    public void setTag(NodeType tag) { this.tag = tag; }
+
+    public char getData() { return data; }
+    public void setData(char data) { this.data = data; }
+
+    public GLNode getHp() { return hp; }
+    public void setHp(GLNode hp) { this.hp = hp; }
+
+    public GLNode getTp() { return tp; }
+    public void setTp(GLNode tp) { this.tp = tp; }
+}
+
+// 广义表类
+public class GeneralizedList {
+    private GLNode head;
+
+    public GeneralizedList() {
+        this.head = null;
+    }
+
+    // 从字符串创建广义表
+    public void createFromString(String str) {
+        Index index = new Index(0);
+        this.head = parseString(str, index);
+    }
+
+    // 辅助类，用于传递索引引用
+    private static class Index {
+        int value;
+        Index(int value) { this.value = value; }
+    }
+
+    // 递归解析字符串
+    private GLNode parseString(String str, Index index) {
+        // 跳过空白字符
+        while (index.value < str.length() && Character.isWhitespace(str.charAt(index.value))) {
+            index.value++;
+        }
+
+        if (index.value >= str.length()) {
+            return null;
+        }
+
+        if (str.charAt(index.value) == '(') {
+            // 创建表节点
+            GLNode listNode = new GLNode(GLNode.NodeType.LIST);
+            index.value++; // 跳过 '('
+
+            // 跳过空白
+            while (index.value < str.length() && Character.isWhitespace(str.charAt(index.value))) {
+                index.value++;
+            }
+
+            // 空表处理
+            if (str.charAt(index.value) == ')') {
+                index.value++; // 跳过 ')'
+                return listNode;
+            }
+
+            // 解析第一个元素作为表头
+            listNode.setHp(parseString(str, index));
+
+            // 跳过空白和逗号
+            while (index.value < str.length() &&
+                   (Character.isWhitespace(str.charAt(index.value)) || str.charAt(index.value) == ',')) {
+                index.value++;
+            }
+
+            // 解析剩余元素作为表尾
+            if (str.charAt(index.value) != ')') {
+                GLNode tailNode = new GLNode(GLNode.NodeType.LIST);
+                tailNode.setHp(parseString(str, index));
+
+                // 继续解析后续元素
+                while (index.value < str.length() && str.charAt(index.value) != ')') {
+                    while (index.value < str.length() &&
+                           (Character.isWhitespace(str.charAt(index.value)) || str.charAt(index.value) == ',')) {
+                        index.value++;
+                    }
+
+                    if (str.charAt(index.value) != ')') {
+                        GLNode nextTail = new GLNode(GLNode.NodeType.LIST);
+                        nextTail.setHp(parseString(str, index));
+                        tailNode.setTp(nextTail);
+                        tailNode = nextTail;
+                    }
+                }
+
+                listNode.setTp(tailNode);
+            }
+
+            index.value++; // 跳过 ')'
+            return listNode;
+
+        } else {
+            // 创建原子节点
+            GLNode atomNode = new GLNode(GLNode.NodeType.ATOM);
+            atomNode.setData(str.charAt(index.value));
+            index.value++;
+            return atomNode;
+        }
+    }
+
+    // 获取表头
+    public GLNode getHead() {
+        if (head == null || head.getTag() == GLNode.NodeType.ATOM) {
+            return null;
+        }
+        return head.getHp();
+    }
+
+    // 获取表尾
+    public GLNode getTail() {
+        if (head == null || head.getTag() == GLNode.NodeType.ATOM) {
+            return null;
+        }
+        return head.getTp();
+    }
+
+    // 计算长度
+    public int getLength() {
+        return calculateLength(head);
+    }
+
+    private int calculateLength(GLNode node) {
+        if (node == null) return 0;
+        if (node.getTag() == GLNode.NodeType.ATOM) return 0;
+
+        int length = 0;
+        GLNode current = node;
+
+        while (current != null && current.getTag() == GLNode.NodeType.LIST) {
+            if (current.getHp() != null) {
+                length++;
+            }
+            current = current.getTp();
+        }
+
+        return length;
+    }
+
+    // 计算深度
+    public int getDepth() {
+        return calculateDepth(head);
+    }
+
+    private int calculateDepth(GLNode node) {
+        if (node == null) return 1;
+        if (node.getTag() == GLNode.NodeType.ATOM) return 0;
+
+        int maxDepth = 0;
+        GLNode current = node;
+
+        while (current != null && current.getTag() == GLNode.NodeType.LIST) {
+            if (current.getHp() != null) {
+                int subDepth = calculateDepth(current.getHp());
+                maxDepth = Math.max(maxDepth, subDepth);
+            }
+            current = current.getTp();
+        }
+
+        return maxDepth + 1;
+    }
+
+    // 打印广义表
+    public void print() {
+        printNode(head);
+        System.out.println();
+    }
+
+    private void printNode(GLNode node) {
+        if (node == null) {
+            System.out.print("()");
+            return;
+        }
+
+        if (node.getTag() == GLNode.NodeType.ATOM) {
+            System.out.print(node.getData());
+        } else {
+            System.out.print("(");
+            printListContent(node);
+            System.out.print(")");
+        }
+    }
+
+    private void printListContent(GLNode node) {
+        boolean first = true;
+
+        while (node != null && node.getTag() == GLNode.NodeType.LIST) {
+            if (node.getHp() != null) {
+                if (!first) System.out.print(",");
+                printNode(node.getHp());
+                first = false;
+            }
+            node = node.getTp();
+        }
+    }
+
+    // 判断是否为空表
+    public boolean isEmpty() {
+        return head == null ||
+               (head.getTag() == GLNode.NodeType.LIST &&
+                head.getHp() == null && head.getTp() == null);
+    }
+
+    // 原子计数
+    public int countAtoms() {
+        return countAtomsRecursive(head);
+    }
+
+    private int countAtomsRecursive(GLNode node) {
+        if (node == null) return 0;
+
+        if (node.getTag() == GLNode.NodeType.ATOM) {
+            return 1;
+        } else {
+            return countAtomsRecursive(node.getHp()) +
+                   countAtomsRecursive(node.getTp());
+        }
+    }
+
+    // 复制广义表
+    public GeneralizedList copy() {
+        GeneralizedList newList = new GeneralizedList();
+        newList.head = copyNode(this.head);
+        return newList;
+    }
+
+    private GLNode copyNode(GLNode node) {
+        if (node == null) return null;
+
+        GLNode newNode = new GLNode(node.getTag());
+
+        if (node.getTag() == GLNode.NodeType.ATOM) {
+            newNode.setData(node.getData());
+        } else {
+            newNode.setHp(copyNode(node.getHp()));
+            newNode.setTp(copyNode(node.getTp()));
+        }
+
+        return newNode;
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        GeneralizedList gl = new GeneralizedList();
+
+        System.out.println("创建广义表: (a,(b,c),d)");
+        gl.createFromString("(a,(b,c),d)");
+
+        System.out.print("广义表内容: ");
+        gl.print();
+
+        System.out.println("长度: " + gl.getLength());
+        System.out.println("深度: " + gl.getDepth());
+        System.out.println("原子个数: " + gl.countAtoms());
+        System.out.println("是否为空: " + (gl.isEmpty() ? "是" : "否"));
+    }
+}</code></pre></div><div id="python-code" class="code-content"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><h4>Python 实现</h4><button onclick="copyCode('python', this)" class="copy-btn">📋 复制代码</button></div><pre><code id="python-source">from enum import Enum
+from typing import Union, Optional
+
+class NodeType(Enum):
+    ATOM = 0
+    LIST = 1
+
+class GLNode:
+    """广义表节点类"""
+    def __init__(self, node_type: NodeType, data: str = None):
+        self.tag = node_type
+        self.data = data if node_type == NodeType.ATOM else None
+        self.hp = None  # 表头指针
+        self.tp = None  # 表尾指针
+
+class GeneralizedList:
+    """广义表类"""
+
+    def __init__(self):
+        self.head = None
+
+    def create_from_string(self, s: str) -> None:
+        """从字符串创建广义表"""
+        index = [0]  # 使用列表来模拟引用传递
+        self.head = self._parse_string(s, index)
+
+    def _parse_string(self, s: str, index: list) -> Optional[GLNode]:
+        """递归解析字符串"""
+        # 跳过空白字符
+        while index[0] < len(s) and s[index[0]].isspace():
+            index[0] += 1
+
+        if index[0] >= len(s):
+            return None
+
+        if s[index[0]] == '(':
+            # 创建表节点
+            list_node = GLNode(NodeType.LIST)
+            index[0] += 1  # 跳过 '('
+
+            # 跳过空白
+            while index[0] < len(s) and s[index[0]].isspace():
+                index[0] += 1
+
+            # 空表处理
+            if s[index[0]] == ')':
+                index[0] += 1  # 跳过 ')'
+                return list_node
+
+            # 解析第一个元素作为表头
+            list_node.hp = self._parse_string(s, index)
+
+            # 跳过空白和逗号
+            while index[0] < len(s) and (s[index[0]].isspace() or s[index[0]] == ','):
+                index[0] += 1
+
+            # 解析剩余元素作为表尾
+            if s[index[0]] != ')':
+                tail_node = GLNode(NodeType.LIST)
+                tail_node.hp = self._parse_string(s, index)
+
+                # 继续解析后续元素
+                while index[0] < len(s) and s[index[0]] != ')':
+                    while index[0] < len(s) and (s[index[0]].isspace() or s[index[0]] == ','):
+                        index[0] += 1
+
+                    if s[index[0]] != ')':
+                        next_tail = GLNode(NodeType.LIST)
+                        next_tail.hp = self._parse_string(s, index)
+                        tail_node.tp = next_tail
+                        tail_node = next_tail
+
+                list_node.tp = tail_node
+
+            index[0] += 1  # 跳过 ')'
+            return list_node
+
+        else:
+            # 创建原子节点
+            atom_node = GLNode(NodeType.ATOM, s[index[0]])
+            index[0] += 1
+            return atom_node
+
+    def get_head(self) -> Optional[GLNode]:
+        """获取表头"""
+        if self.head is None or self.head.tag == NodeType.ATOM:
+            return None
+        return self.head.hp
+
+    def get_tail(self) -> Optional[GLNode]:
+        """获取表尾"""
+        if self.head is None or self.head.tag == NodeType.ATOM:
+            return None
+        return self.head.tp
+
+    def get_length(self) -> int:
+        """计算长度"""
+        return self._calculate_length(self.head)
+
+    def _calculate_length(self, node: Optional[GLNode]) -> int:
+        """递归计算长度"""
+        if node is None:
+            return 0
+        if node.tag == NodeType.ATOM:
+            return 0
+
+        length = 0
+        current = node
+
+        while current is not None and current.tag == NodeType.LIST:
+            if current.hp is not None:
+                length += 1
+            current = current.tp
+
+        return length
+
+    def get_depth(self) -> int:
+        """计算深度"""
+        return self._calculate_depth(self.head)
+
+    def _calculate_depth(self, node: Optional[GLNode]) -> int:
+        """递归计算深度"""
+        if node is None:
+            return 1  # 空表深度为1
+        if node.tag == NodeType.ATOM:
+            return 0  # 原子深度为0
+
+        max_depth = 0
+        current = node
+
+        while current is not None and current.tag == NodeType.LIST:
+            if current.hp is not None:
+                sub_depth = self._calculate_depth(current.hp)
+                max_depth = max(max_depth, sub_depth)
+            current = current.tp
+
+        return max_depth + 1
+
+    def print_list(self) -> None:
+        """打印广义表"""
+        self._print_node(self.head)
+        print()
+
+    def _print_node(self, node: Optional[GLNode]) -> None:
+        """递归打印节点"""
+        if node is None:
+            print("()", end="")
+            return
+
+        if node.tag == NodeType.ATOM:
+            print(node.data, end="")
+        else:
+            print("(", end="")
+            self._print_list_content(node)
+            print(")", end="")
+
+    def _print_list_content(self, node: Optional[GLNode]) -> None:
+        """打印表内容"""
+        first = True
+
+        while node is not None and node.tag == NodeType.LIST:
+            if node.hp is not None:
+                if not first:
+                    print(",", end="")
+                self._print_node(node.hp)
+                first = False
+            node = node.tp
+
+    def is_empty(self) -> bool:
+        """判断是否为空表"""
+        return (self.head is None or
+                (self.head.tag == NodeType.LIST and
+                 self.head.hp is None and self.head.tp is None))
+
+    def count_atoms(self) -> int:
+        """统计原子个数"""
+        return self._count_atoms_recursive(self.head)
+
+    def _count_atoms_recursive(self, node: Optional[GLNode]) -> int:
+        """递归统计原子"""
+        if node is None:
+            return 0
+
+        if node.tag == NodeType.ATOM:
+            return 1
+        else:
+            return (self._count_atoms_recursive(node.hp) +
+                   self._count_atoms_recursive(node.tp))
+
+    def copy(self) -> 'GeneralizedList':
+        """复制广义表"""
+        new_list = GeneralizedList()
+        new_list.head = self._copy_node(self.head)
+        return new_list
+
+    def _copy_node(self, node: Optional[GLNode]) -> Optional[GLNode]:
+        """递归复制节点"""
+        if node is None:
+            return None
+
+        new_node = GLNode(node.tag, node.data)
+
+        if node.tag == NodeType.LIST:
+            new_node.hp = self._copy_node(node.hp)
+            new_node.tp = self._copy_node(node.tp)
+
+        return new_node
+
+    def to_string(self) -> str:
+        """转换为字符串表示"""
+        return self._node_to_string(self.head)
+
+    def _node_to_string(self, node: Optional[GLNode]) -> str:
+        """递归转换节点为字符串"""
+        if node is None:
+            return "()"
+
+        if node.tag == NodeType.ATOM:
+            return node.data
+        else:
+            content = []
+            current = node
+
+            while current is not None and current.tag == NodeType.LIST:
+                if current.hp is not None:
+                    content.append(self._node_to_string(current.hp))
+                current = current.tp
+
+            return "(" + ",".join(content) + ")"
+
+    def traverse_preorder(self, visit_func=None) -> list:
+        """前序遍历广义表"""
+        result = []
+        self._traverse_preorder_recursive(self.head, result, visit_func)
+        return result
+
+    def _traverse_preorder_recursive(self, node: Optional[GLNode], result: list, visit_func) -> None:
+        """递归前序遍历"""
+        if node is None:
+            return
+
+        if node.tag == NodeType.ATOM:
+            if visit_func:
+                visit_func(node.data)
+            result.append(node.data)
+        else:
+            if visit_func:
+                visit_func("(")
+            result.append("(")
+
+            self._traverse_preorder_recursive(node.hp, result, visit_func)
+            self._traverse_preorder_recursive(node.tp, result, visit_func)
+
+            if visit_func:
+                visit_func(")")
+            result.append(")")
+
+# 使用示例
+if __name__ == "__main__":
+    # 创建广义表
+    gl = GeneralizedList()
+
+    print("创建广义表: (a,(b,c),d)")
+    gl.create_from_string("(a,(b,c),d)")
+
+    print("广义表内容: ", end="")
+    gl.print_list()
+
+    print(f"长度: {gl.get_length()}")
+    print(f"深度: {gl.get_depth()}")
+    print(f"原子个数: {gl.count_atoms()}")
+    print(f"是否为空: {'是' if gl.is_empty() else '否'}")
+    print(f"字符串表示: {gl.to_string()}")
+
+    # 测试表头表尾
+    head = gl.get_head()
+    tail = gl.get_tail()
+
+    if head:
+        print("表头: ", end="")
+        temp_gl = GeneralizedList()
+        temp_gl.head = head
+        temp_gl.print_list()
+
+    if tail:
+        print("表尾: ", end="")
+        temp_gl = GeneralizedList()
+        temp_gl.head = tail
+        temp_gl.print_list()
+
+    # 测试遍历
+    print("前序遍历结果:", gl.traverse_preorder())
+
+    # 测试复制
+    copied_gl = gl.copy()
+    print("复制的广义表: ", end="")
+    copied_gl.print_list()</code></pre></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="application-card"><span class="app-icon">🤖</span><h4>人工智能</h4><p>LISP语言的基础数据结构，广泛用于专家系统、自然语言处理和知识表示。广义表的递归特性完美契合AI中的符号推理。</p><div class="example-box"><strong>应用：</strong>知识图谱表示、逻辑推理引擎、语法树构建
+                    </div></div><div class="application-card"><span class="app-icon">🧮</span><h4>符号计算</h4><p>数学表达式处理系统（如Mathematica、Maple）使用广义表表示复杂的数学公式、多项式和符号运算。</p><div class="example-box"><strong>应用：</strong>多项式运算、微积分求解、代数系统
+                    </div></div><div class="application-card"><span class="app-icon">📝</span><h4>编译器设计</h4><p>抽象语法树（AST）的表示和处理，程序语言的语法分析和语义分析都可以使用广义表来表示复杂的嵌套结构。</p><div class="example-box"><strong>应用：</strong>语法分析、代码优化、程序变换
+                    </div></div></div><div class="case-study" style="margin-top: 30px;"><h3>🔍 深度案例：LISP解释器中的广义表</h3><div class="case-content"><p><strong>场景描述：</strong>LISP（List Processing）是最早使用广义表作为核心数据结构的编程语言，所有代码和数据都用广义表表示，体现了"代码即数据"的哲学。</p><div class="unified-grid unified-grid-2" style="margin: 20px 0;"><div class="metric-box challenge-box"><h4>📊 LISP中的广义表应用</h4><ul><li><strong>程序表示：</strong>(+ 1 2) 表示加法操作</li><li><strong>函数定义：</strong>(defun fact (n) (if (= n 0) 1 (* n (fact (- n 1)))))</li><li><strong>数据结构：</strong>列表、树、图都用广义表表示</li><li><strong>宏系统：</strong>元编程能力基于广义表操作</li></ul></div><div class="metric-box solution-box"><h4>🎯 广义表的优势</h4><ul><li><strong>同构性：</strong>代码和数据使用相同结构</li><li><strong>动态性：</strong>运行时可以生成和修改代码</li><li><strong>递归性：</strong>天然支持递归算法</li><li><strong>灵活性：</strong>支持任意复杂的嵌套结构</li></ul></div></div><div class="algorithm-demo"><h4>📄 LISP表达式求值过程</h4><div class="flow-steps"><div class="step-item"><span class="step-num">1</span><div class="step-desc"><strong>词法分析</strong><br>
+                                    将字符串转换为token序列
+                                </div></div><div class="step-item"><span class="step-num">2</span><div class="step-desc"><strong>语法解析</strong><br>
+                                    构建广义表表示的AST
+                                </div></div><div class="step-item"><span class="step-num">3</span><div class="step-desc"><strong>语义分析</strong><br>
+                                    递归遍历广义表进行类型检查
+                                </div></div><div class="step-item"><span class="step-num">4</span><div class="step-desc"><strong>表达式求值</strong><br>
+                                    基于广义表结构进行递归求值
+                                </div></div></div></div><div class="code-example"><h4>💻 LISP表达式示例</h4><div class="lisp-examples"><div class="lisp-example"><strong>算术表达式：</strong><code>(+ (* 2 3) (/ 8 4))</code><span class="result">→ 8</span></div><div class="lisp-example"><strong>条件表达式：</strong><code>(if (> x 0) "positive" "non-positive")</code></div><div class="lisp-example"><strong>递归函数：</strong><code>(defun length (lst) (if (null lst) 0 (+ 1 (length (cdr lst)))))</code></div></div></div><div class="info-box info-box-success"><span class="info-icon">💡</span><strong>核心价值：</strong>广义表在LISP中实现了代码与数据的统一表示，这种同构性使得LISP具有强大的元编程能力。现代函数式编程语言（如Clojure、Scheme）仍然延续这一设计哲学，广义表的递归性质也深深影响了现代编程语言的设计。
+                    </div></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div class="quiz-container"><div class="quiz-question"><h4>📝 问题1：基本概念理解</h4><p>对于广义表 L = (a, (b, c), d)，请分析其长度、深度、表头、表尾，并说明其中包含几个原子和几个子表？</p><button onclick="toggleAnswer(1)" class="answer-btn">点击查看答案</button><div id="answer1" class="answer-content"><strong>答案：</strong><br><strong>长度：</strong>3（最上层有3个元素：a、(b,c)、d）<br><strong>深度：</strong>2（最大括号嵌套层数为2）<br><strong>表头：</strong>a（第一个元素）<br><strong>表尾：</strong>((b,c), d)（除表头外其余元素组成的表）<br><strong>原子个数：</strong>3个（a、b、c、d中的a、b、c、d都是原子）<br><strong>子表个数：</strong>1个（(b,c)是子表）<br><strong>详细分析：</strong>广义表的长度只计算最上层元素，不包括子表内部元素；深度计算括号的最大嵌套层数；表头表尾分解是理解广义表结构的关键。
+                    </div></div><div class="quiz-question"><h4>📝 问题2：存储结构分析</h4><p>在头尾链表示法中，如何区分原子节点和表节点？为什么需要使用联合体（union）来实现节点结构？</p><button onclick="toggleAnswer(2)" class="answer-btn">点击查看答案</button><div id="answer2" class="answer-content"><strong>答案：</strong>使用标志域（tag）区分节点类型，联合体节省内存空间。<br><strong>详细解析：</strong><br><strong>1. 节点区分方法：</strong><br>
+                        • 标志域tag：0表示原子节点，1表示表节点<br>
+                        • 原子节点：存储数据域data<br>
+                        • 表节点：存储表头指针hp和表尾指针tp<br><strong>2. 联合体的作用：</strong><br>
+                        • 内存共享：原子的data与表的hp/tp共用同一块内存<br>
+                        • 空间效率：避免每个节点都包含所有字段<br>
+                        • 类型安全：通过tag字段确保正确访问对应的联合体成员<br><strong>3. 结构优势：</strong><br>
+                        • 节省内存：同一时刻只使用一种数据类型<br>
+                        • 提高效率：减少内存碎片和访问开销
+                    </div></div><div class="quiz-question"><h4>📝 问题3：递归算法设计</h4><p>如何设计算法计算广义表的深度？请描述递归思路并分析时间复杂度。</p><button onclick="toggleAnswer(3)" class="answer-btn">点击查看答案</button><div id="answer3" class="answer-content"><strong>答案：</strong>使用递归思路，深度 = max(子表深度) + 1。<br><strong>递归算法步骤：</strong><br><strong>1. 边界条件：</strong><br>
+                        • 空表：深度为1<br>
+                        • 原子：深度为0（在递归中）<br><strong>2. 递归步骤：</strong><br>
+                        • 遍历表中所有元素<br>
+                        • 对每个子表递归计算深度<br>
+                        • 取所有子表深度的最大值<br>
+                        • 最终深度 = max_depth + 1<br><strong>3. 算法实现：</strong><br>
+                        ```<br>
+                        int depth(GLNode* node) {<br>
+                        &nbsp;&nbsp;if (node == null) return 1;<br>
+                        &nbsp;&nbsp;if (node->tag == ATOM) return 0;<br>
+                        &nbsp;&nbsp;int maxDepth = 0;<br>
+                        &nbsp;&nbsp;// 遍历所有子元素，取最大深度<br>
+                        &nbsp;&nbsp;return maxDepth + 1;<br>
+                        }<br>
+                        ```<br><strong>时间复杂度：</strong>O(n)，其中n为广义表中所有节点数
+                    </div></div><div class="quiz-question"><h4>📝 问题4：操作实现分析</h4><p>实现广义表的复制操作时需要注意什么问题？如何处理共享子表的情况？</p><button onclick="toggleAnswer(4)" class="answer-btn">点击查看答案</button><div id="answer4" class="answer-content"><strong>答案：</strong>需要深拷贝所有节点，共享子表需要特殊处理避免重复复制。<br><strong>关键问题和解决方案：</strong><br><strong>1. 深拷贝 vs 浅拷贝：</strong><br>
+                        • 必须使用深拷贝：创建新的节点结构<br>
+                        • 浅拷贝会导致：原表修改影响复制表<br><strong>2. 共享子表处理：</strong><br>
+                        • 问题：同一子表被多次引用时重复复制<br>
+                        • 解决：使用哈希表记录已复制的子表<br>
+                        • 策略：第一次复制时记录映射，后续直接引用<br><strong>3. 递归复制算法：</strong><br>
+                        • 原子节点：直接复制数据<br>
+                        • 表节点：递归复制表头和表尾<br>
+                        • 共享检测：维护已复制节点的映射表<br><strong>4. 内存管理：</strong><br>
+                        • 确保所有分配的内存都能正确释放<br>
+                        • 避免循环引用导致的内存泄漏<br><strong>5. 性能优化：</strong><br>
+                        • 使用迭代栈避免深度递归<br>
+                        • 预分配内存池提高分配效率
+                    </div></div><div class="quiz-question"><h4>📝 问题5：应用场景判断</h4><p>在什么情况下选择广义表而不是其他数据结构？请给出具体的应用场景和判断标准。</p><button onclick="toggleAnswer(5)" class="answer-btn">点击查看答案</button><div id="answer5" class="answer-content"><strong>答案：</strong>当需要表示递归、嵌套、异构数据结构时选择广义表。<br><strong>适用场景：</strong><br><strong>1. 符号计算领域：</strong><br>
+                        • 数学表达式：(+ (* 2 x) (sin x))<br>
+                        • 多项式运算：复杂的代数表达式<br>
+                        • 逻辑公式：嵌套的逻辑表达式<br><strong>2. 人工智能：</strong><br>
+                        • 知识表示：规则和事实的表示<br>
+                        • 自然语言处理：语法树表示<br>
+                        • 专家系统：知识库的组织<br><strong>3. 编译器设计：</strong><br>
+                        • 抽象语法树：程序结构表示<br>
+                        • 中间代码：嵌套的代码结构<br>
+                        • 宏处理：代码模板和展开<br><strong>判断标准：</strong><br><strong>✅ 选择广义表的情况：</strong><br>
+                        • 数据结构层次复杂、不规则<br>
+                        • 需要递归处理<br>
+                        • 数据类型异构（混合原子和子结构）<br>
+                        • 需要动态修改结构<br><strong>❌ 不适合的情况：</strong><br>
+                        • 简单的线性结构<br>
+                        • 需要高效的随机访问<br>
+                        • 内存使用要求严格<br>
+                        • 数据类型同构且结构规则
+                    </div></div></div><div class="learning-path" style="margin-top: 30px;"><h3>🎯 进阶学习路径</h3><div class="unified-grid unified-grid-2"><div class="path-card"><span class="path-icon">📚</span><h4>巩固练习</h4><ul><li>实现完整的广义表库（头尾链表示法）</li><li>编写广义表的各种遍历算法</li><li>实现广义表的序列化和反序列化</li><li>测试共享子表的复制算法</li></ul></div><div class="path-card"><span class="path-icon">🚀</span><h4>下一步学习</h4><ul><li>树的各种表示方法和算法</li><li>LISP语言和函数式编程</li><li>编译原理中的语法分析</li><li>符号计算和计算机代数系统</li></ul></div></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.page-container {max-width:1200px;margin:0 auto;padding:20px}.content-card {background:white;border-radius:12px;padding:30px;margin:20px 0;box-shadow:0 4px 6px rgba(0,0,0,0.1)}.section-title {font-size:24px;color:#2c3e50;margin-bottom:20px;display:flex;align-items:center;gap:10px}.section-icon {font-size:28px}.unified-grid {display:grid;gap:20px;margin:20px 0}.unified-grid-2 {grid-template-columns:repeat(auto-fit, minmax(300px, 1fr))}.unified-grid-3 {grid-template-columns:repeat(auto-fit, minmax(250px, 1fr))}.grid-card, .application-card, .path-card, .property-card, .example-card {background:#f8f9fa;padding:20px;border-radius:8px;text-align:center;border:1px solid #e9ecef}.card-icon, .app-icon, .path-icon {font-size:32px;display:block;margin-bottom:10px}.info-box {padding:15px;border-radius:8px;margin:15px 0;display:flex;align-items:center;gap:10px}.info-box-info {background:#d1ecf1;border:1px solid #bee5eb}.info-box-success {background:#d4edda;border:1px solid #c3e6cb}.info-box-warning {background:#fff3cd;border:1px solid #ffeaa7}.concept-demo {margin:30px 0}.element-box {display:inline-block;padding:20px;border-radius:8px;text-align:center;min-width:100px;font-weight:bold;border:3px solid;margin:10px}.atom {background:#e3f2fd;border-color:#2196f3;color:#1976d2}.list {background:#e8f5e8;border-color:#4caf50;color:#388e3c}.glist-structure {text-align:center;margin:40px 0}.expression {font-family:'Courier New', monospace;font-size:28px;font-weight:bold;margin:20px 0;padding:20px;background:#f8f9fa;border:3px solid #dee2e6;border-radius:10px;display:inline-block}.level-display {margin:30px 0}.level {display:flex;align-items:center;margin:20px 0;justify-content:center}.level-label {background:#3498db;color:white;padding:8px 16px;border-radius:20px;font-weight:bold;margin-right:30px;min-width:80px;text-align:center}.level-content {display:flex;gap:20px}.node {padding:15px 20px;border-radius:8px;font-weight:bold;border:2px solid;min-width:80px;text-align:center}.node.atom {background:#e3f2fd;border-color:#2196f3;color:#1976d2}.node.list {background:#e8f5e8;border-color:#4caf50;color:#388e3c}.head-tail-demo {background:#fff8e1;padding:25px;border-radius:10px;border:2px solid #ffb74d;margin:20px 0}.decomp-step {text-align:center;margin:20px 0}.decomp-expression {font-family:'Courier New', monospace;font-size:24px;font-weight:bold;margin:15px 0}.highlight-head {background:#ffcdd2;color:#d32f2f;padding:5px 8px;border-radius:5px}.highlight-tail {background:#c8e6c9;color:#388e3c;padding:5px 8px;border-radius:5px}.result-box {display:inline-block;margin:10px;padding:15px 25px;border-radius:8px;font-weight:bold}.head-box {background:#ffcdd2;border:2px solid #d32f2f;color:#d32f2f}.tail-box {background:#c8e6c9;border:2px solid #388e3c;color:#388e3c}.arrow {font-size:30px;color:#ff9800;margin:15px 0}.storage-demo {background:#f3e5f5;padding:25px;border-radius:10px;border:2px solid #ba68c8;margin:20px 0}.node-type {display:inline-flex;margin:15px;border:3px solid #333;border-radius:5px;overflow:hidden}.field {padding:12px 16px;font-family:'Courier New', monospace;font-weight:bold;color:white;text-align:center;min-width:40px}.tag {background:#e74c3c}.data {background:#34495e}.hp {background:#27ae60}.tp {background:#f39c12}.stats-box {background:#e8f5e8;padding:20px;border-radius:8px;border:2px solid #4caf50;margin:20px 0;text-align:center}.stat {display:inline-block;margin:0 15px;font-size:18px;font-weight:bold;color:#2e7d32}.formula-showcase {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);border-radius:15px;padding:30px;margin:20px auto;max-width:800px;text-align:center;color:white;box-shadow:0 10px 30px rgba(0,0,0,0.2)}.formula-main {font-size:32px;font-family:'Courier New', monospace;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,0.3)}.formula-metrics {display:flex;justify-content:center;gap:20px;flex-wrap:wrap}.metric-item {background:rgba(255,255,255,0.2);backdrop-filter:blur(10px);padding:10px 15px;border-radius:20px;display:flex;flex-direction:column;align-items:center;min-width:80px}.metric-label {font-size:12px;opacity:0.8;margin-bottom:5px}.metric-value {font-size:24px;font-weight:bold}.examples-section {margin:30px 0}.example-card {text-align:left}.example-card ul {margin:10px 0;padding-left:20px}.example-card li {margin:8px 0;font-family:'Courier New', monospace}.decomposition-examples {display:grid;gap:15px;margin-top:15px}.decomp-example {background:white;padding:15px;border-radius:5px;border:1px solid #bee5eb;font-family:'Courier New', monospace}.property-card h4 {color:#007bff;margin-bottom:10px}.code-tabs {margin:20px 0}.tab-buttons {display:flex;gap:5px;margin-bottom:15px}.tab-btn {padding:10px 20px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:5px 5px 0 0;cursor:pointer;transition:all 0.3s}.tab-btn.active {background:#007bff;color:white;border-color:#007bff}.code-content {display:none;background:#f8f9fa;padding:20px;border-radius:0 5px 5px 5px;border:1px solid #dee2e6}.code-content.active {display:block}.code-content pre {margin:0;background:#2d3748;color:#e2e8f0;padding:20px;border-radius:5px;overflow-x:auto;font-family:'Courier New', monospace;line-height:1.5}.copy-btn {background:#007bff;color:white;border:none;padding:5px 15px;border-radius:3px;cursor:pointer;transition:background 0.3s}.copy-btn:hover {background:#0056b3}.case-content {background:#fff;padding:20px;border-radius:8px;border:1px solid #e9ecef}.challenge-box {background:#fff3cd;border:1px solid #ffeaa7}.solution-box {background:#d1edff;border:1px solid #bee5eb}.algorithm-demo {margin:20px 0}.flow-steps {display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:20px;margin:20px 0}.step-item {display:flex;flex-direction:column;align-items:center;text-align:center}.step-num {background:#007bff;color:white;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;margin-bottom:10px}.step-desc {font-size:14px}.code-example {margin:20px 0;padding:20px;background:#f8f9fa;border-radius:8px}.lisp-examples {display:flex;flex-direction:column;gap:15px;margin-top:15px}.lisp-example {background:white;padding:15px;border-radius:5px;border:1px solid #dee2e6;font-family:'Courier New', monospace}.lisp-example .result {color:#28a745;font-weight:bold;margin-left:10px}.quiz-question {background:#f8f9fa;padding:20px;border-radius:8px;margin:15px 0;border:1px solid #dee2e6}.answer-btn {background:#28a745;color:white;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;margin-top:10px;transition:background 0.3s}.answer-btn:hover {background:#1e7e34}.answer-content {display:none;background:#e8f5e8;padding:15px;border-radius:5px;margin-top:10px;border:1px solid #c3e6cb}.example-box, .metric-box {background:#e3f2fd;padding:10px;border-radius:5px;margin-top:10px;border:1px solid #bbdefb}.unified-btn {display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:500;margin:0 10px;transition:all 0.3s}.unified-btn-primary {background:#007bff;color:white;border:1px solid #007bff}.unified-btn-secondary {background:white;color:#6c757d;border:1px solid #dee2e6}.unified-btn:hover {transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.1)}@media (max-width:768px) {.unified-grid-2, .unified-grid-3 {grid-template-columns:1fr}.tab-buttons {flex-direction:column}.level {flex-direction:column;gap:10px}.level-label {margin-right:0;margin-bottom:10px}.flow-steps {grid-template-columns:1fr}.node-type {font-size:10px}.field {padding:6px 8px;min-width:20px}.concept-demo {flex-direction:column;align-items:center}.element-box {margin:10px 0}}</style><script>function showCode(language) { document.querySelectorAll('.code-content').forEach(content => { content.classList.remove('active'); }); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); }); document.getElementById(language + '-code').classList.add('active'); event.target.classList.add('active'); } function copyCode(language, button) { const codeElement = document.getElementById(language + '-source'); const text = codeElement.textContent || codeElement.innerText; const originalText = button.textContent; const originalBg = button.style.background; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => { showCopySuccess(button, originalText, originalBg); }).catch(err => { console.warn('Clipboard API 失败，尝试备选方案:', err); fallbackCopyTextToClipboard(text, button, originalText, originalBg); }); } else { fallbackCopyTextToClipboard(text, button, originalText, originalBg); } } function fallbackCopyTextToClipboard(text, button, originalText, originalBg) { const textArea = document.createElement("textarea"); textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-999999px"; textArea.style.top = "-999999px"; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { const successful = document.execCommand('copy'); if (successful) { showCopySuccess(button, originalText, originalBg); } else { showCopyError(button, originalText, originalBg); } } catch (err) { console.error('复制失败:', err); showCopyError(button, originalText, originalBg); } document.body.removeChild(textArea); } function showCopySuccess(button, originalText, originalBg) { button.textContent = '✅ 已复制'; button.style.background = '#28a745'; button.disabled = true; setTimeout(() => { button.textContent = originalText; button.style.background = originalBg || '#007bff'; button.disabled = false; }, 2000); } function showCopyError(button, originalText, originalBg) { button.textContent = '❌ 复制失败'; button.style.background = '#dc3545'; setTimeout(() => { button.textContent = originalText; button.style.background = originalBg || '#007bff'; }, 2000); alert('自动复制失败，请手动选择代码文本进行复制'); } function toggleAnswer(questionNumber) { const answer = document.getElementById('answer' + questionNumber); const button = event.target; if (answer.style.display === 'none' || answer.style.display === '') { answer.style.display = 'block'; button.textContent = '隐藏答案'; button.style.background = '#dc3545'; } else { answer.style.display = 'none'; button.textContent = '点击查看答案'; button.style.background = '#28a745'; } }</script>
+
+{% endblock %}

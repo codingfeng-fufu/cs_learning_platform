@@ -1,0 +1,1918 @@
+
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"静态链表" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>{{ breadcrumb_category|default:"数据结构" }}</span>
+        <span>></span>
+        <span>{{ page_title|default:"静态链表" }}</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">{{ page_icon|default:"🔗" }}</span>
+            {{ page_title|default:"静态链表" }}
+        </h1>
+        <p>{{ page_description|default:"用数组模拟链表，既有数组的随机访问又有链表的动态特性" }}</p>
+    </div>
+
+    <!-- 📋 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                知识点概述
+            </h2>
+            <div class="overview-content">
+                <div class="concept-intro">
+                    <p><strong>核心概念：</strong>静态链表用数组来模拟链表结构，就像用停车位编号来管理汽车停放，每辆车都知道下一辆车的停车位号码，无需实际的物理连接！</p>
+                </div>
+
+                <div class="unified-grid unified-grid-2">
+                    <div class="info-box info-box-info">
+                        <h3>🏷️ 关键术语</h3>
+                        <ul>
+                            <li><strong>静态存储：</strong>使用数组预分配固定大小的存储空间</li>
+                            <li><strong>游标(Cursor)：</strong>指向下一个元素的数组下标</li>
+                            <li><strong>数据域：</strong>存储实际数据的字段</li>
+                            <li><strong>备用链表：</strong>管理空闲存储空间的链表</li>
+                            <li><strong>头节点：</strong>不存储数据，只用来标记链表开始</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box info-box-success">
+                        <h3>📊 学习指标</h3>
+                        <p><strong>难度等级：</strong> <span class="badge badge-medium">进阶</span></p>
+                        <p><strong>前置知识：</strong></p>
+                        <ul>
+                            <li>数组基础操作 ✓</li>
+                            <li>链表基本概念 ✓</li>
+                            <li>指针/引用理解 ✓</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 概念详解 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🔍</span>
+                概念详解
+            </h2>
+
+            <div class="concept-details">
+                <div class="concept-item">
+                    <h3>🏗️ 静态链表的结构</h3>
+                    <p>想象一个公寓楼的住户管理系统：</p>
+                    <ul>
+                        <li>每个房间(数组元素)都有固定的房号(数组下标)</li>
+                        <li>房间里住着住户(数据)和一张纸条(游标)</li>
+                        <li>纸条上写着下一个相关住户的房号</li>
+                        <li>物业(备用链表)管理空房间的信息</li>
+                    </ul>
+                </div>
+
+                <div class="concept-item">
+                    <h3>🔄 与动态链表的对比</h3>
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <h4>🔗 动态链表</h4>
+                            <div class="pros-cons">
+                                <div class="pros">
+                                    <h5>✅ 优点</h5>
+                                    <ul>
+                                        <li>真正的动态内存分配</li>
+                                        <li>内存使用更灵活</li>
+                                        <li>理论上无大小限制</li>
+                                    </ul>
+                                </div>
+                                <div class="cons">
+                                    <h5>❌ 缺点</h5>
+                                    <ul>
+                                        <li>需要指针支持</li>
+                                        <li>内存碎片问题</li>
+                                        <li>频繁malloc/free开销大</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="comparison-card">
+                            <h4>📊 静态链表</h4>
+                            <div class="pros-cons">
+                                <div class="pros">
+                                    <h5>✅ 优点</h5>
+                                    <ul>
+                                        <li>不需要指针操作</li>
+                                        <li>内存管理简单</li>
+                                        <li>缓存友好，访问效率高</li>
+                                    </ul>
+                                </div>
+                                <div class="cons">
+                                    <h5>❌ 缺点</h5>
+                                    <ul>
+                                        <li>数组大小固定</li>
+                                        <li>可能浪费存储空间</li>
+                                        <li>需要额外管理空闲空间</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-item">
+                    <h3>⚠️ 关键理解点</h3>
+                    <div class="key-points">
+                        <div class="point-card">
+                            <span class="point-icon">🎯</span>
+                            <h4>游标的作用</h4>
+                            <p>游标不是指针，而是数组下标。它告诉我们下一个节点在数组的哪个位置。</p>
+                        </div>
+                        <div class="point-card">
+                            <span class="point-icon">🔄</span>
+                            <h4>空间管理</h4>
+                            <p>必须维护一个备用链表来记录哪些数组位置是空闲的，可以用来插入新元素。</p>
+                        </div>
+                        <div class="point-card">
+                            <span class="point-icon">📍</span>
+                            <h4>随机访问能力</h4>
+                            <p>虽然逻辑上是链表，但物理上是数组，所以可以通过下标直接访问任意元素。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 可视化展示 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                可视化展示
+            </h2>
+
+            <!-- 静态结构图 -->
+            <div class="visualization-container">
+                <h3>🏛️ 静态链表基本结构</h3>
+                <div class="static-diagram">
+                    <div class="array-visualization">
+                        <div class="array-header">
+                            <span>数组下标</span>
+                            <span>数据域</span>
+                            <span>游标域</span>
+                        </div>
+                        <div class="array-row header-row">
+                            <div class="index">0</div>
+                            <div class="data">HEAD</div>
+                            <div class="cursor">1</div>
+                        </div>
+                        <div class="array-row active-row">
+                            <div class="index">1</div>
+                            <div class="data">A</div>
+                            <div class="cursor">3</div>
+                        </div>
+                        <div class="array-row free-row">
+                            <div class="index">2</div>
+                            <div class="data">-</div>
+                            <div class="cursor">4</div>
+                        </div>
+                        <div class="array-row active-row">
+                            <div class="index">3</div>
+                            <div class="data">B</div>
+                            <div class="cursor">5</div>
+                        </div>
+                        <div class="array-row free-row">
+                            <div class="index">4</div>
+                            <div class="data">-</div>
+                            <div class="cursor">0</div>
+                        </div>
+                        <div class="array-row active-row">
+                            <div class="index">5</div>
+                            <div class="data">C</div>
+                            <div class="cursor">0</div>
+                        </div>
+                    </div>
+
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-color header-color"></div>
+                            <span>头节点(不存数据)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color active-color"></div>
+                            <span>使用中的节点</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color free-color"></div>
+                            <span>空闲节点</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-cursor">0</div>
+                            <span>游标=0表示链表结束或备用链表结束</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 逻辑链表展示 -->
+                <h3>🔗 逻辑链表结构</h3>
+                <div class="logical-chain">
+                    <div class="chain-node">
+                        <div class="node-content">HEAD</div>
+                        <div class="node-index">[0]</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="chain-node">
+                        <div class="node-content">A</div>
+                        <div class="node-index">[1]</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="chain-node">
+                        <div class="node-content">B</div>
+                        <div class="node-index">[3]</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="chain-node">
+                        <div class="node-content">C</div>
+                        <div class="node-index">[5]</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="null-node">NULL</div>
+                </div>
+
+                <!-- 动态操作演示 -->
+                <h3>🎬 动态操作演示</h3>
+                <div class="animation-controls">
+                    <div class="control-panel">
+                        <button id="insertBtn" class="unified-btn unified-btn-primary">插入元素</button>
+                        <button id="deleteBtn" class="unified-btn unified-btn-warning">删除元素</button>
+                        <input type="text" id="insertValue" placeholder="输入字符" maxlength="1">
+                        <input type="number" id="insertPosition" placeholder="位置" min="1" max="5">
+                        <input type="number" id="deletePosition" placeholder="删除位置" min="1" max="5">
+                        <button id="resetBtn" class="unified-btn">重置</button>
+                    </div>
+                    <div class="step-info" id="stepInfo">点击操作按钮开始演示</div>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="staticListCanvas" width="900" height="500"></canvas>
+                </div>
+
+                <!-- 操作步骤说明 -->
+                <div class="operation-steps">
+                    <div class="step-card">
+                        <h4>➕ 插入步骤</h4>
+                        <ol>
+                            <li>从备用链表中取出一个空闲节点</li>
+                            <li>在该节点中存入新数据</li>
+                            <li>找到插入位置的前驱节点</li>
+                            <li>修改游标指向，建立新的链接关系</li>
+                            <li>更新备用链表头指针</li>
+                        </ol>
+                    </div>
+
+                    <div class="step-card">
+                        <h4>🗑️ 删除步骤</h4>
+                        <ol>
+                            <li>找到要删除节点的前驱节点</li>
+                            <li>修改前驱节点的游标，跳过要删除的节点</li>
+                            <li>清空被删除节点的数据</li>
+                            <li>将被删除节点加入备用链表</li>
+                            <li>更新备用链表头指针</li>
+                        </ol>
+                    </div>
+
+                    <div class="step-card">
+                        <h4>🔧 备用链表管理</h4>
+                        <ol>
+                            <li>初始时所有空节点连成备用链表</li>
+                            <li>插入时从备用链表头部取节点</li>
+                            <li>删除时将节点加入备用链表头部</li>
+                            <li>备用链表为空时无法再插入新元素</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 实际应用 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🌟</span>
+                实际应用
+            </h2>
+
+            <div class="applications">
+                <div class="application-item">
+                    <h3>🔌 嵌入式系统</h3>
+                    <p>在内存受限的嵌入式设备中，静态链表避免了动态内存分配的开销，提供可预测的内存使用。</p>
+                </div>
+
+                <div class="application-item">
+                    <h3>🎮 游戏开发</h3>
+                    <p>游戏中的对象池管理，预分配固定数量的游戏对象，避免频繁创建销毁导致的性能问题。</p>
+                </div>
+
+                <div class="application-item">
+                    <h3>📡 实时系统</h3>
+                    <p>需要确定性内存管理的实时系统，静态链表提供了可预测的操作时间复杂度。</p>
+                </div>
+            </div>
+
+            <!-- 代码示例 -->
+            <div class="code-examples">
+                <h3>💻 代码实现</h3>
+                <div class="code-tabs">
+                    <button class="tab-btn active" data-lang="cpp">C++</button>
+                    <button class="tab-btn" data-lang="java">Java</button>
+                    <button class="tab-btn" data-lang="python">Python</button>
+                </div>
+
+                <!-- C++ 代码 -->
+                <div class="code-content active" data-lang="cpp">
+                    <div class="code-header">
+                        <span>静态链表实现 - C++</span>
+                        <button class="copy-btn" data-clipboard-target="cpp-code">📋 复制</button>
+                    </div>
+                    <pre id="cpp-code"><code>
+#include &lt;iostream&gt;
+#define MAXSIZE 100
+
+struct StaticNode {
+    char data;      // 数据域
+    int cursor;     // 游标域，指向下一个元素的下标
+};
+
+class StaticLinkedList {
+private:
+    StaticNode nodes[MAXSIZE];
+    int length;
+
+public:
+    StaticLinkedList() : length(0) {
+        // 初始化备用链表，所有空闲节点连成链表
+        for (int i = 0; i < MAXSIZE - 1; i++) {
+            nodes[i].cursor = i + 1;
+        }
+        nodes[MAXSIZE - 1].cursor = 0;  // 最后一个节点游标为0
+        nodes[0].cursor = 1;            // 头节点初始指向第一个空闲节点
+    }
+
+    // 分配一个空闲节点，返回其下标
+    int malloc_SL() {
+        int i = nodes[0].cursor;        // 当前备用链表的第一个空闲节点
+        if (i) {
+            nodes[0].cursor = nodes[i].cursor;  // 修改备用链表头
+        }
+        return i;
+    }
+
+    // 释放下标为k的节点
+    void free_SL(int k) {
+        nodes[k].cursor = nodes[0].cursor;  // 把要释放的节点插入到备用链表头部
+        nodes[0].cursor = k;
+    }
+
+    // 在第i个位置插入元素e
+    bool insert(int i, char e) {
+        if (i < 1 || i > length + 1) return false;
+
+        int j = malloc_SL();            // 获取空闲节点
+        if (!j) return false;           // 备用链表为空
+
+        nodes[j].data = e;              // 将数据赋给新节点
+
+        int k = 0;                      // k指向头节点
+        for (int l = 1; l <= i - 1; l++) {  // 找到第i个位置的前驱
+            k = nodes[k].cursor;
+        }
+
+        nodes[j].cursor = nodes[k].cursor;  // 新节点指向原来第i个节点
+        nodes[k].cursor = j;                // 前驱指向新节点
+
+        length++;
+        return true;
+    }
+
+    // 删除第i个位置的元素
+    bool remove(int i) {
+        if (i < 1 || i > length) return false;
+
+        int k = 0;                      // k指向头节点
+        for (int j = 1; j <= i - 1; j++) {  // 找到第i个位置的前驱
+            k = nodes[k].cursor;
+        }
+
+        int j = nodes[k].cursor;        // j是要删除的节点
+        nodes[k].cursor = nodes[j].cursor;  // 前驱指向删除节点的后继
+
+        free_SL(j);                     // 释放删除的节点
+        length--;
+        return true;
+    }
+
+    // 打印链表
+    void display() {
+        int p = nodes[0].cursor;        // p指向第一个数据节点
+        std::cout << "链表内容: ";
+        while (p) {
+            std::cout << nodes[p].data << " ";
+            p = nodes[p].cursor;
+        }
+        std::cout << std::endl;
+    }
+};
+                    </code></pre>
+                </div>
+
+                <!-- Java 代码 -->
+                <div class="code-content" data-lang="java">
+                    <div class="code-header">
+                        <span>静态链表实现 - Java</span>
+                        <button class="copy-btn" data-clipboard-target="java-code">📋 复制</button>
+                    </div>
+                    <pre id="java-code"><code>
+class StaticNode {
+    char data;      // 数据域
+    int cursor;     // 游标域
+
+    StaticNode() {
+        this.data = 0;
+        this.cursor = 0;
+    }
+}
+
+public class StaticLinkedList {
+    private static final int MAXSIZE = 100;
+    private StaticNode[] nodes;
+    private int length;
+
+    public StaticLinkedList() {
+        nodes = new StaticNode[MAXSIZE];
+        for (int i = 0; i < MAXSIZE; i++) {
+            nodes[i] = new StaticNode();
+        }
+
+        // 初始化备用链表
+        for (int i = 0; i < MAXSIZE - 1; i++) {
+            nodes[i].cursor = i + 1;
+        }
+        nodes[MAXSIZE - 1].cursor = 0;
+        nodes[0].cursor = 1;
+        length = 0;
+    }
+
+    // 分配空闲节点
+    private int mallocSL() {
+        int i = nodes[0].cursor;
+        if (i != 0) {
+            nodes[0].cursor = nodes[i].cursor;
+        }
+        return i;
+    }
+
+    // 释放节点
+    private void freeSL(int k) {
+        nodes[k].cursor = nodes[0].cursor;
+        nodes[0].cursor = k;
+    }
+
+    // 插入元素
+    public boolean insert(int i, char e) {
+        if (i < 1 || i > length + 1) return false;
+
+        int j = mallocSL();
+        if (j == 0) return false;
+
+        nodes[j].data = e;
+
+        int k = 0;
+        for (int l = 1; l <= i - 1; l++) {
+            k = nodes[k].cursor;
+        }
+
+        nodes[j].cursor = nodes[k].cursor;
+        nodes[k].cursor = j;
+
+        length++;
+        return true;
+    }
+
+    // 删除元素
+    public boolean remove(int i) {
+        if (i < 1 || i > length) return false;
+
+        int k = 0;
+        for (int j = 1; j <= i - 1; j++) {
+            k = nodes[k].cursor;
+        }
+
+        int j = nodes[k].cursor;
+        nodes[k].cursor = nodes[j].cursor;
+
+        freeSL(j);
+        length--;
+        return true;
+    }
+
+    // 显示链表
+    public void display() {
+        int p = nodes[0].cursor;
+        System.out.print("链表内容: ");
+        while (p != 0) {
+            System.out.print(nodes[p].data + " ");
+            p = nodes[p].cursor;
+        }
+        System.out.println();
+    }
+
+    public int getLength() {
+        return length;
+    }
+}
+                    </code></pre>
+                </div>
+
+                <!-- Python 代码 -->
+                <div class="code-content" data-lang="python">
+                    <div class="code-header">
+                        <span>静态链表实现 - Python</span>
+                        <button class="copy-btn" data-clipboard-target="python-code">📋 复制</button>
+                    </div>
+                    <pre id="python-code"><code>
+class StaticNode:
+    def __init__(self):
+        self.data = None    # 数据域
+        self.cursor = 0     # 游标域
+
+class StaticLinkedList:
+    def __init__(self, maxsize=100):
+        self.MAXSIZE = maxsize
+        self.nodes = [StaticNode() for _ in range(maxsize)]
+        self.length = 0
+
+        # 初始化备用链表
+        for i in range(maxsize - 1):
+            self.nodes[i].cursor = i + 1
+        self.nodes[maxsize - 1].cursor = 0
+        self.nodes[0].cursor = 1
+
+    def malloc_sl(self):
+        """分配空闲节点"""
+        i = self.nodes[0].cursor
+        if i:
+            self.nodes[0].cursor = self.nodes[i].cursor
+        return i
+
+    def free_sl(self, k):
+        """释放节点"""
+        self.nodes[k].cursor = self.nodes[0].cursor
+        self.nodes[0].cursor = k
+
+    def insert(self, i, e):
+        """在第i个位置插入元素e"""
+        if i < 1 or i > self.length + 1:
+            return False
+
+        j = self.malloc_sl()
+        if not j:
+            return False
+
+        self.nodes[j].data = e
+
+        # 找到第i个位置的前驱
+        k = 0
+        for l in range(1, i):
+            k = self.nodes[k].cursor
+
+        self.nodes[j].cursor = self.nodes[k].cursor
+        self.nodes[k].cursor = j
+
+        self.length += 1
+        return True
+
+    def remove(self, i):
+        """删除第i个位置的元素"""
+        if i < 1 or i > self.length:
+            return False
+
+        # 找到第i个位置的前驱
+        k = 0
+        for j in range(1, i):
+            k = self.nodes[k].cursor
+
+        j = self.nodes[k].cursor
+        self.nodes[k].cursor = self.nodes[j].cursor
+
+        self.free_sl(j)
+        self.length -= 1
+        return True
+
+    def display(self):
+        """显示链表内容"""
+        p = self.nodes[0].cursor
+        result = []
+        while p:
+            result.append(self.nodes[p].data)
+            p = self.nodes[p].cursor
+        print("链表内容:", " ".join(map(str, result)))
+        return result
+
+    def get_length(self):
+        return self.length
+
+# 使用示例
+if __name__ == "__main__":
+    sll = StaticLinkedList()
+    sll.insert(1, 'A')
+    sll.insert(2, 'B')
+    sll.insert(3, 'C')
+    sll.display()  # 输出: A B C
+
+    sll.remove(2)
+    sll.display()  # 输出: A C
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 学习检验 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                学习检验
+            </h2>
+
+            <div class="quiz-container">
+                <div class="quiz-item">
+                    <h3>🤔 思考题1：空间管理理解</h3>
+                    <p><strong>问题：</strong>为什么静态链表需要备用链表？如果没有备用链表会发生什么？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer1')">点击查看答案</button>
+                    <div class="answer-content" id="answer1">
+                        <p><strong>答案：</strong>备用链表用于管理空闲的数组元素，实现动态的内存分配和回收。</p>
+                        <p><strong>解释：</strong>没有备用链表就无法知道哪些数组位置是空闲的，插入新元素时不知道往哪里放，删除元素后也无法回收空间供后续使用。备用链表就像一个"空房间登记册"，记录所有可用的存储空间。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题2：操作复杂度分析</h3>
+                    <p><strong>问题：</strong>静态链表插入操作的时间复杂度是多少？为什么？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer2')">点击查看答案</button>
+                    <div class="answer-content" id="answer2">
+                        <p><strong>答案：</strong>O(n)，因为需要遍历找到插入位置的前驱节点。</p>
+                        <p><strong>解释：</strong>虽然获取空闲节点和修改游标都是O(1)操作，但要在第i个位置插入，需要从头节点开始遍历i-1次找到前驱节点，这个过程是O(n)的。相比之下，如果知道具体的插入节点位置，操作可以是O(1)的。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题3：游标值的含义</h3>
+                    <p><strong>问题：</strong>在静态链表中，游标为0表示什么含义？为什么选择0作为结束标志？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer3')">点击查看答案</button>
+                    <div class="answer-content" id="answer3">
+                        <p><strong>答案：</strong>游标为0表示链表结束，类似于动态链表中的NULL指针。</p>
+                        <p><strong>解释：</strong>选择0作为结束标志是因为数组下标从0开始，而下标0通常被头节点占用，不存储实际数据。游标为0意味着"不指向任何有效的数据节点"，这样设计既简洁又易于理解。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题4：适用场景判断</h3>
+                    <p><strong>问题：</strong>什么情况下应该选择静态链表而不是动态链表？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer4')">点击查看答案</button>
+                    <div class="answer-content" id="answer4">
+                        <p><strong>答案：</strong>当需要避免动态内存分配、内存大小可预测、或者在不支持指针的环境中时。</p>
+                        <p><strong>解释：</strong>静态链表适用于：①嵌入式系统(内存受限)；②实时系统(需要可预测的性能)；③不支持指针的早期编程语言；④需要避免内存碎片的场景；⑤对象数量相对固定的应用。</p>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h3>🤔 思考题5：优化思考</h3>
+                    <p><strong>问题：</strong>如何优化静态链表的查找操作？能否像数组一样实现O(1)的随机访问？</p>
+                    <button class="answer-btn" onclick="toggleAnswer('answer5')">点击查看答案</button>
+                    <div class="answer-content" id="answer5">
+                        <p><strong>答案：</strong>可以通过维护额外的索引表实现快速访问，但这会增加空间复杂度。</p>
+                        <p><strong>解释：</strong>传统静态链表按逻辑顺序访问是O(n)的，但可以优化：①维护一个索引数组，记录每个逻辑位置对应的物理下标；②使用跳表的思想，设置多级索引；③对于特定应用，可以按照访问频率重新排列物理存储。但这些优化都会牺牲空间或增加维护复杂度。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 进阶学习建议 -->
+            <div class="learning-progress">
+                <h3>📚 进阶学习路径</h3>
+                <div class="progress-steps">
+                    <div class="progress-step completed">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <h4>静态链表基础</h4>
+                            <p>掌握数组模拟链表的原理</p>
+                        </div>
+                    </div>
+                    <div class="progress-step next">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <h4>内存池技术</h4>
+                            <p>学习内存池和对象池设计</p>
+                        </div>
+                    </div>
+                    <div class="progress-step">
+                        <span class="step-number">3</span>
+                        <div class="step-content">
+                            <h4>缓存友好数据结构</h4>
+                            <p>B+树、跳表等结构</p>
+                        </div>
+                    </div>
+                    <div class="progress-step">
+                        <span class="step-number">4</span>
+                        <div class="step-content">
+                            <h4>系统级优化</h4>
+                            <p>嵌入式、实时系统应用</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航按钮 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<!-- CSS样式 -->
+<style>
+.overview-content {
+    margin-top: 20px;
+}
+
+.concept-intro {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border-left: 4px solid #2196F3;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+}
+
+.badge-medium {
+    background: #FF9800;
+}
+
+.concept-details {
+    margin-top: 20px;
+}
+
+.concept-item {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+}
+
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.comparison-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.comparison-card h4 {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    margin: 0;
+    padding: 15px;
+    text-align: center;
+}
+
+.pros-cons {
+    padding: 15px;
+}
+
+.pros h5 {
+    color: #4CAF50;
+    margin: 0 0 8px 0;
+}
+
+.cons h5 {
+    color: #f44336;
+    margin: 15px 0 8px 0;
+}
+
+.pros-cons ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+}
+
+.pros-cons li {
+    margin-bottom: 4px;
+}
+
+.key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.point-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-left: 4px solid #FF5722;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.point-icon {
+    font-size: 1.5em;
+    flex-shrink: 0;
+}
+
+.point-card h4 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.point-card p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.visualization-container {
+    margin-top: 20px;
+}
+
+.static-diagram {
+    text-align: center;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+}
+
+.array-visualization {
+    max-width: 600px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.array-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    background: #333;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+}
+
+.array-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.array-row:last-child {
+    border-bottom: none;
+}
+
+.index, .data, .cursor {
+    padding: 12px;
+    text-align: center;
+}
+
+.index {
+    background: #f5f5f5;
+    font-weight: bold;
+    border-right: 1px solid #ddd;
+}
+
+.cursor {
+    background: #f5f5f5;
+    font-weight: bold;
+    border-left: 1px solid #ddd;
+}
+
+.header-row {
+    background: linear-gradient(135deg, #2196F3, #21CBF3);
+    color: white;
+}
+
+.active-row {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+}
+
+.free-row {
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+    color: white;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.header-color {
+    background: linear-gradient(135deg, #2196F3, #21CBF3);
+}
+
+.active-color {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+}
+
+.free-color {
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+}
+
+.legend-cursor {
+    background: #f5f5f5;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-weight: bold;
+    font-family: monospace;
+}
+
+.logical-chain {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chain-node {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    min-width: 60px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.node-content {
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.node-index {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.arrow {
+    font-size: 20px;
+    font-weight: bold;
+    color: #666;
+}
+
+.null-node {
+    background: #757575;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.animation-controls {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.control-panel {
+    margin-bottom: 15px;
+}
+
+.control-panel button,
+.control-panel input {
+    margin: 5px;
+}
+
+#insertValue {
+    width: 100px;
+}
+
+#insertPosition,
+#deletePosition {
+    width: 80px;
+}
+
+.control-panel input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.step-info {
+    padding: 10px;
+    background: #e3f2fd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.canvas-container {
+    text-align: center;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 15px 0;
+}
+
+#staticListCanvas {
+    border: 1px solid #eee;
+    border-radius: 4px;
+}
+
+.operation-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.step-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #2196F3;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.step-card h4 {
+    margin-top: 0;
+    color: #1976D2;
+}
+
+.step-card ol {
+    margin: 10px 0 0 20px;
+}
+
+.applications {
+    margin-top: 20px;
+}
+
+.application-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #FF5722;
+}
+
+.code-examples {
+    margin-top: 30px;
+}
+
+.code-tabs {
+    display: flex;
+    margin-bottom: 0;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: #f5f5f5;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background: #2196F3;
+    color: white;
+    border-bottom-color: #2196F3;
+}
+
+.code-content {
+    display: none;
+    background: #1e1e1e;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+}
+
+.code-content.active {
+    display: block;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #333;
+    color: white;
+    font-size: 14px;
+}
+
+.copy-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.copy-btn:hover {
+    background: #45a049;
+}
+
+pre {
+    margin: 0;
+    overflow-x: auto;
+}
+
+code {
+    color: #f8f8f2;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    display: block;
+    padding: 20px;
+}
+
+.quiz-container {
+    margin-top: 20px;
+}
+
+.quiz-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.quiz-item h3 {
+    color: #1976D2;
+    margin-top: 0;
+}
+
+.answer-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px 0;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.answer-btn:hover {
+    background: #45a049;
+}
+
+.answer-content {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: #e8f5e8;
+    border-radius: 5px;
+    border-left: 4px solid #4CAF50;
+}
+
+.answer-content.show {
+    display: block;
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.learning-progress {
+    margin-top: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 10px;
+}
+
+.progress-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.progress-step {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    opacity: 0.6;
+    transition: all 0.3s;
+}
+
+.progress-step.completed {
+    opacity: 1;
+    border-left: 4px solid #4CAF50;
+}
+
+.progress-step.next {
+    opacity: 1;
+    border-left: 4px solid #FF9800;
+    transform: scale(1.05);
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #e0e0e0;
+    color: white;
+    border-radius: 50%;
+    margin-right: 15px;
+    font-weight: bold;
+}
+
+.progress-step.completed .step-number {
+    background: #4CAF50;
+}
+
+.progress-step.next .step-number {
+    background: #FF9800;
+}
+
+.step-content h4 {
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.step-content p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .comparison-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .key-points {
+        grid-template-columns: 1fr;
+    }
+
+    .operation-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .progress-steps {
+        grid-template-columns: 1fr;
+    }
+
+    .code-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        flex: 1;
+        min-width: 80px;
+    }
+
+    .logical-chain {
+        flex-direction: column;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+    }
+
+    .array-header,
+    .array-row {
+        grid-template-columns: 60px 1fr 60px;
+    }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+// 静态链表动画相关变量
+let canvas, ctx;
+let staticList = [];
+let freeList = [];
+let animationStep = 0;
+let currentOperation = '';
+let animationInProgress = false;
+
+// 初始化静态链表演示
+document.addEventListener('DOMContentLoaded', function() {
+    canvas = document.getElementById('staticListCanvas');
+    ctx = canvas.getContext('2d');
+
+    // 初始化一个示例静态链表
+    initializeSampleList();
+    drawStaticList();
+
+    // 绑定事件
+    document.getElementById('insertBtn').addEventListener('click', () => {
+        if (animationInProgress) return;
+
+        const value = document.getElementById('insertValue').value.trim();
+        const position = parseInt(document.getElementById('insertPosition').value);
+
+        if (!value) {
+            alert('请输入要插入的字符');
+            return;
+        }
+        if (!position || position < 1) {
+            alert('请输入有效的插入位置（≥1）');
+            return;
+        }
+
+        startAnimation('insert', value, position);
+    });
+
+    document.getElementById('deleteBtn').addEventListener('click', () => {
+        if (animationInProgress) return;
+
+        const position = parseInt(document.getElementById('deletePosition').value);
+
+        if (!position || position < 1) {
+            alert('请输入有效的删除位置（≥1）');
+            return;
+        }
+
+        startAnimation('delete', null, position);
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if (animationInProgress) return;
+
+        staticList = [];
+        freeList = [];
+        animationStep = 0;
+        document.getElementById('stepInfo').textContent = '已重置，点击操作按钮开始演示';
+        initializeSampleList();
+        drawStaticList();
+    });
+});
+
+// 初始化示例静态链表
+function initializeSampleList() {
+    // 创建大小为8的数组
+    staticList = new Array(8);
+    for (let i = 0; i < 8; i++) {
+        staticList[i] = { data: null, cursor: 0, used: false };
+    }
+
+    // 设置头节点
+    staticList[0] = { data: 'HEAD', cursor: 1, used: true };
+
+    // 设置数据节点
+    staticList[1] = { data: 'A', cursor: 3, used: true };
+    staticList[3] = { data: 'B', cursor: 5, used: true };
+    staticList[5] = { data: 'C', cursor: 0, used: true };
+
+    // 设置备用链表：2->4->6->7->0
+    staticList[2] = { data: null, cursor: 4, used: false };
+    staticList[4] = { data: null, cursor: 6, used: false };
+    staticList[6] = { data: null, cursor: 7, used: false };
+    staticList[7] = { data: null, cursor: 0, used: false };
+
+    // 备用链表头指针（在实际实现中通常单独维护）
+    freeList = [2, 4, 6, 7];
+}
+
+// 绘制静态链表
+function drawStaticList() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const startX = 50;
+    const startY = 50;
+    const cellWidth = 100;
+    const cellHeight = 60;
+    const spacing = 10;
+
+    // 绘制数组结构
+    for (let i = 0; i < staticList.length; i++) {
+        const x = startX + i * (cellWidth + spacing);
+        const y = startY;
+
+        drawCell(x, y, cellWidth, cellHeight, i, staticList[i]);
+    }
+
+    // 绘制逻辑链表指向关系
+    drawLogicalConnections();
+
+    // 绘制备用链表
+    drawFreeListConnections();
+
+    // 绘制说明
+    drawLegend();
+}
+
+// 绘制单个数组元素
+function drawCell(x, y, width, height, index, node) {
+    // 根据节点状态选择颜色
+    let bgColor, textColor, borderColor;
+
+    if (index === 0) {
+        // 头节点
+        bgColor = '#2196F3';
+        textColor = 'white';
+        borderColor = '#1976D2';
+    } else if (node.used) {
+        // 使用中的节点
+        bgColor = '#4CAF50';
+        textColor = 'white';
+        borderColor = '#388E3C';
+    } else {
+        // 空闲节点
+        bgColor = '#FF9800';
+        textColor = 'white';
+        borderColor = '#F57C00';
+    }
+
+    // 绘制外框
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(x, y, width, height);
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, width, height);
+
+    // 绘制分割线
+    ctx.beginPath();
+    ctx.moveTo(x, y + height/2);
+    ctx.lineTo(x + width, y + height/2);
+    ctx.stroke();
+
+    // 绘制索引
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(`[${index}]`, x + width/2, y - 10);
+
+    // 绘制数据域
+    ctx.fillStyle = textColor;
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    const dataText = node.data || (node.used ? '?' : '-');
+    ctx.fillText(dataText, x + width/2, y + height/4 + 5);
+
+    // 绘制游标域
+    ctx.fillText(node.cursor.toString(), x + width/2, y + 3*height/4 + 5);
+
+    // 添加标签
+    ctx.fillStyle = '#666';
+    ctx.font = '10px Arial';
+    ctx.fillText('数据', x + width/4, y + height/4 - 8);
+    ctx.fillText('游标', x + 3*width/4, y + 3*height/4 - 8);
+}
+
+// 绘制逻辑链表连接
+function drawLogicalConnections() {
+    ctx.strokeStyle = '#4CAF50';
+    ctx.lineWidth = 3;
+
+    let current = 0;
+    const startY = 50;
+    const cellWidth = 100;
+    const cellHeight = 60;
+    const spacing = 10;
+
+    while (staticList[current] && staticList[current].cursor !== 0) {
+        const next = staticList[current].cursor;
+
+        const currentX = 50 + current * (cellWidth + spacing) + cellWidth/2;
+        const nextX = 50 + next * (cellWidth + spacing) + cellWidth/2;
+        const arrowY = startY + cellHeight + 20;
+
+        // 绘制箭头
+        drawArrow(currentX, arrowY, nextX, arrowY, '#4CAF50');
+
+        current = next;
+    }
+}
+
+// 绘制备用链表连接
+function drawFreeListConnections() {
+    ctx.strokeStyle = '#FF9800';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+
+    const startY = 50;
+    const cellWidth = 100;
+    const cellHeight = 60;
+    const spacing = 10;
+
+    // 绘制备用链表的连接
+    for (let i = 0; i < staticList.length; i++) {
+        if (!staticList[i].used && staticList[i].cursor !== 0) {
+            const next = staticList[i].cursor;
+
+            const currentX = 50 + i * (cellWidth + spacing) + cellWidth/2;
+            const nextX = 50 + next * (cellWidth + spacing) + cellWidth/2;
+            const arrowY = startY + cellHeight + 40;
+
+            drawArrow(currentX, arrowY, nextX, arrowY, '#FF9800', true);
+        }
+    }
+
+    ctx.setLineDash([]);
+}
+
+// 绘制箭头
+function drawArrow(x1, y1, x2, y2, color, dashed = false) {
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+
+    if (dashed) {
+        ctx.setLineDash([5, 5]);
+    }
+
+    // 绘制线条
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+
+    // 绘制箭头头部
+    const angle = Math.atan2(y2 - y1, x2 - x1);
+    const headlen = 10;
+
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headlen * Math.cos(angle - Math.PI/6), y2 - headlen * Math.sin(angle - Math.PI/6));
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headlen * Math.cos(angle + Math.PI/6), y2 - headlen * Math.sin(angle + Math.PI/6));
+    ctx.stroke();
+
+    if (dashed) {
+        ctx.setLineDash([]);
+    }
+}
+
+// 绘制图例
+function drawLegend() {
+    const legendY = canvas.height - 100;
+
+    ctx.fillStyle = '#333';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('图例说明:', 20, legendY);
+
+    ctx.font = '12px Arial';
+
+    // 头节点
+    ctx.fillStyle = '#2196F3';
+    ctx.fillRect(20, legendY + 10, 20, 15);
+    ctx.fillStyle = '#333';
+    ctx.fillText('头节点', 50, legendY + 22);
+
+    // 使用中节点
+    ctx.fillStyle = '#4CAF50';
+    ctx.fillRect(120, legendY + 10, 20, 15);
+    ctx.fillStyle = '#333';
+    ctx.fillText('使用中的节点', 150, legendY + 22);
+
+    // 空闲节点
+    ctx.fillStyle = '#FF9800';
+    ctx.fillRect(250, legendY + 10, 20, 15);
+    ctx.fillStyle = '#333';
+    ctx.fillText('空闲节点', 280, legendY + 22);
+
+    // 逻辑链表
+    ctx.strokeStyle = '#4CAF50';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(20, legendY + 40);
+    ctx.lineTo(60, legendY + 40);
+    ctx.stroke();
+    drawArrow(60, legendY + 40, 60, legendY + 40, '#4CAF50');
+    ctx.fillStyle = '#333';
+    ctx.fillText('逻辑链表连接', 70, legendY + 45);
+
+    // 备用链表
+    ctx.strokeStyle = '#FF9800';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(200, legendY + 40);
+    ctx.lineTo(240, legendY + 40);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    drawArrow(240, legendY + 40, 240, legendY + 40, '#FF9800');
+    ctx.fillStyle = '#333';
+    ctx.fillText('备用链表连接', 250, legendY + 45);
+}
+
+// 开始动画
+function startAnimation(operation, value, position) {
+    if (animationInProgress) return;
+
+    animationInProgress = true;
+    currentOperation = operation;
+    animationStep = 0;
+
+    if (operation === 'insert') {
+        animateInsert(value, position);
+    } else if (operation === 'delete') {
+        animateDelete(position);
+    }
+}
+
+// 插入动画
+function animateInsert(value, position) {
+    let step = 1;
+
+    // 检查位置是否合理
+    const currentLength = getListLength();
+    if (position > currentLength + 1) {
+        document.getElementById('stepInfo').textContent = `错误：位置 ${position} 超出范围（当前长度：${currentLength}）`;
+        animationInProgress = false;
+        return;
+    }
+
+    // 检查是否有空闲节点
+    const freeNodeIndex = getFreeNode();
+    if (freeNodeIndex === -1) {
+        document.getElementById('stepInfo').textContent = '错误：没有可用的空闲节点';
+        animationInProgress = false;
+        return;
+    }
+
+    document.getElementById('stepInfo').textContent = `步骤${step}: 从备用链表获取空闲节点 [${freeNodeIndex}]`;
+
+    // 高亮空闲节点
+    highlightNode(freeNodeIndex, '#FFD700');
+
+    setTimeout(() => {
+        step++;
+        document.getElementById('stepInfo').textContent = `步骤${step}: 在节点 [${freeNodeIndex}] 中存入数据 '${value}'`;
+
+        // 修改节点数据
+        staticList[freeNodeIndex].data = value;
+        staticList[freeNodeIndex].used = true;
+        drawStaticList();
+        highlightNode(freeNodeIndex, '#FFD700');
+
+        setTimeout(() => {
+            step++;
+            document.getElementById('stepInfo').textContent = `步骤${step}: 寻找插入位置 ${position} 的前驱节点`;
+
+            // 找到前驱节点
+            let prevIndex = 0;
+            for (let i = 1; i < position; i++) {
+                prevIndex = staticList[prevIndex].cursor;
+            }
+
+            highlightNode(prevIndex, '#FF5722');
+
+            setTimeout(() => {
+                step++;
+                document.getElementById('stepInfo').textContent = `步骤${step}: 修改游标建立新的链接关系`;
+
+                // 修改游标
+                const nextIndex = staticList[prevIndex].cursor;
+                staticList[freeNodeIndex].cursor = nextIndex;
+                staticList[prevIndex].cursor = freeNodeIndex;
+
+                drawStaticList();
+
+                setTimeout(() => {
+                    step++;
+                    document.getElementById('stepInfo').textContent = `步骤${step}: 插入完成！新元素 '${value}' 已插入到位置 ${position}`;
+                    animationInProgress = false;
+                }, 1500);
+            }, 1500);
+        }, 1500);
+    }, 1500);
+}
+
+// 删除动画
+function animateDelete(position) {
+    let step = 1;
+
+    // 检查位置是否合理
+    const currentLength = getListLength();
+    if (position > currentLength || position < 1) {
+        document.getElementById('stepInfo').textContent = `错误：位置 ${position} 超出范围（当前长度：${currentLength}）`;
+        animationInProgress = false;
+        return;
+    }
+
+    document.getElementById('stepInfo').textContent = `步骤${step}: 寻找要删除位置 ${position} 的前驱节点`;
+
+    // 找到前驱节点和要删除的节点
+    let prevIndex = 0;
+    for (let i = 1; i < position; i++) {
+        prevIndex = staticList[prevIndex].cursor;
+    }
+    const deleteIndex = staticList[prevIndex].cursor;
+
+    highlightNode(prevIndex, '#FF5722');
+    highlightNode(deleteIndex, '#f44336');
+
+    setTimeout(() => {
+        step++;
+        document.getElementById('stepInfo').textContent = `步骤${step}: 修改前驱节点游标，跳过要删除的节点`;
+
+        // 修改前驱节点的游标
+        staticList[prevIndex].cursor = staticList[deleteIndex].cursor;
+        drawStaticList();
+        highlightNode(deleteIndex, '#f44336');
+
+        setTimeout(() => {
+            step++;
+            document.getElementById('stepInfo').textContent = `步骤${step}: 清空被删除节点的数据`;
+
+            // 清空节点数据
+            staticList[deleteIndex].data = null;
+            staticList[deleteIndex].used = false;
+            drawStaticList();
+            highlightNode(deleteIndex, '#FFD700');
+
+            setTimeout(() => {
+                step++;
+                document.getElementById('stepInfo').textContent = `步骤${step}: 将删除的节点加入备用链表`;
+
+                // 将节点加入备用链表（简化处理，实际应该加到备用链表头部）
+                staticList[deleteIndex].cursor = 0;
+                drawStaticList();
+
+                setTimeout(() => {
+                    step++;
+                    document.getElementById('stepInfo').textContent = `步骤${step}: 删除完成！位置 ${position} 的元素已被删除`;
+                    animationInProgress = false;
+                }, 1500);
+            }, 1500);
+        }, 1500);
+    }, 1500);
+}
+
+// 获取空闲节点
+function getFreeNode() {
+    for (let i = 1; i < staticList.length; i++) {
+        if (!staticList[i].used) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// 获取链表长度
+function getListLength() {
+    let length = 0;
+    let current = staticList[0].cursor;
+    while (current !== 0) {
+        length++;
+        current = staticList[current].cursor;
+    }
+    return length;
+}
+
+// 高亮节点
+function highlightNode(index, color) {
+    const startX = 50;
+    const cellWidth = 100;
+    const cellHeight = 60;
+    const spacing = 10;
+
+    const x = startX + index * (cellWidth + spacing);
+    const y = 50;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(x - 2, y - 2, cellWidth + 4, cellHeight + 4);
+}
+
+// 代码标签页切换
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        // 移除所有active类
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.code-content').forEach(c => c.classList.remove('active'));
+
+        // 添加active类到当前标签
+        this.classList.add('active');
+        const lang = this.getAttribute('data-lang');
+        document.querySelector(`.code-content[data-lang="${lang}"]`).classList.add('active');
+    });
+});
+
+// 复制代码功能
+document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-clipboard-target');
+        const codeElement = document.getElementById(targetId);
+
+        if (codeElement) {
+            // 创建临时文本区域
+            const textarea = document.createElement('textarea');
+            textarea.value = codeElement.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            // 显示复制成功提示
+            const originalText = this.textContent;
+            this.textContent = '✅ 已复制';
+            setTimeout(() => {
+                this.textContent = originalText;
+            }, 2000);
+        }
+    });
+});
+
+// 答案切换功能
+function toggleAnswer(answerId) {
+    const answerElement = document.getElementById(answerId);
+    const button = answerElement.previousElementSibling;
+
+    if (answerElement.classList.contains('show')) {
+        answerElement.classList.remove('show');
+        button.textContent = '点击查看答案';
+    } else {
+        answerElement.classList.add('show');
+        button.textContent = '隐藏答案';
+    }
+}
+</script>
+
+{% endblock %}

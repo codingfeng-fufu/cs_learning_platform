@@ -1,0 +1,329 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}树和森林的遍历 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>.knowledge-container {max-width:1200px;margin:0 auto;padding:20px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif}.section {background:white;border-radius:12px;padding:30px;margin-bottom:30px;box-shadow:0 4px 6px rgba(0, 0, 0, 0.07);border:1px solid #e5e7eb}.section-header {display:flex;align-items:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #f3f4f6}.section-icon {font-size:2rem;margin-right:15px}.section-title {font-size:1.8rem;font-weight:700;color:#1f2937;margin:0}.difficulty-badge {display:inline-block;background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:600;margin-left:15px}.concept-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;margin:20px 0}.concept-card {background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;transition:transform 0.2s, box-shadow 0.2s}.concept-card:hover {transform:translateY(-2px);box-shadow:0 8px 15px rgba(0, 0, 0, 0.1)}.visualization-container {background:#f9fafb;border-radius:12px;padding:30px;margin:25px 0;position:relative}.canvas-container {text-align:center;margin:20px 0;background:white;border-radius:8px;padding:20px;box-shadow:0 2px 4px rgba(0, 0, 0, 0.1)}.controls {display:flex;justify-content:center;gap:15px;margin:20px 0;flex-wrap:wrap}.btn {background:#3b82f6;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:500;transition:background 0.2s}.btn:hover {background:#2563eb}.btn-secondary {background:#6b7280}.btn-secondary:hover {background:#4b5563}.btn-green {background:#10b981}.btn-green:hover {background:#059669}.btn-purple {background:#8b5cf6}.btn-purple:hover {background:#7c3aed}.code-container {background:#1f2937;border-radius:8px;margin:20px 0;overflow:hidden}.code-tabs {display:flex;background:#374151;border-bottom:1px solid #4b5563}.code-tab {background:none;border:none;color:#d1d5db;padding:12px 20px;cursor:pointer;transition:all 0.2s}.code-tab.active {background:#1f2937;color:#f9fafb;border-bottom:2px solid #3b82f6}.code-content {position:relative}.code-block {background:#1f2937;color:#f9fafb;padding:20px;overflow-x:auto;font-family:'Monaco', 'Menlo', 'Ubuntu Mono', monospace;font-size:14px;line-height:1.5;display:none}.code-block.active {display:block}.copy-btn {position:absolute;top:10px;right:10px;background:#4b5563;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px}.copy-btn:hover {background:#374151}.quiz-container {margin:20px 0}.quiz-item {background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:15px 0;padding:20px}.quiz-question {font-weight:600;color:#1f2937;margin-bottom:15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}.quiz-answer {background:#e0f2fe;border-left:4px solid #0288d1;padding:15px;margin-top:10px;border-radius:0 4px 4px 0;display:none}.toggle-icon {transition:transform 0.3s}.toggle-icon.active {transform:rotate(180deg)}.highlight {background:#fef3c7;padding:2px 4px;border-radius:3px;font-weight:600}.warning-box {background:#fef2f2;border-left:4px solid #ef4444;padding:15px;margin:15px 0;border-radius:0 6px 6px 0}.info-box {background:#eff6ff;border-left:4px solid #3b82f6;padding:15px;margin:15px 0;border-radius:0 6px 6px 0}.success-box {background:#f0fdf4;border-left:4px solid #10b981;padding:15px;margin:15px 0;border-radius:0 6px 6px 0}.step-container {display:flex;flex-wrap:wrap;gap:15px;margin:20px 0}.step {background:white;border:2px solid #e5e7eb;border-radius:8px;padding:15px;flex:1;min-width:200px;text-align:center;position:relative}.step-number {background:#3b82f6;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;position:absolute;top:-15px;left:50%;transform:translateX(-50%)}.step-title {margin-top:20px;font-weight:600;color:#1f2937}.traversal-info {background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:15px;margin:15px 0;text-align:center}.visited-sequence {background:#eff6ff;border:1px solid #3b82f6;border-radius:8px;padding:15px;margin:15px 0;font-family:'Monaco', 'Menlo', monospace;font-size:16px;font-weight:bold;text-align:center}</style><div class="knowledge-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>树和森林的遍历</span></div><!-- 📋 知识点概述 --><div class="section slide-in-left"><div class="section-header"><span class="section-icon">📋</span><h1 class="section-title">知识点概述</h1><span class="difficulty-badge">进阶</span></div><div class="info-box"><h3>🎯 核心概念</h3><p><strong>树和森林的遍历</strong>是指按照某种规则，系统地访问树或森林中每个节点一次且仅一次的过程。不同的遍历方式会产生不同的节点访问顺序，这对于树的各种操作具有重要意义。</p></div><div class="concept-grid"><div class="concept-card"><h4>🌳 先根遍历</h4><p>先访问根节点，再依次遍历各个子树</p></div><div class="concept-card"><h4>🍃 后根遍历</h4><p>先遍历所有子树，最后访问根节点</p></div><div class="concept-card"><h4>📊 层次遍历</h4><p>按照从上到下、从左到右的层次顺序访问</p></div><div class="concept-card"><h4>🌲 森林遍历</h4><p>将森林中的多棵树按某种顺序依次遍历</p></div></div><div class="warning-box"><strong>⚠️ 前置知识：</strong>需要掌握树的基本概念、递归思想、队列和栈的基本操作
+        </div></div><!-- 🔍 概念详解 --><div class="section slide-in-right"><div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">概念详解</h2></div><h3>🤔 为什么需要遍历？</h3><p>想象你在整理一个多层文件夹：你可能想要<span class="highlight">先看文件夹名称再看里面的内容</span>（先根遍历），或者<span class="highlight">先清理子文件夹再处理父文件夹</span>（后根遍历），又或者<span class="highlight">一层一层地整理</span>（层次遍历）。每种方式都有其特定的应用场景。</p><h3>🔑 三种基本遍历方式</h3><div class="step-container"><div class="step"><div class="step-number">1</div><div class="step-title">先根遍历</div><p>根 → 子树1 → 子树2 → ...</p><p>适用于复制树结构</p></div><div class="step"><div class="step-number">2</div><div class="step-title">后根遍历</div><p>子树1 → 子树2 → ... → 根</p><p>适用于删除树结构</p></div><div class="step"><div class="step-number">3</div><div class="step-title">层次遍历</div><p>第1层 → 第2层 → 第3层 → ...</p><p>适用于查找最短路径</p></div></div><div class="success-box"><h4>🌲 森林遍历的特点</h4><p>森林是多个不相交树的集合。遍历森林就是将森林中的每棵树按照某种顺序（通常是从左到右）依次进行遍历。可以先遍历第一棵树，再遍历第二棵树，以此类推。</p></div><div class="warning-box"><strong>⚠️ 初学者常见误区：</strong><ul><li>混淆先根遍历和深度优先搜索的概念</li><li>认为层次遍历就是广度优先搜索（虽然实现类似但目的不同）</li><li>忘记在递归实现中处理空树的情况</li><li>对森林遍历时忽略树与树之间的顺序</li></ul></div></div><!-- 📊 可视化展示 --><div class="section"><div class="section-header"><span class="section-icon">📊</span><h2 class="section-title">可视化展示</h2></div><div class="visualization-container"><h3>🎮 交互式遍历演示</h3><div class="canvas-container"><canvas id="traversalCanvas" width="1000" height="450"></canvas></div><div class="controls"><button class="btn" onclick="showTree()">显示树结构</button><button class="btn btn-green" onclick="startPreOrder()">先根遍历</button><button class="btn btn-purple" onclick="startPostOrder()">后根遍历</button><button class="btn" onclick="startLevelOrder()">层次遍历</button><button class="btn btn-secondary" onclick="resetDemo()">重置演示</button></div><div class="traversal-info"><div id="traversalType" style="font-size: 18px; font-weight: bold; color: #1f2937; margin-bottom: 10px;">点击按钮开始遍历演示</div><div class="visited-sequence" id="visitedSequence">访问序列将在这里显示</div></div><div id="explanation" style="text-align: center; margin-top: 15px; font-weight: 600; color: #374151;"></div></div></div><!-- 💻 代码实现 --><div class="section"><div class="section-header"><span class="section-icon">💻</span><h2 class="section-title">代码实现</h2></div><div class="code-container"><div class="code-tabs"><button class="code-tab active" onclick="showCode('cpp')">C++</button><button class="code-tab" onclick="showCode('java')">Java</button><button class="code-tab" onclick="showCode('python')">Python</button></div><div class="code-content"><button class="copy-btn" onclick="copyCode()">📋 复制代码</button><div id="cpp-code" class="code-block active"><pre><code>// C++ 实现：树和森林的遍历
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;queue&gt;
+using namespace std;
+
+struct TreeNode {
+    int data;
+    vector&lt;TreeNode*&gt; children;
+    TreeNode(int val) : data(val) {}
+};
+
+class TreeTraversal {
+public:
+    // 先根遍历
+    static void preOrder(TreeNode* root) {
+        if (!root) return;
+
+        cout &lt;&lt; root-&gt;data &lt;&lt; " ";  // 先访问根节点
+
+        // 再依次遍历各个子树
+        for (TreeNode* child : root-&gt;children) {
+            preOrder(child);
+        }
+    }
+
+    // 后根遍历
+    static void postOrder(TreeNode* root) {
+        if (!root) return;
+
+        // 先遍历所有子树
+        for (TreeNode* child : root-&gt;children) {
+            postOrder(child);
+        }
+
+        cout &lt;&lt; root-&gt;data &lt;&lt; " ";  // 最后访问根节点
+    }
+
+    // 层次遍历
+    static void levelOrder(TreeNode* root) {
+        if (!root) return;
+
+        queue&lt;TreeNode*&gt; q;
+        q.push(root);
+
+        while (!q.empty()) {
+            TreeNode* current = q.front();
+            q.pop();
+
+            cout &lt;&lt; current-&gt;data &lt;&lt; " ";  // 访问当前节点
+
+            // 将所有子节点加入队列
+            for (TreeNode* child : current-&gt;children) {
+                q.push(child);
+            }
+        }
+    }
+
+    // 森林遍历（先根方式）
+    static void forestPreOrder(vector&lt;TreeNode*&gt;&amp; forest) {
+        for (TreeNode* tree : forest) {
+            preOrder(tree);
+        }
+    }
+};
+
+// 使用示例
+int main() {
+    // 构建示例树: A为根，B、C、D为子节点，E、F为B的子节点
+    TreeNode* root = new TreeNode('A');
+    TreeNode* nodeB = new TreeNode('B');
+    TreeNode* nodeC = new TreeNode('C');
+    TreeNode* nodeD = new TreeNode('D');
+    TreeNode* nodeE = new TreeNode('E');
+    TreeNode* nodeF = new TreeNode('F');
+
+    root-&gt;children = {nodeB, nodeC, nodeD};
+    nodeB-&gt;children = {nodeE, nodeF};
+
+    cout &lt;&lt; "先根遍历: ";
+    TreeTraversal::preOrder(root);
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; "后根遍历: ";
+    TreeTraversal::postOrder(root);
+    cout &lt;&lt; endl;
+
+    cout &lt;&lt; "层次遍历: ";
+    TreeTraversal::levelOrder(root);
+    cout &lt;&lt; endl;
+
+    return 0;
+}</code></pre></div><div id="java-code" class="code-block"><pre><code>// Java 实现：树和森林的遍历
+import java.util.*;
+
+class TreeNode {
+    int data;
+    List&lt;TreeNode&gt; children;
+
+    public TreeNode(int data) {
+        this.data = data;
+        this.children = new ArrayList&lt;&gt;();
+    }
+}
+
+public class TreeTraversal {
+
+    // 先根遍历
+    public static void preOrder(TreeNode root) {
+        if (root == null) return;
+
+        System.out.print(root.data + " ");  // 先访问根节点
+
+        // 再依次遍历各个子树
+        for (TreeNode child : root.children) {
+            preOrder(child);
+        }
+    }
+
+    // 后根遍历
+    public static void postOrder(TreeNode root) {
+        if (root == null) return;
+
+        // 先遍历所有子树
+        for (TreeNode child : root.children) {
+            postOrder(child);
+        }
+
+        System.out.print(root.data + " ");  // 最后访问根节点
+    }
+
+    // 层次遍历
+    public static void levelOrder(TreeNode root) {
+        if (root == null) return;
+
+        Queue&lt;TreeNode&gt; queue = new LinkedList&lt;&gt;();
+        queue.offer(root);
+
+        while (!queue.isEmpty()) {
+            TreeNode current = queue.poll();
+            System.out.print(current.data + " ");  // 访问当前节点
+
+            // 将所有子节点加入队列
+            for (TreeNode child : current.children) {
+                queue.offer(child);
+            }
+        }
+    }
+
+    // 森林遍历（先根方式）
+    public static void forestPreOrder(List&lt;TreeNode&gt; forest) {
+        for (TreeNode tree : forest) {
+            preOrder(tree);
+        }
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        // 构建示例树
+        TreeNode root = new TreeNode('A');
+        TreeNode nodeB = new TreeNode('B');
+        TreeNode nodeC = new TreeNode('C');
+        TreeNode nodeD = new TreeNode('D');
+        TreeNode nodeE = new TreeNode('E');
+        TreeNode nodeF = new TreeNode('F');
+
+        root.children.addAll(Arrays.asList(nodeB, nodeC, nodeD));
+        nodeB.children.addAll(Arrays.asList(nodeE, nodeF));
+
+        System.out.print("先根遍历: ");
+        preOrder(root);
+        System.out.println();
+
+        System.out.print("后根遍历: ");
+        postOrder(root);
+        System.out.println();
+
+        System.out.print("层次遍历: ");
+        levelOrder(root);
+        System.out.println();
+    }
+}</code></pre></div><div id="python-code" class="code-block"><pre><code># Python 实现：树和森林的遍历
+from collections import deque
+
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.children = []
+
+class TreeTraversal:
+
+    @staticmethod
+    def pre_order(root):
+        """先根遍历"""
+        if not root:
+            return
+
+        print(root.data, end=" ")  # 先访问根节点
+
+        # 再依次遍历各个子树
+        for child in root.children:
+            TreeTraversal.pre_order(child)
+
+    @staticmethod
+    def post_order(root):
+        """后根遍历"""
+        if not root:
+            return
+
+        # 先遍历所有子树
+        for child in root.children:
+            TreeTraversal.post_order(child)
+
+        print(root.data, end=" ")  # 最后访问根节点
+
+    @staticmethod
+    def level_order(root):
+        """层次遍历"""
+        if not root:
+            return
+
+        queue = deque([root])
+
+        while queue:
+            current = queue.popleft()
+            print(current.data, end=" ")  # 访问当前节点
+
+            # 将所有子节点加入队列
+            for child in current.children:
+                queue.append(child)
+
+    @staticmethod
+    def forest_pre_order(forest):
+        """森林遍历（先根方式）"""
+        for tree in forest:
+            TreeTraversal.pre_order(tree)
+
+    @staticmethod
+    def get_traversal_list(root, method="pre_order"):
+        """获取遍历结果列表（用于可视化）"""
+        result = []
+
+        def pre_order_helper(node):
+            if not node:
+                return
+            result.append(node.data)
+            for child in node.children:
+                pre_order_helper(child)
+
+        def post_order_helper(node):
+            if not node:
+                return
+            for child in node.children:
+                post_order_helper(child)
+            result.append(node.data)
+
+        def level_order_helper(node):
+            if not node:
+                return
+            queue = deque([node])
+            while queue:
+                current = queue.popleft()
+                result.append(current.data)
+                for child in current.children:
+                    queue.append(child)
+
+        if method == "pre_order":
+            pre_order_helper(root)
+        elif method == "post_order":
+            post_order_helper(root)
+        elif method == "level_order":
+            level_order_helper(root)
+
+        return result
+
+# 使用示例
+if __name__ == "__main__":
+    # 构建示例树
+    root = TreeNode('A')
+    node_b = TreeNode('B')
+    node_c = TreeNode('C')
+    node_d = TreeNode('D')
+    node_e = TreeNode('E')
+    node_f = TreeNode('F')
+
+    root.children = [node_b, node_c, node_d]
+    node_b.children = [node_e, node_f]
+
+    print("先根遍历: ", end="")
+    TreeTraversal.pre_order(root)
+    print()
+
+    print("后根遍历: ", end="")
+    TreeTraversal.post_order(root)
+    print()
+
+    print("层次遍历: ", end="")
+    TreeTraversal.level_order(root)
+    print()
+</code></pre></div></div></div></div><!-- 🌟 实际应用 --><div class="section"><div class="section-header"><span class="section-icon">🌟</span><h2 class="section-title">实际应用</h2></div><div class="concept-grid"><div class="concept-card"><h4>📁 文件系统遍历</h4><p><strong>先根遍历</strong>：复制整个文件夹结构<br><strong>后根遍历</strong>：删除文件夹（先删子文件再删父文件夹）<br><strong>层次遍历</strong>：查看各层目录结构</p></div><div class="concept-card"><h4>🏢 组织架构管理</h4><p><strong>先根遍历</strong>：发布公司通知（从上级到下级）<br><strong>后根遍历</strong>：统计部门预算（从下级汇总到上级）<br><strong>层次遍历</strong>：按管理层级展示组织结构</p></div><div class="concept-card"><h4>🎯 决策树分析</h4><p><strong>先根遍历</strong>：自上而下的决策制定过程<br><strong>后根遍历</strong>：自下而上的结果汇总<br><strong>层次遍历</strong>：按决策层次分析问题</p></div></div><div class="info-box"><h4>🎯 典型应用案例：网站爬虫</h4><p>在网站爬虫中，网页链接形成树状结构。<span class="highlight">先根遍历</span>适合下载网页内容，<span class="highlight">层次遍历</span>适合控制爬取深度，<span class="highlight">后根遍历</span>适合统计爬取结果。</p></div><div class="success-box"><h4>🌲 森林遍历的实际应用</h4><p><strong>搜索引擎索引：</strong>多个网站形成森林，需要遍历所有网站建立索引<br><strong>多项目管理：</strong>公司的多个独立项目，需要统一管理和遍历检查<br><strong>分布式系统：</strong>多个独立的服务器集群，需要逐一检查和维护</p></div><div class="warning-box"><strong>🛠️ 推荐学习工具：</strong><ul><li><strong>可视化工具：</strong> Tree Visualizer、Algorithm Visualizer</li><li><strong>编程练习：</strong> LeetCode N叉树遍历题目</li><li><strong>调试工具：</strong> 使用IDE的调试功能观察递归过程</li></ul></div></div><!-- ✅ 学习检验 --><div class="section"><div class="section-header"><span class="section-icon">✅</span><h2 class="section-title">学习检验</h2></div><div class="quiz-container"><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(1)"><span>1. 在先根遍历中，节点的访问顺序是什么？</span><span class="toggle-icon" id="icon1">🔽</span></div><div class="quiz-answer" id="answer1"><strong>答案：</strong>先根遍历的访问顺序是：<span class="highlight">根节点 → 第一个子树 → 第二个子树 → ... → 最后一个子树</span>。对于每个子树，也递归地采用相同的访问顺序。这种方式特别适合复制树结构或自上而下的处理过程。
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(2)"><span>2. 后根遍历在什么场景下最有用？</span><span class="toggle-icon" id="icon2">🔽</span></div><div class="quiz-answer" id="answer2"><strong>答案：</strong>后根遍历最适用于需要<span class="highlight">先处理子节点再处理父节点</span>的场景，如：<br>
+                    • <strong>删除操作：</strong>必须先删除子文件夹才能删除父文件夹<br>
+                    • <strong>计算目录大小：</strong>需要先计算子目录大小再汇总到父目录<br>
+                    • <strong>表达式求值：</strong>先计算子表达式的值再计算整个表达式
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(3)"><span>3. 层次遍历使用什么数据结构实现？为什么？</span><span class="toggle-icon" id="icon3">🔽</span></div><div class="quiz-answer" id="answer3"><strong>答案：</strong>层次遍历使用<span class="highlight">队列（Queue）</span>数据结构实现。原因是：<br>
+                    • 队列的<strong>先进先出</strong>特性保证了同一层的节点按照从左到右的顺序被访问<br>
+                    • 当访问一个节点时，将其所有子节点按顺序加入队列末尾<br>
+                    • 这样可以保证上一层节点全部访问完后，才开始访问下一层节点
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(4)"><span>4. 森林如何进行遍历？与单棵树遍历有什么区别？</span><span class="toggle-icon" id="icon4">🔽</span></div><div class="quiz-answer" id="answer4"><strong>答案：</strong>森林遍历就是<span class="highlight">依次遍历森林中的每棵树</span>。具体过程：<br>
+                    • 按照从左到右（或预定义）的顺序选择森林中的每棵树<br>
+                    • 对每棵树采用相同的遍历方法（先根、后根或层次）<br>
+                    • 区别在于：森林遍历需要额外考虑<strong>树与树之间的顺序</strong>，而单棵树只需考虑节点间的关系
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(5)"><span>5. 对于同一棵树，先根遍历和后根遍历的结果有什么关系？</span><span class="toggle-icon" id="icon5">🔽</span></div><div class="quiz-answer" id="answer5"><strong>答案：</strong>对于同一棵树，先根遍历和后根遍历的结果<span class="highlight">没有简单的反向关系</span>，但有以下特点：<br>
+                    • <strong>根节点：</strong>在先根遍历中位于序列开头，在后根遍历中位于序列末尾<br>
+                    • <strong>子树内部：</strong>每个子树内部仍保持相对的先根/后根关系<br>
+                    • <strong>应用：</strong>可以通过先根和后根遍历结果来唯一确定树的结构
+                </div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="btn">
+            🏠 返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="btn btn-secondary">
+            🌌 探索CS宇宙
+        </a></div></div><script>let canvas, ctx; let currentStep = 0; let currentTraversal = ''; let visitedNodes = []; let animationId; class Node { constructor(x, y, data, color = '#3b82f6') { this.x = x; this.y = y; this.data = data; this.color = color; this.originalColor = color; this.children = []; this.parent = null; this.visited = false; this.visitOrder = -1; } draw(highlighted = false, visitNumber = -1) { ctx.beginPath(); ctx.arc(this.x, this.y, 25, 0, 2 * Math.PI); if (highlighted) { ctx.fillStyle = '#f59e0b'; ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 15; } else if (this.visited) { ctx.fillStyle = '#10b981'; } else { ctx.fillStyle = this.color; } ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(this.data, this.x, this.y); if (visitNumber >= 0) { ctx.fillStyle = '#dc2626'; ctx.font = 'bold 12px Arial'; ctx.fillText(visitNumber + 1, this.x + 20, this.y - 20); } } drawLineTo(other, color = '#4b5563') { ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(other.x, other.y); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke(); } reset() { this.visited = false; this.visitOrder = -1; this.color = this.originalColor; } } let nodes = {}; function initCanvas() { canvas = document.getElementById('traversalCanvas'); ctx = canvas.getContext('2d'); createTreeStructure(); showTree(); } function createTreeStructure() { nodes.A = new Node(500, 80, 'A', '#e11d48'); nodes.B = new Node(300, 180, 'B', '#3b82f6'); nodes.C = new Node(500, 180, 'C', '#3b82f6'); nodes.D = new Node(700, 180, 'D', '#3b82f6'); nodes.E = new Node(250, 280, 'E', '#10b981'); nodes.F = new Node(350, 280, 'F', '#10b981'); nodes.G = new Node(450, 280, 'G', '#10b981'); nodes.H = new Node(550, 280, 'H', '#10b981'); nodes.A.children = [nodes.B, nodes.C, nodes.D]; nodes.B.children = [nodes.E, nodes.F]; nodes.C.children = [nodes.G]; nodes.D.children = [nodes.H]; nodes.B.parent = nodes.A; nodes.C.parent = nodes.A; nodes.D.parent = nodes.A; nodes.E.parent = nodes.B; nodes.F.parent = nodes.B; nodes.G.parent = nodes.C; nodes.H.parent = nodes.D; } function showTree() { ctx.clearRect(0, 0, canvas.width, canvas.height); resetAllNodes(); currentTraversal = ''; visitedNodes = []; currentStep = 0; drawTreeLines(); Object.values(nodes).forEach(node => node.draw()); ctx.fillStyle = '#374151'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('示例树结构：三层树，根节点A有三个子树', 500, 380); document.getElementById('traversalType').textContent = '点击按钮开始遍历演示'; document.getElementById('visitedSequence').textContent = '访问序列将在这里显示'; document.getElementById('explanation').textContent = '这是一个典型的多叉树，我们将演示三种不同的遍历方式'; } function drawTreeLines() { nodes.A.drawLineTo(nodes.B, '#6b7280'); nodes.A.drawLineTo(nodes.C, '#6b7280'); nodes.A.drawLineTo(nodes.D, '#6b7280'); nodes.B.drawLineTo(nodes.E, '#6b7280'); nodes.B.drawLineTo(nodes.F, '#6b7280'); nodes.C.drawLineTo(nodes.G, '#6b7280'); nodes.D.drawLineTo(nodes.H, '#6b7280'); } function resetAllNodes() { Object.values(nodes).forEach(node => node.reset()); } function startPreOrder() { resetAllNodes(); currentTraversal = 'preorder'; visitedNodes = []; currentStep = 0; document.getElementById('traversalType').textContent = '🌳 先根遍历演示'; document.getElementById('explanation').textContent = '先根遍历：先访问根节点，再依次遍历各个子树'; const sequence = getPreOrderSequence(nodes.A); animateTraversal(sequence, 'preorder'); } function startPostOrder() { resetAllNodes(); currentTraversal = 'postorder'; visitedNodes = []; currentStep = 0; document.getElementById('traversalType').textContent = '🍃 后根遍历演示'; document.getElementById('explanation').textContent = '后根遍历：先遍历所有子树，最后访问根节点'; const sequence = getPostOrderSequence(nodes.A); animateTraversal(sequence, 'postorder'); } function startLevelOrder() { resetAllNodes(); currentTraversal = 'levelorder'; visitedNodes = []; currentStep = 0; document.getElementById('traversalType').textContent = '📊 层次遍历演示'; document.getElementById('explanation').textContent = '层次遍历：按照从上到下、从左到右的层次顺序访问'; const sequence = getLevelOrderSequence(nodes.A); animateTraversal(sequence, 'levelorder'); } function getPreOrderSequence(root) { const sequence = []; function preOrder(node) { if (!node) return; sequence.push(node); for (let child of node.children) { preOrder(child); } } preOrder(root); return sequence; } function getPostOrderSequence(root) { const sequence = []; function postOrder(node) { if (!node) return; for (let child of node.children) { postOrder(child); } sequence.push(node); } postOrder(root); return sequence; } function getLevelOrderSequence(root) { const sequence = []; const queue = [root]; while (queue.length > 0) { const node = queue.shift(); sequence.push(node); for (let child of node.children) { queue.push(child); } } return sequence; } function animateTraversal(sequence, type) { if (currentStep >= sequence.length) { document.getElementById('explanation').textContent = `${type === 'preorder' ? '先根' : type === 'postorder' ? '后根' : '层次'}遍历完成！`; return; } const currentNode = sequence[currentStep]; currentNode.visited = true; currentNode.visitOrder = currentStep; visitedNodes.push(currentNode.data); ctx.clearRect(0, 0, canvas.width, canvas.height); drawTreeLines(); Object.values(nodes).forEach(node => { const isHighlighted = (node === currentNode); const visitNumber = node.visited ? node.visitOrder : -1; node.draw(isHighlighted, visitNumber); }); document.getElementById('visitedSequence').textContent = `访问序列: ${visitedNodes.join(' → ')} ${currentStep < sequence.length - 1 ? '→ ...' : ''}`; const explanations = { 'preorder': `正在执行先根遍历，当前访问节点 ${currentNode.data}`, 'postorder': `正在执行后根遍历，当前访问节点 ${currentNode.data}`, 'levelorder': `正在执行层次遍历，当前访问第${Math.floor(Math.log2(currentStep + 1)) + 1}层的节点 ${currentNode.data}` }; document.getElementById('explanation').textContent = explanations[type]; currentStep++; setTimeout(() => { animateTraversal(sequence, type); }, 1500); } function resetDemo() { if (animationId) { clearTimeout(animationId); } showTree(); } function showCode(language) { document.querySelectorAll('.code-block').forEach(block => { block.classList.remove('active'); }); document.querySelectorAll('.code-tab').forEach(tab => { tab.classList.remove('active'); }); const targetCodeBlock = document.getElementById(language + '-code'); const targetTab = document.querySelector(`[onclick="showCode('${language}')"]`); if (targetCodeBlock) { targetCodeBlock.classList.add('active'); } if (targetTab) { targetTab.classList.add('active'); } } function copyCode() { const activeCodeBlock = document.querySelector('.code-block.active'); if (!activeCodeBlock) return; const codeElement = activeCodeBlock.querySelector('code') || activeCodeBlock.querySelector('pre'); const text = codeElement ? codeElement.textContent : activeCodeBlock.textContent; navigator.clipboard.writeText(text).then(() => { const btn = document.querySelector('.copy-btn'); const originalText = btn.textContent; btn.textContent = '✅ 已复制'; btn.style.background = '#10b981'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#4b5563'; }, 2000); }).catch(() => { const textArea = document.createElement('textarea'); textArea.value = text; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); const btn = document.querySelector('.copy-btn'); const originalText = btn.textContent; btn.textContent = '✅ 已复制'; btn.style.background = '#10b981'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#4b5563'; }, 2000); }); } function toggleAnswer(questionId) { const answer = document.getElementById('answer' + questionId); const icon = document.getElementById('icon' + questionId); if (answer.style.display === 'none' || answer.style.display === '') { answer.style.display = 'block'; icon.classList.add('active'); icon.textContent = '🔼'; } else { answer.style.display = 'none'; icon.classList.remove('active'); icon.textContent = '🔽'; } } document.addEventListener('DOMContentLoaded', function() { initCanvas(); });</script>
+
+{% endblock %}

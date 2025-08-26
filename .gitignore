@@ -1,0 +1,142 @@
+# Django项目 .gitignore
+
+# 字节码文件
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 分发/打包
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# PyInstaller
+*.manifest
+*.spec
+
+# 单元测试/覆盖率报告
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# 环境变量和配置文件
+.env
+.env.local
+.env.production
+.env.staging
+config.py
+
+# Django相关
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# 静态文件收集目录
+/staticfiles/
+/static_collected/
+
+# 媒体文件
+/media/
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv/
+
+# IDE配置文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 备份文件
+backups/
+*.backup
+*.bak
+
+# 临时文件
+tmp/
+temp/
+*.tmp
+
+# 缓存文件
+.cache/
+*.cache
+
+# 编译文件
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# 包文件
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 密钥和证书文件
+*.pem
+*.key
+*.crt
+*.p12
+
+# 健康报告
+health_reports/
+
+# 测试文件
+test_*.html
+*_test.html
+debug_*.html
+*_debug.html
+*_demo.html
+
+# 部署相关临时文件
+*.sock

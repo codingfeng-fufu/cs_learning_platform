@@ -1,0 +1,2445 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}线索二叉树 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>数据结构</span>
+        <span>></span>
+        <span>线索二叉树</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">🔗</span>
+            线索二叉树
+        </h1>
+        <p>利用线索化技术优化二叉树遍历，实现无递归高效访问</p>
+    </div>
+
+    <!-- 📋 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                知识点概述
+            </h2>
+
+            <div class="overview-content">
+                <div class="concept-intro">
+                    <h3>核心概念</h3>
+                    <p>线索二叉树就像在迷宫中拉一根导线，让你能够不迷路地遍历整个迷宫。它利用二叉树中的空指针域来存储线索信息，将非线性结构线性化，实现高效的非递归遍历。</p>
+                </div>
+
+                <div class="unified-grid unified-grid-2">
+                    <div class="info-box info-box-info">
+                        <span class="info-icon">📚</span>
+                        <div>
+                            <strong>学习难度：</strong>中等
+                            <br><strong>前置知识：</strong>二叉树遍历、指针操作
+                        </div>
+                    </div>
+                    <div class="info-box info-box-success">
+                        <span class="info-icon">⏱️</span>
+                        <div>
+                            <strong>学习时间：</strong>45-60分钟
+                            <br><strong>重要程度：</strong>⭐⭐⭐⭐
+                        </div>
+                    </div>
+                </div>
+
+                <div class="terms-list">
+                    <h4>🔑 关键术语</h4>
+                    <div class="unified-grid unified-grid-2">
+                        <div class="term-item">
+                            <strong>线索：</strong>利用空指针域存储的前驱或后继信息
+                        </div>
+                        <div class="term-item">
+                            <strong>线索化：</strong>将普通二叉树转换为线索二叉树的过程
+                        </div>
+                        <div class="term-item">
+                            <strong>前驱线索：</strong>指向中序遍历中前驱节点的线索
+                        </div>
+                        <div class="term-item">
+                            <strong>后继线索：</strong>指向中序遍历中后继节点的线索
+                        </div>
+                    </div>
+                </div>
+
+                <div class="problem-solution">
+                    <h4>💡 解决的问题</h4>
+                    <div class="unified-grid unified-grid-2">
+                        <div class="problem-box">
+                            <h5>🔴 传统问题</h5>
+                            <ul>
+                                <li>递归遍历需要大量栈空间</li>
+                                <li>大量空指针域浪费存储空间</li>
+                                <li>难以找到节点的前驱和后继</li>
+                                <li>非递归遍历实现复杂</li>
+                            </ul>
+                        </div>
+                        <div class="solution-box">
+                            <h5>🟢 线索化优势</h5>
+                            <ul>
+                                <li>利用空指针域存储有用信息</li>
+                                <li>实现O(1)时间找到前驱后继</li>
+                                <li>支持高效的非递归遍历</li>
+                                <li>节省栈空间，适合大型树</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📖 概念详解 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📖</span>
+                概念详解
+            </h2>
+
+            <div class="concept-details">
+                <div class="concept-item">
+                    <h3>🎯 什么是线索二叉树</h3>
+                    <p>线索二叉树是一种改进的二叉树存储结构，它利用二叉树中大量的空指针域来存储节点的前驱和后继信息。</p>
+                    <div class="example-box">
+                        <strong>空间利用率：</strong>在n个节点的二叉树中，有n+1个空指针域，线索化可以将这些"废物"变成"宝贝"。
+                    </div>
+                    <div class="stats-box">
+                        <h5>📊 空间统计</h5>
+                        <p><strong>节点数：</strong>n个节点</p>
+                        <p><strong>指针总数：</strong>2n个指针域</p>
+                        <p><strong>非空指针：</strong>n-1个（连接父子节点）</p>
+                        <p><strong>空指针：</strong>n+1个（可用于线索化）</p>
+                    </div>
+                </div>
+
+                <div class="concept-item">
+                    <h3>🎯 线索类型</h3>
+                    <div class="thread-types">
+                        <div class="type-box">
+                            <h4>左线索树</h4>
+                            <p>只在左指针域为空时添加前驱线索</p>
+                            <div class="type-feature">特点：快速找到前驱节点</div>
+                        </div>
+                        <div class="type-box">
+                            <h4>右线索树</h4>
+                            <p>只在右指针域为空时添加后继线索</p>
+                            <div class="type-feature">特点：快速找到后继节点</div>
+                        </div>
+                        <div class="type-box">
+                            <h4>全线索树</h4>
+                            <p>同时添加前驱和后继线索</p>
+                            <div class="type-feature">特点：双向快速访问</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-item">
+                    <h3>🎯 线索化过程</h3>
+                    <p>线索化是通过中序遍历二叉树，在遍历过程中建立线索的过程。</p>
+                    <div class="process-steps">
+                        <div class="step-box">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h5>中序遍历</h5>
+                                <p>按照左→根→右的顺序访问节点</p>
+                            </div>
+                        </div>
+                        <div class="step-box">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h5>建立前驱线索</h5>
+                                <p>如果当前节点左指针为空，指向前驱节点</p>
+                            </div>
+                        </div>
+                        <div class="step-box">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h5>建立后继线索</h5>
+                                <p>如果前一个节点右指针为空，指向当前节点</p>
+                            </div>
+                        </div>
+                        <div class="step-box">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h5>标记线索</h5>
+                                <p>用标志位区分指针是线索还是子树指针</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-item">
+                    <h3>🎯 线索遍历</h3>
+                    <p>利用线索可以实现不需要递归栈的高效遍历。</p>
+                    <div class="traversal-algorithm">
+                        <h5>中序线索遍历算法：</h5>
+                        <div class="algorithm-steps">
+                            <div class="algo-step">
+                                <span class="step-label">步骤1：</span>
+                                <span>找到中序遍历的第一个节点（最左下节点）</span>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-label">步骤2：</span>
+                                <span>访问当前节点</span>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-label">步骤3：</span>
+                                <span>如果右指针是线索，直接跳到后继节点</span>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-label">步骤4：</span>
+                                <span>如果右指针是子树指针，转向右子树的最左节点</span>
+                            </div>
+                            <div class="algo-step">
+                                <span class="step-label">步骤5：</span>
+                                <span>重复步骤2-4直到遍历完成</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box info-box-warning">
+                    <span class="info-icon">⚠️</span>
+                    <strong>重要提示：</strong>
+                    <ul>
+                        <li>线索化通常基于中序遍历，因为中序遍历对BST有特殊意义</li>
+                        <li>需要标志位区分普通指针和线索指针</li>
+                        <li>线索化后的树结构不能随意修改，否则线索会失效</li>
+                        <li>适合查询频繁但修改较少的应用场景</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 可视化展示 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                交互式可视化演示
+            </h2>
+
+            <div class="visualization-container">
+                <div class="demo-description">
+                    <p>观看线索化过程和线索遍历的动画演示。<span style="color: #3b82f6; font-weight: bold; opacity: 0.8;">渐变蓝色曲线</span>表示前驱线索（向上弯曲），<span style="color: #dc2626; font-weight: bold; opacity: 0.8;">渐变红色曲线</span>表示后继线索（向下弯曲），实线表示正常的父子关系。</p>
+                    <div style="margin-top: 10px; font-size: 14px; color: #666;">
+                        ✨ <strong>优化升级设计：</strong>线索曲线采用渐变透明效果，置于最顶层显示，既突出线索连接关系，又不遮挡底层结构，视觉层次更清晰！
+                    </div>
+                </div>
+
+                <div class="canvas-demo">
+                    <div class="controls">
+                        <button class="threading-btn" onclick="startThreading()">🔗 开始线索化</button>
+                        <button class="traverse-btn" onclick="startThreadTraversal()">🚶 线索遍历</button>
+                        <button class="toggle-threads-btn" onclick="toggleThreadsVisibility()">👁️ 显示/隐藏线索</button>
+                        <button class="reset-btn" onclick="resetThreadDemo()">🔄 重置</button>
+                    </div>
+
+                    <div class="canvas-container">
+                        <canvas id="threadCanvas" width="800" height="450"></canvas>
+                    </div>
+
+                    <div class="legend">
+                        <h4>图例说明</h4>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-node-demo">
+                                    <div class="legend-pointer-field">L</div>
+                                    <div class="legend-data-field">A</div>
+                                    <div class="legend-pointer-field">R</div>
+                                </div>
+                                <span>普通节点结构</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-node-demo threaded">
+                                    <div class="legend-pointer-field">T</div>
+                                    <div class="legend-data-field">B</div>
+                                    <div class="legend-pointer-field">T</div>
+                                </div>
+                                <span>线索化节点</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-line normal-line"></div>
+                                <span>正常指针(实线)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-line predecessor-thread-line"></div>
+                                <span>前驱线索(渐变蓝)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-line successor-thread-line"></div>
+                                <span>后继线索(渐变红)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ff4444;"></div>
+                                <span>正在处理</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #22c55e;"></div>
+                                <span>线索化完成</span>
+                            </div>
+                        </div>
+                        <div class="legend-explanation">
+                            <p><strong>指针域说明：</strong></p>
+                            <ul>
+                                <li><strong>L/R：</strong>指向左/右子树的正常指针</li>
+                                <li><strong>T：</strong>线索指针（蓝色=前驱，红色=后继）</li>
+                                <li><strong>∅：</strong>空指针</li>
+                                <li><strong>↙/↘/→：</strong>指针方向指示</li>
+                            </ul>
+                            <div style="margin-top: 12px; padding: 10px; background: #f0f9ff; border-left: 3px solid #3b82f6; border-radius: 4px;">
+                                <strong>💻 优化升级曲线设计：</strong>
+                                <ul style="margin: 8px 0 0 15px; font-size: 12px;">
+                                    <li>🔵 <strong>前驱线索</strong>：渐变蓝色曲线，向上优雅弯曲，顶层显示</li>
+                                    <li>🔴 <strong>后继线索</strong>：渐变红色曲线，向下自然弯曲，顶层显示</li>
+                                    <li>💫 <strong>渐变效果</strong>：50%-80%透明度，既突出又不遮挡底层元素</li>
+                                    <li>🎯 <strong>柔和箭头</strong>：渐变填充，圆润边缘，无锐利尖角</li>
+                                    <li>🏷️ <strong>浮层标签</strong>：半透明背景，白色文字，轻微阴影效果</li>
+                                    <li>📏 <strong>三层渲染</strong>：连接线→节点→线索，层次分明，线索永远在顶层</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info">
+                        <div class="info-box">
+                            <h4>遍历序列</h4>
+                            <div class="sequence" id="threadSequence"></div>
+                            <div class="status" id="threadStatus">点击按钮开始演示</div>
+                        </div>
+                        <div class="info-box">
+                            <h4>当前操作</h4>
+                            <div class="sequence" id="threadCurrentAction">等待开始...</div>
+                            <div class="status" id="threadStepInfo">选择操作类型</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 💻 代码实现 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">💻</span>
+                代码实现
+            </h2>
+
+            <div class="code-implementation">
+                <div class="code-tabs">
+                    <button class="tab-btn active" onclick="showCode('cpp')">C++</button>
+                    <button class="tab-btn" onclick="showCode('java')">Java</button>
+                    <button class="tab-btn" onclick="showCode('python')">Python</button>
+                </div>
+
+                <div id="cpp-code" class="code-content active">
+                    <div class="code-header">
+                        <span>C++ 实现</span>
+                        <button onclick="copyCode('cpp', this)" class="copy-btn">📋 复制代码</button>
+                    </div>
+                    <pre><code id="cpp-source">#include &lt;iostream&gt;
+using namespace std;
+
+// 线索二叉树节点结构
+struct ThreadNode {
+    int data;
+    ThreadNode* left;
+    ThreadNode* right;
+    bool leftTag;   // false表示左指针指向子节点，true表示前驱线索
+    bool rightTag;  // false表示右指针指向子节点，true表示后继线索
+
+    ThreadNode(int val) : data(val), left(nullptr), right(nullptr),
+                         leftTag(false), rightTag(false) {}
+};
+
+class ThreadedBinaryTree {
+private:
+    ThreadNode* root;
+    ThreadNode* pre;  // 中序遍历中的前驱节点
+
+public:
+    ThreadedBinaryTree() : root(nullptr), pre(nullptr) {}
+
+    // 中序线索化
+    void inorderThreading(ThreadNode* node) {
+        if (node) {
+            // 递归线索化左子树
+            inorderThreading(node->left);
+
+            // 处理当前节点的线索
+            if (!node->left) {  // 左指针为空，建立前驱线索
+                node->leftTag = true;
+                node->left = pre;
+            }
+
+            if (pre && !pre->right) {  // 前驱节点右指针为空，建立后继线索
+                pre->rightTag = true;
+                pre->right = node;
+            }
+
+            pre = node;  // 更新前驱节点
+
+            // 递归线索化右子树
+            inorderThreading(node->right);
+        }
+    }
+
+    // 线索化包装函数
+    void createInorderThread() {
+        if (root) {
+            pre = nullptr;
+            inorderThreading(root);
+        }
+    }
+
+    // 找到中序遍历的第一个节点
+    ThreadNode* firstNode() {
+        ThreadNode* p = root;
+        if (!p) return nullptr;
+
+        while (!p->leftTag) {  // 一直向左找到最左下节点
+            p = p->left;
+        }
+        return p;
+    }
+
+    // 在中序线索树中找到节点p的后继
+    ThreadNode* nextNode(ThreadNode* p) {
+        if (p->rightTag) {
+            // 右指针是线索，直接返回后继
+            return p->right;
+        } else {
+            // 右指针指向子树，找到右子树的最左节点
+            p = p->right;
+            while (!p->leftTag) {
+                p = p->left;
+            }
+            return p;
+        }
+    }
+
+    // 中序线索遍历
+    void inorderTraversal() {
+        ThreadNode* p = firstNode();
+        while (p) {
+            cout << p->data << " ";
+            p = nextNode(p);
+        }
+        cout << endl;
+    }
+
+    // 插入节点（建树用）
+    void insert(int val) {
+        if (!root) {
+            root = new ThreadNode(val);
+            return;
+        }
+
+        ThreadNode* curr = root;
+        ThreadNode* parent = nullptr;
+
+        while (curr) {
+            parent = curr;
+            if (val < curr->data) {
+                if (curr->leftTag) break;  // 遇到线索就停止
+                curr = curr->left;
+            } else {
+                if (curr->rightTag) break;  // 遇到线索就停止
+                curr = curr->right;
+            }
+        }
+
+        ThreadNode* newNode = new ThreadNode(val);
+        if (val < parent->data) {
+            parent->left = newNode;
+        } else {
+            parent->right = newNode;
+        }
+    }
+};</code></pre>
+                </div>
+
+                <div id="java-code" class="code-content">
+                    <div class="code-header">
+                        <span>Java 实现</span>
+                        <button onclick="copyCode('java', this)" class="copy-btn">📋 复制代码</button>
+                    </div>
+                    <pre><code id="java-source">// 线索二叉树节点类
+class ThreadNode {
+    int data;
+    ThreadNode left;
+    ThreadNode right;
+    boolean leftTag;   // false表示左指针指向子节点，true表示前驱线索
+    boolean rightTag;  // false表示右指针指向子节点，true表示后继线索
+
+    public ThreadNode(int data) {
+        this.data = data;
+        this.left = null;
+        this.right = null;
+        this.leftTag = false;
+        this.rightTag = false;
+    }
+}
+
+public class ThreadedBinaryTree {
+    private ThreadNode root;
+    private ThreadNode pre;  // 中序遍历中的前驱节点
+
+    public ThreadedBinaryTree() {
+        this.root = null;
+        this.pre = null;
+    }
+
+    // 中序线索化
+    private void inorderThreading(ThreadNode node) {
+        if (node != null) {
+            // 递归线索化左子树
+            inorderThreading(node.left);
+
+            // 处理当前节点的线索
+            if (node.left == null) {  // 左指针为空，建立前驱线索
+                node.leftTag = true;
+                node.left = pre;
+            }
+
+            if (pre != null && pre.right == null) {  // 前驱节点右指针为空，建立后继线索
+                pre.rightTag = true;
+                pre.right = node;
+            }
+
+            pre = node;  // 更新前驱节点
+
+            // 递归线索化右子树
+            inorderThreading(node.right);
+        }
+    }
+
+    // 线索化包装函数
+    public void createInorderThread() {
+        if (root != null) {
+            pre = null;
+            inorderThreading(root);
+        }
+    }
+
+    // 找到中序遍历的第一个节点
+    private ThreadNode firstNode() {
+        ThreadNode p = root;
+        if (p == null) return null;
+
+        while (!p.leftTag) {  // 一直向左找到最左下节点
+            p = p.left;
+        }
+        return p;
+    }
+
+    // 在中序线索树中找到节点p的后继
+    private ThreadNode nextNode(ThreadNode p) {
+        if (p.rightTag) {
+            // 右指针是线索，直接返回后继
+            return p.right;
+        } else {
+            // 右指针指向子树，找到右子树的最左节点
+            p = p.right;
+            while (!p.leftTag) {
+                p = p.left;
+            }
+            return p;
+        }
+    }
+
+    // 中序线索遍历
+    public void inorderTraversal() {
+        ThreadNode p = firstNode();
+        while (p != null) {
+            System.out.print(p.data + " ");
+            p = nextNode(p);
+        }
+        System.out.println();
+    }
+
+    // 插入节点（建树用）
+    public void insert(int val) {
+        if (root == null) {
+            root = new ThreadNode(val);
+            return;
+        }
+
+        ThreadNode curr = root;
+        ThreadNode parent = null;
+
+        while (curr != null) {
+            parent = curr;
+            if (val < curr.data) {
+                if (curr.leftTag) break;  // 遇到线索就停止
+                curr = curr.left;
+            } else {
+                if (curr.rightTag) break;  // 遇到线索就停止
+                curr = curr.right;
+            }
+        }
+
+        ThreadNode newNode = new ThreadNode(val);
+        if (val < parent.data) {
+            parent.left = newNode;
+        } else {
+            parent.right = newNode;
+        }
+    }
+}</code></pre>
+                </div>
+
+                <div id="python-code" class="code-content">
+                    <div class="code-header">
+                        <span>Python 实现</span>
+                        <button onclick="copyCode('python', this)" class="copy-btn">📋 复制代码</button>
+                    </div>
+                    <pre><code id="python-source">class ThreadNode:
+    """线索二叉树节点类"""
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+        self.left_tag = False   # False表示左指针指向子节点，True表示前驱线索
+        self.right_tag = False  # False表示右指针指向子节点，True表示后继线索
+
+class ThreadedBinaryTree:
+    """线索二叉树类"""
+    def __init__(self):
+        self.root = None
+        self.pre = None  # 中序遍历中的前驱节点
+
+    def inorder_threading(self, node):
+        """中序线索化"""
+        if node:
+            # 递归线索化左子树
+            self.inorder_threading(node.left)
+
+            # 处理当前节点的线索
+            if not node.left:  # 左指针为空，建立前驱线索
+                node.left_tag = True
+                node.left = self.pre
+
+            if self.pre and not self.pre.right:  # 前驱节点右指针为空，建立后继线索
+                self.pre.right_tag = True
+                self.pre.right = node
+
+            self.pre = node  # 更新前驱节点
+
+            # 递归线索化右子树
+            self.inorder_threading(node.right)
+
+    def create_inorder_thread(self):
+        """线索化包装函数"""
+        if self.root:
+            self.pre = None
+            self.inorder_threading(self.root)
+
+    def first_node(self):
+        """找到中序遍历的第一个节点"""
+        p = self.root
+        if not p:
+            return None
+
+        while not p.left_tag:  # 一直向左找到最左下节点
+            p = p.left
+        return p
+
+    def next_node(self, p):
+        """在中序线索树中找到节点p的后继"""
+        if p.right_tag:
+            # 右指针是线索，直接返回后继
+            return p.right
+        else:
+            # 右指针指向子树，找到右子树的最左节点
+            p = p.right
+            while not p.left_tag:
+                p = p.left
+            return p
+
+    def inorder_traversal(self):
+        """中序线索遍历"""
+        result = []
+        p = self.first_node()
+        while p:
+            result.append(p.data)
+            p = self.next_node(p)
+        return result
+
+    def insert(self, val):
+        """插入节点（建树用）"""
+        if not self.root:
+            self.root = ThreadNode(val)
+            return
+
+        curr = self.root
+        parent = None
+
+        while curr:
+            parent = curr
+            if val < curr.data:
+                if curr.left_tag:  # 遇到线索就停止
+                    break
+                curr = curr.left
+            else:
+                if curr.right_tag:  # 遇到线索就停止
+                    break
+                curr = curr.right
+
+        new_node = ThreadNode(val)
+        if val < parent.data:
+            parent.left = new_node
+        else:
+            parent.right = new_node
+
+# 使用示例
+def example_usage():
+    tree = ThreadedBinaryTree()
+
+    # 构建二叉树
+    values = [50, 30, 70, 20, 40, 60, 80]
+    for val in values:
+        tree.insert(val)
+
+    # 线索化
+    tree.create_inorder_thread()
+
+    # 遍历
+    print("中序线索遍历结果:", tree.inorder_traversal())</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 实际应用 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🌟</span>
+                实际应用
+            </h2>
+
+            <div class="applications">
+                <div class="unified-grid unified-grid-2">
+                    <div class="app-item">
+                        <h4>🗄️ 数据库索引</h4>
+                        <p><strong>应用场景：</strong>B+树叶子节点的线索连接</p>
+                        <p><strong>优势：</strong>支持范围查询和顺序访问</p>
+                        <p><strong>实现：</strong>叶子节点通过线索形成有序链表</p>
+                    </div>
+
+                    <div class="app-item">
+                        <h4>💾 内存受限环境</h4>
+                        <p><strong>应用场景：</strong>嵌入式系统、单片机编程</p>
+                        <p><strong>优势：</strong>避免递归栈溢出问题</p>
+                        <p><strong>实现：</strong>用线索替代函数调用栈</p>
+                    </div>
+
+                    <div class="app-item">
+                        <h4>📊 表达式求值</h4>
+                        <p><strong>应用场景：</strong>编译器中的语法树遍历</p>
+                        <p><strong>优势：</strong>高效的非递归遍历算法</p>
+                        <p><strong>实现：</strong>线索化语法树进行代码生成</p>
+                    </div>
+
+                    <div class="app-item">
+                        <h4>📈 大数据遍历</h4>
+                        <p><strong>应用场景：</strong>大规模树形数据的顺序访问</p>
+                        <p><strong>优势：</strong>节省内存，提高缓存命中率</p>
+                        <p><strong>实现：</strong>将树形结构线性化访问</p>
+                    </div>
+                </div>
+
+                <div class="comparison-table">
+                    <h4>📈 性能对比</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>操作类型</th>
+                                <th>普通二叉树</th>
+                                <th>线索二叉树</th>
+                                <th>优势说明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>找前驱节点</td>
+                                <td>O(h)</td>
+                                <td>O(1)</td>
+                                <td>直接通过线索访问</td>
+                            </tr>
+                            <tr>
+                                <td>找后继节点</td>
+                                <td>O(h)</td>
+                                <td>O(1)</td>
+                                <td>直接通过线索访问</td>
+                            </tr>
+                            <tr>
+                                <td>中序遍历</td>
+                                <td>O(n), 需要O(h)栈空间</td>
+                                <td>O(n), 需要O(1)栈空间</td>
+                                <td>节省栈空间</td>
+                            </tr>
+                            <tr>
+                                <td>空间利用率</td>
+                                <td>有n+1个空指针域</td>
+                                <td>充分利用空指针域</td>
+                                <td>提高存储效率</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 学习检验 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                学习检验
+            </h2>
+
+            <div class="quiz-section">
+                <div class="quiz-item">
+                    <h4>🤔 问题1：空间分析</h4>
+                    <p>一棵有100个节点的完全二叉树，有多少个空指针域可以用于线索化？线索化后能节省多少空间？</p>
+                    <button class="quiz-btn" onclick="toggleAnswer(1)">点击查看答案</button>
+                    <div id="answer1" class="quiz-answer">
+                        <strong>答案：</strong><br>
+                        <strong>空指针域数量：</strong>100个节点的二叉树有200个指针域，其中99个用于连接父子节点，所以有101个空指针域<br>
+                        <strong>线索化效果：</strong>可以利用这101个空指针域存储前驱后继信息，大大提高空间利用率<br>
+                        <strong>公式：</strong>n个节点的二叉树有n+1个空指针域
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h4>🤔 问题2：时间复杂度对比</h4>
+                    <p>在线索二叉树中查找某个节点的中序前驱的时间复杂度是多少？普通二叉树呢？</p>
+                    <button class="quiz-btn" onclick="toggleAnswer(2)">点击查看答案</button>
+                    <div id="answer2" class="quiz-answer">
+                        <strong>答案：</strong><br>
+                        <strong>线索二叉树：</strong>O(1) - 通过前驱线索直接访问<br>
+                        <strong>普通二叉树：</strong>O(h) - 需要向上回溯或重新遍历，h是树的高度<br>
+                        <strong>优势：</strong>线索二叉树将查找前驱后继的操作从对数时间优化为常数时间
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h4>🤔 问题3：线索化过程</h4>
+                    <p>给定二叉树结构，请描述对节点E进行线索化时需要建立哪些线索？</p>
+                    <pre class="tree-structure">
+        D
+       / \
+      B   F
+     / \ / \
+    A  C E  G
+                    </pre>
+                    <button class="quiz-btn" onclick="toggleAnswer(3)">点击查看答案</button>
+                    <div id="answer3" class="quiz-answer">
+                        <strong>答案：</strong><br>
+                        <strong>节点E的线索化：</strong><br>
+                        • 左指针域为空，建立前驱线索指向D（中序遍历中E的前驱是D）<br>
+                        • 右指针域为空，建立后继线索指向F（中序遍历中E的后继是F）<br>
+                        <strong>中序遍历序列：</strong>A → B → C → D → E → F → G<br>
+                        <strong>标志位：</strong>leftTag=true, rightTag=true（都是线索）
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <h4>🤔 问题4：适用场景判断</h4>
+                    <p>什么情况下使用线索二叉树最合适？什么情况下不建议使用？</p>
+                    <button class="quiz-btn" onclick="toggleAnswer(4)">点击查看答案</button>
+                    <div id="answer4" class="quiz-answer">
+                        <strong>答案：</strong><br>
+                        <strong>适合使用的场景：</strong><br>
+                        • 频繁需要找前驱后继节点的应用<br>
+                        • 内存受限需要避免递归栈的环境<br>
+                        • 树结构相对稳定，很少进行插入删除操作<br>
+                        • 需要顺序遍历的大型数据集<br><br>
+                        <strong>不建议使用的场景：</strong><br>
+                        • 频繁插入删除操作（会破坏线索结构）<br>
+                        • 只需要偶尔遍历的小规模数据<br>
+                        • 主要进行查找操作而非遍历操作
+                    </div>
+                </div>
+            </div>
+
+            <div class="next-steps">
+                <h4>🚀 下一步学习建议</h4>
+                <div class="unified-grid unified-grid-2">
+                    <div class="info-box info-box-info">
+                        <span class="info-icon">📖</span>
+                        <strong>继续学习：</strong>B树、B+树的线索化应用
+                    </div>
+                    <div class="info-box info-box-success">
+                        <span class="info-icon">💪</span>
+                        <strong>练习建议：</strong>手动线索化小规模二叉树，实现线索遍历算法
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航按钮 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<style>
+/* 页面基础样式 */
+.page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.page-icon {
+    font-size: 3rem;
+    margin-right: 15px;
+}
+
+.content-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.section-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-icon {
+    font-size: 1.8rem;
+}
+
+/* 网格布局 */
+.unified-grid {
+    display: grid;
+    gap: 20px;
+}
+
+.unified-grid-2 {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* 信息框样式 */
+.info-box {
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #4299e1;
+}
+
+.info-box-info {
+    background: #ebf8ff;
+    border-left-color: #4299e1;
+}
+
+.info-box-success {
+    background: #f0fff4;
+    border-left-color: #48bb78;
+}
+
+.info-box-warning {
+    background: #fffaf0;
+    border-left-color: #ed8936;
+}
+
+.info-icon {
+    margin-right: 8px;
+}
+
+/* 概念详解样式 */
+.concept-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.concept-item h3 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.example-box {
+    margin-top: 15px;
+    padding: 15px;
+    background: #e6fffa;
+    border-left: 4px solid #38b2ac;
+    border-radius: 4px;
+}
+
+/* 问题解决方案样式 */
+.problem-solution {
+    margin-top: 25px;
+}
+
+.problem-box {
+    padding: 20px;
+    background: #fef2f2;
+    border-left: 4px solid #f56565;
+    border-radius: 8px;
+}
+
+.solution-box {
+    padding: 20px;
+    background: #f0fff4;
+    border-left: 4px solid #48bb78;
+    border-radius: 8px;
+}
+
+/* 统计框样式 */
+.stats-box {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.stats-box h5 {
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+/* 线索类型样式 */
+.thread-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.type-box {
+    padding: 15px;
+    background: #ebf4ff;
+    border-radius: 8px;
+    border-left: 4px solid #3182ce;
+    text-align: center;
+}
+
+.type-box h4 {
+    color: #2b6cb0;
+    margin-bottom: 10px;
+}
+
+.type-feature {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #4a5568;
+    font-style: italic;
+}
+
+/* 过程步骤样式 */
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.step-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.step-number {
+    background: #4299e1;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.step-content h5 {
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+/* 遍历算法样式 */
+.traversal-algorithm {
+    margin-top: 15px;
+}
+
+.algorithm-steps {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.algo-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px 0;
+}
+
+.step-label {
+    background: #ed8936;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* Canvas演示样式 */
+.canvas-demo {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.controls button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.threading-btn { background: linear-gradient(45deg, #667eea, #764ba2); }
+.traverse-btn { background: linear-gradient(45deg, #f093fb, #f5576c); }
+.toggle-threads-btn { background: linear-gradient(45deg, #4facfe, #00f2fe); }
+.reset-btn { background: linear-gradient(45deg, #4a5568, #2d3748); }
+
+.controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.canvas-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+#threadCanvas {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: white;
+}
+
+/* 图例样式 */
+.legend {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 20px 0;
+    border: 1px solid #e2e8f0;
+}
+
+.legend h4 {
+    margin: 0 0 15px 0;
+    color: #2d3748;
+    font-size: 16px;
+}
+
+.legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.legend-line {
+    width: 30px;
+    height: 3px;
+}
+
+.normal-line {
+    background: #374151;
+}
+
+.predecessor-thread-line {
+    background: linear-gradient(90deg, rgba(59, 130, 246, 0.8), rgba(147, 197, 253, 0.6));
+    border-radius: 2px;
+}
+
+.successor-thread-line {
+    background: linear-gradient(90deg, rgba(220, 38, 38, 0.8), rgba(248, 113, 113, 0.6));
+    border-radius: 2px;
+}
+
+.legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+/* 节点演示样式 */
+.legend-node-demo {
+    display: flex;
+    border: 2px solid #374151;
+    border-radius: 4px;
+    overflow: hidden;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.legend-node-demo.threaded {
+    border-color: #22c55e;
+}
+
+.legend-pointer-field {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e7eb;
+    border-right: 1px solid #374151;
+    color: #374151;
+}
+
+.legend-pointer-field:last-child {
+    border-right: none;
+}
+
+.legend-threaded .legend-pointer-field {
+    color: #dc2626;
+}
+
+.legend-data-field {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f3f4f6;
+    border-right: 1px solid #374151;
+    color: #1f2937;
+    font-weight: bold;
+}
+
+.legend-explanation {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid #3b82f6;
+}
+
+.legend-explanation p {
+    margin: 0 0 8px 0;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.legend-explanation ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.legend-explanation li {
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.info .info-box {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.info h4 {
+    margin-top: 0;
+    color: #2d3748;
+}
+
+.sequence {
+    font-size: 16px;
+    font-weight: bold;
+    color: #4299e1;
+    min-height: 20px;
+}
+
+.status {
+    font-size: 14px;
+    color: #718096;
+    margin-top: 8px;
+}
+
+/* 代码样式 */
+.code-tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    color: #4299e1;
+    border-bottom-color: #4299e1;
+}
+
+.code-content {
+    display: none;
+}
+
+.code-content.active {
+    display: block;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.copy-btn {
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.copy-btn:hover {
+    background: #3182ce;
+}
+
+pre {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* 应用场景样式 */
+.app-item {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4299e1;
+}
+
+.app-item h4 {
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+/* 性能对比表格样式 */
+.comparison-table {
+    margin-top: 30px;
+}
+
+.comparison-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.comparison-table th {
+    background: #f7fafc;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+/* 术语列表样式 */
+.terms-list .unified-grid-2 {
+    margin-top: 15px;
+}
+
+.term-item {
+    padding: 12px;
+    background: white;
+    border-radius: 6px;
+    border-left: 3px solid #4299e1;
+}
+
+/* 测验样式 */
+.quiz-item {
+    margin-bottom: 25px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+}
+
+.quiz-btn {
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s ease;
+}
+
+.quiz-btn:hover {
+    background: #3182ce;
+}
+
+.quiz-answer {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    background: #f0fff4;
+    border-left: 4px solid #48bb78;
+    border-radius: 4px;
+}
+
+.quiz-answer.show {
+    display: block;
+}
+
+.tree-structure {
+    background: #f7fafc;
+    color: #2d3748;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    margin: 15px 0;
+}
+
+.unified-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    margin: 0 10px;
+    transition: all 0.3s ease;
+}
+
+.unified-btn-primary {
+    background: #4299e1;
+    color: white;
+}
+
+.unified-btn-secondary {
+    background: #718096;
+    color: white;
+}
+
+.unified-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+@media (max-width: 768px) {
+    .info {
+        grid-template-columns: 1fr;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .controls button {
+        width: 200px;
+    }
+
+    .unified-grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .thread-types {
+        grid-template-columns: 1fr;
+    }
+
+    .process-steps {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+// Canvas线索二叉树演示相关代码
+const threadCanvas = document.getElementById('threadCanvas');
+const threadCtx = threadCanvas.getContext('2d');
+
+// 线索二叉树节点类
+class ThreadedNode {
+    constructor(val, x, y) {
+        this.val = val;
+        this.x = x;
+        this.y = y;
+        this.left = null;
+        this.right = null;
+        this.leftTag = false;   // false表示左指针指向子节点，true表示前驱线索
+        this.rightTag = false;  // false表示右指针指向子节点，true表示后继线索
+        this.visited = false;
+        this.current = false;
+        this.threaded = false;  // 是否已经完成线索化
+        this.width = 80;        // 节点宽度
+        this.height = 40;       // 节点高度
+    }
+
+    // 获取左指针域的位置
+    getLeftPointerPos() {
+        return {
+            x: this.x - this.width/2 + this.width/6,
+            y: this.y
+        };
+    }
+
+    // 获取右指针域的位置
+    getRightPointerPos() {
+        return {
+            x: this.x + this.width/2 - this.width/6,
+            y: this.y
+        };
+    }
+
+    // 获取数据域的位置
+    getDataPos() {
+        return {
+            x: this.x,
+            y: this.y
+        };
+    }
+}
+
+// 创建示例线索二叉树 - 向下平移
+function createSampleThreadTree() {
+    const root = new ThreadedNode('D', 400, 120);  // 从80向下移到120
+    root.left = new ThreadedNode('B', 250, 180);   // 从140向下移到180
+    root.right = new ThreadedNode('F', 550, 180);  // 从140向下移到180
+    root.left.left = new ThreadedNode('A', 150, 240);   // 从200向下移到240
+    root.left.right = new ThreadedNode('C', 350, 240);  // 从200向下移到240
+    root.right.left = new ThreadedNode('E', 450, 240);  // 从200向下移到240
+    root.right.right = new ThreadedNode('G', 650, 240); // 从200向下移到240
+
+    return root;
+}
+
+let threadTree = createSampleThreadTree();
+let threadAnimationState = {
+    isAnimating: false,
+    currentOperation: '',
+    sequence: [],
+    threadsVisible: true,
+    pre: null  // 用于线索化过程中记录前驱节点
+};
+
+// 绘制矩形节点
+function drawThreadNode(node) {
+    const x = node.x - node.width/2;
+    const y = node.y - node.height/2;
+
+    // 根据节点状态设置颜色
+    let fillColor, strokeColor, lineWidth;
+    if (node.current) {
+        fillColor = '#ff4444';
+        strokeColor = '#cc0000';
+        lineWidth = 3;
+    } else if (node.threaded) {
+        fillColor = '#22c55e';
+        strokeColor = '#16a34a';
+        lineWidth = 2;
+    } else if (node.visited) {
+        fillColor = '#f97316';
+        strokeColor = '#ea580c';
+        lineWidth = 2;
+    } else {
+        fillColor = '#e2e8f0';
+        strokeColor = '#a0aec0';
+        lineWidth = 2;
+    }
+
+    // 绘制整个节点框架
+    threadCtx.fillStyle = fillColor;
+    threadCtx.strokeStyle = strokeColor;
+    threadCtx.lineWidth = lineWidth;
+    threadCtx.fillRect(x, y, node.width, node.height);
+    threadCtx.strokeRect(x, y, node.width, node.height);
+
+    // 绘制分隔线（分为三个区域：左指针域 | 数据域 | 右指针域）
+    threadCtx.strokeStyle = strokeColor;
+    threadCtx.lineWidth = 1;
+    // 左分隔线
+    threadCtx.beginPath();
+    threadCtx.moveTo(x + node.width/3, y);
+    threadCtx.lineTo(x + node.width/3, y + node.height);
+    threadCtx.stroke();
+    // 右分隔线
+    threadCtx.beginPath();
+    threadCtx.moveTo(x + 2*node.width/3, y);
+    threadCtx.lineTo(x + 2*node.width/3, y + node.height);
+    threadCtx.stroke();
+
+    // 绘制数据值（中间区域）
+    threadCtx.fillStyle = node.current ? 'white' : '#1a1a1a';
+    threadCtx.font = 'bold 16px Arial';
+    threadCtx.textAlign = 'center';
+    threadCtx.textBaseline = 'middle';
+    threadCtx.fillText(node.val, node.x, node.y);
+
+    // 绘制左指针域标识
+    threadCtx.font = '10px Arial';
+    threadCtx.textAlign = 'center';
+    threadCtx.textBaseline = 'middle';
+    const leftPtrX = x + node.width/6;
+    const leftPtrY = y + node.height/2;
+
+    if (node.leftTag) {
+        // 线索指针用虚线箭头表示
+        threadCtx.fillStyle = '#3b82f6';
+        threadCtx.fillText('T', leftPtrX, leftPtrY - 6);
+        threadCtx.fillText('↖', leftPtrX, leftPtrY + 6);
+    } else if (node.left) {
+        // 正常指针用实线箭头表示
+        threadCtx.fillStyle = '#000000';
+        threadCtx.fillText('L', leftPtrX, leftPtrY - 6);
+        threadCtx.fillText('↙', leftPtrX, leftPtrY + 6);
+    } else {
+        // 空指针
+        threadCtx.fillStyle = '#666666';
+        threadCtx.fillText('∅', leftPtrX, leftPtrY);
+    }
+
+    // 绘制右指针域标识
+    const rightPtrX = x + 5*node.width/6;
+    const rightPtrY = y + node.height/2;
+
+    if (node.rightTag) {
+        // 线索指针
+        threadCtx.fillStyle = '#dc2626';
+        threadCtx.fillText('T', rightPtrX, rightPtrY - 6);
+        threadCtx.fillText('↗', rightPtrX, rightPtrY + 6);
+    } else if (node.right) {
+        // 正常指针
+        threadCtx.fillStyle = '#000000';
+        threadCtx.fillText('R', rightPtrX, rightPtrY - 6);
+        threadCtx.fillText('↘', rightPtrX, rightPtrY + 6);
+    } else {
+        // 空指针
+        threadCtx.fillStyle = '#666666';
+        threadCtx.fillText('∅', rightPtrX, rightPtrY);
+    }
+}
+
+// 绘制普通连接线
+function drawNormalConnection(parent, child) {
+    let startX, startY, endX, endY;
+
+    // 确定是左子树还是右子树连接
+    if (child.x < parent.x) {
+        // 左子树连接 - 从父节点的左指针域开始
+        const leftPtr = parent.getLeftPointerPos();
+        startX = leftPtr.x;
+        startY = parent.y + parent.height/2;
+    } else {
+        // 右子树连接 - 从父节点的右指针域开始
+        const rightPtr = parent.getRightPointerPos();
+        startX = rightPtr.x;
+        startY = parent.y + parent.height/2;
+    }
+
+    // 终点为子节点的顶部中心
+    endX = child.x;
+    endY = child.y - child.height/2;
+
+    threadCtx.beginPath();
+    threadCtx.moveTo(startX, startY);
+    threadCtx.lineTo(endX, endY);
+    threadCtx.strokeStyle = '#374151';
+    threadCtx.lineWidth = 2;
+    threadCtx.stroke();
+
+    // 绘制箭头
+    const angle = Math.atan2(endY - startY, endX - startX);
+    const headLength = 8;
+    const headAngle = Math.PI / 6;
+
+    threadCtx.fillStyle = '#374151';
+    threadCtx.beginPath();
+    threadCtx.moveTo(endX, endY);
+    threadCtx.lineTo(
+        endX - headLength * Math.cos(angle - headAngle),
+        endY - headLength * Math.sin(angle - headAngle)
+    );
+    threadCtx.lineTo(
+        endX - headLength * Math.cos(angle + headAngle),
+        endY - headLength * Math.sin(angle + headAngle)
+    );
+    threadCtx.closePath();
+    threadCtx.fill();
+}
+
+// 收集所有线索信息并计算分层路径
+function calculateThreadPaths(root) {
+    const threads = [];
+
+    // 收集所有线索
+    function collectThreads(node) {
+        if (node) {
+            if (node.leftTag && node.left) {
+                threads.push({
+                    from: node,
+                    to: node.left,
+                    type: 'predecessor',
+                    isLeft: true
+                });
+            }
+            if (node.rightTag && node.right) {
+                threads.push({
+                    from: node,
+                    to: node.right,
+                    type: 'successor',
+                    isLeft: false
+                });
+            }
+            if (!node.leftTag) collectThreads(node.left);
+            if (!node.rightTag) collectThreads(node.right);
+        }
+    }
+
+    collectThreads(root);
+
+    // 为每个线索分配不同的路径高度
+    threads.forEach((thread, index) => {
+        const { from, to, type } = thread;
+
+        // 计算同类型线索的索引（用于进一步分层）
+        const sameTypeThreads = threads.filter((t, i) => i < index && t.type === type);
+        const sameTypeIndex = sameTypeThreads.length;
+
+        // 根据类型设置基础高度和方向
+        if (type === 'predecessor') {
+            // 前驱线索：向上弯曲
+            thread.pathType = 'upper';
+            thread.baseOffset = -60;  // 向上偏移
+            thread.levelOffset = sameTypeIndex * -25;  // 多个前驱线索逐层向上
+            thread.direction = -1;
+        } else {
+            // 后继线索：向下弯曲
+            thread.pathType = 'lower';
+            thread.baseOffset = 60;   // 向下偏移
+            thread.levelOffset = sameTypeIndex * 25;   // 多个后继线索逐层向下
+            thread.direction = 1;
+        }
+
+        thread.level = sameTypeIndex;
+    });
+
+    return threads;
+}
+
+// 【优化升级】绘制柔和渐变的线索曲线 - 无锐利箭头
+function drawSingleThread(thread) {
+    if (!threadAnimationState.threadsVisible) return;
+
+    const { from, to, type, pathType, baseOffset, levelOffset, level, direction } = thread;
+
+    // 起点坐标
+    let startX, startY;
+    if (type === 'predecessor') {
+        const leftPtr = from.getLeftPointerPos();
+        startX = leftPtr.x;
+        startY = from.y + from.height/2;
+    } else {
+        const rightPtr = from.getRightPointerPos();
+        startX = rightPtr.x;
+        startY = from.y + from.height/2;
+    }
+
+    // 终点坐标 - 精确指向节点边缘
+    const endX = to.x;
+    const endY = to.y - to.height/2;
+
+    // 计算弯曲路径的控制高度
+    const totalOffset = baseOffset + levelOffset;
+
+    // 水平偏移，创建更自然的曲线
+    const horizontalSpread = Math.abs(endX - startX) * 0.4; // 根据距离调整弯曲程度
+    const minSpread = 60 + level * 20;
+    const actualSpread = Math.max(horizontalSpread, minSpread);
+
+    // 计算四个控制点，用于创建平滑的三次贝塞尔曲线
+    const cp1X = startX + (direction * actualSpread * 0.5);
+    const cp1Y = startY + totalOffset * 0.4;
+
+    const cp2X = endX + (direction * actualSpread * 0.3);
+    const cp2Y = endY + totalOffset * 0.6;
+
+    threadCtx.save();
+
+    // 【优化核心】创建渐变效果
+    const gradient = threadCtx.createLinearGradient(startX, startY, endX, endY);
+
+    if (type === 'predecessor') {
+        // 前驱线索：蓝色系渐变
+        gradient.addColorStop(0, 'rgba(59, 130, 246, 0.8)');   // 深蓝开始
+        gradient.addColorStop(0.3, 'rgba(96, 165, 250, 0.7)'); // 中蓝过渡
+        gradient.addColorStop(0.7, 'rgba(147, 197, 253, 0.6)'); // 浅蓝过渡
+        gradient.addColorStop(1, 'rgba(191, 219, 254, 0.5)');   // 极浅蓝结束
+    } else {
+        // 后继线索：红色系渐变
+        gradient.addColorStop(0, 'rgba(220, 38, 38, 0.8)');    // 深红开始
+        gradient.addColorStop(0.3, 'rgba(239, 68, 68, 0.7)');  // 中红过渡
+        gradient.addColorStop(0.7, 'rgba(248, 113, 113, 0.6)'); // 浅红过渡
+        gradient.addColorStop(1, 'rgba(254, 202, 202, 0.5)');   // 极浅红结束
+    }
+
+    // 使用三次贝塞尔曲线绘制超平滑路径
+    threadCtx.beginPath();
+    threadCtx.moveTo(startX, startY);
+    threadCtx.bezierCurveTo(cp1X, cp1Y, cp2X, cp2Y, endX, endY);
+
+    // 设置线索样式 - 渐变透明效果
+    const baseAlpha = Math.max(0.5, 0.8 - level * 0.1);  // 基础透明度
+    const lineWidth = Math.max(3, 5 - level * 0.4);     // 线条宽度
+
+    threadCtx.strokeStyle = gradient;
+    threadCtx.lineWidth = lineWidth;
+    threadCtx.setLineDash([]);  // 实线，不再使用虚线
+    threadCtx.lineCap = 'round';
+    threadCtx.lineJoin = 'round';
+    threadCtx.shadowColor = type === 'predecessor' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(220, 38, 38, 0.3)';
+    threadCtx.shadowBlur = 8;
+    threadCtx.stroke();
+
+    // 【优化升级】绘制柔和的渐变箭头 - 无锐角设计
+    drawSoftGradientArrow(cp2X, cp2Y, endX, endY, gradient, lineWidth, type);
+
+    // 绘制类型标签 - 放在曲线的中点
+    if (level < 2) {
+        // 计算贝塞尔曲线中点
+        const t = 0.5; // 参数t=0.5对应曲线中点
+        const labelX = Math.pow(1-t, 3) * startX +
+                      3 * Math.pow(1-t, 2) * t * cp1X +
+                      3 * (1-t) * Math.pow(t, 2) * cp2X +
+                      Math.pow(t, 3) * endX;
+        const labelY = Math.pow(1-t, 3) * startY +
+                      3 * Math.pow(1-t, 2) * t * cp1Y +
+                      3 * (1-t) * Math.pow(t, 2) * cp2Y +
+                      Math.pow(t, 3) * endY;
+
+        drawSoftThreadLabel(labelX, labelY, type, gradient, level);
+    }
+
+    // 高亮当前活动的线索
+    if (from.current || to.current) {
+        threadCtx.shadowBlur = 20;
+        threadCtx.lineWidth = lineWidth + 2;
+        threadCtx.stroke();
+    }
+
+    threadCtx.shadowBlur = 0;
+    threadCtx.restore();
+}
+
+// 【全新优化】绘制柔和渐变箭头 - 圆润无锐角设计
+function drawSoftGradientArrow(fromX, fromY, toX, toY, gradient, baseWidth, type) {
+    // 计算箭头方向
+    const dx = toX - fromX;
+    const dy = toY - fromY;
+    const angle = Math.atan2(dy, dx);
+
+    // 【柔和设计】箭头参数 - 更小更圆润
+    const headLength = Math.max(12, baseWidth * 2.5);  // 减小箭头长度
+    const headWidth = Math.max(4, baseWidth);          // 减小箭头宽度
+
+    threadCtx.save();
+
+    // 【渐变箭头】使用相同的渐变填充
+    threadCtx.fillStyle = gradient;
+    threadCtx.strokeStyle = gradient;
+    threadCtx.lineWidth = 1;
+
+    // 【圆润三角形】绘制更温和的箭头形状
+    threadCtx.beginPath();
+    threadCtx.moveTo(toX, toY);
+
+    // 计算箭头的两个侧边点 - 使用更大的角度创建更温和的形状
+    const arrowAngle = Math.PI / 4;  // 45度角，比原来的36度更温和
+    const leftAngle = angle + Math.PI - arrowAngle;
+    const rightAngle = angle - Math.PI + arrowAngle;
+
+    const leftX = toX + headLength * Math.cos(leftAngle);
+    const leftY = toY + headLength * Math.sin(leftAngle);
+    const rightX = toX + headLength * Math.cos(rightAngle);
+    const rightY = toY + headLength * Math.sin(rightAngle);
+
+    // 【圆角处理】使用圆角连接创建更柔和的外观
+    threadCtx.lineJoin = 'round';
+    threadCtx.lineCap = 'round';
+
+    threadCtx.lineTo(leftX, leftY);
+    threadCtx.lineTo(rightX, rightY);
+    threadCtx.closePath();
+
+    // 【渐变填充】柔和的阴影效果
+    threadCtx.shadowColor = type === 'predecessor' ? 'rgba(59, 130, 246, 0.4)' : 'rgba(220, 38, 38, 0.4)';
+    threadCtx.shadowBlur = 6;
+    threadCtx.fill();
+
+    // 【细腻描边】给箭头添加极细的描边增强立体感
+    threadCtx.shadowBlur = 0;
+    threadCtx.lineWidth = 0.5;
+    threadCtx.globalAlpha = 0.7;
+    threadCtx.stroke();
+    threadCtx.globalAlpha = 1;
+
+    threadCtx.restore();
+}
+
+// 【优化升级】绘制柔和的线索标签 - 渐变背景
+function drawSoftThreadLabel(x, y, type, gradient, level) {
+    const labelText = type === 'predecessor' ? '前驱' : '后继';
+
+    threadCtx.save();
+    threadCtx.font = 'bold 11px Arial';
+    threadCtx.textAlign = 'center';
+    threadCtx.textBaseline = 'middle';
+
+    // 测量文本尺寸
+    const textMetrics = threadCtx.measureText(labelText);
+    const labelWidth = textMetrics.width + 14;
+    const labelHeight = 20;
+
+    // 根据层级微调位置，避免重叠
+    const adjustedY = y + level * 8;
+
+    // 【渐变背景】创建与线索匹配的背景渐变
+    const bgGradient = threadCtx.createLinearGradient(
+        x - labelWidth/2, adjustedY - labelHeight/2,
+        x + labelWidth/2, adjustedY + labelHeight/2
+    );
+
+    if (type === 'predecessor') {
+        bgGradient.addColorStop(0, 'rgba(59, 130, 246, 0.9)');
+        bgGradient.addColorStop(1, 'rgba(147, 197, 253, 0.7)');
+    } else {
+        bgGradient.addColorStop(0, 'rgba(220, 38, 38, 0.9)');
+        bgGradient.addColorStop(1, 'rgba(248, 113, 113, 0.7)');
+    }
+
+    // 【柔和阴影】绘制标签阴影
+    threadCtx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+    threadCtx.fillRect(x - labelWidth/2 + 2, adjustedY - labelHeight/2 + 2, labelWidth, labelHeight);
+
+    // 【圆角矩形】绘制圆角标签背景
+    const radius = 6;
+    threadCtx.fillStyle = bgGradient;
+    threadCtx.beginPath();
+    threadCtx.roundRect(x - labelWidth/2, adjustedY - labelHeight/2, labelWidth, labelHeight, radius);
+    threadCtx.fill();
+
+    // 【优雅边框】添加半透明边框
+    threadCtx.strokeStyle = type === 'predecessor' ? 'rgba(59, 130, 246, 0.8)' : 'rgba(220, 38, 38, 0.8)';
+    threadCtx.lineWidth = 1;
+    threadCtx.stroke();
+
+    // 【高对比文字】白色文字带轻微阴影，确保清晰可读
+    threadCtx.fillStyle = 'rgba(255, 255, 255, 0.98)';
+    threadCtx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+    threadCtx.shadowBlur = 2;
+    threadCtx.shadowOffsetX = 0;
+    threadCtx.shadowOffsetY = 1;
+    threadCtx.fillText(labelText, x, adjustedY);
+
+    threadCtx.restore();
+}
+
+// 绘制所有线索
+function drawAllThreadConnections(root) {
+    const threads = calculateThreadPaths(root);
+    threads.forEach(thread => drawSingleThread(thread));
+}
+
+// 绘制整个线索二叉树 - 线索置于最顶层
+function drawThreadTree(root) {
+    threadCtx.clearRect(0, 0, threadCanvas.width, threadCanvas.height);
+
+    // 第一层：绘制普通连接线
+    function drawConnections(node) {
+        if (node.left && !node.leftTag) {
+            drawNormalConnection(node, node.left);
+            drawConnections(node.left);
+        }
+        if (node.right && !node.rightTag) {
+            drawNormalConnection(node, node.right);
+            drawConnections(node.right);
+        }
+    }
+
+    drawConnections(root);
+
+    // 第二层：绘制节点（中间层）
+    function drawNodes(node) {
+        if (node) {
+            drawThreadNode(node);
+            if (!node.leftTag) drawNodes(node.left);
+            if (!node.rightTag) drawNodes(node.right);
+        }
+    }
+
+    drawNodes(root);
+
+    // 第三层（最顶层）：绘制线索连接，确保在最上方显示
+    drawAllThreadConnections(root);
+}
+
+// 重置所有节点状态
+function resetThreadNodeStates(root) {
+    if (root) {
+        root.visited = false;
+        root.current = false;
+        root.threaded = false;
+        root.leftTag = false;
+        root.rightTag = false;
+        resetThreadNodeStates(root.left);
+        resetThreadNodeStates(root.right);
+    }
+}
+
+// 睡眠函数
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// 更新显示信息
+function updateThreadDisplay(action, info) {
+    document.getElementById('threadCurrentAction').textContent = action;
+    document.getElementById('threadStepInfo').textContent = info;
+}
+
+// 更新遍历序列显示
+function updateThreadSequence() {
+    document.getElementById('threadSequence').textContent = threadAnimationState.sequence.join(' → ');
+}
+
+// 中序线索化过程
+async function inorderThreading(node) {
+    if (!node || !threadAnimationState.isAnimating) return;
+
+    // 1. 递归处理左子树
+    if (node.left) {
+        await inorderThreading(node.left);
+    }
+
+    if (!threadAnimationState.isAnimating) return;
+
+    // 2. 处理当前节点
+    node.current = true;
+    updateThreadDisplay(`正在处理节点: ${node.val}`, '检查是否需要建立线索');
+    drawThreadTree(threadTree);
+    await sleep(800);
+
+    // 3. 建立前驱线索
+    if (!node.left) {
+        node.leftTag = true;
+        node.left = threadAnimationState.pre;
+        updateThreadDisplay(`为节点 ${node.val} 建立前驱线索`, threadAnimationState.pre ? `前驱: ${threadAnimationState.pre.val}` : '无前驱');
+        drawThreadTree(threadTree);
+        await sleep(600);
+    }
+
+    // 4. 建立后继线索
+    if (threadAnimationState.pre && !threadAnimationState.pre.right) {
+        threadAnimationState.pre.rightTag = true;
+        threadAnimationState.pre.right = node;
+        updateThreadDisplay(`为前驱节点建立后继线索`, `${threadAnimationState.pre.val} → ${node.val}`);
+        drawThreadTree(threadTree);
+        await sleep(600);
+    }
+
+    // 5. 更新前驱节点
+    threadAnimationState.pre = node;
+    node.current = false;
+    node.threaded = true;
+    drawThreadTree(threadTree);
+    await sleep(400);
+
+    // 6. 递归处理右子树
+    if (node.right && !node.rightTag) {
+        await inorderThreading(node.right);
+    }
+}
+
+// 开始线索化
+async function startThreading() {
+    if (threadAnimationState.isAnimating) return;
+
+    resetThreadDemo();
+    threadAnimationState.isAnimating = true;
+    threadAnimationState.currentOperation = 'threading';
+    threadAnimationState.pre = null;
+
+    document.getElementById('threadStatus').textContent = '正在执行线索化...';
+
+    try {
+        await inorderThreading(threadTree);
+
+        if (threadAnimationState.isAnimating) {
+            document.getElementById('threadStatus').textContent = '线索化完成！';
+            updateThreadDisplay('线索化完成', '所有空指针域已建立线索');
+        }
+    } catch (error) {
+        console.error('线索化过程中发生错误:', error);
+    }
+
+    threadAnimationState.isAnimating = false;
+}
+
+// 找到中序遍历的第一个节点
+function findFirstNode(root) {
+    let p = root;
+    while (p && !p.leftTag) {
+        p = p.left;
+    }
+    return p;
+}
+
+// 找到节点的中序后继
+function findSuccessor(node) {
+    if (node.rightTag) {
+        return node.right;  // 右指针是线索，直接返回后继
+    } else {
+        // 右指针指向子树，找到右子树的最左节点
+        let p = node.right;
+        while (p && !p.leftTag) {
+            p = p.left;
+        }
+        return p;
+    }
+}
+
+// 线索遍历
+async function startThreadTraversal() {
+    if (threadAnimationState.isAnimating) return;
+
+    threadAnimationState.isAnimating = true;
+    threadAnimationState.currentOperation = 'traversal';
+    threadAnimationState.sequence = [];
+
+    document.getElementById('threadStatus').textContent = '正在执行线索遍历...';
+
+    try {
+        let p = findFirstNode(threadTree);
+
+        while (p && threadAnimationState.isAnimating) {
+            // 访问当前节点
+            p.current = true;
+            updateThreadDisplay(`访问节点: ${p.val}`, '线索遍历中...');
+            drawThreadTree(threadTree);
+            await sleep(800);
+
+            // 记录访问结果
+            threadAnimationState.sequence.push(p.val);
+            updateThreadSequence();
+            p.visited = true;
+            p.current = false;
+            drawThreadTree(threadTree);
+            await sleep(400);
+
+            // 找到下一个节点
+            p = findSuccessor(p);
+        }
+
+        if (threadAnimationState.isAnimating) {
+            document.getElementById('threadStatus').textContent = '线索遍历完成！';
+            updateThreadDisplay('线索遍历完成', `遍历序列: ${threadAnimationState.sequence.join(' → ')}`);
+        }
+    } catch (error) {
+        console.error('线索遍历过程中发生错误:', error);
+    }
+
+    threadAnimationState.isAnimating = false;
+}
+
+// 切换线索显示/隐藏
+function toggleThreadsVisibility() {
+    threadAnimationState.threadsVisible = !threadAnimationState.threadsVisible;
+    const button = document.querySelector('.toggle-threads-btn');
+    if (threadAnimationState.threadsVisible) {
+        button.textContent = '👁️ 隐藏线索';
+        updateThreadDisplay('显示线索', '渐变透明曲线置于顶层，前驱向上蓝，后继向下红');
+    } else {
+        button.textContent = '👀 显示线索';
+        updateThreadDisplay('隐藏线索', '只显示正常的树结构连接');
+    }
+    drawThreadTree(threadTree);
+}
+
+// 重置演示
+function resetThreadDemo() {
+    threadAnimationState.isAnimating = false;
+    threadAnimationState.sequence = [];
+    threadAnimationState.pre = null;
+
+    // 重新创建树
+    threadTree = createSampleThreadTree();
+    resetThreadNodeStates(threadTree);
+    drawThreadTree(threadTree);
+
+    document.getElementById('threadSequence').textContent = '';
+    document.getElementById('threadStatus').textContent = '点击按钮开始演示';
+    updateThreadDisplay('等待开始...', '选择操作类型');
+
+    // 重置按钮文本
+    document.querySelector('.toggle-threads-btn').textContent = '👁️ 显示/隐藏线索';
+}
+
+// 代码相关功能
+function showCode(language) {
+    // 隐藏所有代码块
+    const codeContents = document.querySelectorAll('.code-content');
+    codeContents.forEach(content => content.classList.remove('active'));
+
+    // 移除所有tab的active状态
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    // 显示选中的代码块
+    document.getElementById(`${language}-code`).classList.add('active');
+
+    // 添加active状态到点击的tab
+    event.target.classList.add('active');
+}
+
+// 修复后的代码复制功能
+function copyCode(language, buttonElement) {
+    // 确保正确获取按钮元素
+    let button = buttonElement;
+    if (!button) {
+        button = event ? event.target : null;
+    }
+
+    if (!button) {
+        console.error('无法获取按钮元素');
+        return;
+    }
+
+    const codeElement = document.getElementById(`${language}-source`);
+
+    if (!codeElement) {
+        console.error(`找不到代码元素: ${language}-source`);
+        showCopyError(button);
+        return;
+    }
+
+    const text = codeElement.textContent || codeElement.innerText;
+    const cleanText = text.trim();
+
+    if (!cleanText) {
+        console.error('代码内容为空');
+        showCopyError(button);
+        return;
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(cleanText).then(() => {
+            showCopySuccess(button);
+        }).catch(err => {
+            console.error('现代API复制失败:', err);
+            fallbackCopyTextToClipboard(cleanText, button);
+        });
+    } else {
+        fallbackCopyTextToClipboard(cleanText, button);
+    }
+}
+
+function fallbackCopyTextToClipboard(text, button) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    textArea.style.position = "fixed";
+    textArea.style.top = "-1000px";
+    textArea.style.left = "-1000px";
+    textArea.style.width = "1px";
+    textArea.style.height = "1px";
+    textArea.style.padding = "0";
+    textArea.style.border = "none";
+    textArea.style.outline = "none";
+    textArea.style.boxShadow = "none";
+    textArea.style.background = "transparent";
+
+    document.body.appendChild(textArea);
+
+    try {
+        textArea.focus();
+        textArea.select();
+        textArea.setSelectionRange(0, text.length);
+
+        const successful = document.execCommand('copy');
+
+        if (successful) {
+            showCopySuccess(button);
+        } else {
+            console.error('execCommand复制失败');
+            showCopyError(button);
+        }
+    } catch (err) {
+        console.error('降级复制方法出错:', err);
+        showCopyError(button);
+    } finally {
+        document.body.removeChild(textArea);
+    }
+}
+
+function showCopySuccess(button) {
+    if (!button) return;
+
+    const originalText = button.innerHTML;
+    const originalClass = button.className;
+
+    button.innerHTML = '✅ 已复制';
+    button.className = originalClass + ' copy-success';
+    button.disabled = true;
+
+    const originalStyle = button.style.cssText;
+    button.style.cssText = originalStyle + '; background: #22c55e !important; color: white !important;';
+
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.className = originalClass;
+        button.disabled = false;
+        button.style.cssText = originalStyle;
+    }, 2000);
+}
+
+function showCopyError(button) {
+    if (!button) return;
+
+    const originalText = button.innerHTML;
+    const originalClass = button.className;
+
+    button.innerHTML = '❌ 复制失败';
+    button.className = originalClass + ' copy-error';
+    button.disabled = true;
+
+    const originalStyle = button.style.cssText;
+    button.style.cssText = originalStyle + '; background: #ef4444 !important; color: white !important;';
+
+    setTimeout(() => {
+        button.innerHTML = originalText;
+        button.className = originalClass;
+        button.disabled = false;
+        button.style.cssText = originalStyle;
+    }, 2000);
+}
+
+// 测验功能
+function toggleAnswer(questionNumber) {
+    const answer = document.getElementById(`answer${questionNumber}`);
+    const button = event.target;
+
+    if (answer.classList.contains('show')) {
+        answer.classList.remove('show');
+        button.textContent = '点击查看答案';
+    } else {
+        answer.classList.add('show');
+        button.textContent = '隐藏答案';
+    }
+}
+
+// 初始化
+drawThreadTree(threadTree);
+</script>
+
+{% endblock %}

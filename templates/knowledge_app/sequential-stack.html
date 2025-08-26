@@ -1,0 +1,230 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"顺序栈" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>{{ breadcrumb_category|default:"数据结构" }}</span><span>></span><span>{{ page_title|default:"顺序栈" }}</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">📚</span>
+            顺序栈 (Sequential Stack)
+        </h1><p>基于数组实现的后进先出(LIFO)数据结构</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>顺序栈是用数组实现的栈，元素按照"后进先出"的原则存储和访问，就像叠盘子一样，最后放上去的盘子最先被拿走。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🔑</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>栈顶(Top)：</strong>能够进行插入和删除操作的一端</li><li><strong>栈底(Bottom)：</strong>固定不变的另一端</li><li><strong>入栈(Push)：</strong>向栈中添加元素</li><li><strong>出栈(Pop)：</strong>从栈中取出元素</li><li><strong>栈空：</strong>栈中没有任何元素的状态</li></ul></div><div class="grid-card"><span class="card-icon">🎯</span><h4 class="card-title">学习信息</h4><p><strong>难度等级：</strong><span style="color: #28a745;">🟢 入门级</span></p><p><strong>前置知识：</strong></p><ul style="text-align: left; margin: 10px 0;"><li>数组的基本操作</li><li>变量和指针概念</li><li>基本循环结构</li></ul></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div class="unified-grid unified-grid-1"><div class="info-box info-box-warning"><span class="info-icon">🔄</span><strong>生活类比：</strong>想象一个装菜的盘子堆。你只能从最顶层拿盘子，也只能往最顶层放盘子。无论堆了多少个盘子，你永远只能操作最上面的那一个！
+                </div></div><h3>🏗️ 核心组成部分</h3><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📦</span><h4 class="card-title">1. 存储空间</h4><p>用一个固定大小的数组作为容器，就像一个有限高度的盘子架。</p></div><div class="grid-card"><span class="card-icon">📍</span><h4 class="card-title">2. 栈顶指针</h4><p>记录当前栈顶元素的位置，相当于标记最上面盘子的位置。</p></div><div class="grid-card"><span class="card-icon">⬆️</span><h4 class="card-title">3. 入栈操作</h4><p>在栈顶添加新元素，栈顶指针向上移动一位。</p></div><div class="grid-card"><span class="card-icon">⬇️</span><h4 class="card-title">4. 出栈操作</h4><p>移除栈顶元素，栈顶指针向下移动一位。</p></div></div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易混淆点：</strong>初学者容易混淆栈顶和栈底的概念。记住：栈顶是"活跃"的一端，可以进行操作；栈底是"固定"的一端，不能直接访问。
+            </div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><h3>🏗️ 静态结构图</h3><div style="background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0;"><div style="font-family: monospace; font-size: 14px;"><div style="margin-bottom: 10px;"><strong>顺序栈结构</strong></div><div style="border: 2px solid #007bff; display: inline-block; padding: 10px;"><div style="margin-bottom: 10px;"><span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 4px;">top = 2</span><span style="margin-left: 10px;">← 栈顶指针</span></div><div style="border: 1px solid #333; width: 60px; height: 30px; margin: 2px; background: #ffc107; display: flex; align-items: center; justify-content: center;">30</div><div style="border: 1px solid #333; width: 60px; height: 30px; margin: 2px; background: #ffc107; display: flex; align-items: center; justify-content: center;">20</div><div style="border: 1px solid #333; width: 60px; height: 30px; margin: 2px; background: #ffc107; display: flex; align-items: center; justify-content: center;">10</div><div style="border: 1px solid #333; width: 60px; height: 30px; margin: 2px; background: #e9ecef; display: flex; align-items: center; justify-content: center;">-</div><div style="border: 1px solid #333; width: 60px; height: 30px; margin: 2px; background: #e9ecef; display: flex; align-items: center; justify-content: center;">-</div><div style="margin-top: 10px; font-size: 12px;"><span>栈底 → 栈顶</span></div></div></div></div><h3>🎬 动态操作过程</h3><div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 25px; border-radius: 15px; text-align: center; margin: 20px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.3);"><canvas id="stackCanvas" width="600" height="400" style="border: 3px solid #fff; border-radius: 12px; background: linear-gradient(to bottom, #f8f9ff 0%, #e6f3ff 100%); box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);"></canvas><div style="margin-top: 20px;"><button id="pushBtn" onclick="pushElement()" class="animate-btn push-btn">📥 入栈 Push</button><button id="popBtn" onclick="popElement()" class="animate-btn pop-btn">📤 出栈 Pop</button><button id="resetBtn" onclick="resetStack()" class="animate-btn reset-btn">🔄 重置</button></div><div id="stackStatus" style="margin-top: 15px; font-weight: bold; color: #fff; background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; display: inline-block;">
+                    栈顶指针: top = -1 | 栈大小: 0 | 状态: 空栈
+                </div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🔙</span><h4 class="card-title">1. 撤销功能</h4><p>文字处理器、图像编辑器的"撤销"功能，每次操作压入栈中，撤销时弹出最近的操作。</p></div><div class="grid-card"><span class="card-icon">🧮</span><h4 class="card-title">2. 表达式求值</h4><p>计算器处理数学表达式，使用栈来处理运算符优先级和括号匹配。</p></div><div class="grid-card"><span class="card-icon">🔄</span><h4 class="card-title">3. 函数调用</h4><p>程序运行时的函数调用栈，记录函数的调用顺序和返回地址。</p></div></div><h3>💻 多语言代码示例</h3><!-- 语言选择器 --><div style="text-align: center; margin: 20px 0;"><button onclick="showCode('python')" id="pythonBtn" class="code-lang-btn active">🐍 Python</button><button onclick="showCode('java')" id="javaBtn" class="code-lang-btn">☕ Java</button><button onclick="showCode('cpp')" id="cppBtn" class="code-lang-btn">⚡ C++</button></div><!-- Python 代码 --><div id="pythonCode" class="code-container"><div class="code-header"><span>🐍 Python 实现</span><button onclick="copyCode('python')" class="copy-btn">📋 复制代码</button></div><pre id="pythonCodeBlock"><code>class SequentialStack:
+    def __init__(self, max_size=10):
+        self.data = [None] * max_size  # 存储数组
+        self.top = -1                  # 栈顶指针(-1表示空栈)
+        self.max_size = max_size       # 最大容量
+
+    def push(self, item):
+        """入栈操作"""
+        if self.top >= self.max_size - 1:
+            print("栈已满，无法入栈!")
+            return False
+        self.top += 1
+        self.data[self.top] = item
+        print(f"元素 {item} 入栈成功")
+        return True
+
+    def pop(self):
+        """出栈操作"""
+        if self.top < 0:
+            print("栈为空，无法出栈!")
+            return None
+        item = self.data[self.top]
+        self.top -= 1
+        print(f"元素 {item} 出栈成功")
+        return item
+
+    def peek(self):
+        """查看栈顶元素"""
+        if self.top < 0:
+            return None
+        return self.data[self.top]
+
+    def is_empty(self):
+        """判断栈是否为空"""
+        return self.top < 0
+
+    def size(self):
+        """获取栈的大小"""
+        return self.top + 1
+
+# 使用示例
+stack = SequentialStack(5)
+stack.push(10)  # 入栈: [10]
+stack.push(20)  # 入栈: [10, 20]
+stack.push(30)  # 入栈: [10, 20, 30]
+print("栈顶元素:", stack.peek())  # 输出: 30
+stack.pop()     # 出栈: [10, 20]
+print("栈大小:", stack.size())    # 输出: 2</code></pre></div><!-- Java 代码 --><div id="javaCode" class="code-container" style="display: none;"><div class="code-header"><span>☕ Java 实现</span><button onclick="copyCode('java')" class="copy-btn">📋 复制代码</button></div><pre id="javaCodeBlock"><code>public class SequentialStack {
+    private int[] data;      // 存储数组
+    private int top;         // 栈顶指针
+    private int maxSize;     // 最大容量
+
+    public SequentialStack(int maxSize) {
+        this.maxSize = maxSize;
+        this.data = new int[maxSize];
+        this.top = -1;  // 空栈时top = -1
+    }
+
+    // 入栈操作
+    public boolean push(int item) {
+        if (top >= maxSize - 1) {
+            System.out.println("栈已满，无法入栈!");
+            return false;
+        }
+        data[++top] = item;
+        System.out.println("元素 " + item + " 入栈成功");
+        return true;
+    }
+
+    // 出栈操作
+    public Integer pop() {
+        if (top < 0) {
+            System.out.println("栈为空，无法出栈!");
+            return null;
+        }
+        int item = data[top--];
+        System.out.println("元素 " + item + " 出栈成功");
+        return item;
+    }
+
+    // 查看栈顶元素
+    public Integer peek() {
+        if (top < 0) {
+            return null;
+        }
+        return data[top];
+    }
+
+    // 判断栈是否为空
+    public boolean isEmpty() {
+        return top < 0;
+    }
+
+    // 获取栈的大小
+    public int size() {
+        return top + 1;
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        SequentialStack stack = new SequentialStack(5);
+        stack.push(10);  // 入栈: [10]
+        stack.push(20);  // 入栈: [10, 20]
+        stack.push(30);  // 入栈: [10, 20, 30]
+        System.out.println("栈顶元素: " + stack.peek());  // 输出: 30
+        stack.pop();     // 出栈: [10, 20]
+        System.out.println("栈大小: " + stack.size());    // 输出: 2
+    }
+}</code></pre></div><!-- C++ 代码 --><div id="cppCode" class="code-container" style="display: none;"><div class="code-header"><span>⚡ C++ 实现</span><button onclick="copyCode('cpp')" class="copy-btn">📋 复制代码</button></div><pre id="cppCodeBlock"><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class SequentialStack {
+private:
+    vector&lt;int&gt; data;    // 存储数组
+    int top;             // 栈顶指针
+    int maxSize;         // 最大容量
+
+public:
+    SequentialStack(int maxSize) : maxSize(maxSize), top(-1) {
+        data.resize(maxSize);
+    }
+
+    // 入栈操作
+    bool push(int item) {
+        if (top >= maxSize - 1) {
+            cout &lt;&lt; "栈已满，无法入栈!" &lt;&lt; endl;
+            return false;
+        }
+        data[++top] = item;
+        cout &lt;&lt; "元素 " &lt;&lt; item &lt;&lt; " 入栈成功" &lt;&lt; endl;
+        return true;
+    }
+
+    // 出栈操作
+    bool pop(int& item) {
+        if (top &lt; 0) {
+            cout &lt;&lt; "栈为空，无法出栈!" &lt;&lt; endl;
+            return false;
+        }
+        item = data[top--];
+        cout &lt;&lt; "元素 " &lt;&lt; item &lt;&lt; " 出栈成功" &lt;&lt; endl;
+        return true;
+    }
+
+    // 查看栈顶元素
+    bool peek(int& item) {
+        if (top &lt; 0) {
+            return false;
+        }
+        item = data[top];
+        return true;
+    }
+
+    // 判断栈是否为空
+    bool isEmpty() {
+        return top &lt; 0;
+    }
+
+    // 获取栈的大小
+    int size() {
+        return top + 1;
+    }
+};
+
+// 使用示例
+int main() {
+    SequentialStack stack(5);
+    stack.push(10);  // 入栈: [10]
+    stack.push(20);  // 入栈: [10, 20]
+    stack.push(30);  // 入栈: [10, 20, 30]
+
+    int topElement;
+    if (stack.peek(topElement)) {
+        cout &lt;&lt; "栈顶元素: " &lt;&lt; topElement &lt;&lt; endl;  // 输出: 30
+    }
+
+    int poppedElement;
+    stack.pop(poppedElement);  // 出栈: [10, 20]
+    cout &lt;&lt; "栈大小: " &lt;&lt; stack.size() &lt;&lt; endl;    // 输出: 2
+
+    return 0;
+}</code></pre></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><h3>🤔 理解检验问题</h3><div class="qa-container"><div class="qa-item"><div class="question" onclick="toggleAnswer('answer1')"><span class="question-icon">❓</span><strong>问题1：</strong>为什么栈被称为"后进先出"数据结构？请用生活中的例子说明。
+                        <span class="toggle-icon">▼</span></div><div id="answer1" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>栈遵循"后进先出"(LIFO)原则，意思是最后放入的元素最先被取出。
+                        <br><br><strong>生活例子：</strong><ul><li><strong>叠盘子：</strong>洗完的盘子叠起来，用的时候总是拿最上面的那个</li><li><strong>停车场：</strong>只有一个出入口的停车场，最后进入的车最先出来</li><li><strong>浏览器历史：</strong>点击"后退"按钮，总是回到最近访问的页面</li></ul></div></div><div class="qa-item"><div class="question" onclick="toggleAnswer('answer2')"><span class="question-icon">❓</span><strong>问题2：</strong>顺序栈的top指针初始值为什么通常设为-1而不是0？
+                        <span class="toggle-icon">▼</span></div><div id="answer2" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>设置top = -1有以下好处：
+                        <br><br><ul><li><strong>明确表示空栈：</strong>-1是一个明显的"无效索引"，清楚表示栈中没有元素</li><li><strong>简化判断：</strong>判断栈空只需检查 top < 0</li><li><strong>操作简洁：</strong>入栈时先++top再赋值，出栈时先取值再top--</li><li><strong>边界清晰：</strong>避免了使用额外变量来记录栈的元素个数</li></ul>
+                        如果top初始为0，就需要额外的逻辑来区分"空栈"和"有一个元素在索引0"的情况。
+                    </div></div><div class="qa-item"><div class="question" onclick="toggleAnswer('answer3')"><span class="question-icon">❓</span><strong>问题3：</strong>如果连续执行 push(1), push(2), pop(), push(3), pop(), pop()，最终栈中剩余什么元素？
+                        <span class="toggle-icon">▼</span></div><div id="answer3" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong>让我们逐步追踪：
+                        <br><br><div style="font-family: monospace; background: #f8f9fa; padding: 10px; border-radius: 5px;">
+                            初始状态: [] (空栈)<br>
+                            push(1): [1]<br>
+                            push(2): [1, 2]<br>
+                            pop():   [1] (移除了2)<br>
+                            push(3): [1, 3]<br>
+                            pop():   [1] (移除了3)<br>
+                            pop():   [] (移除了1)<br></div><br><strong>最终结果：</strong>栈为空，没有剩余元素。
+                    </div></div><div class="qa-item"><div class="question" onclick="toggleAnswer('answer4')"><span class="question-icon">❓</span><strong>问题4：</strong>顺序栈相比链式栈有什么优缺点？
+                        <span class="toggle-icon">▼</span></div><div id="answer4" class="answer"><span class="answer-icon">💡</span><strong>答案：</strong><br><br><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;"><div><strong style="color: #28a745;">✅ 顺序栈优点：</strong><ul><li>访问速度快（数组随机访问）</li><li>内存利用率高（无额外指针开销）</li><li>实现简单，代码容易理解</li><li>缓存友好性好（连续内存空间）</li></ul></div><div><strong style="color: #dc3545;">❌ 顺序栈缺点：</strong><ul><li>容量固定，需要预先分配空间</li><li>可能造成内存浪费或溢出</li><li>扩容操作开销大</li><li>不适合元素数量变化很大的场景</li></ul></div></div></div></div></div><h3>📚 学习资源推荐</h3><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">🛠️</span><strong>可视化工具：</strong>VisuAlgo网站的栈动画演示，帮助直观理解栈的操作过程。
+                </div><div class="info-box info-box-warning"><span class="info-icon">➡️</span><strong>下一步学习：</strong>掌握顺序栈后，建议学习链式栈、队列、然后进入递归算法的学习。
+                </div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.code-container {background:#f8f9fa;border-radius:12px;margin:20px 0;border:1px solid #dee2e6;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,0.1);transition:transform 0.3s ease}.code-container:hover {transform:translateY(-2px)}.code-header {background:linear-gradient(135deg, #343a40 0%, #495057 100%);color:white;padding:15px 25px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid #007bff}.code-lang-btn {background:linear-gradient(135deg, #6c757d 0%, #495057 100%);color:white;border:none;padding:10px 20px;border-radius:25px;margin:0 8px;cursor:pointer;transition:all 0.3s ease;font-weight:500;box-shadow:0 3px 10px rgba(0,0,0,0.2)}.code-lang-btn.active {background:linear-gradient(135deg, #007bff 0%, #0056b3 100%);transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,123,255,0.4)}.code-lang-btn:hover {background:linear-gradient(135deg, #007bff 0%, #0056b3 100%);transform:translateY(-2px);box-shadow:0 5px 15px rgba(0,123,255,0.4)}.copy-btn {background:linear-gradient(135deg, #28a745 0%, #20c997 100%);color:white;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:500;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(40,167,69,0.3)}.copy-btn:hover {transform:translateY(-1px);box-shadow:0 4px 12px rgba(40,167,69,0.4)}.copy-btn.copied {background:linear-gradient(135deg, #17a2b8 0%, #138496 100%);animation:pulse 0.6s ease-in-out}@keyframes pulse {0% {transform:scale(1)}50% {transform:scale(1.05)}100% {transform:scale(1)}}.code-container pre {margin:0;padding:25px;font-family:'Courier New', 'Monaco', 'Menlo', monospace;font-size:14px;line-height:1.6;overflow-x:auto;background:linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%)}.animate-btn {background:linear-gradient(135deg, #28a745 0%, #20c997 100%);color:white;border:none;padding:12px 25px;border-radius:25px;margin:0 8px;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(0,0,0,0.2);position:relative;overflow:hidden}.animate-btn:hover {transform:translateY(-3px);box-shadow:0 8px 25px rgba(0,0,0,0.3)}.animate-btn:active {transform:translateY(-1px)}.push-btn {background:linear-gradient(135deg, #28a745 0%, #20c997 100%)}.push-btn:hover {box-shadow:0 8px 25px rgba(40,167,69,0.4)}.pop-btn {background:linear-gradient(135deg, #dc3545 0%, #e83e8c 100%)}.pop-btn:hover {box-shadow:0 8px 25px rgba(220,53,69,0.4)}.reset-btn {background:linear-gradient(135deg, #6c757d 0%, #495057 100%)}.reset-btn:hover {box-shadow:0 8px 25px rgba(108,117,125,0.4)}.animate-btn:disabled {opacity:0.6;cursor:not-allowed;transform:none !important}.qa-container {margin:20px 0}.qa-item {border:1px solid #dee2e6;border-radius:12px;margin-bottom:15px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.08);transition:all 0.3s ease}.qa-item:hover {box-shadow:0 5px 20px rgba(0,0,0,0.12);transform:translateY(-2px)}.question {background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);padding:20px 25px;cursor:pointer;display:flex;align-items:center;transition:all 0.3s ease;user-select:none;border-bottom:1px solid transparent}.question:hover {background:linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%)}.question.active {background:linear-gradient(135deg, #007bff 0%, #0056b3 100%);color:white;border-bottom:1px solid #004085}.question-icon {margin-right:15px;font-size:18px;transition:transform 0.3s ease}.question.active .question-icon {transform:scale(1.2)}.toggle-icon {margin-left:auto;transition:transform 0.4s ease;font-size:14px;opacity:0.7}.question.active .toggle-icon {transform:rotate(180deg);opacity:1}.answer {padding:25px;background:linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);border-top:1px solid #dee2e6;display:none;animation:slideDown 0.4s ease-out}.answer.show {display:block}.answer-icon {color:#28a745;margin-right:10px;font-size:16px}@keyframes slideDown {from {opacity:0;transform:translateY(-20px);max-height:0}to {opacity:1;transform:translateY(0);max-height:500px}}@media (max-width:768px) {.animate-btn {padding:10px 15px;font-size:12px;margin:5px}.code-lang-btn {padding:8px 12px;font-size:12px}#stackCanvas {width:100%;max-width:500px;height:auto}}</style><script>let canvas, ctx; let stack = []; let maxSize = 6; let animating = false; let elementCounter = 10; let animationFrame = null; let particles = []; class Particle { constructor(x, y, color) { this.x = x; this.y = y; this.vx = (Math.random() - 0.5) * 4; this.vy = (Math.random() - 0.5) * 4; this.life = 1.0; this.decay = 0.02; this.color = color; this.size = Math.random() * 3 + 1; } update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; this.vx *= 0.98; this.vy *= 0.98; } draw(ctx) { ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; } } window.onload = function() { canvas = document.getElementById('stackCanvas'); ctx = canvas.getContext('2d'); drawStack(); animate(); }; function animate() { particles = particles.filter(particle => { particle.update(); return particle.life > 0; }); if (particles.length > 0) { drawStack(); particles.forEach(particle => particle.draw(ctx)); } animationFrame = requestAnimationFrame(animate); } function createParticles(x, y, color, count = 8) { for (let i = 0; i < count; i++) { particles.push(new Particle(x, y, color)); } } function drawGradientBackground() { const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height); gradient.addColorStop(0, '#f8f9ff'); gradient.addColorStop(1, '#e6f3ff'); ctx.fillStyle = gradient; ctx.fillRect(0, 0, canvas.width, canvas.height); } function drawStack() { ctx.clearRect(0, 0, canvas.width, canvas.height); drawGradientBackground(); ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)'; ctx.lineWidth = 1; for (let i = 0; i < canvas.width; i += 30) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke(); } for (let i = 0; i < canvas.height; i += 30) { ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke(); } const baseGradient = ctx.createLinearGradient(250, 350, 250, 380); baseGradient.addColorStop(0, '#495057'); baseGradient.addColorStop(1, '#343a40'); ctx.fillStyle = baseGradient; ctx.fillRect(240, 360, 120, 25); ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; ctx.fillRect(245, 385, 110, 5); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center'; ctx.fillText('栈底 (Bottom)', 300, 378); const boxHeight = 50; const boxWidth = 100; const startX = 250; const startY = 360; for (let i = 0; i < maxSize; i++) { const y = startY - (i + 1) * (boxHeight + 5); if (i < stack.length) { const elementGradient = ctx.createLinearGradient(startX, y, startX, y + boxHeight); elementGradient.addColorStop(0, '#ffd700'); elementGradient.addColorStop(0.5, '#ffc107'); elementGradient.addColorStop(1, '#ffb300'); ctx.fillStyle = elementGradient; ctx.fillRect(startX, y, boxWidth, boxHeight); ctx.strokeStyle = '#ff8f00'; ctx.lineWidth = 3; ctx.strokeRect(startX, y, boxWidth, boxHeight); ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fillRect(startX + 2, y + 2, boxWidth - 4, boxHeight * 0.4); ctx.fillStyle = '#2c3e50'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText(stack[i].toString(), startX + boxWidth/2, y + boxHeight/2 + 8); if (i === stack.length - 1) { ctx.strokeStyle = '#ff6b6b'; ctx.lineWidth = 4; ctx.setLineDash([5, 5]); ctx.strokeRect(startX - 5, y - 5, boxWidth + 10, boxHeight + 10); ctx.setLineDash([]); } } else { const emptyGradient = ctx.createLinearGradient(startX, y, startX, y + boxHeight); emptyGradient.addColorStop(0, '#f8f9fa'); emptyGradient.addColorStop(1, '#e9ecef'); ctx.fillStyle = emptyGradient; ctx.fillRect(startX, y, boxWidth, boxHeight); ctx.strokeStyle = '#dee2e6'; ctx.lineWidth = 2; ctx.setLineDash([10, 5]); ctx.strokeRect(startX, y, boxWidth, boxHeight); ctx.setLineDash([]); ctx.fillStyle = '#adb5bd'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('空', startX + boxWidth/2, y + boxHeight/2 + 5); } ctx.fillStyle = '#495057'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'right'; ctx.fillText(`[${i}]`, startX - 15, y + boxHeight/2 + 5); } if (stack.length > 0) { const topY = startY - stack.length * (boxHeight + 5); ctx.fillStyle = '#dc3545'; ctx.font = 'bold 18px Arial'; ctx.textAlign = 'left'; ctx.fillText('← TOP', startX + boxWidth + 15, topY + boxHeight/2 + 6); ctx.strokeStyle = '#dc3545'; ctx.fillStyle = '#dc3545'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(startX + boxWidth + 12, topY + boxHeight/2); ctx.lineTo(startX + boxWidth, topY + boxHeight/2); ctx.stroke(); ctx.beginPath(); ctx.moveTo(startX + boxWidth + 8, topY + boxHeight/2 - 6); ctx.lineTo(startX + boxWidth + 8, topY + boxHeight/2 + 6); ctx.lineTo(startX + boxWidth, topY + boxHeight/2); ctx.fill(); } else { ctx.fillStyle = '#6c757d'; ctx.font = 'bold 20px Arial'; ctx.textAlign = 'center'; ctx.fillText('栈为空', canvas.width / 2, canvas.height / 2); } if (!animating) { ctx.fillStyle = 'rgba(0, 123, 255, 0.8)'; ctx.font = '14px Arial'; ctx.textAlign = 'center'; ctx.fillText('点击按钮进行栈操作演示', canvas.width / 2, 30); } updateStatus(); } function updateStatus() { const statusDiv = document.getElementById('stackStatus'); const topIndex = stack.length - 1; const status = stack.length === 0 ? '空栈' : stack.length === maxSize ? '栈满' : '正常'; const statusColor = status === '空栈' ? '#ffc107' : status === '栈满' ? '#dc3545' : '#28a745'; statusDiv.innerHTML = `栈顶指针: top = ${topIndex} | 栈大小: ${stack.length} | 状态: <span style="color: ${statusColor};">${status}</span>`; } function pushElement() { if (animating || stack.length >= maxSize) { showMessage('栈已满，无法入栈！', '#dc3545'); return; } animating = true; disableButtons(); const element = elementCounter++; const boxHeight = 50; const boxWidth = 100; const startX = 250; const startY = 360; const targetY = startY - (stack.length + 1) * (boxHeight + 5); createParticles(startX + boxWidth/2, targetY + boxHeight/2, '#28a745', 12); let animationStep = 0; const animationDuration = 30; function animateStep() { animationStep++; const progress = animationStep / animationDuration; const easeProgress = 1 - Math.pow(1 - progress, 3); if (progress >= 1) { stack.push(element); drawStack(); animating = false; enableButtons(); showMessage(`元素 ${element} 入栈成功！`, '#28a745'); } else { drawStack(); const currentY = canvas.height - 50 - (easeProgress * (canvas.height - 50 - targetY)); const alpha = Math.min(1, progress * 2); ctx.globalAlpha = alpha; const elementGradient = ctx.createLinearGradient(startX, currentY, startX, currentY + boxHeight); elementGradient.addColorStop(0, '#28a745'); elementGradient.addColorStop(1, '#20c997'); ctx.fillStyle = elementGradient; ctx.fillRect(startX, currentY, boxWidth, boxHeight); ctx.strokeStyle = '#1e7e34'; ctx.lineWidth = 3; ctx.strokeRect(startX, currentY, boxWidth, boxHeight); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText(element.toString(), startX + boxWidth/2, currentY + boxHeight/2 + 8); ctx.globalAlpha = 1; requestAnimationFrame(animateStep); } } animateStep(); } function popElement() { if (animating || stack.length === 0) { showMessage('栈为空，无法出栈！', '#dc3545'); return; } animating = true; disableButtons(); const element = stack[stack.length - 1]; const boxHeight = 50; const boxWidth = 100; const startX = 250; const startY = 360; const currentY = startY - stack.length * (boxHeight + 5); createParticles(startX + boxWidth/2, currentY + boxHeight/2, '#dc3545', 15); let animationStep = 0; const animationDuration = 30; function animateStep() { animationStep++; const progress = animationStep / animationDuration; const easeProgress = Math.pow(progress, 2); if (progress >= 1) { stack.pop(); drawStack(); animating = false; enableButtons(); showMessage(`元素 ${element} 出栈成功！`, '#dc3545'); } else { drawStack(); const moveY = currentY - (easeProgress * (currentY + 100)); const alpha = Math.max(0, 1 - progress * 1.5); const scale = 1 + progress * 0.2; ctx.globalAlpha = alpha; ctx.save(); ctx.translate(startX + boxWidth/2, moveY + boxHeight/2); ctx.scale(scale, scale); const elementGradient = ctx.createLinearGradient(-boxWidth/2, -boxHeight/2, -boxWidth/2, boxHeight/2); elementGradient.addColorStop(0, '#dc3545'); elementGradient.addColorStop(1, '#e83e8c'); ctx.fillStyle = elementGradient; ctx.fillRect(-boxWidth/2, -boxHeight/2, boxWidth, boxHeight); ctx.strokeStyle = '#c82333'; ctx.lineWidth = 3; ctx.strokeRect(-boxWidth/2, -boxHeight/2, boxWidth, boxHeight); ctx.fillStyle = '#ffffff'; ctx.font = 'bold 24px Arial'; ctx.textAlign = 'center'; ctx.fillText(element.toString(), 0, 8); ctx.restore(); ctx.globalAlpha = 1; requestAnimationFrame(animateStep); } } animateStep(); } function resetStack() { if (animating) return; for (let i = 0; i < stack.length; i++) { const boxHeight = 50; const startX = 250; const startY = 360; const y = startY - (i + 1) * (boxHeight + 5); createParticles(startX + 50, y + boxHeight/2, '#6c757d', 6); } stack = []; elementCounter = 10; drawStack(); showMessage('栈已重置！', '#6c757d'); } function showMessage(message, color) { const messageDiv = document.createElement('div'); messageDiv.style.cssText = ` position: fixed; top: 20px; right: 20px; background: ${color}; color: white; padding: 12px 20px; border-radius: 25px; font-weight: bold; z-index: 1000; animation: slideInRight 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.3); `; messageDiv.textContent = message; document.body.appendChild(messageDiv); setTimeout(() => { messageDiv.style.animation = 'slideOutRight 0.3s ease-in'; setTimeout(() => messageDiv.remove(), 300); }, 2000); } function disableButtons() { document.getElementById('pushBtn').disabled = true; document.getElementById('popBtn').disabled = true; document.getElementById('resetBtn').disabled = true; } function enableButtons() { document.getElementById('pushBtn').disabled = false; document.getElementById('popBtn').disabled = false; document.getElementById('resetBtn').disabled = false; } function showCode(language) { document.getElementById('pythonCode').style.display = 'none'; document.getElementById('javaCode').style.display = 'none'; document.getElementById('cppCode').style.display = 'none'; document.getElementById('pythonBtn').classList.remove('active'); document.getElementById('javaBtn').classList.remove('active'); document.getElementById('cppBtn').classList.remove('active'); document.getElementById(language + 'Code').style.display = 'block'; document.getElementById(language + 'Btn').classList.add('active'); } function copyCode(language) { const codeBlock = document.getElementById(language + 'CodeBlock'); const text = codeBlock.textContent || codeBlock.innerText; const btn = event.target; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => { showCopySuccess(btn); }).catch(() => { fallbackCopyToClipboard(text, btn); }); } else { fallbackCopyToClipboard(text, btn); } } function fallbackCopyToClipboard(text, btn) { const textArea = document.createElement('textarea'); textArea.value = text; textArea.style.position = 'fixed'; textArea.style.left = '-999999px'; textArea.style.top = '-999999px'; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { document.execCommand('copy'); showCopySuccess(btn); } catch (err) { console.error('复制失败:', err); showCopyError(btn); } finally { document.body.removeChild(textArea); } } function showCopySuccess(btn) { const originalText = btn.innerHTML; btn.innerHTML = '✅ 已复制！'; btn.classList.add('copied'); setTimeout(() => { btn.innerHTML = originalText; btn.classList.remove('copied'); }, 2000); } function showCopyError(btn) { const originalText = btn.innerHTML; btn.innerHTML = '❌ 复制失败'; btn.style.background = 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)'; setTimeout(() => { btn.innerHTML = originalText; btn.style.background = ''; }, 2000); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); const question = answer.previousElementSibling; if (answer.classList.contains('show')) { answer.classList.remove('show'); question.classList.remove('active'); } else { document.querySelectorAll('.answer').forEach(a => a.classList.remove('show')); document.querySelectorAll('.question').forEach(q => q.classList.remove('active')); answer.classList.add('show'); question.classList.add('active'); } } const style = document.createElement('style'); style.textContent = ` @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } } @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } } `; document.head.appendChild(style);</script>
+
+{% endblock %}

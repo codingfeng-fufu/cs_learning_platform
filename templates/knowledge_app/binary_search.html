@@ -1,0 +1,163 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}二分查找 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>算法设计</span><span>></span><span>二分查找</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔍</span>
+            二分查找 (Binary Search)
+        </h1><p>在有序数组中高效查找元素的经典算法</p></div><!-- 主要内容 --><div class="content-card slide-in-right"><!-- 算法概述 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                算法原理
+            </h2><div class="concept-explanation"><p class="concept-intro">
+                    二分查找是一种在<strong>有序数组</strong>中查找特定元素的搜索算法。
+                    它通过反复将搜索区间对半分割，将时间复杂度降低到O(log n)。
+                </p><div class="key-points"><div class="point-item"><span class="point-icon">📊</span><div class="point-content"><h4>前提条件</h4><p>数组必须是有序的（升序或降序）</p></div></div><div class="point-item"><span class="point-icon">⚡</span><div class="point-content"><h4>核心思想</h4><p>每次比较中间元素，排除一半的搜索空间</p></div></div><div class="point-item"><span class="point-icon">🎯</span><div class="point-content"><h4>时间复杂度</h4><p>O(log n)，比线性查找O(n)快得多</p></div></div></div></div></div><!-- 可视化演示 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎮</span>
+                交互式演示
+            </h2><div class="interactive-demo"><div class="demo-controls"><div class="control-group"><label>数组：</label><input type="text" id="array-input" value="1,3,5,7,9,11,13,15,17,19" placeholder="输入有序数组，用逗号分隔"><button class="demo-btn" onclick="updateArray()">更新数组</button></div><div class="control-group"><label>查找目标：</label><input type="number" id="target-input" value="7" placeholder="输入要查找的数字"><button class="demo-btn primary" onclick="startSearch()">开始查找</button><button class="demo-btn" onclick="resetSearch()">重置</button></div></div><div id="array-display" class="array-display"></div><div class="search-info"><div class="info-row"><div class="info-item"><span class="info-label">当前步骤：</span><span id="current-step">0</span></div><div class="info-item"><span class="info-label">左边界：</span><span id="left-bound">-</span></div><div class="info-item"><span class="info-label">右边界：</span><span id="right-bound">-</span></div><div class="info-item"><span class="info-label">中间位置：</span><span id="mid-position">-</span></div></div><div class="search-result" id="search-result"></div></div></div></div><!-- 算法步骤 --><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                算法步骤
+            </h2><div class="steps-container"><div class="step-item"><div class="step-number">1</div><div class="step-content"><h4>初始化边界</h4><p>设置左边界left=0，右边界right=数组长度-1</p></div></div><div class="step-item"><div class="step-number">2</div><div class="step-content"><h4>计算中点</h4><p>mid = left + (right - left) / 2</p></div></div><div class="step-item"><div class="step-number">3</div><div class="step-content"><h4>比较中点值</h4><p>如果arr[mid] == target，找到目标；如果arr[mid] < target，搜索右半部分；否则搜索左半部分</p></div></div><div class="step-item"><div class="step-number">4</div><div class="step-content"><h4>更新边界</h4><p>根据比较结果更新left或right，重复步骤2-4直到找到目标或left > right</p></div></div></div></div><!-- 代码实现 --><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><div class="code-tabs"><div class="tab-buttons"><button class="tab-btn active" onclick="showTab('python')">Python</button><button class="tab-btn" onclick="showTab('java')">Java</button><button class="tab-btn" onclick="showTab('cpp')">C++</button></div><div id="python-tab" class="tab-content active"><div class="code-example"><div class="code-header"><span class="code-title">Python实现</span><button class="copy-btn" onclick="copyCode('python-code')">复制代码</button></div><pre id="python-code"><code class="language-python">def binary_search(arr, target):
+    """
+    二分查找算法
+    :param arr: 有序数组
+    :param target: 目标值
+    :return: 目标值的索引，未找到返回-1
+    """
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        # 防止整数溢出的写法
+        mid = left + (right - left) // 2
+        
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1  # 搜索右半部分
+        else:
+            right = mid - 1  # 搜索左半部分
+    
+    return -1  # 未找到
+
+# 递归实现
+def binary_search_recursive(arr, target, left=0, right=None):
+    if right is None:
+        right = len(arr) - 1
+    
+    if left > right:
+        return -1
+    
+    mid = left + (right - left) // 2
+    
+    if arr[mid] == target:
+        return mid
+    elif arr[mid] < target:
+        return binary_search_recursive(arr, target, mid + 1, right)
+    else:
+        return binary_search_recursive(arr, target, left, mid - 1)
+
+# 使用示例
+arr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+target = 7
+result = binary_search(arr, target)
+print(f"目标值 {target} 在索引 {result} 处")</code></pre></div></div><div id="java-tab" class="tab-content"><div class="code-example"><div class="code-header"><span class="code-title">Java实现</span><button class="copy-btn" onclick="copyCode('java-code')">复制代码</button></div><pre id="java-code"><code class="language-java">public class BinarySearch {
+    
+    public static int binarySearch(int[] arr, int target) {
+        int left = 0;
+        int right = arr.length - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (arr[mid] == target) {
+                return mid;
+            } else if (arr[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        
+        return -1; // 未找到
+    }
+    
+    // 递归实现
+    public static int binarySearchRecursive(int[] arr, int target, int left, int right) {
+        if (left > right) {
+            return -1;
+        }
+        
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            return binarySearchRecursive(arr, target, mid + 1, right);
+        } else {
+            return binarySearchRecursive(arr, target, left, mid - 1);
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[] arr = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
+        int target = 7;
+        int result = binarySearch(arr, target);
+        System.out.println("目标值 " + target + " 在索引 " + result + " 处");
+    }
+}</code></pre></div></div><div id="cpp-tab" class="tab-content"><div class="code-example"><div class="code-header"><span class="code-title">C++实现</span><button class="copy-btn" onclick="copyCode('cpp-code')">复制代码</button></div><pre id="cpp-code"><code class="language-cpp">#include <iostream>
+#include <vector>
+
+int binarySearch(const std::vector<int>& arr, int target) {
+    int left = 0;
+    int right = arr.size() - 1;
+    
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        
+        if (arr[mid] == target) {
+            return mid;
+        } else if (arr[mid] < target) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    
+    return -1; // 未找到
+}
+
+// 递归实现
+int binarySearchRecursive(const std::vector<int>& arr, int target, int left, int right) {
+    if (left > right) {
+        return -1;
+    }
+    
+    int mid = left + (right - left) / 2;
+    
+    if (arr[mid] == target) {
+        return mid;
+    } else if (arr[mid] < target) {
+        return binarySearchRecursive(arr, target, mid + 1, right);
+    } else {
+        return binarySearchRecursive(arr, target, left, mid - 1);
+    }
+}
+
+int main() {
+    std::vector<int> arr = {1, 3, 5, 7, 9, 11, 13, 15, 17, 19};
+    int target = 7;
+    int result = binarySearch(arr, target);
+    std::cout << "目标值 " << target << " 在索引 " << result << " 处" << std::endl;
+    return 0;
+}</code></pre></div></div></div></div><!-- 变种问题 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🔄</span>
+                常见变种
+            </h2><div class="variants-grid"><div class="variant-card"><h4 class="variant-title">查找第一个出现位置</h4><p class="variant-desc">在有重复元素的数组中查找目标值第一次出现的位置</p><div class="variant-complexity">时间复杂度：O(log n)</div></div><div class="variant-card"><h4 class="variant-title">查找最后一个出现位置</h4><p class="variant-desc">在有重复元素的数组中查找目标值最后一次出现的位置</p><div class="variant-complexity">时间复杂度：O(log n)</div></div><div class="variant-card"><h4 class="variant-title">查找插入位置</h4><p class="variant-desc">找到目标值应该插入的位置以保持数组有序</p><div class="variant-complexity">时间复杂度：O(log n)</div></div><div class="variant-card"><h4 class="variant-title">旋转数组查找</h4><p class="variant-desc">在旋转有序数组中查找目标值</p><div class="variant-complexity">时间复杂度：O(log n)</div></div></div></div><!-- 应用场景 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                实际应用
+            </h2><div class="application-grid"><div class="app-card"><span class="app-icon">📚</span><h4>数据库索引</h4><p>B树索引的查找操作</p></div><div class="app-card"><span class="app-icon">🔍</span><h4>搜索引擎</h4><p>在排序结果中快速定位</p></div><div class="app-card"><span class="app-icon">📊</span><h4>数据分析</h4><p>在大数据集中快速查找</p></div><div class="app-card"><span class="app-icon">🎮</span><h4>游戏开发</h4><p>AI决策树的搜索优化</p></div></div></div></div><!-- 学习提示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💡</span>
+                学习要点
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">📊</span><strong>有序前提：</strong>理解为什么数组必须有序才能使用二分查找。
+                </div><div class="info-box info-box-success"><span class="info-icon">🎯</span><strong>边界处理：</strong>注意left、right、mid的边界条件和更新方式。
+                </div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>整数溢出：</strong>使用mid = left + (right - left) / 2避免溢出。
+                </div><div class="info-box info-box-info"><span class="info-icon">🔄</span><strong>变种练习：</strong>掌握各种二分查找的变种问题。
+                </div></div></div></div></div><style>.interactive-demo {background:#f8f9fa;border-radius:12px;padding:25px;margin:20px 0}.demo-controls {display:flex;flex-direction:column;gap:15px;margin-bottom:25px}.control-group {display:flex;align-items:center;gap:10px;flex-wrap:wrap}.control-group label {font-weight:600;color:#333;min-width:80px}.control-group input {padding:8px 12px;border:1px solid #ddd;border-radius:6px;flex:1;min-width:200px}.demo-btn {padding:8px 16px;background:#6c757d;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:500;transition:all 0.3s ease}.demo-btn.primary {background:#007bff}.demo-btn:hover {transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.2)}.demo-btn.primary:hover {background:#0056b3}.array-display {display:flex;justify-content:center;align-items:center;gap:5px;margin:25px 0;padding:20px;background:white;border-radius:8px;border:1px solid #e9ecef;overflow-x:auto;min-height:80px}.array-element {width:50px;height:50px;display:flex;align-items:center;justify-content:center;border:2px solid #ddd;border-radius:8px;background:white;font-weight:600;font-size:16px;transition:all 0.3s ease;position:relative}.array-element.left-bound {border-color:#28a745;background:#d4edda;color:#155724}.array-element.right-bound {border-color:#dc3545;background:#f8d7da;color:#721c24}.array-element.mid {border-color:#007bff;background:#cce7ff;color:#004085;transform:scale(1.1);box-shadow:0 4px 12px rgba(0,123,255,0.3)}.array-element.found {border-color:#ffc107;background:#fff3cd;color:#856404;animation:pulse 1s infinite}.array-element.excluded {opacity:0.3;background:#f8f9fa}.array-element::after {content:attr(data-index);position:absolute;bottom:-20px;font-size:12px;color:#666}.search-info {background:white;border-radius:8px;padding:20px;border:1px solid #e9ecef}.info-row {display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:15px;margin-bottom:15px}.info-item {text-align:center;padding:10px;background:#f8f9fa;border-radius:6px}.info-label {display:block;font-size:14px;color:#666;margin-bottom:5px}.info-item span:last-child {font-size:18px;font-weight:600;color:#007bff}.search-result {text-align:center;padding:15px;border-radius:8px;font-weight:600;margin-top:15px}.search-result.success {background:#d4edda;color:#155724;border:1px solid #c3e6cb}.search-result.failure {background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}.search-result.searching {background:#cce7ff;color:#004085;border:1px solid #b3d7ff}.steps-container {display:grid;gap:20px;margin:20px 0}.step-item {display:flex;align-items:flex-start;gap:20px;padding:20px;background:#f8f9fa;border-radius:12px;border-left:4px solid #007bff}.step-number {width:40px;height:40px;background:#007bff;color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px;flex-shrink:0}.step-content h4 {color:#333;margin-bottom:8px}.step-content p {color:#666;line-height:1.5}.code-tabs {margin:20px 0}.tab-buttons {display:flex;gap:5px;margin-bottom:0;border-bottom:1px solid #ddd}.tab-btn {padding:12px 20px;background:#f8f9fa;border:1px solid #ddd;border-bottom:none;border-radius:8px 8px 0 0;cursor:pointer;font-weight:500;color:#666;transition:all 0.3s ease}.tab-btn.active {background:white;color:#007bff;border-color:#007bff}.tab-content {display:none}.tab-content.active {display:block}.variants-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;margin:20px 0}.variant-card {background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #e9ecef;transition:all 0.3s ease}.variant-card:hover {transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.1);background:white}.variant-title {color:#333;margin-bottom:10px;font-size:1.1rem}.variant-desc {color:#666;line-height:1.5;margin-bottom:10px}.variant-complexity {color:#007bff;font-weight:600;font-size:14px}.application-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:20px;margin:20px 0}.app-card {background:#f8f9fa;padding:20px;border-radius:12px;text-align:center;border:1px solid #e9ecef;transition:all 0.3s ease}.app-card:hover {transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.1);background:white}.app-icon {font-size:2rem;display:block;margin-bottom:15px}.app-card h4 {color:#333;margin-bottom:10px}.app-card p {color:#666;font-size:14px}@keyframes pulse {0%, 100% {transform:scale(1.1)}50% {transform:scale(1.2)}}@media (max-width:768px) {.control-group {flex-direction:column;align-items:stretch}.control-group label {min-width:auto}.control-group input {min-width:auto}.array-display {flex-wrap:wrap;justify-content:center}.array-element {width:40px;height:40px;font-size:14px}.info-row {grid-template-columns:1fr}.step-item {flex-direction:column;text-align:center}.tab-buttons {flex-wrap:wrap}.variants-grid, .application-grid {grid-template-columns:1fr}}</style><script>let currentArray = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]; let currentTarget = 7; let searchSteps = []; let currentStep = 0; let isSearching = false; function updateArray() { const input = document.getElementById('array-input').value; try { const newArray = input.split(',').map(num => parseInt(num.trim())).filter(num => !isNaN(num)); if (newArray.length === 0) { alert('请输入有效的数字数组'); return; } const isSorted = newArray.every((val, i) => i === 0 || val >= newArray[i - 1]); if (!isSorted) { if (confirm('数组不是有序的，是否自动排序？')) { newArray.sort((a, b) => a - b); document.getElementById('array-input').value = newArray.join(','); } else { return; } } currentArray = newArray; resetSearch(); displayArray(); } catch (error) { alert('输入格式错误，请使用逗号分隔的数字'); } } function displayArray() { const displayElement = document.getElementById('array-display'); displayElement.innerHTML = ''; currentArray.forEach((value, index) => { const element = document.createElement('div'); element.className = 'array-element'; element.textContent = value; element.setAttribute('data-index', index); element.id = `element-${index}`; displayElement.appendChild(element); }); } function startSearch() { if (isSearching) return; const targetInput = document.getElementById('target-input'); currentTarget = parseInt(targetInput.value); if (isNaN(currentTarget)) { alert('请输入有效的目标数字'); return; } isSearching = true; searchSteps = []; currentStep = 0; generateSearchSteps(); animateSearch(); } function generateSearchSteps() { let left = 0; let right = currentArray.length - 1; let found = false; while (left <= right && !found) { const mid = Math.floor(left + (right - left) / 2); const step = { left: left, right: right, mid: mid, midValue: currentArray[mid], comparison: '' }; if (currentArray[mid] === currentTarget) { step.comparison = 'found'; found = true; } else if (currentArray[mid] < currentTarget) { step.comparison = 'less'; left = mid + 1; } else { step.comparison = 'greater'; right = mid - 1; } searchSteps.push(step); } if (!found) { searchSteps.push({ left: left, right: right, mid: -1, midValue: -1, comparison: 'not_found' }); } } async function animateSearch() { for (let i = 0; i < searchSteps.length; i++) { currentStep = i + 1; const step = searchSteps[i]; document.querySelectorAll('.array-element').forEach(el => { el.className = 'array-element'; }); for (let j = 0; j < currentArray.length; j++) { const element = document.getElementById(`element-${j}`); if (j < step.left || j > step.right) { element.classList.add('excluded'); } else if (j === step.left) { element.classList.add('left-bound'); } else if (j === step.right) { element.classList.add('right-bound'); } } if (step.mid >= 0) { const midElement = document.getElementById(`element-${step.mid}`); midElement.classList.add('mid'); if (step.comparison === 'found') { midElement.classList.add('found'); } } updateSearchInfo(step); await new Promise(resolve => setTimeout(resolve, 1500)); if (step.comparison === 'found' || step.comparison === 'not_found') { break; } } isSearching = false; } function updateSearchInfo(step) { document.getElementById('current-step').textContent = currentStep; document.getElementById('left-bound').textContent = step.left; document.getElementById('right-bound').textContent = step.right; document.getElementById('mid-position').textContent = step.mid >= 0 ? step.mid : '-'; const resultElement = document.getElementById('search-result'); if (step.comparison === 'found') { resultElement.textContent = `找到目标值 ${currentTarget}，位置在索引 ${step.mid}`; resultElement.className = 'search-result success'; } else if (step.comparison === 'not_found') { resultElement.textContent = `未找到目标值 ${currentTarget}`; resultElement.className = 'search-result failure'; } else { let message = `比较中间值 ${step.midValue} 与目标值 ${currentTarget}：`; if (step.comparison === 'less') { message += ` ${step.midValue} < ${currentTarget}，搜索右半部分`; } else if (step.comparison === 'greater') { message += ` ${step.midValue} > ${currentTarget}，搜索左半部分`; } resultElement.textContent = message; resultElement.className = 'search-result searching'; } } function resetSearch() { isSearching = false; currentStep = 0; searchSteps = []; document.querySelectorAll('.array-element').forEach(el => { el.className = 'array-element'; }); document.getElementById('current-step').textContent = '0'; document.getElementById('left-bound').textContent = '-'; document.getElementById('right-bound').textContent = '-'; document.getElementById('mid-position').textContent = '-'; document.getElementById('search-result').textContent = ''; document.getElementById('search-result').className = 'search-result'; } function showTab(tabName) { document.querySelectorAll('.tab-content').forEach(tab => { tab.classList.remove('active'); }); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); }); document.getElementById(`${tabName}-tab`).classList.add('active'); event.target.classList.add('active'); } function copyCode(elementId) { const codeElement = document.getElementById(elementId); const text = codeElement.textContent; navigator.clipboard.writeText(text).then(() => { alert('代码已复制到剪贴板！'); }).catch(() => { alert('复制失败，请手动复制'); }); } document.addEventListener('DOMContentLoaded', function() { displayArray(); document.getElementById('target-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') { startSearch(); } }); document.getElementById('array-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') { updateArray(); } }); });</script>
+
+{% endblock %}

@@ -1,0 +1,394 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"循环链表" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>循环链表</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔄</span>
+            循环链表 (Circular Linked List)
+        </h1><p>一种特殊的链表结构，最后一个节点指向第一个节点，形成环形连接</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>循环链表是一种特殊的链表，其最后一个节点的指针不是指向NULL，而是指向第一个节点，形成一个环形结构。
+            </div><h3>🔑 关键术语</h3><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🔗</span><h4 class="card-title">节点 (Node)</h4><p class="card-description">包含数据和指向下一个节点指针的基本单元</p></div><div class="grid-card"><span class="card-icon">👆</span><h4 class="card-title">指针 (Pointer)</h4><p class="card-description">存储下一个节点内存地址的变量</p></div><div class="grid-card"><span class="card-icon">🎯</span><h4 class="card-title">头节点 (Head)</h4><p class="card-description">循环链表的起始节点，作为访问入口</p></div><div class="grid-card"><span class="card-icon">🔄</span><h4 class="card-title">环形结构 (Circular)</h4><p class="card-description">最后一个节点指向第一个节点的闭环结构</p></div></div><div class="unified-grid unified-grid-3"><div class="info-box info-box-success"><span class="info-icon">📊</span><strong>学习难度：</strong>进阶级
+                </div><div class="info-box info-box-warning"><span class="info-icon">📚</span><strong>前置知识：</strong>线性链表、指针概念
+                </div><div class="info-box info-box-info"><span class="info-icon">⏱️</span><strong>学习时间：</strong>2-3小时
+                </div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><h3>🏗️ 1. 基本结构特点</h3><p>想象一群人手拉手围成一个圆圈，每个人都知道下一个人是谁。循环链表就是这样：每个节点（人）都有一个指针（手）指向下一个节点，而最后一个节点的指针指回第一个节点，形成闭环。</p><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易混淆点：</strong>与普通链表的区别在于，普通链表的最后一个节点指向NULL，而循环链表指向头节点！
+            </div><h3>🔄 2. 遍历特性</h3><p>在循环链表中遍历就像在操场上跑圈——你可以从任意一个点开始，一直跑下去永远不会遇到"尽头"。因此需要设置停止条件，通常是当回到起始节点时停止。</p><h3>➕ 3. 插入操作</h3><p>插入新节点就像在圆圈中加入新朋友：</p><ul><li><strong>找到插入位置：</strong>确定新节点要插在哪两个节点之间</li><li><strong>建立新连接：</strong>新节点指向后继节点</li><li><strong>修改前驱连接：</strong>前驱节点指向新节点</li><li><strong>特殊情况：</strong>如果插入位置是头部，需要更新尾节点的指针</li></ul><h3>➖ 4. 删除操作</h3><p>删除节点就像让某个朋友离开圆圈：</p><ul><li><strong>找到目标节点：</strong>定位要删除的节点</li><li><strong>找到前驱节点：</strong>找到指向目标节点的节点</li><li><strong>重新连接：</strong>让前驱节点直接指向目标节点的后继</li><li><strong>特殊处理：</strong>删除头节点时需要更新头指针</li></ul></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><h3>🎮 交互式动画演示</h3><p>下面的动画演示展示了循环链表的插入和删除操作，重点观察指针是如何变化的：</p><!-- 嵌入循环链表动画 --><div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 20px; margin: 25px 0; box-shadow: 0 10px 30px rgba(0,0,0,0.2);"><div style="background: rgba(255, 255, 255, 0.95); border-radius: 15px; padding: 25px; backdrop-filter: blur(10px);"><h3 style="text-align: center; color: #333; margin-bottom: 20px; font-size: 1.8em;">🔄 循环链表动画演示</h3><canvas id="canvas" width="850" height="480" style="border: 3px solid #4a90e2; border-radius: 15px; background: #f8f9fa; display: block; margin: 0 auto 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);"></canvas><div id="stepInfo" style="background: #e3f2fd; border-left: 4px solid #2196f3; padding: 15px; margin: 20px 0; border-radius: 8px; font-size: 16px; min-height: 50px; display: flex; align-items: center; transition: all 0.3s ease;">
+                        点击下方按钮开始动画演示...
+                    </div><div style="width: 100%; height: 6px; background: #e0e0e0; border-radius: 3px; margin: 10px 0; overflow: hidden;"><div id="progressFill" style="height: 100%; background: linear-gradient(90deg, #4CAF50, #2196F3); border-radius: 3px; transition: width 0.3s ease; width: 0%;"></div></div><div style="display: flex; justify-content: center; gap: 20px; margin-bottom: 25px; align-items: center; flex-wrap: wrap;"><div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><label style="font-weight: bold;">节点值</label><input type="number" id="nodeValue" min="1" max="99" value="4" style="padding: 10px 15px; border: 2px solid #ddd; border-radius: 20px; font-size: 16px; width: 80px; text-align: center;"></div><div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><label style="font-weight: bold;">插入位置</label><input type="number" id="insertPosition" min="0" value="1" style="padding: 10px 15px; border: 2px solid #ddd; border-radius: 20px; font-size: 16px; width: 80px; text-align: center;"></div><div style="display: flex; flex-direction: column; align-items: center; gap: 8px;"><label style="font-weight: bold;">删除位置</label><input type="number" id="deletePosition" min="0" value="1" style="padding: 10px 15px; border: 2px solid #ddd; border-radius: 20px; font-size: 16px; width: 80px; text-align: center;"></div></div><div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;"><button onclick="startInsertAnimation()" id="insertBtn" style="padding: 12px 25px; font-size: 16px; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; background: linear-gradient(45deg, #4CAF50, #45a049); box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3); transition: all 0.3s ease;">
+                            ➕ 插入节点动画
+                        </button><button onclick="startDeleteAnimation()" id="deleteBtn" style="padding: 12px 25px; font-size: 16px; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; background: linear-gradient(45deg, #f44336, #d32f2f); box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3); transition: all 0.3s ease;">
+                            ➖ 删除节点动画
+                        </button><button onclick="resetDemo()" id="resetBtn" style="padding: 12px 25px; font-size: 16px; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; color: white; background: linear-gradient(45deg, #ff9800, #f57c00); box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3); transition: all 0.3s ease;">
+                            🔄 重置链表
+                        </button></div><div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;"><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; background: rgba(255, 255, 255, 0.8); padding: 6px 12px; border-radius: 15px;"><div style="width: 18px; height: 18px; border-radius: 50%; background: #ff6b6b; border: 2px solid #333;"></div><span>头节点</span></div><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; background: rgba(255, 255, 255, 0.8); padding: 6px 12px; border-radius: 15px;"><div style="width: 18px; height: 18px; border-radius: 50%; background: #4ecdc4; border: 2px solid #333;"></div><span>普通节点</span></div><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; background: rgba(255, 255, 255, 0.8); padding: 6px 12px; border-radius: 15px;"><div style="width: 18px; height: 18px; border-radius: 50%; background: #ffd93d; border: 2px solid #333;"></div><span>新节点/目标节点</span></div><div style="display: flex; align-items: center; gap: 8px; font-size: 14px; background: rgba(255, 255, 255, 0.8); padding: 6px 12px; border-radius: 15px;"><div style="width: 18px; height: 18px; border-radius: 50%; background: #ff9ff3; border: 2px solid #333;"></div><span>操作节点</span></div></div></div></div><script>const canvas = document.getElementById('canvas'); const ctx = canvas.getContext('2d'); const stepInfo = document.getElementById('stepInfo'); const progressFill = document.getElementById('progressFill'); let isAnimating = false; class Node { constructor(value, x, y) { this.value = value; this.x = x; this.y = y; this.targetX = x; this.targetY = y; this.next = null; this.radius = 35; this.color = '#4ecdc4'; this.highlighted = false; this.opacity = 1.0; this.scale = 1.0; this.targetScale = 1.0; } update() { if (Math.abs(this.x - this.targetX) > 0.5 || Math.abs(this.y - this.targetY) > 0.5) { this.x += (this.targetX - this.x) * 0.12; this.y += (this.targetY - this.y) * 0.12; } if (Math.abs(this.scale - this.targetScale) > 0.01) { this.scale += (this.targetScale - this.scale) * 0.15; } } } class Arrow { constructor(from, to, color = '#4a90e2', width = 3, dashed = false) { this.from = from; this.to = to; this.color = color; this.width = width; this.dashed = dashed; this.opacity = 1.0; this.targetOpacity = 1.0; } update() { if (Math.abs(this.opacity - this.targetOpacity) > 0.01) { this.opacity += (this.targetOpacity - this.opacity) * 0.1; } } } class CircularLinkedList { constructor() { this.head = null; this.size = 0; this.centerX = canvas.width / 2; this.centerY = canvas.height / 2; this.radius = 160; this.arrows = []; this.tempArrows = []; this.tempNodes = []; } calculatePositions() { if (this.size === 0) return; let current = this.head; for (let i = 0; i < this.size; i++) { const angle = (2 * Math.PI * i) / this.size - Math.PI / 2; current.targetX = this.centerX + this.radius * Math.cos(angle); current.targetY = this.centerY + this.radius * Math.sin(angle); current = current.next; } } createArrows() { this.arrows = []; if (this.size === 0) return; let current = this.head; for (let i = 0; i < this.size; i++) { this.arrows.push(new Arrow(current, current.next)); current = current.next; } } addNodeToList(value) { const node = new Node(value, this.centerX, this.centerY); if (this.size === 0) { this.head = node; node.next = node; node.color = '#ff6b6b'; } else { let current = this.head; while (current.next !== this.head) { current = current.next; } node.next = this.head; current.next = node; } this.size++; this.calculatePositions(); this.createArrows(); } update() { let current = this.head; if (current) { for (let i = 0; i < this.size; i++) { current.update(); current = current.next; } } this.tempNodes.forEach(node => node.update()); this.arrows.forEach(arrow => arrow.update()); this.tempArrows.forEach(arrow => arrow.update()); } draw() { ctx.clearRect(0, 0, canvas.width, canvas.height); this.tempArrows.forEach(arrow => this.drawArrow(arrow)); this.arrows.forEach(arrow => this.drawArrow(arrow)); this.tempNodes.forEach(node => this.drawNode(node)); if (this.size > 0) { let current = this.head; for (let i = 0; i < this.size; i++) { this.drawNode(current); current = current.next; } } if (this.size === 0) { ctx.fillStyle = '#999'; ctx.font = '20px Arial'; ctx.textAlign = 'center'; ctx.fillText('空链表 - 点击重置创建初始链表', this.centerX, this.centerY); } } drawArrow(arrow) { if (!arrow.from || !arrow.to) return; ctx.save(); ctx.globalAlpha = arrow.opacity; ctx.strokeStyle = arrow.color; ctx.lineWidth = arrow.width; if (arrow.dashed) { ctx.setLineDash([10, 5]); } else { ctx.setLineDash([]); } const dx = arrow.to.x - arrow.from.x; const dy = arrow.to.y - arrow.from.y; const distance = Math.sqrt(dx * dx + dy * dy); if (distance > 0) { const unitX = dx / distance; const unitY = dy / distance; const startX = arrow.from.x + unitX * arrow.from.radius * arrow.from.scale; const startY = arrow.from.y + unitY * arrow.from.radius * arrow.from.scale; const endX = arrow.to.x - unitX * arrow.to.radius * arrow.to.scale; const endY = arrow.to.y - unitY * arrow.to.radius * arrow.to.scale; ctx.beginPath(); if (arrow.from === arrow.to) { const loopRadius = arrow.from.radius * arrow.from.scale + 25; ctx.arc(arrow.from.x + loopRadius, arrow.from.y, loopRadius, 0, 2 * Math.PI); } else if (this.size === 2 && arrow.to === this.head && arrow.from !== this.head) { const midX = (startX + endX) / 2; const midY = (startY + endY) / 2; const controlX = midX + (arrow.from.y - arrow.to.y) * 0.4; const controlY = midY + (arrow.to.x - arrow.from.x) * 0.4; ctx.moveTo(startX, startY); ctx.quadraticCurveTo(controlX, controlY, endX, endY); } else { ctx.moveTo(startX, startY); ctx.lineTo(endX, endY); } ctx.stroke(); const arrowLength = 15; const arrowAngle = Math.PI / 6; const angle = Math.atan2(dy, dx); ctx.beginPath(); ctx.moveTo(endX, endY); ctx.lineTo( endX - arrowLength * Math.cos(angle - arrowAngle), endY - arrowLength * Math.sin(angle - arrowAngle) ); ctx.moveTo(endX, endY); ctx.lineTo( endX - arrowLength * Math.cos(angle + arrowAngle), endY - arrowLength * Math.sin(angle + arrowAngle) ); ctx.stroke(); } ctx.restore(); } drawNode(node) { ctx.save(); ctx.globalAlpha = node.opacity; const radius = node.radius * node.scale; ctx.beginPath(); ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI); ctx.fillStyle = node.color; ctx.fill(); if (node.highlighted) { ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 4; ctx.setLineDash([8, 4]); } else { ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.setLineDash([]); } ctx.stroke(); ctx.fillStyle = '#fff'; ctx.font = `bold ${Math.floor(18 * node.scale)}px Arial`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(node.value, node.x, node.y); if (node === this.head) { ctx.fillStyle = '#ff6b6b'; ctx.font = `${Math.floor(12 * node.scale)}px Arial`; ctx.fillText('HEAD', node.x, node.y - radius - 15); } ctx.restore(); } } const list = new CircularLinkedList(); function initializeList() { list.addNodeToList(1); list.addNodeToList(2); list.addNodeToList(3); } function setButtonsEnabled(enabled) { document.getElementById('insertBtn').disabled = !enabled; document.getElementById('deleteBtn').disabled = !enabled; document.getElementById('resetBtn').disabled = !enabled; } function updateProgress(current, total) { const percentage = (current / total) * 100; progressFill.style.width = percentage + '%'; } async function startInsertAnimation() { if (isAnimating) return; const value = parseInt(document.getElementById('nodeValue').value) || 4; const position = Math.max(0, Math.min(parseInt(document.getElementById('insertPosition').value) || 0, list.size)); isAnimating = true; setButtonsEnabled(false); const steps = [ { description: `🎬 开始插入动画：在位置 ${position} 插入值为 ${value} 的新节点`, duration: 1000, action: () => { resetAllStates(); } }, { description: `✨ 创建新节点 (值: ${value})`, duration: 1500, action: () => { const newNode = new Node(value, canvas.width - 80, 80); newNode.color = '#ffd93d'; newNode.highlighted = true; newNode.targetScale = 1.2; list.tempNodes = [newNode]; } }, { description: position === 0 ? '🎯 定位到头节点，准备在头部插入' : `🎯 定位到位置 ${position-1} 的节点`, duration: 1500, action: () => { if (list.size === 0) return; let current = list.head; if (position === 0) { current.highlighted = true; current.targetScale = 1.1; } else { for (let i = 0; i < position - 1; i++) { current = current.next; } current.highlighted = true; current.color = '#ff9ff3'; current.targetScale = 1.1; } } }, { description: '🔗 设置新节点的 next 指针', duration: 2000, action: () => { const newNode = list.tempNodes[0]; let targetNode; if (list.size === 0) { targetNode = newNode; } else if (position === 0) { targetNode = list.head; } else { let current = list.head; for (let i = 0; i < position; i++) { current = current.next; } targetNode = current; } const arrow = new Arrow(newNode, targetNode, '#ff4444', 5, true); arrow.opacity = 0; arrow.targetOpacity = 1; list.tempArrows = [arrow]; } }, { description: '🔄 修改前驱节点的 next 指针指向新节点', duration: 2000, action: () => { const newNode = list.tempNodes[0]; if (list.size === 0) return; let prevNode; if (position === 0) { prevNode = list.head; while (prevNode.next !== list.head) { prevNode = prevNode.next; } } else { prevNode = list.head; for (let i = 0; i < position - 1; i++) { prevNode = prevNode.next; } } prevNode.highlighted = true; prevNode.color = '#ff9ff3'; prevNode.targetScale = 1.1; const arrow = new Arrow(prevNode, newNode, '#ff4444', 5, true); arrow.opacity = 0; arrow.targetOpacity = 1; list.tempArrows.push(arrow); } }, { description: '✅ 完成插入，更新链表结构', duration: 2000, action: () => { const newNode = list.tempNodes[0]; if (list.size === 0) { list.head = newNode; newNode.next = newNode; newNode.color = '#ff6b6b'; } else { let current = list.head; if (position === 0) { while (current.next !== list.head) { current = current.next; } newNode.next = list.head; current.next = newNode; list.head.color = '#4ecdc4'; list.head = newNode; newNode.color = '#ff6b6b'; } else { for (let i = 0; i < position - 1; i++) { current = current.next; } newNode.next = current.next; current.next = newNode; newNode.color = '#4ecdc4'; } } list.size++; list.calculatePositions(); list.createArrows(); list.tempNodes = []; list.tempArrows = []; resetAllStates(); document.getElementById('nodeValue').value = value + 1; document.getElementById('insertPosition').value = list.size; } } ]; await executeSteps(steps); isAnimating = false; setButtonsEnabled(true); } async function startDeleteAnimation() { if (isAnimating || list.size === 0) return; const position = Math.max(0, Math.min(parseInt(document.getElementById('deletePosition').value) || 0, list.size - 1)); isAnimating = true; setButtonsEnabled(false); const steps = [ { description: `🎬 开始删除动画：删除位置 ${position} 的节点`, duration: 1000, action: () => { resetAllStates(); } }, { description: `🎯 定位到要删除的节点 (位置 ${position})`, duration: 1500, action: () => { let current = list.head; for (let i = 0; i < position; i++) { current = current.next; } current.highlighted = true; current.color = '#ffd93d'; current.targetScale = 1.2; } }, { description: '🔍 找到前驱节点', duration: 1500, action: () => { let prevNode; if (position === 0) { prevNode = list.head; while (prevNode.next !== list.head) { prevNode = prevNode.next; } } else { prevNode = list.head; for (let i = 0; i < position - 1; i++) { prevNode = prevNode.next; } } prevNode.highlighted = true; prevNode.color = '#ff9ff3'; prevNode.targetScale = 1.1; } }, { description: '🔗 修改前驱节点的指针，跳过要删除的节点', duration: 2000, action: () => { let targetNode = list.head; for (let i = 0; i < position; i++) { targetNode = targetNode.next; } const nextNode = targetNode.next; let prevNode; if (position === 0) { prevNode = list.head; while (prevNode.next !== list.head) { prevNode = prevNode.next; } } else { prevNode = list.head; for (let i = 0; i < position - 1; i++) { prevNode = prevNode.next; } } const arrow = new Arrow(prevNode, nextNode, '#ff4444', 5, true); arrow.opacity = 0; arrow.targetOpacity = 1; list.tempArrows = [arrow]; targetNode.opacity = 0.3; targetNode.targetScale = 0.5; } }, { description: '✅ 完成删除，更新链表结构', duration: 2000, action: () => { if (list.size === 1) { list.head = null; } else { let current = list.head; let nodeToDelete = current; for (let i = 0; i < position; i++) { nodeToDelete = nodeToDelete.next; } if (position === 0) { while (current.next !== list.head) { current = current.next; } current.next = list.head.next; list.head = list.head.next; list.head.color = '#ff6b6b'; } else { current = list.head; for (let i = 0; i < position - 1; i++) { current = current.next; } current.next = current.next.next; } } list.size--; list.calculatePositions(); list.createArrows(); list.tempArrows = []; resetAllStates(); document.getElementById('deletePosition').value = Math.max(0, list.size - 1); } } ]; await executeSteps(steps); isAnimating = false; setButtonsEnabled(true); } async function executeSteps(steps) { for (let i = 0; i < steps.length; i++) { const step = steps[i]; stepInfo.textContent = step.description; stepInfo.style.background = '#fff3e0'; stepInfo.style.borderLeftColor = '#ff9800'; updateProgress(i + 1, steps.length); step.action(); await new Promise(resolve => setTimeout(resolve, step.duration)); } stepInfo.textContent = '✨ 动画完成！可以继续进行其他操作'; stepInfo.style.background = '#e3f2fd'; stepInfo.style.borderLeftColor = '#2196f3'; updateProgress(0, 1); } function resetAllStates() { list.tempNodes = []; list.tempArrows = []; if (list.head) { let current = list.head; for (let i = 0; i < list.size; i++) { current.highlighted = false; current.targetScale = 1.0; current.opacity = 1.0; if (current === list.head) { current.color = '#ff6b6b'; } else { current.color = '#4ecdc4'; } current = current.next; } } } function resetDemo() { if (isAnimating) return; list.head = null; list.size = 0; list.tempNodes = []; list.tempArrows = []; list.arrows = []; initializeList(); stepInfo.textContent = '🔄 链表已重置，可以开始新的操作'; stepInfo.style.background = '#e3f2fd'; stepInfo.style.borderLeftColor = '#2196f3'; updateProgress(0, 1); document.getElementById('nodeValue').value = 4; document.getElementById('insertPosition').value = 3; document.getElementById('deletePosition').value = 1; } function animate() { list.update(); list.draw(); requestAnimationFrame(animate); } initializeList(); animate();</script><h3>📈 操作复杂度分析</h3><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">🔍</span><h4 class="card-title">查找操作</h4><p class="card-description">时间复杂度：O(n)<br>需要遍历链表查找目标元素</p></div><div class="grid-card"><span class="card-icon">➕</span><h4 class="card-title">插入操作</h4><p class="card-description">时间复杂度：O(1)到O(n)<br>头部插入O(1)，指定位置O(n)</p></div><div class="grid-card"><span class="card-icon">➖</span><h4 class="card-title">删除操作</h4><p class="card-description">时间复杂度：O(1)到O(n)<br>已知前驱节点O(1)，否则O(n)</p></div><div class="grid-card"><span class="card-icon">💾</span><h4 class="card-title">空间复杂度</h4><p class="card-description">O(n)<br>每个节点需要额外的指针空间</p></div></div></div></div><!-- 💻 代码实现 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><p>以下是循环链表在不同编程语言中的实现，点击语言标签切换，点击复制按钮可快速复制代码：</p><!-- 语言选择标签 --><div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;"><button onclick="showCode('cpp')" id="btn-cpp" style="padding: 10px 20px; border: 2px solid #4a90e2; background: #4a90e2; color: white; border-radius: 25px; cursor: pointer; font-weight: bold;">C++</button><button onclick="showCode('java')" id="btn-java" style="padding: 10px 20px; border: 2px solid #4a90e2; background: white; color: #4a90e2; border-radius: 25px; cursor: pointer; font-weight: bold;">Java</button><button onclick="showCode('python')" id="btn-python" style="padding: 10px 20px; border: 2px solid #4a90e2; background: white; color: #4a90e2; border-radius: 25px; cursor: pointer; font-weight: bold;">Python</button></div><!-- C++ 代码 --><div id="code-cpp" class="code-container" style="position: relative; display: block;"><div style="display: flex; justify-content: between; align-items: center; background: #2d3748; color: white; padding: 15px; border-radius: 10px 10px 0 0;"><span style="font-weight: bold;">🔷 C++ 实现</span><button onclick="copyCode('cpp')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer; margin-left: auto;">📋 复制</button></div><pre style="background: #1a202c; color: #e2e8f0; padding: 20px; margin: 0; border-radius: 0 0 10px 10px; overflow-x: auto;"><code id="cpp-code">#include &lt;iostream&gt;
+using namespace std;
+
+template&lt;typename T&gt;
+class CircularLinkedList {
+private:
+    struct Node {
+        T data;
+        Node* next;
+        Node(T value) : data(value), next(nullptr) {}
+    };
+
+    Node* head;
+    int size;
+
+public:
+    CircularLinkedList() : head(nullptr), size(0) {}
+
+    // 插入节点到指定位置
+    void insert(T value, int position = 0) {
+        position = max(0, min(position, size));
+        Node* newNode = new Node(value);
+
+        if (size == 0) {
+            head = newNode;
+            newNode-&gt;next = newNode;  // 指向自己
+        } else {
+            Node* current = head;
+
+            if (position == 0) {
+                // 插入到头部
+                while (current-&gt;next != head) {
+                    current = current-&gt;next;
+                }
+                newNode-&gt;next = head;
+                current-&gt;next = newNode;
+                head = newNode;
+            } else {
+                // 插入到中间或尾部
+                for (int i = 0; i &lt; position - 1; i++) {
+                    current = current-&gt;next;
+                }
+                newNode-&gt;next = current-&gt;next;
+                current-&gt;next = newNode;
+            }
+        }
+        size++;
+    }
+
+    // 删除指定位置的节点
+    bool remove(int position) {
+        if (size == 0 || position &lt; 0 || position &gt;= size) {
+            return false;
+        }
+
+        if (size == 1) {
+            delete head;
+            head = nullptr;
+        } else {
+            Node* current = head;
+
+            if (position == 0) {
+                // 删除头节点
+                while (current-&gt;next != head) {
+                    current = current-&gt;next;
+                }
+                Node* toDelete = head;
+                current-&gt;next = head-&gt;next;
+                head = head-&gt;next;
+                delete toDelete;
+            } else {
+                // 删除中间或尾部节点
+                for (int i = 0; i &lt; position - 1; i++) {
+                    current = current-&gt;next;
+                }
+                Node* toDelete = current-&gt;next;
+                current-&gt;next = toDelete-&gt;next;
+                delete toDelete;
+            }
+        }
+        size--;
+        return true;
+    }
+
+    // 遍历并打印链表
+    void display() {
+        if (size == 0) {
+            cout &lt;&lt; "链表为空" &lt;&lt; endl;
+            return;
+        }
+
+        Node* current = head;
+        do {
+            cout &lt;&lt; current-&gt;data &lt;&lt; " -&gt; ";
+            current = current-&gt;next;
+        } while (current != head);
+        cout &lt;&lt; "(回到头节点)" &lt;&lt; endl;
+    }
+
+    int getSize() const { return size; }
+
+    ~CircularLinkedList() {
+        while (size &gt; 0) {
+            remove(0);
+        }
+    }
+};</code></pre></div><!-- Java 代码 --><div id="code-java" class="code-container" style="position: relative; display: none;"><div style="display: flex; justify-content: between; align-items: center; background: #2d3748; color: white; padding: 15px; border-radius: 10px 10px 0 0;"><span style="font-weight: bold;">☕ Java 实现</span><button onclick="copyCode('java')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer; margin-left: auto;">📋 复制</button></div><pre style="background: #1a202c; color: #e2e8f0; padding: 20px; margin: 0; border-radius: 0 0 10px 10px; overflow-x: auto;"><code id="java-code">public class CircularLinkedList&lt;T&gt; {
+    private class Node {
+        T data;
+        Node next;
+
+        Node(T data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    private Node head;
+    private int size;
+
+    public CircularLinkedList() {
+        head = null;
+        size = 0;
+    }
+
+    // 插入节点到指定位置
+    public void insert(T value, int position) {
+        position = Math.max(0, Math.min(position, size));
+        Node newNode = new Node(value);
+
+        if (size == 0) {
+            head = newNode;
+            newNode.next = newNode;  // 指向自己
+        } else {
+            Node current = head;
+
+            if (position == 0) {
+                // 插入到头部
+                while (current.next != head) {
+                    current = current.next;
+                }
+                newNode.next = head;
+                current.next = newNode;
+                head = newNode;
+            } else {
+                // 插入到中间或尾部
+                for (int i = 0; i &lt; position - 1; i++) {
+                    current = current.next;
+                }
+                newNode.next = current.next;
+                current.next = newNode;
+            }
+        }
+        size++;
+    }
+
+    // 删除指定位置的节点
+    public boolean remove(int position) {
+        if (size == 0 || position &lt; 0 || position &gt;= size) {
+            return false;
+        }
+
+        if (size == 1) {
+            head = null;
+        } else {
+            Node current = head;
+
+            if (position == 0) {
+                // 删除头节点
+                while (current.next != head) {
+                    current = current.next;
+                }
+                current.next = head.next;
+                head = head.next;
+            } else {
+                // 删除中间或尾部节点
+                for (int i = 0; i &lt; position - 1; i++) {
+                    current = current.next;
+                }
+                current.next = current.next.next;
+            }
+        }
+        size--;
+        return true;
+    }
+
+    // 查找元素
+    public int find(T value) {
+        if (size == 0) return -1;
+
+        Node current = head;
+        for (int i = 0; i &lt; size; i++) {
+            if (current.data.equals(value)) {
+                return i;
+            }
+            current = current.next;
+        }
+        return -1;
+    }
+
+    // 遍历并打印链表
+    public void display() {
+        if (size == 0) {
+            System.out.println("链表为空");
+            return;
+        }
+
+        Node current = head;
+        do {
+            System.out.print(current.data + " -> ");
+            current = current.next;
+        } while (current != head);
+        System.out.println("(回到头节点)");
+    }
+
+    public int getSize() { return size; }
+    public boolean isEmpty() { return size == 0; }
+}</code></pre></div><!-- Python 代码 --><div id="code-python" class="code-container" style="position: relative; display: none;"><div style="display: flex; justify-content: between; align-items: center; background: #2d3748; color: white; padding: 15px; border-radius: 10px 10px 0 0;"><span style="font-weight: bold;">🐍 Python 实现</span><button onclick="copyCode('python')" style="background: #4CAF50; color: white; border: none; padding: 8px 15px; border-radius: 15px; cursor: pointer; margin-left: auto;">📋 复制</button></div><pre style="background: #1a202c; color: #e2e8f0; padding: 20px; margin: 0; border-radius: 0 0 10px 10px; overflow-x: auto;"><code id="python-code">class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class CircularLinkedList:
+    def __init__(self):
+        self.head = None
+        self.size = 0
+
+    def insert(self, value, position=None):
+        """插入节点到指定位置"""
+        if position is None:
+            position = self.size
+        position = max(0, min(position, self.size))
+
+        new_node = Node(value)
+
+        if self.size == 0:
+            self.head = new_node
+            new_node.next = new_node  # 指向自己
+        else:
+            current = self.head
+
+            if position == 0:
+                # 插入到头部
+                while current.next != self.head:
+                    current = current.next
+                new_node.next = self.head
+                current.next = new_node
+                self.head = new_node
+            else:
+                # 插入到中间或尾部
+                for i in range(position - 1):
+                    current = current.next
+                new_node.next = current.next
+                current.next = new_node
+
+        self.size += 1
+
+    def remove(self, position):
+        """删除指定位置的节点"""
+        if self.size == 0 or position < 0 or position >= self.size:
+            return False
+
+        if self.size == 1:
+            self.head = None
+        else:
+            current = self.head
+
+            if position == 0:
+                # 删除头节点
+                while current.next != self.head:
+                    current = current.next
+                current.next = self.head.next
+                self.head = self.head.next
+            else:
+                # 删除中间或尾部节点
+                for i in range(position - 1):
+                    current = current.next
+                current.next = current.next.next
+
+        self.size -= 1
+        return True
+
+    def find(self, value):
+        """查找元素位置"""
+        if self.size == 0:
+            return -1
+
+        current = self.head
+        for i in range(self.size):
+            if current.data == value:
+                return i
+            current = current.next
+        return -1
+
+    def display(self):
+        """遍历并打印链表"""
+        if self.size == 0:
+            print("链表为空")
+            return
+
+        current = self.head
+        elements = []
+        for i in range(self.size):
+            elements.append(str(current.data))
+            current = current.next
+
+        print(" -> ".join(elements) + " -> (回到头节点)")
+
+    def get_size(self):
+        return self.size
+
+    def is_empty(self):
+        return self.size == 0
+
+# 使用示例
+if __name__ == "__main__":
+    cll = CircularLinkedList()
+    cll.insert(1)
+    cll.insert(2)
+    cll.insert(3)
+    cll.display()  # 1 -> 2 -> 3 -> (回到头节点)</code></pre></div><script>function showCode(language) { document.querySelectorAll('.code-container').forEach(container => { container.style.display = 'none'; }); document.querySelectorAll('[id^="btn-"]').forEach(btn => { btn.style.background = 'white'; btn.style.color = '#4a90e2'; }); document.getElementById('code-' + language).style.display = 'block'; document.getElementById('btn-' + language).style.background = '#4a90e2'; document.getElementById('btn-' + language).style.color = 'white'; } function copyCode(language) { const codeElement = document.getElementById(language + '-code'); const text = codeElement.textContent; const button = document.querySelector(`#code-${language} button`); const originalText = button.textContent; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(function() { button.textContent = '✅ 已复制'; button.style.background = '#4CAF50'; setTimeout(() => { button.textContent = originalText; button.style.background = '#4CAF50'; }, 2000); }).catch(function(err) { console.error('复制失败: ', err); fallbackCopyTextToClipboard(text, button, originalText); }); } else { fallbackCopyTextToClipboard(text, button, originalText); } } function fallbackCopyTextToClipboard(text, button, originalText) { const textArea = document.createElement("textarea"); textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-999999px"; textArea.style.top = "-999999px"; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { const successful = document.execCommand('copy'); if (successful) { button.textContent = '✅ 已复制'; button.style.background = '#4CAF50'; setTimeout(() => { button.textContent = originalText; button.style.background = '#4CAF50'; }, 2000); } else { button.textContent = '❌ 复制失败'; setTimeout(() => { button.textContent = originalText; }, 2000); } } catch (err) { console.error('降级复制方案也失败了: ', err); button.textContent = '❌ 复制失败'; setTimeout(() => { button.textContent = originalText; }, 2000); } document.body.removeChild(textArea); }</script></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><h3>💻 1. 操作系统进程调度</h3><p>在操作系统的时间片轮转调度算法中，循环链表完美地表示了进程队列。每个进程执行完时间片后，控制权自动转给下一个进程，队列中的最后一个进程执行完后又回到第一个进程。</p><div class="info-box info-box-success"><span class="info-icon">🎯</span><strong>应用优势：</strong>无需判断队列结束，自然循环执行，非常适合需要循环处理的场景。
+            </div><h3>🎮 2. 游戏开发中的回合制系统</h3><p>在回合制游戏中，玩家按顺序行动。循环链表可以很好地管理玩家回合。</p><h3>🎵 3. 音乐播放器的播放列表</h3><p>音乐播放器的"循环播放"功能就是循环链表的典型应用。播放完最后一首歌后自动回到第一首，实现无缝循环。</p><div class="info-box info-box-info"><span class="info-icon">🔧</span><strong>推荐工具：</strong>VisuAlgo 数据结构可视化、LeetCode 链表专题、Data Structure Visualizations
+            </div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><h3>🤔 常见易错问题精选</h3><p>以下是循环链表学习中最容易出错的问题，点击问题可查看详细答案：</p><div style="margin: 20px 0;"><div style="border: 2px solid #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;"><div onclick="toggleAnswer('q1')" style="background: #f5f5f5; padding: 15px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: bold;">❓ 问题1：循环链表的遍历为什么容易造成死循环？</span><span id="arrow-q1" style="transition: transform 0.3s;">▼</span></div><div id="answer-q1" style="display: none; padding: 20px; background: #fff;"><div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;"><strong>💡 答案：</strong><br><p>因为循环链表没有明确的"结束点"（NULL），如果使用普通链表的遍历方式：</p><pre style="background: #f8f8f8; padding: 10px; border-radius: 5px;"><code>while (current != NULL) {  // ❌ 错误！循环链表中永远不会为NULL
+    current = current->next;
+}</code></pre><p><strong>正确的遍历方式：</strong></p><pre style="background: #f8f8f8; padding: 10px; border-radius: 5px;"><code>Node* start = head;
+do {
+    // 处理当前节点
+    current = current->next;
+} while (current != start);  // ✅ 正确！回到起始节点时停止</code></pre></div></div></div><div style="border: 2px solid #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;"><div onclick="toggleAnswer('q2')" style="background: #f5f5f5; padding: 15px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: bold;">❓ 问题2：插入第一个节点时为什么要特殊处理？</span><span id="arrow-q2" style="transition: transform 0.3s;">▼</span></div><div id="answer-q2" style="display: none; padding: 20px; background: #fff;"><div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;"><strong>💡 答案：</strong><br><p>因为循环链表要求所有节点都要有next指针指向链表中的某个节点，第一个节点插入时：</p><ul><li><strong>普通链表：</strong>第一个节点的next = NULL</li><li><strong>循环链表：</strong>第一个节点的next = 自己（形成自环）</li></ul><pre style="background: #f8f8f8; padding: 10px; border-radius: 5px;"><code>if (size == 0) {
+    head = newNode;
+    newNode->next = newNode;  // 指向自己，形成最小的环
+}</code></pre><p>这样确保了链表从一开始就具有"循环"的特性。</p></div></div></div><div style="border: 2px solid #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;"><div onclick="toggleAnswer('q3')" style="background: #f5f5f5; padding: 15px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: bold;">❓ 问题3：删除头节点时为什么要先找到尾节点？</span><span id="arrow-q3" style="transition: transform 0.3s;">▼</span></div><div id="answer-q3" style="display: none; padding: 20px; background: #fff;"><div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;"><strong>💡 答案：</strong><br><p>因为循环链表中，尾节点的next指针指向头节点。删除头节点时需要：</p><ol><li><strong>更新尾节点的指针：</strong>让它指向新的头节点</li><li><strong>更新head指针：</strong>指向原头节点的下一个节点</li></ol><pre style="background: #f8f8f8; padding: 10px; border-radius: 5px;"><code>// 找到尾节点（指向头节点的那个节点）
+Node* tail = head;
+while (tail->next != head) {
+    tail = tail->next;
+}
+
+// 更新连接
+tail->next = head->next;  // 尾节点指向新头节点
+head = head->next;        // 更新头指针</code></pre><p>如果不更新尾节点的指针，链表的环形结构就会被破坏！</p></div></div></div><div style="border: 2px solid #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;"><div onclick="toggleAnswer('q4')" style="background: #f5f5f5; padding: 15px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: bold;">❓ 问题4：如何判断一个链表是否为循环链表？</span><span id="arrow-q4" style="transition: transform 0.3s;">▼</span></div><div id="answer-q4" style="display: none; padding: 20px; background: #fff;"><div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;"><strong>💡 答案：</strong><br><p>使用<strong>快慢指针法</strong>（Floyd判圈算法）：</p><pre style="background: #f8f8f8; padding: 10px; border-radius: 5px;"><code>bool isCircular(Node* head) {
+    if (head == nullptr) return false;
+
+    Node* slow = head;
+    Node* fast = head;
+
+    do {
+        slow = slow->next;           // 慢指针每次走1步
+        fast = fast->next->next;     // 快指针每次走2步
+
+        if (fast == slow) {
+            return true;   // 快慢指针相遇，说明有环
+        }
+    } while (fast != nullptr && fast->next != nullptr);
+
+    return false;  // 快指针到达NULL，说明无环
+}</code></pre><p><strong>原理：</strong>如果链表有环，快指针最终会追上慢指针；如果无环，快指针会先到达NULL。</p></div></div></div><div style="border: 2px solid #e0e0e0; border-radius: 10px; margin: 15px 0; overflow: hidden;"><div onclick="toggleAnswer('q5')" style="background: #f5f5f5; padding: 15px; cursor: pointer; border-bottom: 1px solid #e0e0e0; display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: bold;">❓ 问题5：循环链表适合用在哪些场景？不适合哪些场景？</span><span id="arrow-q5" style="transition: transform 0.3s;">▼</span></div><div id="answer-q5" style="display: none; padding: 20px; background: #fff;"><div style="background: #e8f5e8; padding: 15px; border-radius: 8px; border-left: 4px solid #4CAF50;"><strong>💡 答案：</strong><br><p><strong>✅ 适合的场景：</strong></p><ul><li><strong>轮转调度：</strong>操作系统进程调度、任务轮转</li><li><strong>循环播放：</strong>音乐播放器、幻灯片自动播放</li><li><strong>回合制游戏：</strong>玩家轮流操作</li><li><strong>约瑟夫环问题：</strong>经典的循环淘汰问题</li></ul><p><strong>❌ 不适合的场景：</strong></p><ul><li><strong>频繁随机访问：</strong>数组更适合O(1)随机访问</li><li><strong>大量插入/删除操作：</strong>每次都要遍历找位置，效率较低</li><li><strong>需要明确起始/结束的场景：</strong>普通链表或数组更合适</li><li><strong>内存敏感的应用：</strong>每个节点都需要额外的指针开销</li></ul></div></div></div></div><script>function toggleAnswer(questionId) { const answer = document.getElementById('answer-' + questionId); const arrow = document.getElementById('arrow-' + questionId); if (answer.style.display === 'none') { answer.style.display = 'block'; arrow.style.transform = 'rotate(180deg)'; } else { answer.style.display = 'none'; arrow.style.transform = 'rotate(0deg)'; } }</script><div class="info-box info-box-success"><span class="info-icon">📖</span><strong>下一步学习建议：</strong>双向链表 → 双向循环链表 → 栈和队列的链表实现 → 图的邻接表表示
+            </div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div>
+{% endblock %}

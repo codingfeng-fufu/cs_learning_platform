@@ -1,0 +1,449 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"三角矩阵" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>{{ breadcrumb_category|default:"数据结构" }}</span><span>></span><span>{{ page_title|default:"三角矩阵" }}</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">📐</span>
+            三角矩阵（Triangular Matrix）
+        </h1><p>探索上三角矩阵和下三角矩阵的特性与应用</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>三角矩阵是指主对角线一侧的所有元素都为零的方阵。分为上三角矩阵（主对角线以下为0）和下三角矩阵（主对角线以上为0）。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>上三角矩阵：</strong>主对角线以下元素全为0</li><li><strong>下三角矩阵：</strong>主对角线以上元素全为0</li><li><strong>严格三角矩阵：</strong>主对角线元素也为0</li><li><strong>单位三角矩阵：</strong>主对角线元素为1的三角矩阵</li><li><strong>LU分解：</strong>将矩阵分解为下三角×上三角</li></ul></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">学习指南</h4><div style="text-align: left;"><p><strong>难度级别：</strong><span style="color: #4CAF50;">入门</span></p><p><strong>前置知识：</strong></p><ul><li>矩阵的基本概念</li><li>矩阵运算（加法、乘法）</li><li>线性方程组求解</li></ul></div></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">🔺</span><strong>上三角矩阵：</strong>就像一个三角形屋顶，所有的"材料"都在屋顶线以上，屋顶线以下是空的（全为0）。数学表示：当 i > j 时，A[i][j] = 0。
+                </div><div class="info-box info-box-info"><span class="info-icon">🔻</span><strong>下三角矩阵：</strong>像一个倒置的三角形，所有的"材料"都在底线以下，底线以上是空的（全为0）。数学表示：当 i < j 时，A[i][j] = 0。
+                </div></div><div style="margin: 20px 0;"><h3>🏗️ 建筑类比</h3><p>想象你正在建造一栋楼房：</p><div class="unified-grid unified-grid-2"><div class="grid-card"><h4>🔺 上三角矩阵 = 金字塔</h4><ul style="text-align: left;"><li>每一层都比下一层小</li><li>底层最宽，顶层最窄</li><li>下方的空间是空的</li></ul></div><div class="grid-card"><h4>🔻 下三角矩阵 = 地基</h4><ul style="text-align: left;"><li>从地基开始向上建造</li><li>底层最厚实，向上递减</li><li>上方的空间是空的</li></ul></div></div></div><div style="margin: 20px 0;"><h3>⚡ 重要性质</h3><div class="unified-grid unified-grid-3"><div class="info-box info-box-warning"><span class="info-icon">🧮</span><strong>存储优化：</strong>只需存储非零元素，节省约一半存储空间
+                    </div><div class="info-box info-box-success"><span class="info-icon">⚡</span><strong>计算高效：</strong>矩阵运算（如求逆、求解线性方程组）更快
+                    </div><div class="info-box info-box-info"><span class="info-icon">🔗</span><strong>封闭性质：</strong>两个同类三角矩阵相乘仍是三角矩阵
+                    </div></div></div><div style="margin: 20px 0;"><h3>❗ 易混淆点</h3><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>注意区分：</strong><ul style="text-align: left; margin: 10px 0;"><li><strong>严格三角矩阵 vs 普通三角矩阵：</strong>严格三角矩阵的主对角线元素也必须为0</li><li><strong>上三角 vs 下三角：</strong>记住"上三角在上方有元素，下三角在下方有元素"</li><li><strong>索引关系：</strong>上三角是 i ≤ j 有值，下三角是 i ≥ j 有值</li></ul></div></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><!-- 三角矩阵类型对比 --><div style="margin: 20px 0;"><h3>🎯 三角矩阵类型对比</h3><div style="text-align: center; margin: 20px 0;"><canvas id="triangularComparison" width="800" height="300" style="border: 2px solid #ddd; border-radius: 8px;"></canvas></div></div><!-- 动态构造过程 --><div style="margin: 20px 0;"><h3>🔄 三角矩阵构造动画</h3><div style="text-align: center; margin: 20px 0;"><div style="margin: 10px 0;"><button id="buildUpper" class="unified-btn unified-btn-primary">构造上三角矩阵</button><button id="buildLower" class="unified-btn unified-btn-secondary">构造下三角矩阵</button><button id="resetBuild" class="unified-btn unified-btn-outline">重置</button></div><canvas id="buildAnimation" width="600" height="450" style="border: 2px solid #ddd; border-radius: 8px;"></canvas><div id="buildStatus" style="margin: 10px 0; font-weight: bold; color: #2196F3; min-height: 24px;"></div></div></div><!-- LU分解演示 --><div style="margin: 20px 0;"><h3>🧩 LU分解可视化</h3><div style="text-align: center; margin: 20px 0;"><div style="margin: 10px 0;"><button id="startLU" class="unified-btn unified-btn-success">开始LU分解</button><button id="stepLU" class="unified-btn unified-btn-info" disabled>下一步</button><button id="resetLU" class="unified-btn unified-btn-outline">重置</button></div><canvas id="luDecomposition" width="900" height="400" style="border: 2px solid #ddd; border-radius: 8px;"></canvas><div id="luStatus" style="margin: 10px 0; font-weight: bold; color: #4CAF50; min-height: 24px;"></div></div></div><!-- 交互式矩阵操作 --><div style="margin: 20px 0;"><h3>🎮 交互式三角矩阵操作</h3><div style="text-align: center; margin: 20px 0;"><div style="margin: 10px 0;"><button id="createUpperMatrix" class="unified-btn unified-btn-primary">创建上三角矩阵</button><button id="createLowerMatrix" class="unified-btn unified-btn-secondary">创建下三角矩阵</button><button id="multiplyMatrices" class="unified-btn unified-btn-success">矩阵相乘</button><button id="clearMatrices" class="unified-btn unified-btn-outline">清空</button></div><canvas id="interactiveTriangular" width="900" height="350" style="border: 2px solid #ddd; border-radius: 8px; cursor: pointer;"></canvas><div id="operationResult" style="margin: 10px 0; font-size: 16px; font-weight: bold; min-height: 24px;"></div><p style="color: #666; font-size: 14px;">💡 提示：点击矩阵单元格可以编辑数值</p></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🧮</span><h4 class="card-title">数值计算</h4><p class="card-description">高斯消元法、LU分解、Cholesky分解等算法的核心。求解线性方程组 Ax=b 时，三角矩阵可以通过前向/后向替换高效求解。</p></div><div class="grid-card"><span class="card-icon">🤖</span><h4 class="card-title">机器学习</h4><p class="card-description">QR分解中的R矩阵是上三角矩阵，用于最小二乘法求解。协方差矩阵的Cholesky分解产生下三角矩阵，用于多元正态分布采样。</p></div><div class="grid-card"><span class="card-icon">🎮</span><h4 class="card-title">计算机图形学</h4><p class="card-description">3D变换矩阵的组合常常产生上三角形式，用于优化渲染管线。骨骼动画中的变换层次结构也利用三角矩阵特性。</p></div></div><!-- 应用案例深入分析 --><div style="margin: 30px 0;"><h3>🔍 深度案例：线性方程组求解</h3><div class="info-box info-box-info"><span class="info-icon">🎯</span><strong>案例背景：</strong>求解线性方程组 Ux = b，其中 U 是上三角矩阵。
+                    <br><br><strong>为什么高效？</strong><ul style="text-align: left; margin: 10px 0;"><li>从最后一行开始：x₃ = b₃ / U₃₃</li><li>逐行向上：x₂ = (b₂ - U₂₃x₃) / U₂₂</li><li>继续：x₁ = (b₁ - U₁₂x₂ - U₁₃x₃) / U₁₁</li><li>时间复杂度：O(n²) vs 普通矩阵的 O(n³)</li></ul></div></div><!-- 代码示例 --><div style="margin: 30px 0;"><h3>💻 代码实现</h3><div class="code-tabs"><button class="tab-button active" onclick="showCode('cpp')">C++</button><button class="tab-button" onclick="showCode('java')">Java</button><button class="tab-button" onclick="showCode('python')">Python</button></div><div id="cpp-code" class="code-container active"><div class="code-header"><span>C++ 实现</span><button class="copy-btn" onclick="copyCode('cpp')">📋 复制代码</button></div><pre><code id="cpp-content">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;iomanip&gt;
+using namespace std;
+
+class TriangularMatrix {
+private:
+    vector&lt;vector&lt;double&gt;&gt; matrix;
+    int size;
+    bool isUpper;
+
+public:
+    TriangularMatrix(int n, bool upper = true) : size(n), isUpper(upper) {
+        matrix.resize(n, vector&lt;double&gt;(n, 0.0));
+    }
+
+    // 设置元素（自动维护三角形状）
+    void setElement(int i, int j, double value) {
+        if (i &lt; size && j &lt; size) {
+            if (isUpper && i &lt;= j) {
+                matrix[i][j] = value;
+            } else if (!isUpper && i &gt;= j) {
+                matrix[i][j] = value;
+            }
+        }
+    }
+
+    // 获取元素
+    double getElement(int i, int j) const {
+        if (i &lt; size && j &lt; size) {
+            return matrix[i][j];
+        }
+        return 0.0;
+    }
+
+    // 检查是否为三角矩阵
+    bool isTriangular() const {
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                if (isUpper && i &gt; j && matrix[i][j] != 0) return false;
+                if (!isUpper && i &lt; j && matrix[i][j] != 0) return false;
+            }
+        }
+        return true;
+    }
+
+    // 求解三角矩阵方程组 Ax = b
+    vector&lt;double&gt; solve(const vector&lt;double&gt;& b) const {
+        vector&lt;double&gt; x(size, 0.0);
+
+        if (isUpper) {
+            // 后向替换
+            for (int i = size - 1; i &gt;= 0; i--) {
+                x[i] = b[i];
+                for (int j = i + 1; j &lt; size; j++) {
+                    x[i] -= matrix[i][j] * x[j];
+                }
+                x[i] /= matrix[i][i];
+            }
+        } else {
+            // 前向替换
+            for (int i = 0; i &lt; size; i++) {
+                x[i] = b[i];
+                for (int j = 0; j &lt; i; j++) {
+                    x[i] -= matrix[i][j] * x[j];
+                }
+                x[i] /= matrix[i][i];
+            }
+        }
+        return x;
+    }
+
+    // 矩阵乘法
+    TriangularMatrix multiply(const TriangularMatrix& other) const {
+        TriangularMatrix result(size, isUpper && other.isUpper);
+
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                double sum = 0.0;
+                for (int k = 0; k &lt; size; k++) {
+                    sum += matrix[i][k] * other.matrix[k][j];
+                }
+                result.setElement(i, j, sum);
+            }
+        }
+        return result;
+    }
+
+    // 显示矩阵
+    void display() const {
+        cout &lt;&lt; (isUpper ? "上三角矩阵:" : "下三角矩阵:") &lt;&lt; endl;
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                cout &lt;&lt; setw(8) &lt;&lt; setprecision(2) &lt;&lt; matrix[i][j] &lt;&lt; " ";
+            }
+            cout &lt;&lt; endl;
+        }
+    }
+};
+
+int main() {
+    // 创建上三角矩阵
+    TriangularMatrix upper(3, true);
+    upper.setElement(0, 0, 2); upper.setElement(0, 1, 1); upper.setElement(0, 2, 3);
+    upper.setElement(1, 1, 3); upper.setElement(1, 2, 2);
+    upper.setElement(2, 2, 1);
+
+    upper.display();
+    cout &lt;&lt; "是否为三角矩阵: " &lt;&lt; (upper.isTriangular() ? "是" : "否") &lt;&lt; endl;
+
+    // 求解方程组
+    vector&lt;double&gt; b = {6, 7, 1};
+    vector&lt;double&gt; x = upper.solve(b);
+
+    cout &lt;&lt; "解向量 x: ";
+    for (double val : x) {
+        cout &lt;&lt; setprecision(2) &lt;&lt; val &lt;&lt; " ";
+    }
+    cout &lt;&lt; endl;
+
+    return 0;
+}</code></pre></div><div id="java-code" class="code-container"><div class="code-header"><span>Java 实现</span><button class="copy-btn" onclick="copyCode('java')">📋 复制代码</button></div><pre><code id="java-content">public class TriangularMatrix {
+    private double[][] matrix;
+    private int size;
+    private boolean isUpper;
+
+    public TriangularMatrix(int n, boolean upper) {
+        this.size = n;
+        this.isUpper = upper;
+        this.matrix = new double[n][n];
+    }
+
+    // 设置元素（自动维护三角形状）
+    public void setElement(int i, int j, double value) {
+        if (i &lt; size && j &lt; size) {
+            if (isUpper && i &lt;= j) {
+                matrix[i][j] = value;
+            } else if (!isUpper && i &gt;= j) {
+                matrix[i][j] = value;
+            }
+        }
+    }
+
+    // 获取元素
+    public double getElement(int i, int j) {
+        if (i &lt; size && j &lt; size) {
+            return matrix[i][j];
+        }
+        return 0.0;
+    }
+
+    // 检查是否为三角矩阵
+    public boolean isTriangular() {
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                if (isUpper && i &gt; j && matrix[i][j] != 0) return false;
+                if (!isUpper && i &lt; j && matrix[i][j] != 0) return false;
+            }
+        }
+        return true;
+    }
+
+    // 求解三角矩阵方程组 Ax = b
+    public double[] solve(double[] b) {
+        double[] x = new double[size];
+
+        if (isUpper) {
+            // 后向替换
+            for (int i = size - 1; i &gt;= 0; i--) {
+                x[i] = b[i];
+                for (int j = i + 1; j &lt; size; j++) {
+                    x[i] -= matrix[i][j] * x[j];
+                }
+                x[i] /= matrix[i][i];
+            }
+        } else {
+            // 前向替换
+            for (int i = 0; i &lt; size; i++) {
+                x[i] = b[i];
+                for (int j = 0; j &lt; i; j++) {
+                    x[i] -= matrix[i][j] * x[j];
+                }
+                x[i] /= matrix[i][i];
+            }
+        }
+        return x;
+    }
+
+    // 矩阵乘法
+    public TriangularMatrix multiply(TriangularMatrix other) {
+        TriangularMatrix result = new TriangularMatrix(size, this.isUpper && other.isUpper);
+
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                double sum = 0.0;
+                for (int k = 0; k &lt; size; k++) {
+                    sum += this.matrix[i][k] * other.matrix[k][j];
+                }
+                result.setElement(i, j, sum);
+            }
+        }
+        return result;
+    }
+
+    // 显示矩阵
+    public void display() {
+        System.out.println(isUpper ? "上三角矩阵:" : "下三角矩阵:");
+        for (int i = 0; i &lt; size; i++) {
+            for (int j = 0; j &lt; size; j++) {
+                System.out.printf("%8.2f ", matrix[i][j]);
+            }
+            System.out.println();
+        }
+    }
+
+    public static void main(String[] args) {
+        // 创建上三角矩阵
+        TriangularMatrix upper = new TriangularMatrix(3, true);
+        upper.setElement(0, 0, 2); upper.setElement(0, 1, 1); upper.setElement(0, 2, 3);
+        upper.setElement(1, 1, 3); upper.setElement(1, 2, 2);
+        upper.setElement(2, 2, 1);
+
+        upper.display();
+        System.out.println("是否为三角矩阵: " + (upper.isTriangular() ? "是" : "否"));
+
+        // 求解方程组
+        double[] b = {6, 7, 1};
+        double[] x = upper.solve(b);
+
+        System.out.print("解向量 x: ");
+        for (double val : x) {
+            System.out.printf("%.2f ", val);
+        }
+        System.out.println();
+    }
+}</code></pre></div><div id="python-code" class="code-container"><div class="code-header"><span>Python 实现</span><button class="copy-btn" onclick="copyCode('python')">📋 复制代码</button></div><pre><code id="python-content">import numpy as np
+from typing import List, Union
+
+class TriangularMatrix:
+    def __init__(self, size: int, is_upper: bool = True):
+        """
+        初始化三角矩阵
+
+        Args:
+            size: 矩阵大小
+            is_upper: True为上三角矩阵，False为下三角矩阵
+        """
+        self.size = size
+        self.is_upper = is_upper
+        self.matrix = np.zeros((size, size), dtype=float)
+
+    def set_element(self, i: int, j: int, value: float):
+        """设置元素（自动维护三角形状）"""
+        if 0 &lt;= i &lt; self.size and 0 &lt;= j &lt; self.size:
+            if self.is_upper and i &lt;= j:
+                self.matrix[i, j] = value
+            elif not self.is_upper and i &gt;= j:
+                self.matrix[i, j] = value
+
+    def get_element(self, i: int, j: int) -&gt; float:
+        """获取元素"""
+        if 0 &lt;= i &lt; self.size and 0 &lt;= j &lt; self.size:
+            return self.matrix[i, j]
+        return 0.0
+
+    def is_triangular(self) -&gt; bool:
+        """检查是否为三角矩阵"""
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.is_upper and i &gt; j and self.matrix[i, j] != 0:
+                    return False
+                if not self.is_upper and i &lt; j and self.matrix[i, j] != 0:
+                    return False
+        return True
+
+    def solve(self, b: Union[List[float], np.ndarray]) -&gt; np.ndarray:
+        """
+        求解三角矩阵方程组 Ax = b
+
+        Args:
+            b: 右侧向量
+
+        Returns:
+            解向量 x
+        """
+        b = np.array(b, dtype=float)
+        x = np.zeros(self.size, dtype=float)
+
+        if self.is_upper:
+            # 后向替换
+            for i in range(self.size - 1, -1, -1):
+                x[i] = b[i]
+                for j in range(i + 1, self.size):
+                    x[i] -= self.matrix[i, j] * x[j]
+                x[i] /= self.matrix[i, i]
+        else:
+            # 前向替换
+            for i in range(self.size):
+                x[i] = b[i]
+                for j in range(i):
+                    x[i] -= self.matrix[i, j] * x[j]
+                x[i] /= self.matrix[i, i]
+
+        return x
+
+    def multiply(self, other: 'TriangularMatrix') -&gt; 'TriangularMatrix':
+        """矩阵乘法"""
+        result = TriangularMatrix(self.size, self.is_upper and other.is_upper)
+
+        for i in range(self.size):
+            for j in range(self.size):
+                sum_val = 0.0
+                for k in range(self.size):
+                    sum_val += self.matrix[i, k] * other.matrix[k, j]
+                result.set_element(i, j, sum_val)
+
+        return result
+
+    def to_scipy_sparse(self):
+        """转换为SciPy稀疏矩阵格式"""
+        from scipy.sparse import triu, tril
+        if self.is_upper:
+            return triu(self.matrix)
+        else:
+            return tril(self.matrix)
+
+    def display(self):
+        """显示矩阵"""
+        matrix_type = "上三角矩阵" if self.is_upper else "下三角矩阵"
+        print(f"{matrix_type}:")
+        for row in self.matrix:
+            print(" ".join(f"{val:8.2f}" for val in row))
+
+    @classmethod
+    def from_lu_decomposition(cls, A: np.ndarray):
+        """从LU分解创建L和U矩阵"""
+        from scipy.linalg import lu
+        P, L, U = lu(A)
+
+        # 创建下三角矩阵L
+        lower = cls(L.shape[0], is_upper=False)
+        lower.matrix = L
+
+        # 创建上三角矩阵U
+        upper = cls(U.shape[0], is_upper=True)
+        upper.matrix = U
+
+        return P, lower, upper
+
+# 使用示例
+if __name__ == "__main__":
+    # 创建上三角矩阵
+    upper = TriangularMatrix(3, is_upper=True)
+    upper.set_element(0, 0, 2); upper.set_element(0, 1, 1); upper.set_element(0, 2, 3)
+    upper.set_element(1, 1, 3); upper.set_element(1, 2, 2)
+    upper.set_element(2, 2, 1)
+
+    upper.display()
+    print(f"是否为三角矩阵: {'是' if upper.is_triangular() else '否'}")
+
+    # 求解方程组
+    b = [6, 7, 1]
+    x = upper.solve(b)
+    print(f"解向量 x: {x}")
+
+    # 验证解
+    print(f"验证 Ax = {upper.matrix @ x}")
+
+    # LU分解示例
+    A = np.array([[4, 3, 2], [3, 4, 1], [2, 1, 3]], dtype=float)
+    P, L, U = TriangularMatrix.from_lu_decomposition(A)
+    print("\nLU分解结果:")
+    L.display()
+    U.display()</code></pre></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div class="quiz-container"><div class="quiz-item"><h4>🤔 问题 1：存储优化</h4><p>一个 n×n 的上三角矩阵（包括主对角线）最少需要存储多少个元素？如何计算一维数组中的索引？</p><button class="quiz-btn" onclick="toggleAnswer('answer1')">💡 查看答案</button><div id="answer1" class="quiz-answer"><strong>答案：n(n+1)/2 个元素</strong><br>
+                        解释：上三角矩阵包括主对角线，需要存储的元素位置为 (i,j) 其中 i ≤ j。
+                        <br>第0行：n个元素，第1行：n-1个元素，...，第n-1行：1个元素
+                        <br>总计：n + (n-1) + ... + 1 = n(n+1)/2
+                        <br><strong>一维数组索引公式：</strong><code>index = i*n - i*(i-1)/2 + (j-i)</code><br>其中，i*n 是第i行的起始位置，减去 i*(i-1)/2 是因为前面的行都少了一些元素。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 2：运算性质</h4><p>两个上三角矩阵相乘的结果是什么？为什么？时间复杂度如何优化？</p><button class="quiz-btn" onclick="toggleAnswer('answer2')">💡 查看答案</button><div id="answer2" class="quiz-answer"><strong>答案：仍然是上三角矩阵</strong><br>
+                        解释：设A和B都是上三角矩阵，即当i>j时，A[i][j]=0，B[i][j]=0。
+                        <br>对于乘积矩阵C=AB，有 C[i][j] = Σ(k=0 to n-1) A[i][k] * B[k][j]
+                        <br>当i>j时，分两种情况：
+                        <br>• 当k&lt;j时，B[k][j]=0（因为k&lt;j且B是上三角）
+                        <br>• 当k≥j时，由于i>j≥k，所以A[i][k]=0（因为i>k且A是上三角）
+                        <br>因此C[i][j]=0，所以C也是上三角矩阵。
+                        <br><strong>优化：</strong>只计算上三角部分，时间复杂度从O(n³)降低到O(n³/6)。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 3：求解效率</h4><p>为什么三角矩阵求解线性方程组比普通矩阵快？前向替换和后向替换的区别是什么？</p><button class="quiz-btn" onclick="toggleAnswer('answer3')">💡 查看答案</button><div id="answer3" class="quiz-answer"><strong>答案：避免了消元过程，直接替换求解</strong><br>
+                        解释：
+                        <br><strong>普通矩阵：</strong>需要先进行高斯消元(O(n³))，再求解(O(n²))
+                        <br><strong>三角矩阵：</strong>直接用替换法求解(O(n²))
+                        <br><br><strong>前向替换（下三角）：</strong>从第一个方程开始向下求解
+                        <br>x₁ = b₁/L₁₁, x₂ = (b₂-L₂₁x₁)/L₂₂, ...
+                        <br><strong>后向替换（上三角）：</strong>从最后一个方程开始向上求解
+                        <br>xₙ = bₙ/Uₙₙ, xₙ₋₁ = (bₙ₋₁-Uₙ₋₁,ₙxₙ)/Uₙ₋₁,ₙ₋₁, ...
+                        <br>这样每个未知数都可以直接从已知量计算得出。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 4：LU分解</h4><p>什么是LU分解？为什么它在数值计算中如此重要？它与三角矩阵有什么关系？</p><button class="quiz-btn" onclick="toggleAnswer('answer4')">💡 查看答案</button><div id="answer4" class="quiz-answer"><strong>答案：将矩阵分解为下三角×上三角</strong><br>
+                        解释：LU分解将矩阵A分解为A = LU，其中：
+                        <br>• L是下三角矩阵（Lower triangular）
+                        <br>• U是上三角矩阵（Upper triangular）
+                        <br><br><strong>重要性：</strong><br>1. <strong>求解多个方程组：</strong>对于不同的b，求解Ax=b时，只需分解一次A，然后分别求解Ly=b和Ux=y
+                        <br>2. <strong>矩阵求逆：</strong>A⁻¹ = U⁻¹L⁻¹，三角矩阵求逆更简单
+                        <br>3. <strong>行列式计算：</strong>det(A) = det(L) × det(U) = 主对角线元素乘积
+                        <br>4. <strong>数值稳定性：</strong>部分选主元的LU分解比直接高斯消元更稳定
+                    </div></div><div class="quiz-item"><h4>🤔 问题 5：应用拓展</h4><p>在机器学习中，哪些算法会产生或使用三角矩阵？举出具体例子并说明原因。</p><button class="quiz-btn" onclick="toggleAnswer('answer5')">💡 查看答案</button><div id="answer5" class="quiz-answer"><strong>答案：QR分解、Cholesky分解、RNN等</strong><br><strong>具体例子：</strong><br>1. <strong>QR分解：</strong>用于最小二乘法，R矩阵是上三角矩阵，保证数值稳定性
+                        <br>2. <strong>Cholesky分解：</strong>正定矩阵A=LL^T，L是下三角矩阵，用于多元正态分布采样和快速求解
+                        <br>3. <strong>RNN反向传播：</strong>展开的时间步形成上三角结构，避免梯度消失
+                        <br>4. <strong>稀疏矩阵存储：</strong>很多图神经网络的邻接矩阵可以重新排列成块三角形式
+                        <br>5. <strong>正则化：</strong>岭回归的正规方程 (X^TX + λI) 可以通过Cholesky分解高效求解
+                        <br><br><strong>原因：</strong>这些应用利用了三角矩阵的计算效率和数值稳定性。
+                    </div></div><div class="quiz-item"><h4>🤔 问题 6：实现挑战</h4><p>如何在实际编程中高效地实现三角矩阵的乘法？需要注意哪些细节？</p><button class="quiz-btn" onclick="toggleAnswer('answer6')">💡 查看答案</button><div id="answer6" class="quiz-answer"><strong>答案：循环边界优化和缓存友好访问</strong><br><strong>关键优化策略：</strong><br>1. <strong>循环边界：</strong>只计算非零区域
+                        <br><code>for(i=0; i&lt;n; i++) for(j=i; j&lt;n; j++) // 上三角</code><br>2. <strong>内存访问模式：</strong>按行优先访问，提高缓存命中率
+                        <br>3. <strong>分块算法：</strong>对大矩阵使用分块乘法，减少缓存缺失
+                        <br>4. <strong>SIMD优化：</strong>利用向量指令并行计算
+                        <br>5. <strong>稀疏性利用：</strong>跳过已知为零的乘法运算
+                        <br><br><strong>注意事项：</strong><br>• 数值精度：避免小主元导致的数值不稳定
+                        <br>• 边界检查：防止数组越界
+                        <br>• 内存对齐：确保SIMD指令的有效执行
+                    </div></div></div><div style="margin-top: 30px;"><h3>📚 进阶学习路径</h3><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">📖</span><strong>后续学习：</strong>矩阵分解理论（QR、SVD、特征分解）、数值线性代数、稀疏矩阵算法、迭代求解方法
+                    </div><div class="info-box info-box-success"><span class="info-icon">🛠️</span><strong>实践项目：</strong>实现高性能线性代数库、求解大型线性系统、图像处理中的滤波器设计、机器学习算法优化
+                    </div></div><div style="margin-top: 20px;"><h4>🎯 推荐练习</h4><ul style="text-align: left; color: #666;"><li>实现带部分选主元的LU分解算法</li><li>比较不同矩阵存储格式的性能（稠密 vs 稀疏）</li><li>使用三角矩阵求解线性最小二乘问题</li><li>在GPU上实现并行三角矩阵求解器</li><li>分析实际工程问题中的三角矩阵结构</li></ul></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.code-tabs {display:flex;border-bottom:2px solid #e0e0e0;margin-bottom:0}.tab-button {background:#f5f5f5;border:none;padding:12px 24px;cursor:pointer;font-size:14px;font-weight:500;transition:all 0.3s ease;border-top-left-radius:8px;border-top-right-radius:8px}.tab-button:hover {background:#e0e0e0}.tab-button.active {background:#2196F3;color:white}.code-container {display:none;background:#1e1e1e;border-radius:0 8px 8px 8px;overflow:hidden}.code-container.active {display:block}.code-header {background:#2d2d2d;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;color:#fff;font-weight:500}.copy-btn {background:#4CAF50;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;transition:background 0.3s ease}.copy-btn:hover {background:#45a049}.code-container pre {margin:0;padding:20px;overflow-x:auto;background:#1e1e1e}.code-container code {color:#f8f8f2;font-family:'Consolas', 'Monaco', 'Courier New', monospace;font-size:14px;line-height:1.6}.quiz-container {max-width:900px;margin:0 auto}.quiz-item {background:#f8f9fa;border:2px solid #e9ecef;border-radius:12px;padding:20px;margin-bottom:20px;transition:all 0.3s ease}.quiz-item:hover {border-color:#2196F3;box-shadow:0 4px 12px rgba(33, 150, 243, 0.1)}.quiz-item h4 {color:#2196F3;margin-bottom:15px;font-size:18px}.quiz-btn {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;border:none;padding:10px 20px;border-radius:25px;cursor:pointer;font-weight:500;margin-top:15px;transition:all 0.3s ease}.quiz-btn:hover {transform:translateY(-2px);box-shadow:0 4px 12px rgba(102, 126, 234, 0.4)}.quiz-answer {display:none;background:#e3f2fd;border:1px solid #bbdefb;border-radius:8px;padding:15px;margin-top:15px;line-height:1.6}.quiz-answer.show {display:block;animation:fadeIn 0.5s ease}@keyframes fadeIn {from {opacity:0;transform:translateY(-10px)}to {opacity:1;transform:translateY(0)}}canvas {box-shadow:0 4px 12px rgba(0, 0, 0, 0.1)}.unified-btn {margin:5px;min-width:120px}.unified-btn-outline {background:transparent;border:2px solid #ddd;color:#666}.unified-btn-outline:hover {background:#f5f5f5;border-color:#bbb}#buildStatus, #luStatus, #operationResult {min-height:24px;font-weight:bold}</style><script>function showCode(language) { const containers = document.querySelectorAll('.code-container'); containers.forEach(container => container.classList.remove('active')); const buttons = document.querySelectorAll('.tab-button'); buttons.forEach(button => button.classList.remove('active')); document.getElementById(language + '-code').classList.add('active'); event.target.classList.add('active'); } function copyCode(language) { const code = document.getElementById(language + '-content').textContent; navigator.clipboard.writeText(code).then(() => { const btn = event.target; const originalText = btn.textContent; btn.textContent = '✅ 已复制!'; btn.style.background = '#4CAF50'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#4CAF50'; }, 2000); }); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); answer.classList.toggle('show'); } function drawTriangularComparison() { const canvas = document.getElementById('triangularComparison'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); const cellSize = 50; const matrices = [ { x: 100, y: 50, type: 'upper', label: '上三角矩阵' }, { x: 350, y: 50, type: 'lower', label: '下三角矩阵' }, { x: 600, y: 50, type: 'unit', label: '单位下三角矩阵' } ]; matrices.forEach(matrix => { ctx.fillStyle = '#333'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText(matrix.label, matrix.x + 75, matrix.y - 10); for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = matrix.x + j * cellSize; const y = matrix.y + i * cellSize; let value = 0; let bgColor = '#f5f5f5'; if (matrix.type === 'upper' && i <= j) { value = Math.floor(Math.random() * 9) + 1; bgColor = '#e3f2fd'; } else if (matrix.type === 'lower' && i >= j) { value = Math.floor(Math.random() * 9) + 1; bgColor = '#e8f5e8'; } else if (matrix.type === 'unit') { if (i === j) { value = 1; bgColor = '#fff3e0'; } else if (i > j) { value = Math.floor(Math.random() * 9) + 1; bgColor = '#e8f5e8'; } } ctx.fillStyle = bgColor; ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 1; ctx.strokeRect(x, y, cellSize, cellSize); if (value > 0) { ctx.fillStyle = '#333'; ctx.font = '14px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(value, x + cellSize/2, y + cellSize/2); } } } }); } let buildStep = 0; let buildType = ''; let buildInterval; let buildMatrix = [[0,0,0],[0,0,0],[0,0,0]]; function startBuildAnimation(type) { buildType = type; buildStep = 0; buildMatrix = [[0,0,0],[0,0,0],[0,0,0]]; const positions = type === 'upper' ? [[0,0],[0,1],[0,2],[1,1],[1,2],[2,2]] : [[0,0],[1,0],[1,1],[2,0],[2,1],[2,2]]; function animate() { const canvas = document.getElementById('buildAnimation'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#333'; ctx.font = '20px Arial'; ctx.textAlign = 'center'; ctx.fillText(`构造${type === 'upper' ? '上' : '下'}三角矩阵`, canvas.width/2, 30); const cellSize = 80; const startX = 160; const startY = 80; for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = startX + j * cellSize; const y = startY + i * cellSize; ctx.fillStyle = '#f5f5f5'; ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 2; ctx.strokeRect(x, y, cellSize, cellSize); } } for (let step = 0; step <= Math.min(buildStep, positions.length - 1); step++) { const pos = positions[step]; const i = pos[0], j = pos[1]; const x = startX + j * cellSize; const y = startY + i * cellSize; const value = Math.floor(Math.random() * 9) + 1; buildMatrix[i][j] = value; if (step === buildStep) { ctx.fillStyle = '#ffeb3b'; } else { ctx.fillStyle = type === 'upper' ? '#e3f2fd' : '#e8f5e8'; } ctx.fillRect(x + 2, y + 2, cellSize - 4, cellSize - 4); ctx.fillStyle = '#333'; ctx.font = '24px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(value, x + cellSize/2, y + cellSize/2); } const status = document.getElementById('buildStatus'); if (buildStep < positions.length) { const pos = positions[buildStep]; status.textContent = `正在填充位置 [${pos[0]}][${pos[1]}]`; } else { status.textContent = `✅ ${type === 'upper' ? '上' : '下'}三角矩阵构造完成！`; clearInterval(buildInterval); } } buildInterval = setInterval(() => { animate(); buildStep++; if (buildStep > 6) { clearInterval(buildInterval); } }, 800); animate(); } let luStep = 0; let luInterval; let originalMatrix = [[4,3,2],[3,4,1],[2,1,3]]; let lMatrix = [[1,0,0],[0,1,0],[0,0,1]]; let uMatrix = [[0,0,0],[0,0,0],[0,0,0]]; function startLUDecomposition() { luStep = 0; originalMatrix = [[4,3,2],[3,4,1],[2,1,3]]; lMatrix = [[1,0,0],[0,1,0],[0,0,1]]; uMatrix = JSON.parse(JSON.stringify(originalMatrix)); document.getElementById('stepLU').disabled = false; drawLUStep(); } function nextLUStep() { if (luStep >= 6) return; switch(luStep) { case 0: lMatrix[1][0] = uMatrix[1][0] / uMatrix[0][0]; lMatrix[2][0] = uMatrix[2][0] / uMatrix[0][0]; break; case 1: uMatrix[1][0] = 0; uMatrix[1][1] -= lMatrix[1][0] * uMatrix[0][1]; uMatrix[1][2] -= lMatrix[1][0] * uMatrix[0][2]; uMatrix[2][0] = 0; uMatrix[2][1] -= lMatrix[2][0] * uMatrix[0][1]; uMatrix[2][2] -= lMatrix[2][0] * uMatrix[0][2]; break; case 2: lMatrix[2][1] = uMatrix[2][1] / uMatrix[1][1]; break; case 3: uMatrix[2][1] = 0; uMatrix[2][2] -= lMatrix[2][1] * uMatrix[1][2]; break; } luStep++; drawLUStep(); if (luStep >= 4) { document.getElementById('stepLU').disabled = true; document.getElementById('luStatus').textContent = '✅ LU分解完成！A = L × U'; } } function drawLUStep() { const canvas = document.getElementById('luDecomposition'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); const cellSize = 60; const matrices = [ { matrix: originalMatrix, x: 50, y: 80, label: 'A', color: '#e3f2fd' }, { matrix: lMatrix, x: 250, y: 80, label: 'L', color: '#e8f5e8' }, { matrix: uMatrix, x: 450, y: 80, label: 'U', color: '#fff3e0' } ]; matrices.forEach((mat, idx) => { ctx.fillStyle = '#333'; ctx.font = '20px Arial'; ctx.textAlign = 'center'; ctx.fillText(mat.label, mat.x + 90, mat.y - 20); for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = mat.x + j * cellSize; const y = mat.y + i * cellSize; let bgColor = mat.color; const value = mat.matrix[i][j]; if (idx === 1 && i < j) bgColor = '#f5f5f5'; if (idx === 2 && i > j) bgColor = '#f5f5f5'; ctx.fillStyle = bgColor; ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 1; ctx.strokeRect(x, y, cellSize, cellSize); if (Math.abs(value) > 0.001) { ctx.fillStyle = '#333'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(value.toFixed(1), x + cellSize/2, y + cellSize/2); } } } if (idx === 0) { ctx.fillStyle = '#333'; ctx.font = '24px Arial'; ctx.fillText('=', mat.x + 200, mat.y + 90); } else if (idx === 1) { ctx.fillText('×', mat.x + 200, mat.y + 90); } }); const stepTexts = [ '开始LU分解', '计算L的第一列元素', '消除A的第一列', '计算L的第二列元素', '消除A的第二列', 'LU分解完成' ]; document.getElementById('luStatus').textContent = stepTexts[Math.min(luStep, stepTexts.length - 1)]; } let matrixA = [[0,0,0],[0,0,0],[0,0,0]]; let matrixB = [[0,0,0],[0,0,0],[0,0,0]]; let resultMatrix = [[0,0,0],[0,0,0],[0,0,0]]; let selectedMatrix = null; function drawInteractiveTriangular() { const canvas = document.getElementById('interactiveTriangular'); const ctx = canvas.getContext('2d'); ctx.clearRect(0, 0, canvas.width, canvas.height); const cellSize = 50; const matrices = [ { matrix: matrixA, x: 50, y: 80, label: 'A (上三角)', color: '#e3f2fd' }, { matrix: matrixB, x: 250, y: 80, label: 'B (下三角)', color: '#e8f5e8' }, { matrix: resultMatrix, x: 550, y: 80, label: 'A × B', color: '#fff3e0' } ]; matrices.forEach((mat, matIdx) => { ctx.fillStyle = '#333'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText(mat.label, mat.x + 75, mat.y - 20); for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { const x = mat.x + j * cellSize; const y = mat.y + i * cellSize; let bgColor = mat.color; if (matIdx === 0 && i > j) bgColor = '#f5f5f5'; if (matIdx === 1 && i < j) bgColor = '#f5f5f5'; ctx.fillStyle = bgColor; ctx.fillRect(x, y, cellSize, cellSize); ctx.strokeStyle = '#333'; ctx.lineWidth = 1; ctx.strokeRect(x, y, cellSize, cellSize); const value = mat.matrix[i][j]; if (value !== 0) { ctx.fillStyle = '#333'; ctx.font = '14px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(value, x + cellSize/2, y + cellSize/2); } } } if (matIdx === 0) { ctx.fillStyle = '#666'; ctx.font = '20px Arial'; ctx.fillText('×', mat.x + 180, mat.y + 75); } else if (matIdx === 1) { ctx.fillText('=', mat.x + 180, mat.y + 75); } }); } function createUpperMatrix() { for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (i <= j) { matrixA[i][j] = Math.floor(Math.random() * 9) + 1; } else { matrixA[i][j] = 0; } } } drawInteractiveTriangular(); document.getElementById('operationResult').textContent = '✅ 已创建上三角矩阵 A'; } function createLowerMatrix() { for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { if (i >= j) { matrixB[i][j] = Math.floor(Math.random() * 9) + 1; } else { matrixB[i][j] = 0; } } } drawInteractiveTriangular(); document.getElementById('operationResult').textContent = '✅ 已创建下三角矩阵 B'; } function multiplyMatrices() { for (let i = 0; i < 3; i++) { for (let j = 0; j < 3; j++) { resultMatrix[i][j] = 0; for (let k = 0; k < 3; k++) { resultMatrix[i][j] += matrixA[i][k] * matrixB[k][j]; } } } drawInteractiveTriangular(); document.getElementById('operationResult').textContent = '✅ 矩阵乘法完成！注意结果的结构特点'; } function clearMatrices() { matrixA = [[0,0,0],[0,0,0],[0,0,0]]; matrixB = [[0,0,0],[0,0,0],[0,0,0]]; resultMatrix = [[0,0,0],[0,0,0],[0,0,0]]; drawInteractiveTriangular(); document.getElementById('operationResult').textContent = '已清空所有矩阵'; } document.addEventListener('DOMContentLoaded', function() { drawTriangularComparison(); drawInteractiveTriangular(); drawLUStep(); document.getElementById('buildUpper').addEventListener('click', () => startBuildAnimation('upper')); document.getElementById('buildLower').addEventListener('click', () => startBuildAnimation('lower')); document.getElementById('resetBuild').addEventListener('click', () => { clearInterval(buildInterval); const ctx = document.getElementById('buildAnimation').getContext('2d'); ctx.clearRect(0, 0, 600, 450); document.getElementById('buildStatus').textContent = ''; }); document.getElementById('startLU').addEventListener('click', startLUDecomposition); document.getElementById('stepLU').addEventListener('click', nextLUStep); document.getElementById('resetLU').addEventListener('click', () => { luStep = 0; document.getElementById('stepLU').disabled = false; document.getElementById('luStatus').textContent = ''; drawLUStep(); }); document.getElementById('createUpperMatrix').addEventListener('click', createUpperMatrix); document.getElementById('createLowerMatrix').addEventListener('click', createLowerMatrix); document.getElementById('multiplyMatrices').addEventListener('click', multiplyMatrices); document.getElementById('clearMatrices').addEventListener('click', clearMatrices); });</script>
+{% endblock %}

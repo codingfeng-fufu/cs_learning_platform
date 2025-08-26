@@ -1,0 +1,1963 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"关键路径" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>{{ breadcrumb_category|default:"算法设计" }}</span>
+        <span>></span>
+        <span>{{ page_title|default:"关键路径" }}</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">🛤️</span>
+            关键路径 (Critical Path Method)
+        </h1>
+        <p>掌握项目管理和任务调度的核心算法</p>
+    </div>
+
+    <!-- 📋 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                知识点概述
+            </h2>
+
+            <div class="concept-overview">
+                <div class="core-concept">
+                    <h3>🎯 核心概念</h3>
+                    <p><strong>关键路径</strong>是项目管理中用于确定完成项目所需最短时间的方法。它通过识别项目中最长的任务序列，找出不能延迟的关键任务。</p>
+                </div>
+
+                <div class="unified-grid unified-grid-3">
+                    <div class="grid-card">
+                        <span class="card-icon">🔑</span>
+                        <h4>关键活动 (Critical Activity)</h4>
+                        <p>任何延迟都会影响项目完成时间的活动</p>
+                    </div>
+                    <div class="grid-card">
+                        <span class="card-icon">⏱️</span>
+                        <h4>浮动时间 (Float Time)</h4>
+                        <p>活动可以延迟而不影响项目工期的时间</p>
+                    </div>
+                    <div class="grid-card">
+                        <span class="card-icon">🎯</span>
+                        <h4>最早/最晚时间 (ES/LS)</h4>
+                        <p>活动可以开始或必须开始的时间点</p>
+                    </div>
+                </div>
+
+                <div class="unified-grid unified-grid-2">
+                    <div class="info-box info-box-info">
+                        <span class="info-icon">📈</span>
+                        <strong>学习难度：</strong>进阶级 - 需要理解图论基础和动态规划思想
+                    </div>
+                    <div class="info-box info-box-warning">
+                        <span class="info-icon">📚</span>
+                        <strong>前置知识：</strong>有向无环图(DAG)、拓扑排序、图的遍历
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔍 概念详解 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🔍</span>
+                概念详解
+            </h2>
+
+            <div class="concept-breakdown">
+                <div class="concept-item">
+                    <h3>1️⃣ 项目网络图</h3>
+                    <p>将项目任务表示为有向无环图，节点代表里程碑事件，边代表活动任务。就像<strong>地铁线路图</strong>一样，每个站点是事件，站点间的线路是活动。</p>
+                </div>
+
+                <div class="concept-item">
+                    <h3>2️⃣ 正向计算 (Forward Pass)</h3>
+                    <p>从项目开始计算每个事件的<strong>最早发生时间(ES)</strong>。如同<strong>多米诺骨牌</strong>，前面的倒下后面的才能开始倒。</p>
+                </div>
+
+                <div class="concept-item">
+                    <h3>3️⃣ 反向计算 (Backward Pass)</h3>
+                    <p>从项目结束倒推每个事件的<strong>最晚发生时间(LS)</strong>。如同<strong>倒推火车时刻表</strong>，要准时到达终点站，每站最晚几点必须出发。</p>
+                </div>
+
+                <div class="concept-item">
+                    <h3>4️⃣ 关键路径识别</h3>
+                    <p>浮动时间为0的路径就是关键路径。如同<strong>交通要道</strong>，任何拥堵都会影响整体通行。</p>
+                </div>
+
+                <div class="common-mistakes">
+                    <h4>🚨 常见误区</h4>
+                    <ul>
+                        <li><strong>误区1：</strong>认为关键路径只有一条 → 实际可能有多条并行关键路径</li>
+                        <li><strong>误区2：</strong>混淆最早时间和最晚时间 → ES是能开始的最早时间，LS是必须开始的最晚时间</li>
+                        <li><strong>误区3：</strong>忽略浮动时间的管理价值 → 浮动时间为资源调配提供灵活性</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 可视化展示 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">📊</span>
+                可视化展示
+            </h2>
+
+            <!-- 静态结构图 -->
+            <div class="visualization-container">
+                <h3>📈 项目网络图结构</h3>
+                <div class="static-diagram">
+                    <canvas id="networkCanvas" width="800" height="400" style="border: 1px solid #ddd; border-radius: 8px;"></canvas>
+                </div>
+            </div>
+
+            <!-- 动态演示控制器 -->
+            <div class="demo-controls">
+                <h3>🎮 交互式演示</h3>
+                <div class="control-panel">
+                    <button id="startDemo" class="unified-btn unified-btn-primary">开始演示</button>
+                    <button id="stepForward" class="unified-btn unified-btn-secondary">正向计算</button>
+                    <button id="stepBackward" class="unified-btn unified-btn-secondary">反向计算</button>
+                    <button id="showCritical" class="unified-btn unified-btn-success">显示关键路径</button>
+                    <button id="resetDemo" class="unified-btn unified-btn-warning">重置</button>
+                </div>
+                <div id="stepInfo" class="step-info"></div>
+            </div>
+
+            <!-- 计算过程展示 -->
+            <div class="calculation-display">
+                <h3>📝 计算过程</h3>
+                <div id="calculationSteps" class="calculation-steps"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 实际应用 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">🌟</span>
+                实际应用
+            </h2>
+
+            <div class="applications">
+                <div class="app-example">
+                    <h3>🏗️ 建筑工程管理</h3>
+                    <p>在建造摩天大楼时，地基→框架→装修→验收，每个阶段有依赖关系。关键路径帮助确定最短建设周期和资源配置。</p>
+                </div>
+
+                <div class="app-example">
+                    <h3>💻 软件开发流程</h3>
+                    <p>需求分析→设计→编码→测试→部署，识别关键路径可以优化开发进度，合理安排人员和资源。</p>
+                </div>
+
+                <div class="app-example">
+                    <h3>📱 产品发布规划</h3>
+                    <p>市场调研→产品设计→生产→营销→销售，找到关键路径确保产品按时上市，抢占市场先机。</p>
+                </div>
+            </div>
+
+            <!-- 代码示例 -->
+            <div class="code-examples">
+                <h3>💻 算法实现</h3>
+
+                <!-- 语言选择器 -->
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="python">Python</button>
+                    <button class="lang-btn" data-lang="java">Java</button>
+                    <button class="lang-btn" data-lang="cpp">C++</button>
+                </div>
+
+                <!-- Python代码 -->
+                <div id="code-python" class="code-container active">
+                    <div class="code-header">
+                        <span>Python实现</span>
+                        <button class="copy-btn" data-code="python">📋 复制代码</button>
+                    </div>
+                    <pre><code class="python">from collections import defaultdict, deque
+
+class CriticalPath:
+    def __init__(self):
+        self.graph = defaultdict(list)  # 邻接表
+        self.in_degree = defaultdict(int)  # 入度
+        self.activities = {}  # 活动时间
+
+    def add_activity(self, start, end, duration):
+        """添加活动"""
+        self.graph[start].append(end)
+        self.in_degree[end] += 1
+        self.activities[(start, end)] = duration
+        if start not in self.in_degree:
+            self.in_degree[start] = 0
+
+    def find_critical_path(self):
+        """寻找关键路径"""
+        # 正向计算最早时间
+        earliest_time = self.forward_pass()
+        # 反向计算最晚时间
+        latest_time = self.backward_pass(earliest_time)
+        # 识别关键路径
+        critical_path = self.identify_critical_activities(
+            earliest_time, latest_time)
+
+        return earliest_time, latest_time, critical_path
+
+    def forward_pass(self):
+        """正向计算最早发生时间"""
+        earliest = defaultdict(int)
+        queue = deque()
+        temp_in_degree = self.in_degree.copy()
+
+        # 找到所有起始节点
+        for node in temp_in_degree:
+            if temp_in_degree[node] == 0:
+                queue.append(node)
+
+        while queue:
+            current = queue.popleft()
+            for neighbor in self.graph[current]:
+                # 更新最早时间
+                activity_time = self.activities[(current, neighbor)]
+                earliest[neighbor] = max(earliest[neighbor],
+                                       earliest[current] + activity_time)
+                temp_in_degree[neighbor] -= 1
+                if temp_in_degree[neighbor] == 0:
+                    queue.append(neighbor)
+
+        return dict(earliest)
+
+    def backward_pass(self, earliest_time):
+        """反向计算最晚发生时间"""
+        # 项目总时间
+        project_time = max(earliest_time.values()) if earliest_time else 0
+        latest = defaultdict(lambda: project_time)
+
+        # 从终点开始反向计算
+        end_nodes = [node for node in earliest_time
+                    if earliest_time[node] == project_time]
+
+        for end_node in end_nodes:
+            latest[end_node] = project_time
+
+        # 拓扑排序的逆序进行反向计算
+        visited = set()
+
+        def dfs_backward(node):
+            if node in visited:
+                return
+            visited.add(node)
+
+            for next_node in self.graph[node]:
+                dfs_backward(next_node)
+                activity_time = self.activities[(node, next_node)]
+                latest[node] = min(latest[node],
+                                 latest[next_node] - activity_time)
+
+        for node in self.graph:
+            dfs_backward(node)
+
+        return dict(latest)
+
+    def identify_critical_activities(self, earliest, latest):
+        """识别关键活动"""
+        critical = []
+        for (start, end), duration in self.activities.items():
+            # 浮动时间 = 最晚时间 - 最早时间 - 活动时间
+            float_time = (latest[end] - earliest[start] - duration)
+            if float_time == 0:
+                critical.append((start, end))
+        return critical
+
+# 使用示例
+if __name__ == "__main__":
+    cp = CriticalPath()
+
+    # 添加项目活动 (起点, 终点, 持续时间)
+    cp.add_activity('Start', 'A', 3)
+    cp.add_activity('Start', 'B', 4)
+    cp.add_activity('A', 'C', 2)
+    cp.add_activity('B', 'C', 1)
+    cp.add_activity('C', 'End', 3)
+
+    earliest, latest, critical = cp.find_critical_path()
+
+    print("最早时间:", earliest)
+    print("最晚时间:", latest)
+    print("关键路径活动:", critical)</code></pre>
+                </div>
+
+                <!-- Java代码 -->
+                <div id="code-java" class="code-container">
+                    <div class="code-header">
+                        <span>Java实现</span>
+                        <button class="copy-btn" data-code="java">📋 复制代码</button>
+                    </div>
+                    <pre><code class="java">import java.util.*;
+
+public class CriticalPath {
+    private Map<String, List<String>> graph;
+    private Map<String, Integer> inDegree;
+    private Map<String, Map<String, Integer>> activities;
+
+    public CriticalPath() {
+        this.graph = new HashMap<>();
+        this.inDegree = new HashMap<>();
+        this.activities = new HashMap<>();
+    }
+
+    public void addActivity(String start, String end, int duration) {
+        graph.computeIfAbsent(start, k -> new ArrayList<>()).add(end);
+        inDegree.put(end, inDegree.getOrDefault(end, 0) + 1);
+        inDegree.putIfAbsent(start, 0);
+
+        activities.computeIfAbsent(start, k -> new HashMap<>()).put(end, duration);
+    }
+
+    public CriticalPathResult findCriticalPath() {
+        Map<String, Integer> earliestTime = forwardPass();
+        Map<String, Integer> latestTime = backwardPass(earliestTime);
+        List<String> criticalPath = identifyCriticalActivities(earliestTime, latestTime);
+
+        return new CriticalPathResult(earliestTime, latestTime, criticalPath);
+    }
+
+    private Map<String, Integer> forwardPass() {
+        Map<String, Integer> earliest = new HashMap<>();
+        Queue<String> queue = new LinkedList<>();
+        Map<String, Integer> tempInDegree = new HashMap<>(inDegree);
+
+        // 初始化起始节点
+        for (String node : tempInDegree.keySet()) {
+            earliest.put(node, 0);
+            if (tempInDegree.get(node) == 0) {
+                queue.offer(node);
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            String current = queue.poll();
+
+            if (graph.containsKey(current)) {
+                for (String neighbor : graph.get(current)) {
+                    int activityTime = activities.get(current).get(neighbor);
+                    earliest.put(neighbor, Math.max(earliest.get(neighbor),
+                                                  earliest.get(current) + activityTime));
+
+                    tempInDegree.put(neighbor, tempInDegree.get(neighbor) - 1);
+                    if (tempInDegree.get(neighbor) == 0) {
+                        queue.offer(neighbor);
+                    }
+                }
+            }
+        }
+
+        return earliest;
+    }
+
+    private Map<String, Integer> backwardPass(Map<String, Integer> earliestTime) {
+        int projectTime = Collections.max(earliestTime.values());
+        Map<String, Integer> latest = new HashMap<>();
+
+        // 初始化所有节点的最晚时间
+        for (String node : earliestTime.keySet()) {
+            latest.put(node, projectTime);
+        }
+
+        // 找到终点节点并设置最晚时间
+        for (String node : earliestTime.keySet()) {
+            if (earliestTime.get(node) == projectTime) {
+                latest.put(node, projectTime);
+            }
+        }
+
+        // 反向计算
+        Set<String> visited = new HashSet<>();
+        for (String node : graph.keySet()) {
+            dfsBackward(node, latest, visited);
+        }
+
+        return latest;
+    }
+
+    private void dfsBackward(String node, Map<String, Integer> latest, Set<String> visited) {
+        if (visited.contains(node)) {
+            return;
+        }
+        visited.add(node);
+
+        if (graph.containsKey(node)) {
+            for (String nextNode : graph.get(node)) {
+                dfsBackward(nextNode, latest, visited);
+                int activityTime = activities.get(node).get(nextNode);
+                latest.put(node, Math.min(latest.get(node),
+                                        latest.get(nextNode) - activityTime));
+            }
+        }
+    }
+
+    private List<String> identifyCriticalActivities(Map<String, Integer> earliest,
+                                                   Map<String, Integer> latest) {
+        List<String> critical = new ArrayList<>();
+
+        for (String start : activities.keySet()) {
+            for (String end : activities.get(start).keySet()) {
+                int duration = activities.get(start).get(end);
+                int floatTime = latest.get(end) - earliest.get(start) - duration;
+
+                if (floatTime == 0) {
+                    critical.add(start + " -> " + end);
+                }
+            }
+        }
+
+        return critical;
+    }
+
+    public static class CriticalPathResult {
+        public final Map<String, Integer> earliestTime;
+        public final Map<String, Integer> latestTime;
+        public final List<String> criticalActivities;
+
+        public CriticalPathResult(Map<String, Integer> earliest,
+                                Map<String, Integer> latest,
+                                List<String> critical) {
+            this.earliestTime = earliest;
+            this.latestTime = latest;
+            this.criticalActivities = critical;
+        }
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        CriticalPath cp = new CriticalPath();
+
+        cp.addActivity("Start", "A", 3);
+        cp.addActivity("Start", "B", 4);
+        cp.addActivity("A", "C", 2);
+        cp.addActivity("B", "C", 1);
+        cp.addActivity("C", "End", 3);
+
+        CriticalPathResult result = cp.findCriticalPath();
+
+        System.out.println("最早时间: " + result.earliestTime);
+        System.out.println("最晚时间: " + result.latestTime);
+        System.out.println("关键路径活动: " + result.criticalActivities);
+    }
+}</code></pre>
+                </div>
+
+                <!-- C++代码 -->
+                <div id="code-cpp" class="code-container">
+                    <div class="code-header">
+                        <span>C++实现</span>
+                        <button class="copy-btn" data-code="cpp">📋 复制代码</button>
+                    </div>
+                    <pre><code class="cpp">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;unordered_map&gt;
+#include &lt;unordered_set&gt;
+#include &lt;queue&gt;
+#include &lt;algorithm&gt;
+#include &lt;climits&gt;
+
+class CriticalPath {
+private:
+    std::unordered_map&lt;std::string, std::vector&lt;std::string&gt;&gt; graph;
+    std::unordered_map&lt;std::string, int&gt; inDegree;
+    std::unordered_map&lt;std::string, std::unordered_map&lt;std::string, int&gt;&gt; activities;
+
+public:
+    void addActivity(const std::string& start, const std::string& end, int duration) {
+        graph[start].push_back(end);
+        inDegree[end]++;
+        if (inDegree.find(start) == inDegree.end()) {
+            inDegree[start] = 0;
+        }
+        activities[start][end] = duration;
+    }
+
+    struct CriticalPathResult {
+        std::unordered_map&lt;std::string, int&gt; earliestTime;
+        std::unordered_map&lt;std::string, int&gt; latestTime;
+        std::vector&lt;std::pair&lt;std::string, std::string&gt;&gt; criticalActivities;
+    };
+
+    CriticalPathResult findCriticalPath() {
+        auto earliestTime = forwardPass();
+        auto latestTime = backwardPass(earliestTime);
+        auto criticalActivities = identifyCriticalActivities(earliestTime, latestTime);
+
+        return {earliestTime, latestTime, criticalActivities};
+    }
+
+private:
+    std::unordered_map&lt;std::string, int&gt; forwardPass() {
+        std::unordered_map&lt;std::string, int&gt; earliest;
+        std::queue&lt;std::string&gt; q;
+        auto tempInDegree = inDegree;
+
+        // 初始化和找到起始节点
+        for (const auto& pair : inDegree) {
+            earliest[pair.first] = 0;
+            if (pair.second == 0) {
+                q.push(pair.first);
+            }
+        }
+
+        while (!q.empty()) {
+            std::string current = q.front();
+            q.pop();
+
+            for (const std::string& neighbor : graph[current]) {
+                int activityTime = activities[current][neighbor];
+                earliest[neighbor] = std::max(earliest[neighbor],
+                                            earliest[current] + activityTime);
+
+                tempInDegree[neighbor]--;
+                if (tempInDegree[neighbor] == 0) {
+                    q.push(neighbor);
+                }
+            }
+        }
+
+        return earliest;
+    }
+
+    std::unordered_map&lt;std::string, int&gt; backwardPass(
+        const std::unordered_map&lt;std::string, int&gt;& earliestTime) {
+
+        int projectTime = 0;
+        for (const auto& pair : earliestTime) {
+            projectTime = std::max(projectTime, pair.second);
+        }
+
+        std::unordered_map&lt;std::string, int&gt; latest;
+        for (const auto& pair : earliestTime) {
+            latest[pair.first] = projectTime;
+        }
+
+        // 设置终点节点的最晚时间
+        for (const auto& pair : earliestTime) {
+            if (pair.second == projectTime) {
+                latest[pair.first] = projectTime;
+            }
+        }
+
+        // 反向计算
+        std::unordered_set&lt;std::string&gt; visited;
+        for (const auto& pair : graph) {
+            dfsBackward(pair.first, latest, visited);
+        }
+
+        return latest;
+    }
+
+    void dfsBackward(const std::string& node,
+                    std::unordered_map&lt;std::string, int&gt;& latest,
+                    std::unordered_set&lt;std::string&gt;& visited) {
+        if (visited.find(node) != visited.end()) {
+            return;
+        }
+        visited.insert(node);
+
+        for (const std::string& nextNode : graph[node]) {
+            dfsBackward(nextNode, latest, visited);
+            int activityTime = activities[node][nextNode];
+            latest[node] = std::min(latest[node], latest[nextNode] - activityTime);
+        }
+    }
+
+    std::vector&lt;std::pair&lt;std::string, std::string&gt;&gt; identifyCriticalActivities(
+        const std::unordered_map&lt;std::string, int&gt;& earliest,
+        const std::unordered_map&lt;std::string, int&gt;& latest) {
+
+        std::vector&lt;std::pair&lt;std::string, std::string&gt;&gt; critical;
+
+        for (const auto& startPair : activities) {
+            const std::string& start = startPair.first;
+            for (const auto& endPair : startPair.second) {
+                const std::string& end = endPair.first;
+                int duration = endPair.second;
+
+                int floatTime = latest.at(end) - earliest.at(start) - duration;
+                if (floatTime == 0) {
+                    critical.emplace_back(start, end);
+                }
+            }
+        }
+
+        return critical;
+    }
+};
+
+// 使用示例
+int main() {
+    CriticalPath cp;
+
+    cp.addActivity("Start", "A", 3);
+    cp.addActivity("Start", "B", 4);
+    cp.addActivity("A", "C", 2);
+    cp.addActivity("B", "C", 1);
+    cp.addActivity("C", "End", 3);
+
+    auto result = cp.findCriticalPath();
+
+    std::cout &lt;&lt; "最早时间:\n";
+    for (const auto& pair : result.earliestTime) {
+        std::cout &lt;&lt; pair.first &lt;&lt; ": " &lt;&lt; pair.second &lt;&lt; "\n";
+    }
+
+    std::cout &lt;&lt; "\n最晚时间:\n";
+    for (const auto& pair : result.latestTime) {
+        std::cout &lt;&lt; pair.first &lt;&lt; ": " &lt;&lt; pair.second &lt;&lt; "\n";
+    }
+
+    std::cout &lt;&lt; "\n关键路径活动:\n";
+    for (const auto& activity : result.criticalActivities) {
+        std::cout &lt;&lt; activity.first &lt;&lt; " -> " &lt;&lt; activity.second &lt;&lt; "\n";
+    }
+
+    return 0;
+}</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 学习检验 -->
+    <div class="content-card">
+        <div class="content-section">
+            <h2 class="section-title">
+                <span class="section-icon">✅</span>
+                学习检验
+            </h2>
+
+            <div class="quiz-section">
+                <h3>🎯 常见问题解答</h3>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 为什么有些项目会有多条关键路径？这种情况下如何管理？</h4>
+                    </div>
+                    <div class="answer" id="answer1">
+                        <button class="show-answer-btn" onclick="showAnswer(1)">查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>详细解答：</strong><br>
+                            当项目中存在多条路径的总时长都等于项目最短完成时间时，就会出现多条关键路径。这种情况在实际项目中很常见。<br><br>
+                            <strong>管理策略：</strong><br>
+                            • <strong>同步监控：</strong>必须同时密切关注所有关键路径上的活动<br>
+                            • <strong>资源协调：</strong>确保多条路径都有足够的资源支持<br>
+                            • <strong>风险分散：</strong>多条关键路径意味着项目风险更高，需要制定更全面的应急预案<br>
+                            • <strong>沟通加强：</strong>各关键路径的负责人之间需要加强协调沟通
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 如何利用非关键路径上活动的浮动时间来优化资源配置？</h4>
+                    </div>
+                    <div class="answer" id="answer2">
+                        <button class="show-answer-btn" onclick="showAnswer(2)">查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>浮动时间的优化利用：</strong><br><br>
+                            <strong>1. 资源平衡：</strong><br>
+                            • 将关键路径上的人员临时调配到非关键活动<br>
+                            • 利用浮动时间错峰使用共享资源（设备、场地等）<br><br>
+                            <strong>2. 成本优化：</strong><br>
+                            • 非关键活动可以选择成本更低但时间稍长的执行方式<br>
+                            • 避免支付加班费或租用昂贵设备<br><br>
+                            <strong>3. 质量提升：</strong><br>
+                            • 利用额外时间进行更充分的质量检查<br>
+                            • 为非关键活动安排更有经验但速度较慢的人员<br><br>
+                            <strong>4. 风险缓冲：</strong><br>
+                            • 保留部分浮动时间作为风险缓冲，应对意外情况
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 在实际项目中，关键路径可能会发生变化吗？如何应对？</h4>
+                    </div>
+                    <div class="answer" id="answer3">
+                        <button class="show-answer-btn" onclick="showAnswer(3)">查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>关键路径的动态变化：</strong><br><br>
+                            <strong>变化原因：</strong><br>
+                            • 某些活动提前或延后完成<br>
+                            • 资源可用性发生变化<br>
+                            • 项目需求或范围调整<br>
+                            • 外部环境因素影响<br><br>
+                            <strong>应对策略：</strong><br>
+                            <strong>1. 动态监控：</strong>定期重新计算关键路径（建议每周或每次里程碑后）<br>
+                            <strong>2. 预警系统：</strong>当非关键活动的浮动时间减少到阈值时发出警告<br>
+                            <strong>3. 灵活调配：</strong>及时调整资源分配，将重点转移到新的关键路径<br>
+                            <strong>4. 情景规划：</strong>提前分析可能的关键路径变化情况，制定应对预案<br>
+                            <strong>5. 沟通机制：</strong>建立快速的信息反馈机制，确保关键路径变化能及时传达给相关人员
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ CPM与PERT有什么区别？什么时候应该使用哪种方法？</h4>
+                    </div>
+                    <div class="answer" id="answer4">
+                        <button class="show-answer-btn" onclick="showAnswer(4)">查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>CPM vs PERT 对比分析：</strong><br><br>
+                            <table style="width:100%; border-collapse: collapse; margin: 10px 0;">
+                                <tr style="background:#f3f4f6;">
+                                    <th style="border:1px solid #ddd; padding:8px;">特征</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">CPM (关键路径法)</th>
+                                    <th style="border:1px solid #ddd; padding:8px;">PERT (计划评审技术)</th>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>时间估算</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">单一确定时间</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">三点估算(乐观/最可能/悲观)</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>适用性</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">重复性、经验丰富的项目</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">创新性、不确定性高的项目</td>
+                                </tr>
+                                <tr>
+                                    <td style="border:1px solid #ddd; padding:8px;"><strong>重点</strong></td>
+                                    <td style="border:1px solid #ddd; padding:8px;">时间-成本权衡</td>
+                                    <td style="border:1px solid #ddd; padding:8px;">不确定性和风险管理</td>
+                                </tr>
+                            </table>
+                            <br><strong>选择建议：</strong><br>
+                            • <strong>选择CPM：</strong>建筑工程、制造业等标准化项目<br>
+                            • <strong>选择PERT：</strong>研发项目、新产品开发等创新性项目<br>
+                            • <strong>混合使用：</strong>复杂项目可以对不同部分采用不同方法
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="question">
+                        <h4>❓ 如何处理关键路径上出现的瓶颈和延误？</h4>
+                    </div>
+                    <div class="answer" id="answer5">
+                        <button class="show-answer-btn" onclick="showAnswer(5)">查看答案</button>
+                        <div class="answer-content" style="display: none;">
+                            <strong>关键路径瓶颈处理策略：</strong><br><br>
+                            <strong>即时响应措施：</strong><br>
+                            • <strong>资源增投：</strong>向瓶颈活动增加人力、设备或预算<br>
+                            • <strong>并行执行：</strong>将串行活动改为并行，缩短总工期<br>
+                            • <strong>工作分解：</strong>将大活动分解为可并行的小活动<br>
+                            • <strong>外包加速：</strong>将部分工作外包给专业团队<br><br>
+                            <strong>结构调整方案：</strong><br>
+                            • <strong>快速跟进：</strong>在前一活动未完全结束时就开始后续活动<br>
+                            • <strong>赶工：</strong>投入额外成本缩短活动时间<br>
+                            • <strong>替代方案：</strong>寻找完成任务的替代技术或方法<br>
+                            • <strong>范围调整：</strong>与干系人协商，适当减少项目范围<br><br>
+                            <strong>预防措施：</strong><br>
+                            • 为关键活动预留时间缓冲<br>
+                            • 建立早期预警指标<br>
+                            • 培养多技能团队成员<br>
+                            • 与供应商建立紧急供应协议
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="learning-path">
+                <h3>🛤️ 渐进式学习建议</h3>
+                <div class="unified-grid unified-grid-2">
+                    <div class="path-card">
+                        <h4>🎯 基础掌握</h4>
+                        <ul>
+                            <li>理解项目网络图的构建</li>
+                            <li>练习正向和反向计算</li>
+                            <li>识别简单项目的关键路径</li>
+                        </ul>
+                    </div>
+                    <div class="path-card">
+                        <h4>📈 进阶应用</h4>
+                        <ul>
+                            <li>处理复杂的多路径项目</li>
+                            <li>学习资源平衡和优化</li>
+                            <li>掌握时间-成本权衡分析</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="resources">
+                <h3>📚 推荐学习资源</h3>
+                <div class="unified-grid unified-grid-3">
+                    <div class="resource-card">
+                        <span class="card-icon">🛠️</span>
+                        <h4>工具推荐</h4>
+                        <p>Microsoft Project, Primavera P6, GanttProject</p>
+                    </div>
+                    <div class="resource-card">
+                        <span class="card-icon">📖</span>
+                        <h4>相关主题</h4>
+                        <p>PERT分析、甘特图、资源分配、项目调度</p>
+                    </div>
+                    <div class="resource-card">
+                        <span class="card-icon">🎓</span>
+                        <h4>后续学习</h4>
+                        <p>运筹学、线性规划、启发式算法、AI调度</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导航按钮 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<style>
+/* 基础样式 */
+.concept-overview {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.core-concept {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.core-concept h3 {
+    margin-bottom: 10px;
+    font-size: 1.3em;
+}
+
+.concept-breakdown .concept-item {
+    background: #f8f9ff;
+    border-left: 4px solid #4f46e5;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 0 10px 10px 0;
+}
+
+.common-mistakes {
+    background: #fef2f2;
+    border: 2px solid #fecaca;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.common-mistakes h4 {
+    color: #dc2626;
+    margin-bottom: 15px;
+}
+
+/* 可视化样式 */
+.visualization-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.static-diagram {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.demo-controls {
+    background: #f0f4f8;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.control-panel {
+    margin-bottom: 20px;
+}
+
+.control-panel button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.step-info {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 15px;
+    min-height: 60px;
+    border: 2px solid #e5e7eb;
+}
+
+.calculation-display {
+    background: #1f2937;
+    color: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+}
+
+.calculation-steps {
+    font-family: 'Monaco', 'Menlo', monospace;
+    line-height: 1.6;
+}
+
+/* 应用示例样式 */
+.applications {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.app-example {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.app-example h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+/* 代码示例样式 */
+.code-examples {
+    margin-top: 30px;
+}
+
+.language-selector {
+    display: flex;
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 15px;
+    justify-content: center;
+}
+
+.lang-btn {
+    flex: 1;
+    max-width: 150px;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.lang-btn.active {
+    background: white;
+    color: #4f46e5;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.code-container {
+    display: none;
+    background: #1e1e1e;
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.code-container.active {
+    display: block;
+}
+
+.code-header {
+    background: #2d2d2d;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.copy-btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background 0.3s ease;
+}
+
+.copy-btn:hover {
+    background: #4338ca;
+}
+
+pre {
+    margin: 0;
+    padding: 20px;
+    background: #1e1e1e;
+    color: #d4d4d4;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-family: 'Monaco', 'Menlo', monospace;
+}
+
+/* 学习检验样式 */
+.quiz-section {
+    margin-bottom: 40px;
+}
+
+.quiz-item {
+    background: #f8f9ff;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    border: 2px solid #e5e7eb;
+}
+
+.question h4 {
+    color: #1f2937;
+    margin-bottom: 15px;
+}
+
+.options {
+    margin: 15px 0;
+}
+
+.options label {
+    display: block;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.options label:hover {
+    color: #4f46e5;
+}
+
+.options input[type="radio"] {
+    margin-right: 10px;
+}
+
+.answer {
+    margin-top: 15px;
+}
+
+.show-answer-btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.show-answer-btn:hover {
+    background: #4338ca;
+}
+
+.answer-content {
+    margin-top: 15px;
+    padding: 15px;
+    background: #dcfce7;
+    border-left: 4px solid #16a34a;
+    border-radius: 0 8px 8px 0;
+}
+
+/* 学习路径样式 */
+.learning-path {
+    margin: 30px 0;
+}
+
+.path-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 15px;
+}
+
+.path-card h4 {
+    margin-bottom: 15px;
+}
+
+.path-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.path-card li {
+    padding: 5px 0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.path-card li:before {
+    content: "✅";
+    position: absolute;
+    left: 0;
+}
+
+/* 资源卡片样式 */
+.resources {
+    margin-top: 30px;
+}
+
+.resource-card {
+    text-align: center;
+    padding: 25px;
+    background: #f8f9ff;
+    border-radius: 15px;
+    border: 2px solid #e5e7eb;
+    transition: transform 0.3s ease;
+}
+
+.resource-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .unified-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .language-selector {
+        flex-direction: column;
+    }
+
+    .lang-btn {
+        max-width: none;
+        margin: 2px 0;
+    }
+
+    .demo-controls button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+    }
+}
+</style>
+
+<script>
+// Canvas绘图相关
+let canvas, ctx;
+let animationFrame;
+let currentStep = 0;
+let showingCritical = false;
+let isAnimating = false;
+let animationProgress = 0;
+let particles = [];
+let pulseNodes = [];
+let calculatingNode = null;
+
+// 节点和边的数据结构
+let nodes = [
+    {id: 'Start', x: 100, y: 200, es: 0, ls: 0, targetES: 0, targetLS: 0, radius: 35, pulse: 0, calculating: false},
+    {id: 'A', x: 280, y: 120, es: 0, ls: 0, targetES: 0, targetLS: 0, radius: 35, pulse: 0, calculating: false},
+    {id: 'B', x: 280, y: 280, es: 0, ls: 0, targetES: 0, targetLS: 0, radius: 35, pulse: 0, calculating: false},
+    {id: 'C', x: 460, y: 200, es: 0, ls: 0, targetES: 0, targetLS: 0, radius: 35, pulse: 0, calculating: false},
+    {id: 'End', x: 640, y: 200, es: 0, ls: 0, targetES: 0, targetLS: 0, radius: 35, pulse: 0, calculating: false}
+];
+
+let edges = [
+    {from: 'Start', to: 'A', duration: 3, critical: false, pulse: 0, calculating: false, flowParticles: []},
+    {from: 'Start', to: 'B', duration: 4, critical: true, pulse: 0, calculating: false, flowParticles: []},
+    {from: 'A', to: 'C', duration: 2, critical: false, pulse: 0, calculating: false, flowParticles: []},
+    {from: 'B', to: 'C', duration: 1, critical: true, pulse: 0, calculating: false, flowParticles: []},
+    {from: 'C', to: 'End', duration: 3, critical: true, pulse: 0, calculating: false, flowParticles: []}
+];
+
+// 粒子系统
+class Particle {
+    constructor(x, y, type = 'normal') {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.life = 1.0;
+        this.maxLife = 60 + Math.random() * 40;
+        this.size = 2 + Math.random() * 3;
+        this.type = type;
+        this.hue = type === 'critical' ? 0 : 220; // 红色 vs 蓝色
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.life -= 1/this.maxLife;
+        this.vx *= 0.99;
+        this.vy *= 0.99;
+        return this.life > 0;
+    }
+
+    draw(ctx) {
+        const alpha = this.life;
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = `hsla(${this.hue}, 70%, 60%, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+// 流动粒子类
+class FlowParticle {
+    constructor(startX, startY, endX, endY) {
+        this.startX = startX;
+        this.startY = startY;
+        this.endX = endX;
+        this.endY = endY;
+        this.progress = 0;
+        this.x = startX;
+        this.y = startY;
+        this.speed = 0.02;
+        this.size = 3;
+        this.life = 1.0;
+    }
+
+    update() {
+        this.progress += this.speed;
+        if (this.progress > 1) {
+            this.progress = 0;
+        }
+
+        // 平滑插值
+        this.x = this.startX + (this.endX - this.startX) * this.progress;
+        this.y = this.startY + (this.endY - this.startY) * this.progress;
+    }
+
+    draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = 0.8;
+        ctx.fillStyle = '#10b981';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#10b981';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    canvas = document.getElementById('networkCanvas');
+    ctx = canvas.getContext('2d');
+
+    // 设置高DPI支持
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+
+    // 启动动画循环
+    animate();
+
+    // 绑定事件
+    document.getElementById('startDemo').addEventListener('click', startDemo);
+    document.getElementById('stepForward').addEventListener('click', stepForward);
+    document.getElementById('stepBackward').addEventListener('click', stepBackward);
+    document.getElementById('showCritical').addEventListener('click', showCriticalPath);
+    document.getElementById('resetDemo').addEventListener('click', resetDemo);
+
+    // 代码切换
+    setupCodeTabs();
+    setupCopyButtons();
+});
+
+// 主动画循环
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 更新和绘制粒子
+    updateParticles();
+
+    // 更新节点动画
+    updateNodeAnimations();
+
+    // 更新边的动画
+    updateEdgeAnimations();
+
+    // 绘制网络
+    drawNetwork();
+
+    requestAnimationFrame(animate);
+}
+
+// 绘制网络（增强版）
+function drawNetwork() {
+    // 绘制背景网格
+    drawGrid();
+
+    // 绘制边和箭头
+    edges.forEach((edge, index) => {
+        const fromNode = nodes.find(n => n.id === edge.from);
+        const toNode = nodes.find(n => n.id === edge.to);
+
+        drawEdge(fromNode, toNode, edge, index);
+    });
+
+    // 绘制节点
+    nodes.forEach((node, index) => {
+        drawNode(node, index);
+    });
+
+    // 绘制粒子效果
+    drawParticles();
+}
+
+// 绘制背景网格
+function drawGrid() {
+    ctx.save();
+    ctx.globalAlpha = 0.1;
+    ctx.strokeStyle = '#6b7280';
+    ctx.lineWidth = 1;
+
+    // 垂直线
+    for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+
+    // 水平线
+    for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+
+    ctx.restore();
+}
+
+// 增强的边绘制
+function drawEdge(fromNode, toNode, edge, index) {
+    ctx.save();
+
+    // 计算边的位置
+    const dx = toNode.x - fromNode.x;
+    const dy = toNode.y - fromNode.y;
+    const distance = Math.sqrt(dx*dx + dy*dy);
+    const unitX = dx / distance;
+    const unitY = dy / distance;
+
+    const startX = fromNode.x + unitX * fromNode.radius;
+    const startY = fromNode.y + unitY * fromNode.radius;
+    const endX = toNode.x - unitX * toNode.radius;
+    const endY = toNode.y - unitY * toNode.radius;
+
+    // 边的颜色和宽度
+    let strokeColor = '#6b7280';
+    let lineWidth = 3;
+    let glowSize = 0;
+
+    if (edge.critical && showingCritical) {
+        strokeColor = '#ef4444';
+        lineWidth = 4;
+        glowSize = 8;
+    } else if (edge.calculating) {
+        strokeColor = '#10b981';
+        lineWidth = 4;
+        glowSize = 6;
+    }
+
+    // 脉冲效果
+    if (edge.pulse > 0) {
+        glowSize += edge.pulse * 10;
+        ctx.globalAlpha = 0.3 + edge.pulse * 0.7;
+    }
+
+    // 绘制发光效果
+    if (glowSize > 0) {
+        ctx.strokeStyle = strokeColor;
+        ctx.lineWidth = lineWidth + glowSize;
+        ctx.globalAlpha = 0.3;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+    }
+
+    // 绘制主线
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = strokeColor;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.moveTo(startX, startY);
+    ctx.lineTo(endX, endY);
+    ctx.stroke();
+
+    // 绘制箭头
+    drawArrow(ctx, startX, startY, endX, endY, strokeColor, lineWidth);
+
+    // 绘制权重标签
+    const midX = (startX + endX) / 2;
+    const midY = (startY + endY) / 2 - 20;
+
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(edge.duration.toString(), midX, midY);
+
+    // 绘制流动粒子
+    edge.flowParticles.forEach(particle => {
+        particle.draw(ctx);
+    });
+
+    ctx.restore();
+}
+
+// 增强的节点绘制
+function drawNode(node, index) {
+    ctx.save();
+
+    // 脉冲动画
+    const pulseRadius = node.radius + node.pulse * 15;
+    let nodeColor = '#3b82f6';
+
+    if (showingCritical && node.ls === node.es && currentStep > 1) {
+        nodeColor = '#ef4444';
+    } else if (node.calculating) {
+        nodeColor = '#10b981';
+    }
+
+    // 绘制发光效果
+    if (node.pulse > 0 || node.calculating) {
+        const glowRadius = pulseRadius + 10;
+        const gradient = ctx.createRadialGradient(node.x, node.y, node.radius, node.x, node.y, glowRadius);
+        gradient.addColorStop(0, nodeColor + '40');
+        gradient.addColorStop(1, nodeColor + '00');
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, glowRadius, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+
+    // 绘制主节点
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, pulseRadius, 0, 2 * Math.PI);
+
+    // 渐变填充
+    const gradient = ctx.createRadialGradient(node.x - 10, node.y - 10, 0, node.x, node.y, pulseRadius);
+    gradient.addColorStop(0, nodeColor + 'dd');
+    gradient.addColorStop(1, nodeColor);
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    // 边框
+    ctx.strokeStyle = '#1f2937';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // 节点标签
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(node.id, node.x, node.y + 5);
+
+    // ES/LS标签（带动画）
+    if (currentStep > 0) {
+        ctx.fillStyle = '#1f2937';
+        ctx.font = 'bold 12px Arial';
+
+        // ES标签
+        const esText = `ES:${Math.round(node.es)}`;
+        ctx.fillText(esText, node.x - 25, node.y - 50);
+
+        if (currentStep > 1) {
+            // LS标签
+            const lsText = `LS:${Math.round(node.ls)}`;
+            ctx.fillText(lsText, node.x + 25, node.y - 50);
+
+            // 浮动时间
+            const floatTime = node.ls - node.es;
+            if (floatTime >= 0) {
+                ctx.fillStyle = floatTime === 0 ? '#ef4444' : '#10b981';
+                ctx.font = '10px Arial';
+                ctx.fillText(`Float:${floatTime}`, node.x, node.y + 55);
+            }
+        }
+    }
+
+    ctx.restore();
+}
+
+// 更新节点动画
+function updateNodeAnimations() {
+    nodes.forEach(node => {
+        // 平滑数值变化
+        node.es += (node.targetES - node.es) * 0.1;
+        node.ls += (node.targetLS - node.ls) * 0.1;
+
+        // 脉冲动画
+        if (node.pulse > 0) {
+            node.pulse -= 0.02;
+            if (node.pulse < 0) node.pulse = 0;
+        }
+
+        // 计算动画
+        if (node.calculating) {
+            node.pulse = Math.max(node.pulse, Math.sin(Date.now() * 0.01) * 0.5 + 0.5);
+        }
+    });
+}
+
+// 更新边动画
+function updateEdgeAnimations() {
+    edges.forEach(edge => {
+        // 脉冲动画
+        if (edge.pulse > 0) {
+            edge.pulse -= 0.02;
+            if (edge.pulse < 0) edge.pulse = 0;
+        }
+
+        // 更新流动粒子
+        edge.flowParticles.forEach(particle => {
+            particle.update();
+        });
+
+        // 添加新的流动粒子
+        if (edge.calculating && Math.random() < 0.3) {
+            const fromNode = nodes.find(n => n.id === edge.from);
+            const toNode = nodes.find(n => n.id === edge.to);
+            edge.flowParticles.push(new FlowParticle(fromNode.x, fromNode.y, toNode.x, toNode.y));
+        }
+
+        // 清理旧粒子
+        edge.flowParticles = edge.flowParticles.filter(particle => particle.progress < 1.1);
+    });
+}
+
+// 更新粒子系统
+function updateParticles() {
+    particles = particles.filter(particle => particle.update());
+}
+
+// 绘制粒子
+function drawParticles() {
+    particles.forEach(particle => particle.draw(ctx));
+}
+
+// 添加粒子爆炸效果
+function addParticleExplosion(x, y, type = 'normal', count = 15) {
+    for (let i = 0; i < count; i++) {
+        particles.push(new Particle(x, y, type));
+    }
+}
+
+// 增强的箭头绘制
+function drawArrow(ctx, fromX, fromY, toX, toY, color, lineWidth) {
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    const arrowLength = 15;
+    const arrowAngle = Math.PI / 6;
+
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = lineWidth;
+
+    // 箭头线条
+    ctx.beginPath();
+    ctx.moveTo(toX - arrowLength * Math.cos(angle - arrowAngle),
+               toY - arrowLength * Math.sin(angle - arrowAngle));
+    ctx.lineTo(toX, toY);
+    ctx.lineTo(toX - arrowLength * Math.cos(angle + arrowAngle),
+               toY - arrowLength * Math.sin(angle + arrowAngle));
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+// 演示控制函数
+function startDemo() {
+    currentStep = 0;
+    showingCritical = false;
+    resetNodeValues();
+    clearAllAnimations();
+    updateStepInfo("演示已重置，点击'正向计算'开始学习关键路径算法");
+    updateCalculationSteps("");
+}
+
+async function stepForward() {
+    if (currentStep === 0 && !isAnimating) {
+        isAnimating = true;
+        updateStepInfo("正向计算中：从起始节点开始计算最早发生时间(ES)...");
+
+        // 动画化计算ES值
+        await animateForwardCalculation();
+
+        currentStep = 1;
+        isAnimating = false;
+        updateStepInfo("✅ 正向计算完成：所有节点的最早发生时间(ES)已计算完毕");
+        updateCalculationSteps(`<div class="calc-step-by-step">
+            <h4>🔄 正向计算过程 (Forward Pass):</h4>
+            <div class="calc-line">Start节点: ES = 0 (项目起始时间)</div>
+            <div class="calc-line">A节点: ES = ES(Start) + 3 = 0 + 3 = 3</div>
+            <div class="calc-line">B节点: ES = ES(Start) + 4 = 0 + 4 = 4</div>
+            <div class="calc-line">C节点: ES = max(ES(A) + 2, ES(B) + 1) = max(3+2, 4+1) = max(5, 5) = 5</div>
+            <div class="calc-line">End节点: ES = ES(C) + 3 = 5 + 3 = 8</div>
+            <div class="calc-summary">📊 项目最短完成时间: 8天</div>
+        </div>`);
+    }
+}
+
+async function stepBackward() {
+    if (currentStep === 1 && !isAnimating) {
+        isAnimating = true;
+        updateStepInfo("反向计算中：从终点节点开始计算最晚发生时间(LS)...");
+
+        // 动画化计算LS值
+        await animateBackwardCalculation();
+
+        currentStep = 2;
+        isAnimating = false;
+        updateStepInfo("✅ 反向计算完成：所有节点的最晚发生时间(LS)已计算完毕");
+        updateCalculationSteps(`<div class="calc-step-by-step">
+            <h4>🔙 反向计算过程 (Backward Pass):</h4>
+            <div class="calc-line">End节点: LS = 8 (项目必须完成时间)</div>
+            <div class="calc-line">C节点: LS = LS(End) - 3 = 8 - 3 = 5</div>
+            <div class="calc-line">B节点: LS = LS(C) - 1 = 5 - 1 = 4</div>
+            <div class="calc-line">A节点: LS = LS(C) - 2 = 5 - 2 = 3</div>
+            <div class="calc-line">Start节点: LS = min(LS(A) - 3, LS(B) - 4) = min(3-3, 4-4) = min(0, 0) = 0</div>
+            <div class="calc-summary">📊 浮动时间 = LS - ES，为0的路径是关键路径</div>
+        </div>`);
+    }
+}
+
+async function showCriticalPath() {
+    if (currentStep >= 2 && !isAnimating) {
+        isAnimating = true;
+        showingCritical = true;
+
+        updateStepInfo("识别关键路径中：分析浮动时间为0的活动...");
+
+        // 动画化关键路径识别
+        await animateCriticalPathIdentification();
+
+        isAnimating = false;
+        updateStepInfo("🎯 关键路径已识别：Start → B → C → End (总工期: 8天)");
+        updateCalculationSteps(`<div class="calc-step-by-step">
+            <h4>🎯 关键路径分析:</h4>
+            <div class="calc-header">浮动时间计算公式: Float = LS - ES - Duration</div>
+            <br>
+            <div class="activity-analysis">
+                <div class="activity-item non-critical">
+                    <strong>Start → A:</strong> Float = 3 - 0 - 3 = 0 天 (关键活动)
+                </div>
+                <div class="activity-item critical">
+                    <strong>Start → B:</strong> Float = 4 - 0 - 4 = 0 天 (关键活动) ⭐
+                </div>
+                <div class="activity-item non-critical">
+                    <strong>A → C:</strong> Float = 5 - 3 - 2 = 0 天 (关键活动)
+                </div>
+                <div class="activity-item critical">
+                    <strong>B → C:</strong> Float = 5 - 4 - 1 = 0 天 (关键活动) ⭐
+                </div>
+                <div class="activity-item critical">
+                    <strong>C → End:</strong> Float = 8 - 5 - 3 = 0 天 (关键活动) ⭐
+                </div>
+            </div>
+            <br>
+            <div class="critical-path-result">
+                <strong>🔴 关键路径:</strong> Start → B → C → End<br>
+                <strong>⏱️ 项目工期:</strong> 8天<br>
+                <strong>⚠️ 风险提示:</strong> 关键路径上任何活动的延迟都会直接影响项目完成时间
+            </div>
+        </div>`);
+    } else if (currentStep < 2) {
+        updateStepInfo("❌ 请先完成正向和反向计算步骤");
+    }
+}
+
+function resetDemo() {
+    currentStep = 0;
+    showingCritical = false;
+    isAnimating = false;
+    resetNodeValues();
+    clearAllAnimations();
+    updateStepInfo("🔄 演示已重置，准备开始新的学习");
+    updateCalculationSteps("");
+}
+
+// 动画函数
+async function animateForwardCalculation() {
+    const calculationOrder = [
+        {node: 'Start', es: 0, delay: 500},
+        {node: 'A', es: 3, delay: 800, fromEdge: 0},
+        {node: 'B', es: 4, delay: 800, fromEdge: 1},
+        {node: 'C', es: 5, delay: 1200, fromEdges: [2, 3]},
+        {node: 'End', es: 8, delay: 800, fromEdge: 4}
+    ];
+
+    for (const calc of calculationOrder) {
+        const node = nodes.find(n => n.id === calc.node);
+
+        // 高亮正在计算的节点
+        node.calculating = true;
+        if (calc.fromEdge !== undefined) {
+            edges[calc.fromEdge].calculating = true;
+        }
+        if (calc.fromEdges) {
+            calc.fromEdges.forEach(edgeIndex => {
+                edges[edgeIndex].calculating = true;
+            });
+        }
+
+        // 添加粒子效果
+        addParticleExplosion(node.x, node.y, 'normal', 10);
+
+        // 动画更新数值
+        await animateNodeValue(node, 'es', calc.es);
+
+        // 脉冲效果
+        node.pulse = 1.0;
+
+        // 清理动画状态
+        node.calculating = false;
+        edges.forEach(edge => edge.calculating = false);
+
+        await delay(calc.delay);
+    }
+}
+
+async function animateBackwardCalculation() {
+    const calculationOrder = [
+        {node: 'End', ls: 8, delay: 500},
+        {node: 'C', ls: 5, delay: 800, fromEdge: 4},
+        {node: 'B', ls: 4, delay: 800, fromEdge: 3},
+        {node: 'A', ls: 3, delay: 800, fromEdge: 2},
+        {node: 'Start', ls: 0, delay: 1200, fromEdges: [0, 1]}
+    ];
+
+    for (const calc of calculationOrder) {
+        const node = nodes.find(n => n.id === calc.node);
+
+        // 高亮正在计算的节点
+        node.calculating = true;
+        if (calc.fromEdge !== undefined) {
+            edges[calc.fromEdge].calculating = true;
+        }
+        if (calc.fromEdges) {
+            calc.fromEdges.forEach(edgeIndex => {
+                edges[edgeIndex].calculating = true;
+            });
+        }
+
+        // 添加粒子效果
+        addParticleExplosion(node.x, node.y, 'normal', 10);
+
+        // 动画更新数值
+        await animateNodeValue(node, 'ls', calc.ls);
+
+        // 脉冲效果
+        node.pulse = 1.0;
+
+        // 清理动画状态
+        node.calculating = false;
+        edges.forEach(edge => edge.calculating = false);
+
+        await delay(calc.delay);
+    }
+}
+
+async function animateCriticalPathIdentification() {
+    // 标记关键边
+    const criticalEdgeIndices = [1, 3, 4]; // Start->B, B->C, C->End
+
+    for (const edgeIndex of criticalEdgeIndices) {
+        edges[edgeIndex].critical = true;
+        edges[edgeIndex].pulse = 1.0;
+
+        // 添加关键路径粒子效果
+        const edge = edges[edgeIndex];
+        const fromNode = nodes.find(n => n.id === edge.from);
+        const toNode = nodes.find(n => n.id === edge.to);
+
+        addParticleExplosion(fromNode.x, fromNode.y, 'critical', 15);
+        addParticleExplosion(toNode.x, toNode.y, 'critical', 15);
+
+        await delay(600);
+    }
+
+    // 标记关键节点
+    const criticalNodeIds = ['Start', 'B', 'C', 'End'];
+    criticalNodeIds.forEach(nodeId => {
+        const node = nodes.find(n => n.id === nodeId);
+        node.pulse = 1.0;
+    });
+}
+
+// 辅助函数
+async function animateNodeValue(node, property, targetValue) {
+    return new Promise(resolve => {
+        node[`target${property.toUpperCase()}`] = targetValue;
+        const startValue = node[property];
+        const duration = 1000; // 1秒
+        const startTime = Date.now();
+
+        const animateStep = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+
+            // 使用easeOutQuart缓动函数
+            const easedProgress = 1 - Math.pow(1 - progress, 4);
+            node[property] = startValue + (targetValue - startValue) * easedProgress;
+
+            if (progress < 1) {
+                requestAnimationFrame(animateStep);
+            } else {
+                resolve();
+            }
+        };
+
+        animateStep();
+    });
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function resetNodeValues() {
+    nodes.forEach(node => {
+        node.es = 0;
+        node.ls = 0;
+        node.targetES = 0;
+        node.targetLS = 0;
+        node.pulse = 0;
+        node.calculating = false;
+    });
+}
+
+function clearAllAnimations() {
+    edges.forEach(edge => {
+        edge.critical = false;
+        edge.pulse = 0;
+        edge.calculating = false;
+        edge.flowParticles = [];
+    });
+    particles.length = 0;
+}
+
+function updateStepInfo(message) {
+    const stepInfo = document.getElementById('stepInfo');
+    stepInfo.innerHTML = `<div class="step-message">${message}</div>`;
+
+    // 添加打字机效果
+    if (message.includes('计算中') || message.includes('识别中')) {
+        stepInfo.classList.add('calculating');
+    } else {
+        stepInfo.classList.remove('calculating');
+    }
+}
+
+function updateCalculationSteps(steps) {
+    document.getElementById('calculationSteps').innerHTML = steps;
+}
+
+// 代码切换功能
+function setupCodeTabs() {
+    const langBtns = document.querySelectorAll('.lang-btn');
+    const codeContainers = document.querySelectorAll('.code-container');
+
+    langBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-lang');
+
+            langBtns.forEach(b => b.classList.remove('active'));
+            codeContainers.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(`code-${lang}`).classList.add('active');
+        });
+    });
+}
+
+// 复制代码功能
+function setupCopyButtons() {
+    const copyBtns = document.querySelectorAll('.copy-btn');
+
+    copyBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const lang = btn.getAttribute('data-code');
+            const codeElement = document.querySelector(`#code-${lang} code`);
+            const text = codeElement.textContent;
+
+            navigator.clipboard.writeText(text).then(() => {
+                btn.textContent = '✅ 已复制';
+                btn.style.background = '#10b981';
+
+                setTimeout(() => {
+                    btn.textContent = '📋 复制代码';
+                    btn.style.background = '#4f46e5';
+                }, 2000);
+            });
+        });
+    });
+}
+
+// 答案显示功能（增强版）
+function showAnswer(questionNum) {
+    const answer = document.querySelector(`#answer${questionNum} .answer-content`);
+    const btn = document.querySelector(`#answer${questionNum} .show-answer-btn`);
+
+    if (answer.style.display === 'none') {
+        answer.style.display = 'block';
+        btn.textContent = '🔼 隐藏答案';
+        btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+
+        // 添加显示动画
+        answer.style.animation = 'slideInUp 0.5s ease-out';
+
+        // 滚动到答案位置
+        setTimeout(() => {
+            answer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 300);
+
+    } else {
+        answer.style.display = 'none';
+        btn.textContent = '📖 查看答案';
+        btn.style.background = 'linear-gradient(135deg, #4f46e5, #7c3aed)';
+    }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,502 @@
+
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}字符串匹配——KMP算法 - 计算机科学学习平台{% endblock %}
+
+{% block extra_css %}
+<style>.breadcrumb {color:white;margin-bottom:20px;opacity:0.9}.breadcrumb a {color:white;text-decoration:none}.breadcrumb a:hover {text-decoration:underline}.knowledge-header {background:rgba(255, 255, 255, 0.1);backdrop-filter:blur(10px);border-radius:15px;padding:30px;margin-bottom:30px;color:white;text-align:center;position:relative;z-index:2}.knowledge-header h1 {font-size:2.5rem;margin-bottom:15px;display:flex;align-items:center;justify-content:center;gap:15px}.knowledge-header p {font-size:1.1rem;opacity:0.9;line-height:1.6}.main-card {background:white;border-radius:15px;box-shadow:0 8px 32px rgba(0,0,0,0.1);padding:40px;margin-bottom:30px;position:relative;z-index:2}.action-buttons {display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:30px}.btn {padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;transition:all 0.3s ease;border:none;cursor:pointer;font-size:1rem}.btn-primary {background:linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);color:white}.btn-primary:hover {transform:translateY(-2px);box-shadow:0 8px 25px rgba(102, 126, 234, 0.3);z-index:3}.btn-secondary {background:rgba(255, 255, 255, 0.1);color:white;border:1px solid rgba(255, 255, 255, 0.3)}.btn-secondary:hover {background:rgba(255, 255, 255, 0.2);transform:translateY(-2px);z-index:3}.btn-success {background:#10b981;color:white}.btn-warning {background:#f59e0b;color:white}.btn-danger {background:#ef4444;color:white}.btn:disabled {opacity:0.6;cursor:not-allowed;transform:none !important}.theory-section {margin-bottom:40px}.theory-section h2 {color:var(--primary-color);font-size:1.8rem;margin-bottom:20px;border-bottom:3px solid var(--primary-color);padding-bottom:10px}.theory-content {line-height:1.8;color:#333;font-size:1.1rem}.algorithm-steps {background:#f8f9fa;border-left:4px solid var(--primary-color);padding:20px;margin:20px 0;border-radius:0 8px 8px 0}.algorithm-steps ol {margin-left:20px}.algorithm-steps li {margin-bottom:10px;font-weight:500}.visualization-container {margin:40px 0;background:#f8f9fa;border-radius:15px;padding:30px}.input-section {margin-bottom:30px;background:white;padding:20px;border-radius:10px;border:1px solid #e5e7eb}.input-section h4 {color:var(--primary-color);margin-bottom:15px}.input-group {margin-bottom:15px}.input-group label {display:block;font-weight:600;margin-bottom:5px;color:#374151}.input-group input {width:100%;padding:10px;border:2px solid #e5e7eb;border-radius:8px;font-size:16px;font-family:'Courier New', monospace;transition:border-color 0.3s ease}.input-group input:focus {outline:none;border-color:var(--primary-color)}.preset-buttons {display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}.preset-btn {padding:6px 12px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;cursor:pointer;font-size:14px;transition:all 0.3s ease}.preset-btn:hover {background:var(--primary-color);color:white}.controls {display:flex;justify-content:center;gap:15px;margin:20px 0;flex-wrap:wrap}.string-display {background:white;border:2px solid #e5e7eb;border-radius:10px;padding:20px;margin:20px 0;font-family:'Courier New', monospace;font-size:18px;line-height:2}.text-line, .pattern-line {margin-bottom:10px;position:relative}.text-line {color:#374151}.pattern-line {color:#3b82f6;font-weight:bold}.char {display:inline-block;padding:4px 8px;margin:1px;border-radius:4px;transition:all 0.3s ease;min-width:20px;text-align:center}.char.current {background:#fbbf24;color:white;transform:scale(1.1)}.char.match {background:#10b981;color:white}.char.mismatch {background:#ef4444;color:white}.char.pattern {background:#3b82f6;color:white}.char.jump {background:#8b5cf6;color:white;animation:pulse 0.5s ease-in-out}@keyframes pulse {0%, 100% {transform:scale(1)}50% {transform:scale(1.2)}}.failure-table {background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb}.failure-table h4 {color:var(--primary-color);margin-bottom:15px}.table-container {overflow-x:auto}.failure-table table {width:100%;border-collapse:collapse;font-family:'Courier New', monospace;font-size:16px}.failure-table th, .failure-table td {border:1px solid #d1d5db;padding:10px;text-align:center;min-width:40px}.failure-table th {background:#f3f4f6;font-weight:600}.failure-table .highlight {background:#fbbf24;color:white;font-weight:bold}.status-panel {background:white;border-radius:10px;padding:20px;margin:20px 0;border:1px solid #e5e7eb}.status-panel h4 {color:var(--primary-color);margin-bottom:15px}.status-item {display:flex;justify-content:space-between;margin-bottom:10px;padding:5px 0}.status-label {font-weight:600;color:#374151}.status-value {font-family:'Courier New', monospace;color:var(--primary-color);font-weight:bold}.result-panel {background:#ecfdf5;border:1px solid #10b981;border-radius:10px;padding:20px;margin:20px 0;text-align:center}.result-panel.no-match {background:#fef2f2;border-color:#ef4444}.result-panel h4 {margin-bottom:10px}.result-panel.success h4 {color:#065f46}.result-panel.no-match h4 {color:#991b1b}.code-section {margin:40px 0}.code-tabs {display:flex;border-bottom:2px solid #e2e8f0;margin-bottom:0}.code-tab {padding:12px 24px;background:#f8f9fa;border:none;cursor:pointer;font-weight:600;color:#666;border-radius:8px 8px 0 0;margin-right:5px}.code-tab.active {background:var(--primary-color);color:white}.code-content {display:none;position:relative}.code-content.active {display:block}.copy-btn {position:absolute;top:10px;right:10px;background:#10b981;color:white;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-size:12px;transition:all 0.3s ease;z-index:10}.copy-btn:hover {background:#059669;transform:translateY(-1px)}.copy-btn.copied {background:#f59e0b}.code-block {background:#2d3748;color:#e2e8f0;padding:25px;border-radius:0 0 10px 10px;overflow-x:auto;font-family:'Courier New', monospace;line-height:1.6;margin:0}.code-block pre {margin:0;white-space:pre-wrap}.complexity-table {width:100%;border-collapse:collapse;margin:20px 0}.complexity-table th, .complexity-table td {border:1px solid #e2e8f0;padding:12px;text-align:center}.complexity-table th {background:var(--primary-color);color:white}@media (max-width:768px) {.knowledge-header h1 {font-size:2rem}.main-card {padding:25px;position:relative;z-index:2}.action-buttons {flex-direction:column;align-items:center}.btn {width:100%;max-width:250px}.controls {flex-direction:column;align-items:center}.preset-buttons {justify-content:center}.string-display {font-size:14px;padding:15px}.char {padding:2px 4px;font-size:14px}}</style>
+{% endblock %}
+
+{% block content %}
+<div class="container"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a> ><span>算法</span> ><span>字符串匹配——KMP算法</span></div><!-- 知识点头部 --><div class="knowledge-header"><h1><span>🔍</span>
+            字符串匹配——KMP算法
+        </h1><p>算法 - 高效的字符串模式匹配算法可视化演示与代码实现</p></div><!-- 主要内容卡片 --><div class="main-card"><!-- 理论部分 --><div class="theory-section"><h2>🎯 算法原理</h2><div class="theory-content"><p><strong>KMP算法</strong>（Knuth-Morris-Pratt算法）是一种高效的字符串匹配算法。它通过预处理模式串，构建部分匹配表（失效函数），避免在匹配失败时回退过多位置。</p><div class="algorithm-steps"><h3>算法步骤：</h3><ol><li><strong>预处理阶段：</strong>构建模式串的部分匹配表（next数组）</li><li><strong>匹配阶段：</strong>使用部分匹配表进行高效匹配
+                            <ul><li>逐个比较文本串和模式串的字符</li><li>匹配失败时，根据部分匹配表跳跃到合适位置</li><li>避免不必要的回退，提高效率</li></ul></li><li><strong>输出结果：</strong>返回所有匹配位置</li></ol></div><p><strong>核心思想：</strong>利用已匹配的信息，避免从头开始重新匹配，时间复杂度为O(n+m)。</p></div></div><!-- 可视化演示 --><div class="visualization-container"><h2>🎮 交互式演示</h2><div class="input-section"><h4>输入字符串</h4><div class="input-group"><label for="textInput">文本串 (Text)：</label><input type="text" id="textInput" value="ABABDABACDABABCABCABCABCABC" placeholder="输入要搜索的文本"></div><div class="input-group"><label for="patternInput">模式串 (Pattern)：</label><input type="text" id="patternInput" value="ABABCABCABCABC" placeholder="输入要查找的模式"></div><div class="preset-buttons"><button class="preset-btn" onclick="setPreset(1)">示例1: 简单匹配</button><button class="preset-btn" onclick="setPreset(2)">示例2: 复杂模式</button><button class="preset-btn" onclick="setPreset(3)">示例3: 重复字符</button><button class="preset-btn" onclick="setPreset(4)">示例4: 无匹配</button></div></div><div class="controls"><button class="btn btn-primary" onclick="buildFailureTable()">构建失效函数</button><button class="btn btn-success" onclick="startMatching()" id="startBtn">开始匹配</button><button class="btn btn-warning" onclick="nextStep()" id="nextBtn" disabled>下一步</button><button class="btn btn-danger" onclick="resetVisualization()">重置</button><label><input type="checkbox" id="autoMode"> 自动模式
+                </label></div><div class="string-display" id="stringDisplay"><div class="text-line" id="textLine">点击"构建失效函数"开始</div><div class="pattern-line" id="patternLine"></div></div><div class="failure-table" id="failureTable" style="display: none;"><h4>部分匹配表 (Failure Function / Next Array)</h4><div class="table-container"><table id="failureTableContent"><thead><tr id="patternHeader"></tr></thead><tbody><tr id="failureValues"></tr></tbody></table></div></div><div class="status-panel" id="statusPanel" style="display: none;"><h4>算法状态</h4><div class="status-item"><span class="status-label">当前步骤：</span><span class="status-value" id="currentStep">0</span></div><div class="status-item"><span class="status-label">文本位置：</span><span class="status-value" id="textPosition">0</span></div><div class="status-item"><span class="status-label">模式位置：</span><span class="status-value" id="patternPosition">0</span></div><div class="status-item"><span class="status-label">比较次数：</span><span class="status-value" id="compareCount">0</span></div><div class="status-item"><span class="status-label">匹配数量：</span><span class="status-value" id="matchCount">0</span></div></div><div class="result-panel" id="resultPanel" style="display: none;"><h4 id="resultTitle">匹配结果</h4><div id="resultContent"></div></div></div><!-- 代码实现 --><div class="code-section"><h2>💻 代码实现</h2><div class="code-tabs"><button class="code-tab active" onclick="showCode('python')">Python</button><button class="code-tab" onclick="showCode('cpp')">C++</button><button class="code-tab" onclick="showCode('java')">Java</button></div><div id="python-code" class="code-content active"><button class="copy-btn" onclick="copyCode('python')">复制代码</button><div class="code-block"><pre id="python-code-text">
+def build_failure_function(pattern):
+    """
+    构建KMP算法的失效函数（部分匹配表）
+    pattern: 模式串
+    返回: 失效函数数组
+    """
+    m = len(pattern)
+    failure = [0] * m  # 失效函数数组
+
+    # i是当前位置，j是前缀的长度
+    j = 0
+    for i in range(1, m):
+        # 当字符不匹配时，根据失效函数回退
+        while j > 0 and pattern[i] != pattern[j]:
+            j = failure[j - 1]
+
+        # 如果字符匹配，增加前缀长度
+        if pattern[i] == pattern[j]:
+            j += 1
+
+        failure[i] = j
+
+    return failure
+
+def kmp_search(text, pattern):
+    """
+    KMP字符串匹配算法
+    text: 文本串
+    pattern: 模式串
+    返回: 所有匹配位置的列表
+    """
+    if not pattern or not text:
+        return []
+
+    n, m = len(text), len(pattern)
+
+    # 构建失效函数
+    failure = build_failure_function(pattern)
+
+    matches = []  # 存储匹配位置
+    j = 0  # 模式串的当前位置
+
+    for i in range(n):  # 遍历文本串
+        # 当字符不匹配时，根据失效函数跳跃
+        while j > 0 and text[i] != pattern[j]:
+            j = failure[j - 1]
+
+        # 如果字符匹配
+        if text[i] == pattern[j]:
+            j += 1
+
+        # 如果完全匹配
+        if j == m:
+            matches.append(i - m + 1)  # 记录匹配位置
+            j = failure[j - 1]  # 继续寻找下一个匹配
+
+    return matches
+
+def kmp_search_detailed(text, pattern):
+    """
+    KMP算法详细版本，返回匹配过程信息
+    """
+    if not pattern or not text:
+        return [], [], 0
+
+    n, m = len(text), len(pattern)
+    failure = build_failure_function(pattern)
+
+    matches = []
+    steps = []  # 记录每一步的信息
+    comparisons = 0
+    j = 0
+
+    for i in range(n):
+        # 记录当前状态
+        step_info = {
+            'text_pos': i,
+            'pattern_pos': j,
+            'text_char': text[i],
+            'pattern_char': pattern[j] if j < m else '',
+            'action': 'compare'
+        }
+
+        # 处理不匹配的情况
+        while j > 0 and text[i] != pattern[j]:
+            j = failure[j - 1]
+            step_info['action'] = 'jump'
+            step_info['jump_to'] = j
+            comparisons += 1
+
+        comparisons += 1
+
+        # 如果字符匹配
+        if text[i] == pattern[j]:
+            step_info['match'] = True
+            j += 1
+        else:
+            step_info['match'] = False
+
+        steps.append(step_info)
+
+        # 如果完全匹配
+        if j == m:
+            matches.append(i - m + 1)
+            j = failure[j - 1]
+
+    return matches, steps, comparisons
+
+# 使用示例
+if __name__ == "__main__":
+    text = "ABABDABACDABABCABCABCABCABC"
+    pattern = "ABABCABCABCABC"
+
+    # 构建失效函数
+    failure = build_failure_function(pattern)
+    print("模式串:", pattern)
+    print("失效函数:", failure)
+
+    # 执行匹配
+    matches = kmp_search(text, pattern)
+    print(f"\n在文本 '{text}' 中")
+    print(f"模式 '{pattern}' 的匹配位置:", matches)
+
+    # 详细匹配过程
+    matches, steps, comparisons = kmp_search_detailed(text, pattern)
+    print(f"总比较次数: {comparisons}")
+    print(f"匹配效率: {len(text) + len(pattern)}/{comparisons} = {(len(text) + len(pattern))/comparisons:.2f}")
+</pre></div></div><div id="cpp-code" class="code-content"><button class="copy-btn" onclick="copyCode('cpp')">复制代码</button><div class="code-block"><pre id="cpp-code-text">
+#include <iostream>
+#include <vector>
+#include <string>
+
+using namespace std;
+
+class KMP {
+public:
+    // 构建失效函数
+    static vector<int> buildFailureFunction(const string& pattern) {
+        int m = pattern.length();
+        vector<int> failure(m, 0);
+
+        int j = 0;
+        for (int i = 1; i < m; i++) {
+            // 处理不匹配的情况
+            while (j > 0 && pattern[i] != pattern[j]) {
+                j = failure[j - 1];
+            }
+
+            // 如果字符匹配，增加前缀长度
+            if (pattern[i] == pattern[j]) {
+                j++;
+            }
+
+            failure[i] = j;
+        }
+
+        return failure;
+    }
+
+    // KMP字符串匹配
+    static vector<int> search(const string& text, const string& pattern) {
+        if (pattern.empty() || text.empty()) {
+            return {};
+        }
+
+        int n = text.length();
+        int m = pattern.length();
+
+        // 构建失效函数
+        vector<int> failure = buildFailureFunction(pattern);
+
+        vector<int> matches;
+        int j = 0;
+
+        for (int i = 0; i < n; i++) {
+            // 处理不匹配的情况
+            while (j > 0 && text[i] != pattern[j]) {
+                j = failure[j - 1];
+            }
+
+            // 如果字符匹配
+            if (text[i] == pattern[j]) {
+                j++;
+            }
+
+            // 如果完全匹配
+            if (j == m) {
+                matches.push_back(i - m + 1);
+                j = failure[j - 1];
+            }
+        }
+
+        return matches;
+    }
+
+    // 详细匹配信息
+    struct MatchStep {
+        int textPos;
+        int patternPos;
+        char textChar;
+        char patternChar;
+        bool isMatch;
+        bool isJump;
+        int jumpTo;
+    };
+
+    static pair<vector<int>, vector<MatchStep>> searchDetailed(
+        const string& text, const string& pattern) {
+
+        if (pattern.empty() || text.empty()) {
+            return { {}, {} };
+        }
+
+        int n = text.length();
+        int m = pattern.length();
+
+        vector<int> failure = buildFailureFunction(pattern);
+        vector<int> matches;
+        vector<MatchStep> steps;
+
+        int j = 0;
+
+        for (int i = 0; i < n; i++) {
+            MatchStep step;
+            step.textPos = i;
+            step.patternPos = j;
+            step.textChar = text[i];
+            step.patternChar = (j < m) ? pattern[j] : '\0';
+            step.isJump = false;
+
+            // 处理不匹配的情况
+            while (j > 0 && text[i] != pattern[j]) {
+                j = failure[j - 1];
+                step.isJump = true;
+                step.jumpTo = j;
+            }
+
+            // 如果字符匹配
+            if (text[i] == pattern[j]) {
+                step.isMatch = true;
+                j++;
+            } else {
+                step.isMatch = false;
+            }
+
+            steps.push_back(step);
+
+            // 如果完全匹配
+            if (j == m) {
+                matches.push_back(i - m + 1);
+                j = failure[j - 1];
+            }
+        }
+
+        return {matches, steps};
+    }
+};
+
+int main() {
+    string text = "ABABDABACDABABCABCABCABCABC";
+    string pattern = "ABABCABCABCABC";
+
+    // 构建失效函数
+    vector<int> failure = KMP::buildFailureFunction(pattern);
+    cout << "模式串: " << pattern << endl;
+    cout << "失效函数: ";
+    for (int val : failure) {
+        cout << val << " ";
+    }
+    cout << endl;
+
+    // 执行匹配
+    vector<int> matches = KMP::search(text, pattern);
+    cout << "\n在文本 '" << text << "' 中" << endl;
+    cout << "模式 '" << pattern << "' 的匹配位置: ";
+    for (int pos : matches) {
+        cout << pos << " ";
+    }
+    cout << endl;
+
+    // 详细匹配过程
+    auto result = KMP::searchDetailed(text, pattern);
+    cout << "总步骤数: " << result.second.size() << endl;
+
+    return 0;
+}
+</pre></div></div><div id="java-code" class="code-content"><button class="copy-btn" onclick="copyCode('java')">复制代码</button><div class="code-block"><pre id="java-code-text">
+import java.util.*;
+
+public class KMP {
+
+    /**
+     * 构建KMP算法的失效函数
+     * @param pattern 模式串
+     * @return 失效函数数组
+     */
+    public static int[] buildFailureFunction(String pattern) {
+        int m = pattern.length();
+        int[] failure = new int[m];
+
+        int j = 0;
+        for (int i = 1; i < m; i++) {
+            // 处理不匹配的情况
+            while (j > 0 && pattern.charAt(i) != pattern.charAt(j)) {
+                j = failure[j - 1];
+            }
+
+            // 如果字符匹配，增加前缀长度
+            if (pattern.charAt(i) == pattern.charAt(j)) {
+                j++;
+            }
+
+            failure[i] = j;
+        }
+
+        return failure;
+    }
+
+    /**
+     * KMP字符串匹配算法
+     * @param text 文本串
+     * @param pattern 模式串
+     * @return 所有匹配位置的列表
+     */
+    public static List<Integer> search(String text, String pattern) {
+        if (pattern == null || pattern.isEmpty() ||
+            text == null || text.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        int n = text.length();
+        int m = pattern.length();
+
+        // 构建失效函数
+        int[] failure = buildFailureFunction(pattern);
+
+        List<Integer> matches = new ArrayList<>();
+        int j = 0;
+
+        for (int i = 0; i < n; i++) {
+            // 处理不匹配的情况
+            while (j > 0 && text.charAt(i) != pattern.charAt(j)) {
+                j = failure[j - 1];
+            }
+
+            // 如果字符匹配
+            if (text.charAt(i) == pattern.charAt(j)) {
+                j++;
+            }
+
+            // 如果完全匹配
+            if (j == m) {
+                matches.add(i - m + 1);
+                j = failure[j - 1];
+            }
+        }
+
+        return matches;
+    }
+
+    // 匹配步骤信息类
+    public static class MatchStep {
+        public int textPos;
+        public int patternPos;
+        public char textChar;
+        public char patternChar;
+        public boolean isMatch;
+        public boolean isJump;
+        public int jumpTo;
+
+        public MatchStep(int textPos, int patternPos, char textChar,
+                        char patternChar, boolean isMatch) {
+            this.textPos = textPos;
+            this.patternPos = patternPos;
+            this.textChar = textChar;
+            this.patternChar = patternChar;
+            this.isMatch = isMatch;
+            this.isJump = false;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Step[t:%d,p:%d,'%c'=='%c':%b%s]",
+                textPos, patternPos, textChar, patternChar, isMatch,
+                isJump ? ",jump:" + jumpTo : "");
+        }
+    }
+
+    /**
+     * 带详细步骤信息的KMP匹配
+     */
+    public static class DetailedResult {
+        public List<Integer> matches;
+        public List<MatchStep> steps;
+        public int comparisons;
+
+        public DetailedResult(List<Integer> matches, List<MatchStep> steps, int comparisons) {
+            this.matches = matches;
+            this.steps = steps;
+            this.comparisons = comparisons;
+        }
+    }
+
+    public static DetailedResult searchDetailed(String text, String pattern) {
+        if (pattern == null || pattern.isEmpty() ||
+            text == null || text.isEmpty()) {
+            return new DetailedResult(new ArrayList<>(), new ArrayList<>(), 0);
+        }
+
+        int n = text.length();
+        int m = pattern.length();
+
+        int[] failure = buildFailureFunction(pattern);
+        List<Integer> matches = new ArrayList<>();
+        List<MatchStep> steps = new ArrayList<>();
+
+        int j = 0;
+        int comparisons = 0;
+
+        for (int i = 0; i < n; i++) {
+            char textChar = text.charAt(i);
+            char patternChar = (j < m) ? pattern.charAt(j) : '\0';
+
+            // 处理不匹配的情况
+            while (j > 0 && textChar != pattern.charAt(j)) {
+                j = failure[j - 1];
+                comparisons++;
+            }
+
+            comparisons++;
+
+            // 创建步骤信息
+            boolean isMatch = (textChar == pattern.charAt(j));
+            MatchStep step = new MatchStep(i, j, textChar, patternChar, isMatch);
+
+            if (isMatch) {
+                j++;
+            }
+
+            steps.add(step);
+
+            // 如果完全匹配
+            if (j == m) {
+                matches.add(i - m + 1);
+                j = failure[j - 1];
+            }
+        }
+
+        return new DetailedResult(matches, steps, comparisons);
+    }
+
+    public static void main(String[] args) {
+        String text = "ABABDABACDABABCABCABCABCABC";
+        String pattern = "ABABCABCABCABC";
+
+        // 构建失效函数
+        int[] failure = buildFailureFunction(pattern);
+        System.out.println("模式串: " + pattern);
+        System.out.print("失效函数: ");
+        for (int val : failure) {
+            System.out.print(val + " ");
+        }
+        System.out.println();
+
+        // 执行匹配
+        List<Integer> matches = search(text, pattern);
+        System.out.println("\n在文本 '" + text + "' 中");
+        System.out.println("模式 '" + pattern + "' 的匹配位置: " + matches);
+
+        // 详细匹配过程
+        DetailedResult result = searchDetailed(text, pattern);
+        System.out.println("总比较次数: " + result.comparisons);
+        System.out.printf("匹配效率: %d/%d = %.2f\n",
+            text.length() + pattern.length(), result.comparisons,
+            (double)(text.length() + pattern.length()) / result.comparisons);
+    }
+}
+</pre></div></div></div><!-- 复杂度分析 --><div class="theory-section"><h2>📊 复杂度分析</h2><table class="complexity-table"><thead><tr><th>算法</th><th>预处理时间</th><th>匹配时间</th><th>总时间复杂度</th><th>空间复杂度</th></tr></thead><tbody><tr><td>朴素匹配</td><td>O(1)</td><td>O(nm)</td><td>O(nm)</td><td>O(1)</td></tr><tr><td><strong>KMP算法</strong></td><td>O(m)</td><td>O(n)</td><td><strong>O(n+m)</strong></td><td>O(m)</td></tr></tbody></table><p><strong>说明：</strong>n为文本串长度，m为模式串长度。KMP算法通过预处理避免了不必要的字符比较，实现了线性时间复杂度。</p></div><!-- 原有的导航按钮 --><div class="action-buttons"><a href="{% url 'knowledge_app:index' %}" class="btn btn-primary">
+                🏠 返回首页
+            </a><a href="{% url 'knowledge_app:cs_universe' %}" class="btn btn-secondary">
+                🌌 探索CS宇宙
+            </a></div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>{% verbatim %} class KMPVisualizer { constructor() { this.text = ''; this.pattern = ''; this.failureTable = []; this.isRunning = false; this.currentStep = 0; this.textPosition = 0; this.patternPosition = 0; this.compareCount = 0; this.matches = []; this.steps = []; this.currentStepIndex = 0; } buildFailureFunction(pattern) { const m = pattern.length; const failure = new Array(m).fill(0); let j = 0; for (let i = 1; i < m; i++) { while (j > 0 && pattern[i] !== pattern[j]) { j = failure[j - 1]; } if (pattern[i] === pattern[j]) { j++; } failure[i] = j; } return failure; } updateFailureTableDisplay() { const table = document.getElementById('failureTable'); const header = document.getElementById('patternHeader'); const values = document.getElementById('failureValues'); header.innerHTML = '<th>Index</th>'; values.innerHTML = '<td><strong>i</strong></td>'; for (let i = 0; i < this.pattern.length; i++) { const headerCell = document.createElement('th'); headerCell.textContent = i; header.appendChild(headerCell); const charCell = document.createElement('td'); charCell.textContent = this.pattern[i]; charCell.className = 'pattern-char'; header.appendChild(charCell); const valueCell = document.createElement('td'); valueCell.textContent = this.failureTable[i]; valueCell.id = `failure-${i}`; values.appendChild(valueCell); } values.innerHTML = '<td><strong>next[i]</strong></td>' + this.failureTable.map((val, i) => `<td id="failure-${i}">${val}</td>`).join(''); table.style.display = 'block'; } generateSteps() { this.steps = []; this.matches = []; this.compareCount = 0; const n = this.text.length; const m = this.pattern.length; let j = 0; for (let i = 0; i < n; i++) { const step = { textPos: i, patternPos: j, textChar: this.text[i], patternChar: j < m ? this.pattern[j] : '', action: 'compare', match: false, jump: false, jumpTo: -1 }; while (j > 0 && this.text[i] !== this.pattern[j]) { j = this.failureTable[j - 1]; step.action = 'jump'; step.jump = true; step.jumpTo = j; this.compareCount++; } this.compareCount++; if (this.text[i] === this.pattern[j]) { step.match = true; j++; } this.steps.push(step); if (j === m) { this.matches.push(i - m + 1); j = this.failureTable[j - 1]; } } } updateStringDisplay() { const textLine = document.getElementById('textLine'); const patternLine = document.getElementById('patternLine'); if (this.currentStepIndex >= this.steps.length) { this.showResult(); return; } const step = this.steps[this.currentStepIndex]; let textHTML = ''; for (let i = 0; i < this.text.length; i++) { let className = 'char'; if (i === step.textPos) { className += ' current'; } textHTML += `<span class="${className}">${this.text[i]}</span>`; } textLine.innerHTML = `文本串: ${textHTML}`; let patternHTML = ''; const startPos = Math.max(0, step.textPos - step.patternPos); for (let i = 0; i < startPos; i++) { patternHTML += '<span class="char"></span>'; } for (let i = 0; i < this.pattern.length; i++) { let className = 'char pattern'; if (i === step.patternPos && step.match) { className += ' match'; } else if (i === step.patternPos && !step.match) { className += ' mismatch'; } else if (i < step.patternPos) { className += ' match'; } if (step.jump && i === step.jumpTo) { className += ' jump'; } patternHTML += `<span class="${className}">${this.pattern[i]}</span>`; } patternLine.innerHTML = `模式串: ${patternHTML}`; } updateStatus() { if (this.currentStepIndex < this.steps.length) { const step = this.steps[this.currentStepIndex]; document.getElementById('currentStep').textContent = this.currentStepIndex + 1; document.getElementById('textPosition').textContent = step.textPos; document.getElementById('patternPosition').textContent = step.patternPos; } document.getElementById('compareCount').textContent = this.compareCount; document.getElementById('matchCount').textContent = this.matches.length; } showResult() { const resultPanel = document.getElementById('resultPanel'); const resultTitle = document.getElementById('resultTitle'); const resultContent = document.getElementById('resultContent'); if (this.matches.length > 0) { resultPanel.className = 'result-panel success'; resultTitle.textContent = '✅ 匹配成功！'; resultContent.innerHTML = ` <p>找到 <strong>${this.matches.length}</strong> 个匹配位置：</p><p><strong>[${this.matches.join(', ')}]</strong></p><p>总比较次数：<strong>${this.compareCount}</strong></p><p>理论最优：<strong>${this.text.length + this.pattern.length}</strong></p><p>效率比：<strong>${((this.text.length + this.pattern.length) / this.compareCount).toFixed(2)}</strong></p> `; } else { resultPanel.className = 'result-panel no-match'; resultTitle.textContent = '❌ 未找到匹配'; resultContent.innerHTML = ` <p>在文本中未找到模式串</p><p>总比较次数：<strong>${this.compareCount}</strong></p> `; } resultPanel.style.display = 'block'; } highlightFailureTablePosition(pos) { for (let i = 0; i < this.pattern.length; i++) { const cell = document.getElementById(`failure-${i}`); if (cell) cell.classList.remove('highlight'); } if (pos >= 0 && pos < this.pattern.length) { const cell = document.getElementById(`failure-${pos}`); if (cell) cell.classList.add('highlight'); } } reset() { this.isRunning = false; this.currentStep = 0; this.currentStepIndex = 0; this.textPosition = 0; this.patternPosition = 0; this.compareCount = 0; this.matches = []; this.steps = []; document.getElementById('failureTable').style.display = 'none'; document.getElementById('statusPanel').style.display = 'none'; document.getElementById('resultPanel').style.display = 'none'; document.getElementById('startBtn').disabled = true; document.getElementById('nextBtn').disabled = true; document.getElementById('textLine').textContent = '点击"构建失效函数"开始'; document.getElementById('patternLine').textContent = ''; } } let visualizer = new KMPVisualizer(); function setPreset(preset) { const textInput = document.getElementById('textInput'); const patternInput = document.getElementById('patternInput'); switch (preset) { case 1: textInput.value = 'ABAAABAAABABAABAAABAA'; patternInput.value = 'ABAABAA'; break; case 2: textInput.value = 'ABABDABACDABABCABCABCABCABC'; patternInput.value = 'ABABCABCABCABC'; break; case 3: textInput.value = 'AAAAAAAAAAAAAAAAAB'; patternInput.value = 'AAAAB'; break; case 4: textInput.value = 'ABCDEFGHIJKLMNOP'; patternInput.value = 'XYZ'; break; } visualizer.reset(); } function buildFailureTable() { const textInput = document.getElementById('textInput').value.trim(); const patternInput = document.getElementById('patternInput').value.trim(); if (!textInput || !patternInput) { alert('请输入文本串和模式串！'); return; } visualizer.text = textInput; visualizer.pattern = patternInput; visualizer.failureTable = visualizer.buildFailureFunction(patternInput); visualizer.updateFailureTableDisplay(); const textLine = document.getElementById('textLine'); const patternLine = document.getElementById('patternLine'); textLine.innerHTML = `文本串: ${textInput.split('').map(c => `<span class="char">${c}</span>`).join('')}`; patternLine.innerHTML = `模式串: ${patternInput.split('').map(c => `<span class="char pattern">${c}</span>`).join('')}`; document.getElementById('startBtn').disabled = false; document.getElementById('statusPanel').style.display = 'block'; visualizer.updateStatus(); } function startMatching() { if (!visualizer.pattern || !visualizer.text) { alert('请先构建失效函数！'); return; } visualizer.isRunning = true; visualizer.generateSteps(); visualizer.currentStepIndex = 0; document.getElementById('startBtn').disabled = true; document.getElementById('nextBtn').disabled = false; if (document.getElementById('autoMode').checked) { autoPlay(); } else { nextStep(); } } function nextStep() { if (!visualizer.isRunning || visualizer.currentStepIndex >= visualizer.steps.length) { visualizer.showResult(); document.getElementById('nextBtn').disabled = true; visualizer.isRunning = false; return; } const step = visualizer.steps[visualizer.currentStepIndex]; visualizer.updateStringDisplay(); visualizer.updateStatus(); if (step.jump) { visualizer.highlightFailureTablePosition(step.jumpTo); } else { visualizer.highlightFailureTablePosition(step.patternPos); } visualizer.currentStepIndex++; if (document.getElementById('autoMode').checked && visualizer.isRunning) { setTimeout(nextStep, 1200); } } function autoPlay() { if (visualizer.isRunning && document.getElementById('autoMode').checked) { nextStep(); } } function resetVisualization() { visualizer.reset(); } function showCode(language) { document.querySelectorAll('.code-content').forEach(content => { content.classList.remove('active'); }); document.querySelectorAll('.code-tab').forEach(tab => { tab.classList.remove('active'); }); document.getElementById(language + '-code').classList.add('active'); event.target.classList.add('active'); } function copyCode(language) { const codeText = document.getElementById(language + '-code-text').textContent; const button = event.target; navigator.clipboard.writeText(codeText).then(() => { const originalText = button.textContent; button.textContent = '已复制!'; button.classList.add('copied'); setTimeout(() => { button.textContent = originalText; button.classList.remove('copied'); }, 2000); }).catch(err => { console.error('复制失败:', err); const textArea = document.createElement('textarea'); textArea.value = codeText; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); const originalText = button.textContent; button.textContent = '已复制!'; button.classList.add('copied'); setTimeout(() => { button.textContent = originalText; button.classList.remove('copied'); }, 2000); }); } document.addEventListener('DOMContentLoaded', function() { console.log('知识点页面加载完成:', '字符串匹配——KMP算法'); const card = document.querySelector('.main-card'); if (card) { card.style.opacity = '0'; card.style.transform = 'translateY(20px)'; setTimeout(() => { card.style.transition = 'all 0.6s ease'; card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 100); } visualizer = new KMPVisualizer(); setTimeout(() => { setPreset(2); }, 500); }); {% endverbatim %}</script>
+{% endblock %}

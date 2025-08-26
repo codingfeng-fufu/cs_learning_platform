@@ -1,0 +1,14 @@
+<!-- knowledge_app/templates/knowledge_app/coming_soon.html -->
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ knowledge_point.title }} - 即将推出{% endblock %}
+
+{% block extra_css %}
+<style>.coming-soon-container {text-align:center;color:var(--text-inverse);padding:100px 0}.coming-soon-icon {font-size:8rem;margin-bottom:30px;opacity:0.8}.coming-soon-title {font-size:3rem;margin-bottom:20px}.coming-soon-subtitle {font-size:1.5rem;margin-bottom:40px;opacity:0.8}.back-btn {background:linear-gradient(45deg, var(--primary-color), var(--secondary-color));color:var(--text-inverse);text-decoration:none;padding:15px 30px;border-radius:var(--border-radius-sm);font-size:18px;font-weight:600;transition:all 0.3s ease;display:inline-block}.back-btn:hover {transform:translateY(-2px);box-shadow:0 4px 15px rgba(102, 126, 234, 0.4);color:var(--text-inverse);text-decoration:none}@media (max-width:768px) {.knowledge-header h1 {font-size:2rem}.main-card {padding:25px;margin-bottom:20px}.action-buttons {flex-direction:column;align-items:center;gap:10px}.btn {width:100%;max-width:250px}.btn:hover {transform:translateY(-1px)}}@media (max-width:480px) {.knowledge-header {padding:20px}.main-card {padding:20px}.placeholder-icon {font-size:3rem}.placeholder-title {font-size:1.5rem}}</style>
+{% endblock %}
+
+{% block content %}
+<div class="container"><div class="coming-soon-container"><div class="coming-soon-icon">🚧</div><h1 class="coming-soon-title">{{ knowledge_point.title }}</h1><p class="coming-soon-subtitle">该功能正在紧张开发中...</p><p style="margin-bottom: 40px; opacity: 0.8;">{{ knowledge_point.description }}</p><a href="{% url 'knowledge_app:index' %}" class="back-btn">
+            ← 返回首页
+        </a></div></div>
+{% endblock %}

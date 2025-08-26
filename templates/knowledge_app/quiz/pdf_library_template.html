@@ -1,0 +1,50 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ library.name }} - 题库</title><style>@page {size:A4;margin:2cm}body {font-family:"Microsoft YaHei", "SimHei", "黑体", sans-serif;font-size:12pt;line-height:1.6;color:#000;background:#fff}.header {text-align:center;margin-bottom:30px;border-bottom:2px solid #333;padding-bottom:20px}.title {font-size:24pt;font-weight:bold;margin-bottom:10px;color:#000}.info-table {width:100%;border-collapse:collapse;margin-bottom:30px}.info-table td {padding:8px;border:1px solid #333;vertical-align:top}.info-table .label {background-color:#f0f0f0;font-weight:bold;width:25%;text-align:right}.question {margin-bottom:25px;page-break-inside:avoid;border:1px solid #ddd;padding:15px;border-radius:5px}.question-title {font-size:14pt;font-weight:bold;margin-bottom:10px;color:#000}.question-content {margin-bottom:15px;line-height:1.8}.options {margin-left:20px;margin-bottom:15px}.option {margin-bottom:5px;line-height:1.5}.answer {color:#008000;font-weight:bold;margin-bottom:10px}.explanation {background-color:#f9f9f9;padding:10px;border-left:4px solid #007acc;margin-top:10px;font-size:11pt;line-height:1.6}.separator {border-bottom:1px solid #ccc;margin:20px 0}.tags {margin-top:10px;font-size:10pt;color:#666}.tag {background-color:#e0e0e0;padding:2px 6px;border-radius:3px;margin-right:5px}</style></head><body><div class="header"><div class="title">{{ library.name }} - 题库</div><div>生成时间：{{ generated_time|date:"Y-m-d H:i:s" }}</div></div><table class="info-table"><tr><td class="label">题库名称：</td><td>{{ library.name }}</td></tr>
+        {% if library.description %}
+        <tr><td class="label">题库描述：</td><td>{{ library.description }}</td></tr>
+        {% endif %}
+        <tr><td class="label">创建时间：</td><td>{{ library.created_at|date:"Y-m-d H:i" }}</td></tr><tr><td class="label">题目数量：</td><td>{{ total_questions }} 道</td></tr><tr><td class="label">生成时间：</td><td>{{ generated_time|date:"Y-m-d H:i:s" }}</td></tr></table>
+
+    {% for question in questions %}
+    <div class="question"><div class="question-title">{{ forloop.counter }}. {{ question.title }}</div><div class="question-content">{{ question.content }}</div>
+        
+        {% if question.question_image %}
+        <div style="margin: 10px 0;"><img src="{{ question.question_image.url }}" style="max-width: 400px; max-height: 300px;" alt="题目图片"></div>
+        {% endif %}
+        
+        {% if question.question_type in 'single_choice,multiple_choice' %}
+        <div class="options">
+            {% for key, value in question.options.items %}
+            <div class="option"><strong>{{ key }}.</strong> {{ value }}
+                {% if question.option_images and key in question.option_images %}
+                <br><img src="{{ question.option_images.key }}" style="max-width: 200px; max-height: 150px; margin-left: 20px;" alt="选项图片">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="answer">答案：{{ question.correct_answer }}</div>
+        
+        {% if question.explanation %}
+        <div class="explanation"><strong>解析：</strong>{{ question.explanation }}
+        </div>
+        {% endif %}
+        
+        {% if question.tags.all %}
+        <div class="tags"><strong>标签：</strong>
+            {% for tag in question.tags.all %}
+            <span class="tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if not forloop.last %}
+    <div class="separator"></div>
+    {% endif %}
+    {% endfor %}
+
+    <div style="text-align: center; margin-top: 30px; font-size: 10pt; color: #666;">
+        — 题库导出完成 —<br>
+        共 {{ total_questions }} 道题目
+    </div></body></html>

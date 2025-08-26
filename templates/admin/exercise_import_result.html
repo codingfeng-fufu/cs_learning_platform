@@ -1,0 +1,45 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>导入结果</title><style>* {margin:0;padding:0;box-sizing:border-box}body {font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;background:#f8f9fa;color:#333;line-height:1.6}.result-container {max-width:800px;margin:20px auto;background:white;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);overflow:hidden}.result-header {padding:30px;text-align:center;color:white}.result-header.success {background:linear-gradient(135deg, #28a745 0%, #20c997 100%)}.result-header.error {background:linear-gradient(135deg, #dc3545 0%, #fd7e14 100%)}.result-icon {font-size:4em;margin-bottom:15px}.result-title {font-size:2em;margin-bottom:10px}.result-subtitle {opacity:0.9;font-size:1.1em}.result-content {padding:40px}.stats-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:20px;margin-bottom:30px}.stat-card {background:#f8f9fa;padding:25px;border-radius:8px;text-align:center;border:1px solid #e9ecef}.stat-number {font-size:2.5em;font-weight:bold;margin-bottom:10px}.stat-number.success {color:#28a745}.stat-number.error {color:#dc3545}.stat-label {color:#6c757d;font-size:1em}.errors-section {background:#f8d7da;border:1px solid #f5c6cb;border-radius:8px;padding:25px;margin-bottom:30px}.errors-title {color:#721c24;font-size:1.2em;margin-bottom:15px;display:flex;align-items:center}.errors-title::before {content:'⚠️';margin-right:10px;font-size:1.5em}.error-list {max-height:300px;overflow-y:auto;background:white;border-radius:6px;padding:15px}.error-item {padding:10px 0;border-bottom:1px solid #f5c6cb;color:#721c24}.error-item:last-child {border-bottom:none}.success-section {background:#d4edda;border:1px solid #c3e6cb;border-radius:8px;padding:25px;margin-bottom:30px}.success-title {color:#155724;font-size:1.2em;margin-bottom:15px;display:flex;align-items:center}.success-title::before {content:'✅';margin-right:10px;font-size:1.5em}.success-text {color:#155724;line-height:1.7}.actions-section {display:flex;justify-content:center;gap:15px;padding:30px 0;border-top:1px solid #e9ecef}.btn {display:inline-block;padding:12px 24px;border-radius:6px;text-decoration:none;font-weight:bold;transition:all 0.3s ease;border:none;cursor:pointer;font-size:1em}.btn-primary {background:#007bff;color:white}.btn-success {background:#28a745;color:white}.btn-secondary {background:#6c757d;color:white}.btn-warning {background:#ffc107;color:#212529}.btn:hover {transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.1)}.tips-section {background:#d1ecf1;border:1px solid #bee5eb;border-radius:8px;padding:25px;margin-bottom:30px}.tips-title {color:#0c5460;font-size:1.1em;margin-bottom:15px;display:flex;align-items:center}.tips-title::before {content:'💡';margin-right:10px;font-size:1.3em}.tips-list {color:#0c5460;padding-left:20px}.tips-list li {margin-bottom:8px}@media (max-width:768px) {.result-container {margin:10px;border-radius:8px}.result-content {padding:20px}.stats-grid {grid-template-columns:repeat(2, 1fr)}.actions-section {flex-direction:column;align-items:center}}</style></head><body><div class="result-container"><!-- 结果头部 --><div class="result-header {% if success %}success{% else %}error{% endif %}"><div class="result-icon">
+                {% if success %}✅{% else %}❌{% endif %}
+            </div><div class="result-title">
+                {% if success %}导入完成{% else %}导入失败{% endif %}
+            </div><div class="result-subtitle">
+                {% if success %}
+                    练习题已成功导入到系统中
+                {% else %}
+                    导入过程中遇到了一些问题
+                {% endif %}
+            </div></div><!-- 结果内容 --><div class="result-content"><!-- 统计信息 --><div class="stats-grid"><div class="stat-card"><div class="stat-number success">{{ imported_count|default:0 }}</div><div class="stat-label">成功导入</div></div><div class="stat-card"><div class="stat-number error">{{ errors|length|default:0 }}</div><div class="stat-label">导入失败</div></div></div><!-- 成功信息 -->
+            {% if imported_count > 0 %}
+            <div class="success-section"><div class="success-title">导入成功</div><div class="success-text">
+                    恭喜！已成功导入 <strong>{{ imported_count }}</strong> 道练习题。
+                    这些题目现在可以在练习题管理页面中查看和编辑。
+                </div></div>
+            {% endif %}
+            
+            <!-- 错误信息 -->
+            {% if errors %}
+            <div class="errors-section"><div class="errors-title">导入错误详情</div><div class="error-list">
+                    {% for error in errors %}
+                    <div class="error-item">{{ error }}</div>
+                    {% endfor %}
+                </div></div>
+            {% endif %}
+            
+            <!-- 使用提示 --><div class="tips-section"><div class="tips-title">导入提示</div><ul class="tips-list"><li>确保CSV文件使用UTF-8编码，避免中文乱码</li><li>必填字段不能为空：title, question_text, correct_answer, category, difficulty, question_type</li><li>选择题必须填写选项内容（option_A, option_B等）</li><li>多选题答案用逗号分隔，如：A,C,D</li><li>如果分类或难度不存在，系统会自动创建</li><li>建议先导入少量数据测试格式是否正确</li></ul></div></div><!-- 操作按钮 --><div class="actions-section">
+            {% if imported_count > 0 %}
+            <a href="{% url 'admin:knowledge_app_exercise_changelist' %}" class="btn btn-success">
+                📋 查看导入的题目
+            </a>
+            {% endif %}
+            
+            {% if errors %}
+            <a href="{% url 'knowledge_app:exercise_import' %}" class="btn btn-warning">
+                🔄 重新导入
+            </a>
+            {% endif %}
+            
+            <a href="{% url 'admin:knowledge_app_exercise_changelist' %}" class="btn btn-primary">
+                📝 管理练习题
+            </a><a href="{% url 'admin:index' %}" class="btn btn-secondary">
+                🏠 返回首页
+            </a></div></div><script>{% if imported_count > 0 %} setTimeout(function() { console.log('导入完成，共导入 {{ imported_count }} 道题目'); }, 1000); {% endif %} {% if errors %} function copyErrors() { const errors = [ {% for error in errors %} "{{ error|escapejs }}", {% endfor %} ]; const errorText = errors.join('\n'); if (navigator.clipboard) { navigator.clipboard.writeText(errorText).then(function() { alert('错误信息已复制到剪贴板'); }); } else { const textArea = document.createElement('textarea'); textArea.value = errorText; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); alert('错误信息已复制到剪贴板'); } } const errorsSection = document.querySelector('.errors-section'); if (errorsSection) { const copyBtn = document.createElement('button'); copyBtn.className = 'btn btn-secondary'; copyBtn.style.marginTop = '15px'; copyBtn.innerHTML = '📋 复制错误信息'; copyBtn.onclick = copyErrors; errorsSection.appendChild(copyBtn); } {% endif %}</script></body></html>

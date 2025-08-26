@@ -1,0 +1,227 @@
+
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}最小生成树——Kruskal算法 - 计算机科学学习平台{% endblock %}
+
+{% block extra_css %}
+<style>.breadcrumb {color:white;margin-bottom:20px;opacity:0.9}.breadcrumb a {color:white;text-decoration:none}.breadcrumb a:hover {text-decoration:underline}.knowledge-header {background:rgba(255, 255, 255, 0.1);backdrop-filter:blur(10px);border-radius:15px;padding:30px;margin-bottom:30px;color:white;text-align:center}.knowledge-header h1 {font-size:2.5rem;margin-bottom:15px;display:flex;align-items:center;justify-content:center;gap:15px}.knowledge-header p {font-size:1.1rem;opacity:0.9;line-height:1.6}.main-card {background:white;border-radius:15px;box-shadow:0 8px 32px rgba(0,0,0,0.1);padding:40px;margin-bottom:30px}.section {margin-bottom:40px}.section-title {font-size:1.8rem;color:#333;margin-bottom:20px;font-weight:600;border-bottom:2px solid #667eea;padding-bottom:10px}.algorithm-intro {background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);padding:25px;border-radius:10px;margin-bottom:30px}.algorithm-intro h3 {color:#2c3e50;margin-bottom:15px}.algorithm-intro p {color:#34495e;line-height:1.6;margin-bottom:10px}.visualization-container {background:linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);border-radius:15px;padding:25px;margin-bottom:30px;text-align:center;position:relative;overflow:hidden}.visualization-container::before {content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);animation:shimmer 3s infinite;pointer-events:none}@keyframes shimmer {0% {transform:translateX(-100%) translateY(-100%) rotate(45deg)}100% {transform:translateX(100%) translateY(100%) rotate(45deg)}}#kruskalCanvas {border:3px solid #667eea;border-radius:12px;background:linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);margin:20px 0;max-width:100%;box-shadow:0 8px 32px rgba(102, 126, 234, 0.2);transition:all 0.3s ease;position:relative;z-index:1}#kruskalCanvas:hover {box-shadow:0 12px 40px rgba(102, 126, 234, 0.3);transform:translateY(-2px)}.controls {display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin:20px 0}.btn {padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:600;transition:all 0.3s ease;border:none;cursor:pointer;font-size:1rem}.btn-primary {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white}.btn-primary:hover {transform:translateY(-2px);box-shadow:0 8px 25px rgba(102, 126, 234, 0.3)}.btn-secondary {background:#6c757d;color:white}.btn-secondary:hover {background:#5a6268;transform:translateY(-2px)}.btn-success {background:#28a745;color:white}.btn-success:hover {background:#218838;transform:translateY(-2px)}.status-panel {background:#e9ecef;border-radius:8px;padding:15px;margin:20px 0;font-family:'Courier New', monospace}.code-section {margin-top:40px}.code-tabs {display:flex;background:#f1f3f4;border-radius:8px 8px 0 0;overflow:hidden}.code-tab {padding:15px 25px;background:#f1f3f4;border:none;cursor:pointer;font-weight:600;transition:all 0.3s ease;color:#5f6368}.code-tab.active {background:#667eea;color:white}.code-content {position:relative;background:#263238;border-radius:0 0 8px 8px;overflow:hidden}.code-block {display:none;color:#fff;font-family:'Courier New', monospace;font-size:14px;line-height:1.6;padding:25px;margin:0;overflow-x:auto}.code-block.active {display:block}.copy-btn {position:absolute;top:15px;right:15px;background:rgba(255, 255, 255, 0.1);color:white;border:1px solid rgba(255, 255, 255, 0.3);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:12px;transition:all 0.3s ease}.copy-btn:hover {background:rgba(255, 255, 255, 0.2)}.copy-btn.copied {background:#28a745;border-color:#28a745}.keyword {color:#c792ea}.string {color:#c3e88d}.comment {color:#546e7a}.number {color:#f78c6c}.function {color:#82aaff}.action-buttons {display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:30px}.legend {display:flex;justify-content:center;gap:25px;margin:25px 0;flex-wrap:wrap;padding:20px;background:rgba(255, 255, 255, 0.9);border-radius:15px;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0, 0, 0, 0.1)}.legend-item {display:flex;align-items:center;gap:10px;font-size:14px;font-weight:500;padding:8px 15px;background:white;border-radius:20px;box-shadow:0 2px 8px rgba(0, 0, 0, 0.1);transition:all 0.3s ease}.legend-item:hover {transform:translateY(-2px);box-shadow:0 4px 12px rgba(0, 0, 0, 0.15)}.legend-color {width:24px;height:24px;border-radius:50%;border:2px solid #333;position:relative;overflow:hidden}.legend-color::after {content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);animation:legendShine 2s infinite}@keyframes legendShine {0% {transform:translateX(-100%) translateY(-100%) rotate(45deg)}100% {transform:translateX(100%) translateY(100%) rotate(45deg)}}@media (max-width:768px) {.knowledge-header h1 {font-size:2rem}.main-card {padding:25px}.controls {flex-direction:column;align-items:center}.btn {width:100%;max-width:250px}.code-tabs {flex-direction:column}#kruskalCanvas {width:100%;height:auto}}</style>
+{% endblock %}
+
+{% block content %}
+<div class="container"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a> ><span>数据结构</span> ><span>最小生成树——Kruskal算法</span></div><!-- 知识点头部 --><div class="knowledge-header"><h1><span>🌳</span>
+            最小生成树——Kruskal算法
+        </h1><p>数据结构 - 图中的最小生成树——Kruskal算法可视化演示</p></div><!-- 主要内容卡片 --><div class="main-card"><!-- 算法介绍 --><div class="section"><h2 class="section-title">📚 算法介绍</h2><div class="algorithm-intro"><h3>什么是Kruskal算法？</h3><p>Kruskal算法是一种用于寻找图的最小生成树的贪心算法。它的基本思想是：</p><p>• 将图中所有边按权重从小到大排序</p><p>• 依次选择权重最小的边，如果这条边不会形成环，就将其加入最小生成树</p><p>• 重复此过程，直到最小生成树包含n-1条边（n为顶点数）</p><p><strong>时间复杂度：</strong> O(E log E)，其中E是边的数量</p><p><strong>空间复杂度：</strong> O(V)，其中V是顶点数量</p></div></div><!-- 可视化演示 --><div class="section"><h2 class="section-title">🎬 动态演示</h2><div class="visualization-container"><canvas id="kruskalCanvas" width="800" height="500"></canvas><div class="legend"><div class="legend-item"><div class="legend-color" style="background: #ff6b6b;"></div><span>未处理的边</span></div><div class="legend-item"><div class="legend-color" style="background: #4ecdc4;"></div><span>已选择的边</span></div><div class="legend-item"><div class="legend-color" style="background: #ffd93d;"></div><span>当前考虑的边</span></div><div class="legend-item"><div class="legend-color" style="background: #ff8e8e;"></div><span>被拒绝的边（形成环）</span></div></div><div class="controls"><button class="btn btn-primary" onclick="startAnimation()">🎬 开始演示</button><button class="btn btn-secondary" onclick="stepAnimation()">⏭️ 单步执行</button><button class="btn btn-secondary" onclick="resetAnimation()">🔄 重置</button><button class="btn btn-success" onclick="generateRandomGraph()">🎲 随机图</button></div><div class="status-panel" id="statusPanel"><strong>状态：</strong>点击"开始演示"来观看Kruskal算法的执行过程
+                </div></div></div><!-- 代码实现 --><div class="section code-section"><h2 class="section-title">💻 代码实现</h2><div class="code-tabs"><button class="code-tab active" onclick="showCode('python')">Python</button><button class="code-tab" onclick="showCode('java')">Java</button><button class="code-tab" onclick="showCode('cpp')">C++</button></div><div class="code-content"><button class="copy-btn" onclick="copyCode()">📋 复制代码</button><!-- Python代码 --><pre class="code-block active" id="python-code"><span class="keyword">class</span><span class="function">UnionFind</span>:
+    <span class="keyword">def</span><span class="function">__init__</span>(<span class="keyword">self</span>, n):
+        <span class="keyword">self</span>.parent = <span class="function">list</span>(<span class="function">range</span>(n))
+        <span class="keyword">self</span>.rank = [<span class="number">0</span>] * n
+
+    <span class="keyword">def</span><span class="function">find</span>(<span class="keyword">self</span>, x):
+        <span class="keyword">if</span><span class="keyword">self</span>.parent[x] != x:
+            <span class="keyword">self</span>.parent[x] = <span class="keyword">self</span>.<span class="function">find</span>(<span class="keyword">self</span>.parent[x])
+        <span class="keyword">return</span><span class="keyword">self</span>.parent[x]
+
+    <span class="keyword">def</span><span class="function">union</span>(<span class="keyword">self</span>, x, y):
+        px, py = <span class="keyword">self</span>.<span class="function">find</span>(x), <span class="keyword">self</span>.<span class="function">find</span>(y)
+        <span class="keyword">if</span> px == py:
+            <span class="keyword">return</span><span class="keyword">False</span><span class="keyword">if</span><span class="keyword">self</span>.rank[px] < <span class="keyword">self</span>.rank[py]:
+            <span class="keyword">self</span>.parent[px] = py
+        <span class="keyword">elif</span><span class="keyword">self</span>.rank[px] ><span class="keyword">self</span>.rank[py]:
+            <span class="keyword">self</span>.parent[py] = px
+        <span class="keyword">else</span>:
+            <span class="keyword">self</span>.parent[py] = px
+            <span class="keyword">self</span>.rank[px] += <span class="number">1</span><span class="keyword">return</span><span class="keyword">True</span><span class="keyword">def</span><span class="function">kruskal</span>(vertices, edges):
+    <span class="comment"># 按权重排序所有边</span>
+    edges.<span class="function">sort</span>(key=<span class="keyword">lambda</span> x: x[<span class="number">2</span>])
+
+    uf = <span class="function">UnionFind</span>(<span class="function">len</span>(vertices))
+    mst = []
+    total_weight = <span class="number">0</span><span class="keyword">for</span> u, v, weight <span class="keyword">in</span> edges:
+        <span class="keyword">if</span> uf.<span class="function">union</span>(u, v):
+            mst.<span class="function">append</span>((u, v, weight))
+            total_weight += weight
+            <span class="keyword">if</span><span class="function">len</span>(mst) == <span class="function">len</span>(vertices) - <span class="number">1</span>:
+                <span class="keyword">break</span><span class="keyword">return</span> mst, total_weight
+
+<span class="comment"># 示例使用</span>
+vertices = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]
+edges = [
+    (<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>), (<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>), (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),
+    (<span class="number">1</span>, <span class="number">3</span>, <span class="number">8</span>), (<span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>), (<span class="number">2</span>, <span class="number">4</span>, <span class="number">7</span>), (<span class="number">3</span>, <span class="number">4</span>, <span class="number">9</span>)
+]
+
+mst, weight = <span class="function">kruskal</span>(vertices, edges)
+<span class="function">print</span>(<span class="string">f"最小生成树: {mst}"</span>)
+<span class="function">print</span>(<span class="string">f"总权重: {weight}"</span>)</pre><!-- Java代码 --><pre class="code-block" id="java-code"><span class="keyword">import</span> java.util.*;
+
+<span class="keyword">class</span><span class="function">Edge</span><span class="keyword">implements</span> Comparable&lt;Edge&gt; {
+    <span class="keyword">int</span> src, dest, weight;
+
+    <span class="keyword">public</span><span class="function">Edge</span>(<span class="keyword">int</span> src, <span class="keyword">int</span> dest, <span class="keyword">int</span> weight) {
+        <span class="keyword">this</span>.src = src;
+        <span class="keyword">this</span>.dest = dest;
+        <span class="keyword">this</span>.weight = weight;
+    }
+
+    <span class="keyword">public</span><span class="keyword">int</span><span class="function">compareTo</span>(Edge other) {
+        <span class="keyword">return</span> Integer.<span class="function">compare</span>(<span class="keyword">this</span>.weight, other.weight);
+    }
+}
+
+<span class="keyword">class</span><span class="function">UnionFind</span> {
+    <span class="keyword">private</span><span class="keyword">int</span>[] parent, rank;
+
+    <span class="keyword">public</span><span class="function">UnionFind</span>(<span class="keyword">int</span> n) {
+        parent = <span class="keyword">new</span><span class="keyword">int</span>[n];
+        rank = <span class="keyword">new</span><span class="keyword">int</span>[n];
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    <span class="keyword">public</span><span class="keyword">int</span><span class="function">find</span>(<span class="keyword">int</span> x) {
+        <span class="keyword">if</span> (parent[x] != x) {
+            parent[x] = <span class="function">find</span>(parent[x]);
+        }
+        <span class="keyword">return</span> parent[x];
+    }
+
+    <span class="keyword">public</span><span class="keyword">boolean</span><span class="function">union</span>(<span class="keyword">int</span> x, <span class="keyword">int</span> y) {
+        <span class="keyword">int</span> px = <span class="function">find</span>(x), py = <span class="function">find</span>(y);
+        <span class="keyword">if</span> (px == py) <span class="keyword">return</span><span class="keyword">false</span>;
+
+        <span class="keyword">if</span> (rank[px] &lt; rank[py]) {
+            parent[px] = py;
+        } <span class="keyword">else</span><span class="keyword">if</span> (rank[px] &gt; rank[py]) {
+            parent[py] = px;
+        } <span class="keyword">else</span> {
+            parent[py] = px;
+            rank[px]++;
+        }
+        <span class="keyword">return</span><span class="keyword">true</span>;
+    }
+}
+
+<span class="keyword">public</span><span class="keyword">class</span><span class="function">KruskalAlgorithm</span> {
+    <span class="keyword">public</span><span class="keyword">static</span> List&lt;Edge&gt; <span class="function">kruskal</span>(<span class="keyword">int</span> vertices, List&lt;Edge&gt; edges) {
+        <span class="comment">// 按权重排序所有边</span>
+        Collections.<span class="function">sort</span>(edges);
+
+        UnionFind uf = <span class="keyword">new</span><span class="function">UnionFind</span>(vertices);
+        List&lt;Edge&gt; mst = <span class="keyword">new</span> ArrayList&lt;&gt;();
+
+        <span class="keyword">for</span> (Edge edge : edges) {
+            <span class="keyword">if</span> (uf.<span class="function">union</span>(edge.src, edge.dest)) {
+                mst.<span class="function">add</span>(edge);
+                <span class="keyword">if</span> (mst.<span class="function">size</span>() == vertices - <span class="number">1</span>) {
+                    <span class="keyword">break</span>;
+                }
+            }
+        }
+
+        <span class="keyword">return</span> mst;
+    }
+
+    <span class="keyword">public</span><span class="keyword">static</span><span class="keyword">void</span><span class="function">main</span>(String[] args) {
+        List&lt;Edge&gt; edges = Arrays.<span class="function">asList</span>(
+            <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>), <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>),
+            <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>), <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">8</span>),
+            <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>), <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">7</span>),
+            <span class="keyword">new</span><span class="function">Edge</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">9</span>)
+        );
+
+        List&lt;Edge&gt; mst = <span class="function">kruskal</span>(<span class="number">5</span>, edges);
+        System.out.<span class="function">println</span>(<span class="string">"最小生成树的边:"</span>);
+        <span class="keyword">for</span> (Edge edge : mst) {
+            System.out.<span class="function">println</span>(edge.src + <span class="string">" - "</span> + edge.dest + <span class="string">" : "</span> + edge.weight);
+        }
+    }
+}</pre><!-- C++代码 --><pre class="code-block" id="cpp-code"><span class="keyword">#include</span><span class="string">&lt;iostream&gt;</span><span class="keyword">#include</span><span class="string">&lt;vector&gt;</span><span class="keyword">#include</span><span class="string">&lt;algorithm&gt;</span><span class="keyword">using</span><span class="keyword">namespace</span> std;
+
+<span class="keyword">struct</span><span class="function">Edge</span> {
+    <span class="keyword">int</span> src, dest, weight;
+
+    <span class="function">Edge</span>(<span class="keyword">int</span> s, <span class="keyword">int</span> d, <span class="keyword">int</span> w) : src(s), dest(d), weight(w) {}
+
+    <span class="keyword">bool</span><span class="keyword">operator</span>&lt;(<span class="keyword">const</span> Edge&amp; other) <span class="keyword">const</span> {
+        <span class="keyword">return</span> weight &lt; other.weight;
+    }
+};
+
+<span class="keyword">class</span><span class="function">UnionFind</span> {
+<span class="keyword">private</span>:
+    vector&lt;<span class="keyword">int</span>&gt; parent, rank;
+
+<span class="keyword">public</span>:
+    <span class="function">UnionFind</span>(<span class="keyword">int</span> n) : parent(n), rank(n, <span class="number">0</span>) {
+        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    <span class="keyword">int</span><span class="function">find</span>(<span class="keyword">int</span> x) {
+        <span class="keyword">if</span> (parent[x] != x) {
+            parent[x] = <span class="function">find</span>(parent[x]);
+        }
+        <span class="keyword">return</span> parent[x];
+    }
+
+    <span class="keyword">bool</span><span class="function">unite</span>(<span class="keyword">int</span> x, <span class="keyword">int</span> y) {
+        <span class="keyword">int</span> px = <span class="function">find</span>(x), py = <span class="function">find</span>(y);
+        <span class="keyword">if</span> (px == py) <span class="keyword">return</span><span class="keyword">false</span>;
+
+        <span class="keyword">if</span> (rank[px] &lt; rank[py]) {
+            parent[px] = py;
+        } <span class="keyword">else</span><span class="keyword">if</span> (rank[px] &gt; rank[py]) {
+            parent[py] = px;
+        } <span class="keyword">else</span> {
+            parent[py] = px;
+            rank[px]++;
+        }
+        <span class="keyword">return</span><span class="keyword">true</span>;
+    }
+};
+
+vector&lt;Edge&gt; <span class="function">kruskal</span>(<span class="keyword">int</span> vertices, vector&lt;Edge&gt;&amp; edges) {
+    <span class="comment">// 按权重排序所有边</span><span class="function">sort</span>(edges.begin(), edges.end());
+
+    UnionFind uf(vertices);
+    vector&lt;Edge&gt; mst;
+
+    <span class="keyword">for</span> (<span class="keyword">const</span> Edge&amp; edge : edges) {
+        <span class="keyword">if</span> (uf.<span class="function">unite</span>(edge.src, edge.dest)) {
+            mst.<span class="function">push_back</span>(edge);
+            <span class="keyword">if</span> (mst.<span class="function">size</span>() == vertices - <span class="number">1</span>) {
+                <span class="keyword">break</span>;
+            }
+        }
+    }
+
+    <span class="keyword">return</span> mst;
+}
+
+<span class="keyword">int</span><span class="function">main</span>() {
+    vector&lt;Edge&gt; edges = {
+        <span class="function">Edge</span>(<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>), <span class="function">Edge</span>(<span class="number">0</span>, <span class="number">3</span>, <span class="number">6</span>), <span class="function">Edge</span>(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>),
+        <span class="function">Edge</span>(<span class="number">1</span>, <span class="number">3</span>, <span class="number">8</span>), <span class="function">Edge</span>(<span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>), <span class="function">Edge</span>(<span class="number">2</span>, <span class="number">4</span>, <span class="number">7</span>),
+        <span class="function">Edge</span>(<span class="number">3</span>, <span class="number">4</span>, <span class="number">9</span>)
+    };
+
+    vector&lt;Edge&gt; mst = <span class="function">kruskal</span>(<span class="number">5</span>, edges);
+
+    cout &lt;&lt; <span class="string">"最小生成树的边:"</span> &lt;&lt; endl;
+    <span class="keyword">for</span> (<span class="keyword">const</span> Edge&amp; edge : mst) {
+        cout &lt;&lt; edge.src &lt;&lt; <span class="string">" - "</span> &lt;&lt; edge.dest &lt;&lt; <span class="string">" : "</span> &lt;&lt; edge.weight &lt;&lt; endl;
+    }
+
+    <span class="keyword">return</span><span class="number">0</span>;
+}</pre></div></div><div class="action-buttons"><a href="{% url 'knowledge_app:index' %}" class="btn btn-primary">
+                🏠 返回首页
+            </a><a href="{% url 'knowledge_app:cs_universe' %}" class="btn btn-secondary">
+                🌌 探索CS宇宙
+            </a></div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>let canvas, ctx; let nodes = []; let edges = []; let mstEdges = []; let currentStep = 0; let isAnimating = false; let animationSpeed = 2000; let sortedEdges = []; let unionFind = []; let animationFrame = 0; let currentEdgeAnimation = null; let edgeAnimations = []; let particleSystem = []; const colors = { node: '#667eea', nodeActive: '#ff6b6b', nodeText: 'white', edge: '#ddd', edgeHover: '#ff6b6b', selectedEdge: '#4ecdc4', currentEdge: '#ffd93d', rejectedEdge: '#ff8e8e', background: '#f8f9fa', glow: 'rgba(102, 126, 234, 0.3)', pulse: 'rgba(255, 107, 107, 0.5)' }; document.addEventListener('DOMContentLoaded', function() { console.log('Kruskal算法页面加载完成'); canvas = document.getElementById('kruskalCanvas'); ctx = canvas.getContext('2d'); setupCanvas(); initializeDefaultGraph(); renderLoop(); const card = document.querySelector('.main-card'); if (card) { card.style.opacity = '0'; card.style.transform = 'translateY(20px)'; setTimeout(() => { card.style.transition = 'all 0.6s ease'; card.style.opacity = '1'; card.style.transform = 'translateY(0)'; }, 100); } }); function setupCanvas() { const rect = canvas.getBoundingClientRect(); const dpr = window.devicePixelRatio || 1; canvas.width = rect.width * dpr; canvas.height = rect.height * dpr; ctx.scale(dpr, dpr); canvas.style.width = rect.width + 'px'; canvas.style.height = rect.height + 'px'; } function renderLoop() { animationFrame++; updateAnimations(); drawGraph(); requestAnimationFrame(renderLoop); } function updateAnimations() { particleSystem = particleSystem.filter(particle => { particle.life -= 0.02; particle.x += particle.vx; particle.y += particle.vy; particle.size *= 0.98; return particle.life > 0; }); edgeAnimations.forEach(anim => { if (anim.active) { anim.progress = Math.min(1, anim.progress + 0.03); if (anim.progress >= 1) { anim.active = false; } } }); } function createParticles(x, y, color, count = 10) { for (let i = 0; i < count; i++) { particleSystem.push({ x: x + (Math.random() - 0.5) * 40, y: y + (Math.random() - 0.5) * 40, vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4, size: Math.random() * 6 + 2, color: color, life: 1 }); } } function createEdgeAnimation(edge, type) { const animation = { edge: edge, type: type, progress: 0, active: true }; edgeAnimations.push(animation); return animation; } class UnionFindClass { constructor(n) { this.parent = Array.from({length: n}, (_, i) => i); this.rank = new Array(n).fill(0); } find(x) { if (this.parent[x] !== x) { this.parent[x] = this.find(this.parent[x]); } return this.parent[x]; } union(x, y) { const px = this.find(x); const py = this.find(y); if (px === py) return false; if (this.rank[px] < this.rank[py]) { this.parent[px] = py; } else if (this.rank[px] > this.rank[py]) { this.parent[py] = px; } else { this.parent[py] = px; this.rank[px]++; } return true; } } function initializeDefaultGraph() { nodes = [ {id: 0, x: 150, y: 100, label: 'A'}, {id: 1, x: 350, y: 100, label: 'B'}, {id: 2, x: 450, y: 250, label: 'C'}, {id: 3, x: 250, y: 350, label: 'D'}, {id: 4, x: 50, y: 250, label: 'E'} ]; edges = [ {from: 0, to: 1, weight: 2}, {from: 0, to: 4, weight: 6}, {from: 1, to: 2, weight: 3}, {from: 1, to: 3, weight: 8}, {from: 1, to: 4, weight: 5}, {from: 2, to: 3, weight: 7}, {from: 3, to: 4, weight: 9} ]; resetAnimation(); } function generateRandomGraph() { const numNodes = 5 + Math.floor(Math.random() * 3); nodes = []; edges = []; for (let i = 0; i < numNodes; i++) { const angle = (2 * Math.PI * i) / numNodes; const radius = 150; const centerX = canvas.width / 2; const centerY = canvas.height / 2; nodes.push({ id: i, x: centerX + radius * Math.cos(angle) + (Math.random() - 0.5) * 50, y: centerY + radius * Math.sin(angle) + (Math.random() - 0.5) * 50, label: String.fromCharCode(65 + i) }); } const edgeSet = new Set(); const minEdges = numNodes - 1; const maxEdges = Math.min(numNodes * (numNodes - 1) / 2, numNodes + 3); for (let i = 1; i < numNodes; i++) { const from = Math.floor(Math.random() * i); const weight = Math.floor(Math.random() * 9) + 1; const edgeKey = from < i ? `${from}-${i}` : `${i}-${from}`; edgeSet.add(edgeKey); edges.push({from, to: i, weight}); } while (edges.length < maxEdges && edgeSet.size < maxEdges) { const from = Math.floor(Math.random() * numNodes); const to = Math.floor(Math.random() * numNodes); if (from !== to) { const edgeKey = from < to ? `${from}-${to}` : `${to}-${from}`; if (!edgeSet.has(edgeKey)) { edgeSet.add(edgeKey); const weight = Math.floor(Math.random() * 9) + 1; edges.push({from, to, weight}); } } } resetAnimation(); updateStatus('生成了新的随机图，点击"开始演示"查看算法执行过程'); } function resetAnimation() { currentStep = 0; isAnimating = false; mstEdges = []; sortedEdges = [...edges].sort((a, b) => a.weight - b.weight); unionFind = new UnionFindClass(nodes.length); currentEdgeAnimation = null; edgeAnimations = []; particleSystem = []; nodes.forEach(node => { node.pulse = 0; node.glow = 0; }); updateStatus('准备就绪，点击"开始演示"观看Kruskal算法的执行过程'); } function startAnimation() { if (isAnimating) return; resetAnimation(); isAnimating = true; updateStatus('🚀 算法开始执行，正在按权重排序所有边...'); showSortingAnimation(); setTimeout(nextStep, animationSpeed); } function showSortingAnimation() { updateStatus(`📊 边按权重排序完成：${sortedEdges.map(e => `${nodes[e.from].label}-${nodes[e.to].label}(${e.weight})`).join(', ')}`); } function stepAnimation() { if (isAnimating) return; if (currentStep === 0) { resetAnimation(); showSortingAnimation(); } nextStep(); } function nextStep() { if (currentStep >= sortedEdges.length || mstEdges.length === nodes.length - 1) { isAnimating = false; const totalWeight = mstEdges.reduce((sum, edge) => sum + edge.weight, 0); updateStatus(`🎉 算法完成！最小生成树总权重：${totalWeight}，包含 ${mstEdges.length} 条边`); celebrationAnimation(); return; } const edge = sortedEdges[currentStep]; highlightCurrentEdge(edge); setTimeout(() => { const canAdd = unionFind.union(edge.from, edge.to); if (canAdd) { mstEdges.push(edge); updateStatus(`✅ 步骤 ${currentStep + 1}：选择边 ${nodes[edge.from].label}-${nodes[edge.to].label} (权重:${edge.weight})，已选择 ${mstEdges.length}/${nodes.length - 1} 条边`); selectEdgeAnimation(edge); } else { updateStatus(`❌ 步骤 ${currentStep + 1}：拒绝边 ${nodes[edge.from].label}-${nodes[edge.to].label} (权重:${edge.weight})，会形成环路`); rejectEdgeAnimation(edge); } currentStep++; if (isAnimating) { setTimeout(nextStep, animationSpeed); } }, 800); } function highlightCurrentEdge(edge) { nodes[edge.from].pulse = 1; nodes[edge.to].pulse = 1; currentEdgeAnimation = createEdgeAnimation(edge, 'current'); updateStatus(`🔍 正在考虑边 ${nodes[edge.from].label}-${nodes[edge.to].label} (权重:${edge.weight})...`); } function selectEdgeAnimation(edge) { const fromNode = nodes[edge.from]; const toNode = nodes[edge.to]; createParticles(fromNode.x, fromNode.y, colors.selectedEdge, 8); createParticles(toNode.x, toNode.y, colors.selectedEdge, 8); createEdgeAnimation(edge, 'select'); nodes[edge.from].glow = 1; nodes[edge.to].glow = 1; } function rejectEdgeAnimation(edge) { const fromNode = nodes[edge.from]; const toNode = nodes[edge.to]; createParticles(fromNode.x, fromNode.y, colors.rejectedEdge, 6); createParticles(toNode.x, toNode.y, colors.rejectedEdge, 6); createEdgeAnimation(edge, 'reject'); } function celebrationAnimation() { mstEdges.forEach((edge, index) => { setTimeout(() => { const fromNode = nodes[edge.from]; const toNode = nodes[edge.to]; createParticles(fromNode.x, fromNode.y, colors.selectedEdge, 15); createParticles(toNode.x, toNode.y, colors.selectedEdge, 15); }, index * 200); }); } function drawGraph() { ctx.fillStyle = colors.background; ctx.fillRect(0, 0, canvas.width, canvas.height); drawGrid(); edges.forEach(edge => { drawEdge(edge); }); edgeAnimations.forEach(anim => { if (anim.active) { drawEdgeAnimation(anim); } }); drawParticles(); nodes.forEach(node => { drawNode(node); }); drawWeightTable(); } function drawGrid() { ctx.strokeStyle = 'rgba(200, 200, 200, 0.3)'; ctx.lineWidth = 1; const gridSize = 30; for (let x = 0; x < canvas.width; x += gridSize) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke(); } for (let y = 0; y < canvas.height; y += gridSize) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); } } function drawEdge(edge) { const from = nodes[edge.from]; const to = nodes[edge.to]; let color = colors.edge; let width = 2; let alpha = 1; const isMSTEdge = mstEdges.some(mstEdge => (mstEdge.from === edge.from && mstEdge.to === edge.to) || (mstEdge.from === edge.to && mstEdge.to === edge.from)); if (isMSTEdge) { color = colors.selectedEdge; width = 6; ctx.shadowColor = colors.selectedEdge; ctx.shadowBlur = 15; } ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke(); ctx.shadowBlur = 0; ctx.globalAlpha = 1; drawEdgeWeight(edge, isMSTEdge); } function drawEdgeAnimation(animation) { const edge = animation.edge; const from = nodes[edge.from]; const to = nodes[edge.to]; let color, width, pulseIntensity; switch (animation.type) { case 'current': color = colors.currentEdge; width = 8; pulseIntensity = Math.sin(animationFrame * 0.3) * 0.5 + 0.5; break; case 'select': color = colors.selectedEdge; width = 10; pulseIntensity = 1 - animation.progress; break; case 'reject': color = colors.rejectedEdge; width = 8; pulseIntensity = Math.sin(animation.progress * Math.PI * 6) * (1 - animation.progress); break; } ctx.globalAlpha = pulseIntensity * 0.8; ctx.strokeStyle = color; ctx.lineWidth = width + pulseIntensity * 5; ctx.lineCap = 'round'; ctx.shadowColor = color; ctx.shadowBlur = 20 * pulseIntensity; ctx.beginPath(); ctx.moveTo(from.x, from.y); ctx.lineTo(to.x, to.y); ctx.stroke(); ctx.shadowBlur = 0; ctx.globalAlpha = 1; } function drawEdgeWeight(edge, isHighlighted = false) { const from = nodes[edge.from]; const to = nodes[edge.to]; const midX = (from.x + to.x) / 2; const midY = (from.y + to.y) / 2; const bgColor = isHighlighted ? colors.selectedEdge : 'white'; const textColor = isHighlighted ? 'white' : '#333'; const size = isHighlighted ? 18 : 15; ctx.fillStyle = bgColor; ctx.fillRect(midX - size, midY - 12, size * 2, 24); if (isHighlighted) { ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.strokeRect(midX - size, midY - 12, size * 2, 24); } else { ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1; ctx.strokeRect(midX - size, midY - 12, size * 2, 24); } ctx.fillStyle = textColor; ctx.font = `bold ${isHighlighted ? 14 : 12}px Arial`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(edge.weight.toString(), midX, midY); } function drawNode(node) { const time = animationFrame * 0.1; const pulseScale = 1 + (node.pulse || 0) * Math.sin(time * 8) * 0.3; const glowIntensity = (node.glow || 0) * (Math.sin(time * 4) * 0.3 + 0.7); if (node.pulse > 0) node.pulse -= 0.02; if (node.glow > 0) node.glow -= 0.01; const radius = 25 * pulseScale; if (glowIntensity > 0) { ctx.shadowColor = colors.glow; ctx.shadowBlur = 25 * glowIntensity; } ctx.fillStyle = colors.node; ctx.beginPath(); ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI); ctx.fill(); ctx.shadowBlur = 0; ctx.strokeStyle = '#333'; ctx.lineWidth = 3; ctx.stroke(); const gradient = ctx.createRadialGradient( node.x - 8, node.y - 8, 0, node.x, node.y, radius ); gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)'); gradient.addColorStop(1, 'rgba(255, 255, 255, 0)'); ctx.fillStyle = gradient; ctx.beginPath(); ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = colors.nodeText; ctx.font = 'bold 18px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(node.label, node.x, node.y); } function drawParticles() { particleSystem.forEach(particle => { ctx.globalAlpha = particle.life; ctx.fillStyle = particle.color; ctx.beginPath(); ctx.arc(particle.x, particle.y, particle.size, 0, 2 * Math.PI); ctx.fill(); }); ctx.globalAlpha = 1; } function drawWeightTable() { if (!isAnimating && currentStep === 0) return; const tableX = canvas.width - 200; const tableY = 20; const tableWidth = 180; const tableHeight = Math.min(300, sortedEdges.length * 25 + 40); ctx.fillStyle = 'rgba(255, 255, 255, 0.95)'; ctx.fillRect(tableX, tableY, tableWidth, tableHeight); ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1; ctx.strokeRect(tableX, tableY, tableWidth, tableHeight); ctx.fillStyle = '#333'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center'; ctx.fillText('边权重排序', tableX + tableWidth/2, tableY + 20); ctx.font = '12px Arial'; ctx.textAlign = 'left'; sortedEdges.forEach((edge, index) => { const y = tableY + 40 + index * 20; let color = '#666'; if (index < currentStep) { const isMSTEdge = mstEdges.some(mstEdge => (mstEdge.from === edge.from && mstEdge.to === edge.to) || (mstEdge.from === edge.to && mstEdge.to === edge.from)); color = isMSTEdge ? colors.selectedEdge : colors.rejectedEdge; } else if (index === currentStep) { color = colors.currentEdge; } ctx.fillStyle = color; const text = `${nodes[edge.from].label}-${nodes[edge.to].label}: ${edge.weight}`; ctx.fillText(text, tableX + 10, y); if (index === currentStep) { ctx.fillText('← 当前', tableX + 120, y); } }); } function updateStatus(message) { document.getElementById('statusPanel').innerHTML = `<strong>状态：</strong>${message}`; } function showCode(language) { document.querySelectorAll('.code-block').forEach(block => { block.classList.remove('active'); }); document.querySelectorAll('.code-tab').forEach(tab => { tab.classList.remove('active'); }); document.getElementById(language + '-code').classList.add('active'); event.target.classList.add('active'); } function copyCode() { const activeCodeBlock = document.querySelector('.code-block.active'); const text = activeCodeBlock.textContent; navigator.clipboard.writeText(text).then(function() { const copyBtn = document.querySelector('.copy-btn'); const originalText = copyBtn.textContent; copyBtn.textContent = '✅ 已复制'; copyBtn.classList.add('copied'); setTimeout(() => { copyBtn.textContent = originalText; copyBtn.classList.remove('copied'); }, 2000); }).catch(function(err) { console.error('复制失败:', err); alert('复制失败，请手动选择复制'); }); }</script>
+{% endblock %}

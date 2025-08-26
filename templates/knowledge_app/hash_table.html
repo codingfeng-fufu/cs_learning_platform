@@ -1,0 +1,150 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}哈希表 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>哈希表</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🗂️</span>
+            哈希表 (Hash Table)
+        </h1><p>基于哈希函数实现的高效键值对存储结构，平均查找时间O(1)</p></div><!-- 主要内容 --><div class="content-card slide-in-right"><!-- 概念介绍 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                什么是哈希表
+            </h2><div class="concept-explanation"><p class="concept-intro">
+                    哈希表是一种根据<strong>键值</strong>直接访问内存存储位置的数据结构。
+                    它通过哈希函数将键映射到表中的位置，实现快速的插入、删除和查找操作。
+                </p><div class="key-points"><div class="point-item"><span class="point-icon">🔑</span><div class="point-content"><h4>哈希函数</h4><p>将键转换为数组索引的函数，决定数据存储位置</p></div></div><div class="point-item"><span class="point-icon">⚡</span><div class="point-content"><h4>快速访问</h4><p>理想情况下，插入、删除、查找的时间复杂度都是O(1)</p></div></div><div class="point-item"><span class="point-icon">🔄</span><div class="point-content"><h4>冲突处理</h4><p>当不同的键映射到同一位置时，需要冲突解决策略</p></div></div></div></div></div><!-- 可视化演示 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎮</span>
+                交互式演示
+            </h2><div class="interactive-demo"><div class="demo-controls"><div class="control-group"><label>哈希表大小：</label><select id="table-size" onchange="initHashTable()"><option value="7">7</option><option value="11" selected>11</option><option value="13">13</option></select><label>冲突解决：</label><select id="collision-method"><option value="chaining">链地址法</option><option value="linear">线性探测</option><option value="quadratic">二次探测</option></select></div><div class="control-group"><input type="text" id="key-input" placeholder="输入键" maxlength="10"><input type="text" id="value-input" placeholder="输入值" maxlength="10"><button class="demo-btn primary" onclick="insertItem()">插入</button><button class="demo-btn" onclick="searchItem()">查找</button><button class="demo-btn" onclick="deleteItem()">删除</button><button class="demo-btn" onclick="clearTable()">清空</button></div></div><div id="hash-table-display" class="hash-table-display"></div><div class="hash-info"><div class="info-row"><div class="info-item"><span class="info-label">元素数量：</span><span id="element-count">0</span></div><div class="info-item"><span class="info-label">负载因子：</span><span id="load-factor">0.00</span></div><div class="info-item"><span class="info-label">冲突次数：</span><span id="collision-count">0</span></div><div class="info-item"><span class="info-label">最后操作：</span><span id="last-operation">无</span></div></div><div class="operation-result" id="operation-result"></div></div></div></div><!-- 哈希函数 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🔢</span>
+                常见哈希函数
+            </h2><div class="hash-functions-grid"><div class="function-card"><h4 class="function-title"><span class="function-icon">➗</span>
+                        除法散列
+                    </h4><div class="function-formula">h(k) = k mod m</div><p class="function-desc">最简单的哈希函数，m通常选择质数</p></div><div class="function-card"><h4 class="function-title"><span class="function-icon">✖️</span>
+                        乘法散列
+                    </h4><div class="function-formula">h(k) = ⌊m(kA mod 1)⌋</div><p class="function-desc">A为常数，通常取黄金比例的倒数</p></div><div class="function-card"><h4 class="function-title"><span class="function-icon">🔤</span>
+                        字符串散列
+                    </h4><div class="function-formula">h(s) = Σ(s[i] × p^i) mod m</div><p class="function-desc">多项式滚动哈希，p为质数</p></div></div></div><!-- 冲突解决 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🔧</span>
+                冲突解决策略
+            </h2><div class="collision-methods"><div class="method-card"><h4 class="method-title"><span class="method-icon">🔗</span>
+                        链地址法 (Chaining)
+                    </h4><div class="method-visual"><div class="chain-example"><div class="hash-slot">0: [A] → [D] → NULL</div><div class="hash-slot">1: [B] → NULL</div><div class="hash-slot">2: [C] → [E] → NULL</div></div></div><p class="method-desc">每个槽位维护一个链表，冲突元素添加到链表中</p><div class="method-pros-cons"><div class="pros">✅ 简单易实现，支持删除</div><div class="cons">❌ 需要额外指针空间</div></div></div><div class="method-card"><h4 class="method-title"><span class="method-icon">📍</span>
+                        开放地址法 (Open Addressing)
+                    </h4><div class="method-visual"><div class="probe-example"><div class="probe-sequence">线性探测: h(k), h(k)+1, h(k)+2, ...</div><div class="probe-sequence">二次探测: h(k), h(k)+1², h(k)+2², ...</div></div></div><p class="method-desc">发生冲突时，按某种规律寻找下一个空槽位</p><div class="method-pros-cons"><div class="pros">✅ 节省空间，缓存友好</div><div class="cons">❌ 删除复杂，容易聚集</div></div></div></div></div><!-- 代码实现 --><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><div class="code-example"><div class="code-header"><span class="code-title">Python实现 - 链地址法</span><button class="copy-btn" onclick="copyCode('hashtable-code')">复制代码</button></div><pre id="hashtable-code"><code class="language-python">class HashNode:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+        self.next = None
+
+class HashTable:
+    def __init__(self, size=11):
+        self.size = size
+        self.table = [None] * size
+        self.count = 0
+    
+    def _hash(self, key):
+        """简单的哈希函数"""
+        if isinstance(key, str):
+            hash_value = 0
+            for char in key:
+                hash_value = (hash_value * 31 + ord(char)) % self.size
+            return hash_value
+        return key % self.size
+    
+    def insert(self, key, value):
+        """插入键值对"""
+        index = self._hash(key)
+        
+        # 如果槽位为空，直接插入
+        if self.table[index] is None:
+            self.table[index] = HashNode(key, value)
+            self.count += 1
+            return
+        
+        # 遍历链表，查找是否已存在该键
+        current = self.table[index]
+        while current:
+            if current.key == key:
+                current.value = value  # 更新值
+                return
+            if current.next is None:
+                break
+            current = current.next
+        
+        # 在链表末尾添加新节点
+        current.next = HashNode(key, value)
+        self.count += 1
+    
+    def search(self, key):
+        """查找键对应的值"""
+        index = self._hash(key)
+        current = self.table[index]
+        
+        while current:
+            if current.key == key:
+                return current.value
+            current = current.next
+        
+        return None
+    
+    def delete(self, key):
+        """删除键值对"""
+        index = self._hash(key)
+        current = self.table[index]
+        
+        # 如果要删除的是第一个节点
+        if current and current.key == key:
+            self.table[index] = current.next
+            self.count -= 1
+            return True
+        
+        # 遍历链表查找要删除的节点
+        while current and current.next:
+            if current.next.key == key:
+                current.next = current.next.next
+                self.count -= 1
+                return True
+            current = current.next
+        
+        return False
+    
+    def load_factor(self):
+        """计算负载因子"""
+        return self.count / self.size
+    
+    def display(self):
+        """显示哈希表内容"""
+        for i in range(self.size):
+            print(f"槽位 {i}: ", end="")
+            current = self.table[i]
+            while current:
+                print(f"({current.key}: {current.value})", end="")
+                if current.next:
+                    print(" -> ", end="")
+                current = current.next
+            print(" -> NULL")
+
+# 使用示例
+ht = HashTable()
+ht.insert("apple", 5)
+ht.insert("banana", 3)
+ht.insert("orange", 8)
+print(f"apple: {ht.search('apple')}")
+print(f"负载因子: {ht.load_factor():.2f}")
+ht.display()</code></pre></div></div><!-- 性能分析 --><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                性能分析
+            </h2><div class="performance-grid"><div class="perf-card"><h4 class="perf-title"><span class="perf-icon">🏆</span>
+                        理想情况
+                    </h4><div class="perf-details"><p><strong>查找：</strong>O(1)</p><p><strong>插入：</strong>O(1)</p><p><strong>删除：</strong>O(1)</p><p class="perf-note">无冲突或冲突很少</p></div></div><div class="perf-card"><h4 class="perf-title"><span class="perf-icon">⚠️</span>
+                        最坏情况
+                    </h4><div class="perf-details"><p><strong>查找：</strong>O(n)</p><p><strong>插入：</strong>O(n)</p><p><strong>删除：</strong>O(n)</p><p class="perf-note">所有元素都冲突</p></div></div><div class="perf-card"><h4 class="perf-title"><span class="perf-icon">📊</span>
+                        平均情况
+                    </h4><div class="perf-details"><p><strong>查找：</strong>O(1 + α)</p><p><strong>插入：</strong>O(1 + α)</p><p><strong>删除：</strong>O(1 + α)</p><p class="perf-note">α为负载因子</p></div></div></div></div><!-- 应用场景 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                实际应用
+            </h2><div class="application-grid"><div class="app-card"><span class="app-icon">🗃️</span><h4>数据库索引</h4><p>快速定位数据记录</p></div><div class="app-card"><span class="app-icon">💾</span><h4>缓存系统</h4><p>Redis、Memcached等</p></div><div class="app-card"><span class="app-icon">🔍</span><h4>编译器</h4><p>符号表、关键字识别</p></div><div class="app-card"><span class="app-icon">🌐</span><h4>Web开发</h4><p>Session管理、路由表</p></div></div></div></div><!-- 学习提示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💡</span>
+                学习要点
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">🔑</span><strong>哈希函数：</strong>理解好的哈希函数应该均匀分布、计算快速。
+                </div><div class="info-box info-box-success"><span class="info-icon">🔄</span><strong>冲突处理：</strong>掌握链地址法和开放地址法的优缺点。
+                </div><div class="info-box info-box-warning"><span class="info-icon">📊</span><strong>负载因子：</strong>控制负载因子以保持良好性能。
+                </div><div class="info-box info-box-info"><span class="info-icon">🔧</span><strong>动态调整：</strong>学习哈希表的扩容和缩容机制。
+                </div></div></div></div></div><style>.interactive-demo {background:#f8f9fa;border-radius:12px;padding:25px;margin:20px 0}.demo-controls {display:flex;flex-direction:column;gap:15px;margin-bottom:25px}.control-group {display:flex;align-items:center;gap:10px;flex-wrap:wrap}.control-group label {font-weight:600;color:#333;min-width:80px}.control-group input, .control-group select {padding:8px 12px;border:1px solid #ddd;border-radius:6px;min-width:100px}.demo-btn {padding:8px 16px;background:#6c757d;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:500;transition:all 0.3s ease}.demo-btn.primary {background:#007bff}.demo-btn:hover {transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,0.2)}.hash-table-display {background:white;border-radius:8px;padding:20px;border:1px solid #e9ecef;margin:20px 0;min-height:300px}.hash-slot {display:flex;align-items:center;padding:10px;margin:5px 0;border:1px solid #ddd;border-radius:6px;background:#f8f9fa;transition:all 0.3s ease}.hash-slot.highlight {background:#cce7ff;border-color:#007bff;transform:scale(1.02)}.slot-index {width:30px;text-align:center;font-weight:600;color:#666;margin-right:15px}.slot-content {display:flex;align-items:center;gap:10px;flex:1}.hash-node {background:#007bff;color:white;padding:5px 10px;border-radius:4px;font-size:12px;font-weight:600;animation:slideIn 0.3s ease-out}.hash-node.new {background:#28a745;animation:pulse 0.6s ease-out}.hash-node.found {background:#ffc107;color:#333;animation:pulse 0.6s ease-out}.chain-arrow {color:#666;font-weight:bold}.hash-info {background:white;border-radius:8px;padding:20px;border:1px solid #e9ecef}.info-row {display:grid;grid-template-columns:repeat(auto-fit, minmax(150px, 1fr));gap:15px;margin-bottom:15px}.info-item {text-align:center;padding:10px;background:#f8f9fa;border-radius:6px}.info-label {display:block;font-size:14px;color:#666;margin-bottom:5px}.info-item span:last-child {font-size:18px;font-weight:600;color:#007bff}.operation-result {text-align:center;padding:15px;border-radius:8px;font-weight:600;margin-top:15px}.operation-result.success {background:#d4edda;color:#155724;border:1px solid #c3e6cb}.operation-result.error {background:#f8d7da;color:#721c24;border:1px solid #f5c6cb}.operation-result.info {background:#cce7ff;color:#004085;border:1px solid #b3d7ff}.hash-functions-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;margin:20px 0}.function-card {background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #e9ecef;text-align:center;transition:all 0.3s ease}.function-card:hover {transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.1);background:white}.function-title {display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px;color:#333}.function-formula {background:#e9ecef;padding:10px;border-radius:6px;font-family:'Courier New', monospace;font-weight:600;margin:10px 0;color:#495057}.function-desc {color:#666;font-size:14px;line-height:1.5}.collision-methods {display:grid;grid-template-columns:repeat(auto-fit, minmax(400px, 1fr));gap:30px;margin:20px 0}.method-card {background:#f8f9fa;padding:25px;border-radius:12px;border:1px solid #e9ecef}.method-title {display:flex;align-items:center;gap:10px;margin-bottom:15px;color:#333}.method-visual {background:white;padding:15px;border-radius:8px;margin:15px 0;border:1px solid #ddd}.chain-example {font-family:'Courier New', monospace;font-size:14px}.hash-slot {margin:5px 0;color:#495057}.probe-example {font-family:'Courier New', monospace;font-size:14px}.probe-sequence {margin:5px 0;color:#495057}.method-desc {color:#666;line-height:1.5;margin:15px 0}.method-pros-cons {display:flex;flex-direction:column;gap:8px}.pros, .cons {padding:8px 12px;border-radius:6px;font-size:14px}.pros {background:#d4edda;color:#155724}.cons {background:#f8d7da;color:#721c24}.performance-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:20px;margin:20px 0}.perf-card {background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #e9ecef;text-align:center}.perf-title {display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:15px;color:#333}.perf-details p {margin:8px 0;color:#555}.perf-note {font-style:italic;color:#666;font-size:14px}@keyframes slideIn {from {opacity:0;transform:translateX(-20px)}to {opacity:1;transform:translateX(0)}}@keyframes pulse {0%, 100% {transform:scale(1)}50% {transform:scale(1.1)}}@media (max-width:768px) {.control-group {flex-direction:column;align-items:stretch}.control-group label {min-width:auto}.control-group input, .control-group select {min-width:auto}.info-row {grid-template-columns:1fr}.hash-functions-grid, .performance-grid {grid-template-columns:1fr}.collision-methods {grid-template-columns:1fr}.slot-content {flex-wrap:wrap}}</style><script>class HashTableVisual { constructor(size = 11) { this.size = size; this.table = new Array(size).fill(null).map(() => []); this.count = 0; this.collisionCount = 0; } hash(key) { if (typeof key === 'string') { let hash = 0; for (let i = 0; i < key.length; i++) { hash = (hash * 31 + key.charCodeAt(i)) % this.size; } return hash; } return parseInt(key) % this.size; } insert(key, value) { const index = this.hash(key); const chain = this.table[index]; for (let i = 0; i < chain.length; i++) { if (chain[i].key === key) { chain[i].value = value; return { success: true, message: `更新键 "${key}" 的值为 "${value}"`, index, isUpdate: true }; } } if (chain.length > 0) { this.collisionCount++; } chain.push({ key, value }); this.count++; return { success: true, message: `成功插入键值对 ("${key}", "${value}")`, index, isNew: true, hasCollision: chain.length > 1 }; } search(key) { const index = this.hash(key); const chain = this.table[index]; for (let i = 0; i < chain.length; i++) { if (chain[i].key === key) { return { success: true, value: chain[i].value, message: `找到键 "${key}"，值为 "${chain[i].value}"`, index, position: i }; } } return { success: false, message: `未找到键 "${key}"`, index }; } delete(key) { const index = this.hash(key); const chain = this.table[index]; for (let i = 0; i < chain.length; i++) { if (chain[i].key === key) { const deletedValue = chain[i].value; chain.splice(i, 1); this.count--; return { success: true, message: `成功删除键 "${key}"，值为 "${deletedValue}"`, index }; } } return { success: false, message: `未找到键 "${key}"，无法删除`, index }; } clear() { this.table = new Array(this.size).fill(null).map(() => []); this.count = 0; this.collisionCount = 0; } loadFactor() { return this.count / this.size; } } let hashTable = new HashTableVisual(11); function initHashTable() { const size = parseInt(document.getElementById('table-size').value); hashTable = new HashTableVisual(size); displayHashTable(); updateInfo(); } function displayHashTable() { const displayElement = document.getElementById('hash-table-display'); displayElement.innerHTML = ''; for (let i = 0; i < hashTable.size; i++) { const slotDiv = document.createElement('div'); slotDiv.className = 'hash-slot'; slotDiv.id = `slot-${i}`; const indexDiv = document.createElement('div'); indexDiv.className = 'slot-index'; indexDiv.textContent = i; const contentDiv = document.createElement('div'); contentDiv.className = 'slot-content'; const chain = hashTable.table[i]; if (chain.length === 0) { contentDiv.innerHTML = '<span style="color: #999; font-style: italic;">空</span>'; } else { chain.forEach((node, index) => { const nodeDiv = document.createElement('div'); nodeDiv.className = 'hash-node'; nodeDiv.textContent = `${node.key}:${node.value}`; contentDiv.appendChild(nodeDiv); if (index < chain.length - 1) { const arrowDiv = document.createElement('div'); arrowDiv.className = 'chain-arrow'; arrowDiv.textContent = '→'; contentDiv.appendChild(arrowDiv); } }); } slotDiv.appendChild(indexDiv); slotDiv.appendChild(contentDiv); displayElement.appendChild(slotDiv); } } function updateInfo() { document.getElementById('element-count').textContent = hashTable.count; document.getElementById('load-factor').textContent = hashTable.loadFactor().toFixed(2); document.getElementById('collision-count').textContent = hashTable.collisionCount; } function showOperationResult(result) { const resultElement = document.getElementById('operation-result'); resultElement.textContent = result.message; if (result.success) { resultElement.className = 'operation-result success'; } else { resultElement.className = 'operation-result error'; } if (result.index !== undefined) { const slotElement = document.getElementById(`slot-${result.index}`); slotElement.classList.add('highlight'); setTimeout(() => { slotElement.classList.remove('highlight'); }, 2000); } document.getElementById('last-operation').textContent = result.message.split('，')[0]; } function insertItem() { const key = document.getElementById('key-input').value.trim(); const value = document.getElementById('value-input').value.trim(); if (!key || !value) { showOperationResult({ success: false, message: '请输入键和值' }); return; } const result = hashTable.insert(key, value); displayHashTable(); updateInfo(); showOperationResult(result); document.getElementById('key-input').value = ''; document.getElementById('value-input').value = ''; } function searchItem() { const key = document.getElementById('key-input').value.trim(); if (!key) { showOperationResult({ success: false, message: '请输入要查找的键' }); return; } const result = hashTable.search(key); showOperationResult(result); if (result.success && result.position !== undefined) { setTimeout(() => { const slotElement = document.getElementById(`slot-${result.index}`); const nodes = slotElement.querySelectorAll('.hash-node'); if (nodes[result.position]) { nodes[result.position].classList.add('found'); setTimeout(() => { nodes[result.position].classList.remove('found'); }, 2000); } }, 100); } } function deleteItem() { const key = document.getElementById('key-input').value.trim(); if (!key) { showOperationResult({ success: false, message: '请输入要删除的键' }); return; } const result = hashTable.delete(key); displayHashTable(); updateInfo(); showOperationResult(result); document.getElementById('key-input').value = ''; } function clearTable() { hashTable.clear(); displayHashTable(); updateInfo(); showOperationResult({ success: true, message: '哈希表已清空' }); document.getElementById('key-input').value = ''; document.getElementById('value-input').value = ''; } function copyCode(elementId) { const codeElement = document.getElementById(elementId); const text = codeElement.textContent; navigator.clipboard.writeText(text).then(() => { alert('代码已复制到剪贴板！'); }).catch(() => { alert('复制失败，请手动复制'); }); } document.addEventListener('DOMContentLoaded', function() { displayHashTable(); updateInfo(); document.getElementById('key-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') { document.getElementById('value-input').focus(); } }); document.getElementById('value-input').addEventListener('keypress', function(e) { if (e.key === 'Enter') { insertItem(); } }); });</script>
+
+{% endblock %}

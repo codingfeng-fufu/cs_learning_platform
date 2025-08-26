@@ -1,0 +1,96 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}单链表 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>单链表</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔗</span>
+            单链表 (Linked List)
+        </h1><p>最基础的动态数据结构，理解指针和内存管理的关键</p></div><!-- 主要内容 --><div class="content-card slide-in-right"><!-- 概念介绍 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                什么是单链表
+            </h2><div class="concept-explanation"><p class="concept-intro">
+                    单链表是一种线性数据结构，其中每个元素（节点）包含数据和指向下一个节点的指针。
+                    与数组不同，链表的元素在内存中不是连续存储的。
+                </p><div class="key-points"><div class="point-item"><span class="point-icon">📦</span><div class="point-content"><h4>节点结构</h4><p>每个节点包含数据域和指针域，指针指向下一个节点</p></div></div><div class="point-item"><span class="point-icon">🔄</span><div class="point-content"><h4>动态大小</h4><p>可以在运行时动态增加或删除节点，内存使用更灵活</p></div></div><div class="point-item"><span class="point-icon">⚡</span><div class="point-content"><h4>插入删除</h4><p>在已知位置插入或删除节点的时间复杂度为O(1)</p></div></div></div></div></div><!-- 可视化演示 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                可视化演示
+            </h2><div class="interactive-demo"><div class="demo-controls"><input type="number" id="node-value" placeholder="输入值" min="1" max="99"><button class="demo-btn" onclick="insertNode()">插入节点</button><button class="demo-btn" onclick="deleteNode()">删除首节点</button><button class="demo-btn" onclick="clearList()">清空链表</button></div><div id="linked-list-display" class="list-display"><div class="empty-list">链表为空</div></div><div class="operation-info"><div class="info-item"><span class="info-label">节点数量：</span><span id="node-count">0</span></div><div class="info-item"><span class="info-label">最后操作：</span><span id="last-operation">无</span></div></div></div></div><!-- 基本操作 --><div class="content-section"><h2 class="section-title"><span class="section-icon">⚙️</span>
+                基本操作
+            </h2><div class="operations-grid"><div class="operation-card"><h4 class="operation-title"><span class="op-icon">➕</span>
+                        插入操作
+                    </h4><div class="operation-details"><p><strong>头部插入：</strong>O(1)</p><p><strong>尾部插入：</strong>O(n)</p><p><strong>指定位置：</strong>O(n)</p></div></div><div class="operation-card"><h4 class="operation-title"><span class="op-icon">➖</span>
+                        删除操作
+                    </h4><div class="operation-details"><p><strong>头部删除：</strong>O(1)</p><p><strong>尾部删除：</strong>O(n)</p><p><strong>指定值：</strong>O(n)</p></div></div><div class="operation-card"><h4 class="operation-title"><span class="op-icon">🔍</span>
+                        查找操作
+                    </h4><div class="operation-details"><p><strong>按值查找：</strong>O(n)</p><p><strong>按索引查找：</strong>O(n)</p><p><strong>遍历访问：</strong>O(n)</p></div></div></div></div><!-- 代码实现 --><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><div class="code-example"><div class="code-header"><span class="code-title">Python实现</span><button class="copy-btn" onclick="copyCode('linkedlist-code')">复制代码</button></div><pre id="linkedlist-code"><code class="language-python">class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.size = 0
+    
+    def insert_at_head(self, val):
+        """在头部插入节点"""
+        new_node = ListNode(val)
+        new_node.next = self.head
+        self.head = new_node
+        self.size += 1
+    
+    def insert_at_tail(self, val):
+        """在尾部插入节点"""
+        new_node = ListNode(val)
+        if not self.head:
+            self.head = new_node
+        else:
+            current = self.head
+            while current.next:
+                current = current.next
+            current.next = new_node
+        self.size += 1
+    
+    def delete_head(self):
+        """删除头节点"""
+        if self.head:
+            self.head = self.head.next
+            self.size -= 1
+            return True
+        return False
+    
+    def search(self, val):
+        """查找值为val的节点"""
+        current = self.head
+        index = 0
+        while current:
+            if current.val == val:
+                return index
+            current = current.next
+            index += 1
+        return -1
+    
+    def display(self):
+        """显示链表"""
+        result = []
+        current = self.head
+        while current:
+            result.append(current.val)
+            current = current.next
+        return result</code></pre></div></div><!-- 优缺点对比 --><div class="content-section"><h2 class="section-title"><span class="section-icon">⚖️</span>
+                优缺点分析
+            </h2><div class="comparison-grid"><div class="comparison-card pros"><h4 class="comparison-title"><span class="comparison-icon">✅</span>
+                        优点
+                    </h4><ul class="comparison-list"><li>动态大小，内存使用灵活</li><li>插入删除操作高效（O(1)）</li><li>不需要预分配内存</li><li>适合频繁插入删除的场景</li></ul></div><div class="comparison-card cons"><h4 class="comparison-title"><span class="comparison-icon">❌</span>
+                        缺点
+                    </h4><ul class="comparison-list"><li>不支持随机访问</li><li>需要额外的指针存储空间</li><li>缓存局部性较差</li><li>查找操作效率低（O(n)）</li></ul></div></div></div><!-- 应用场景 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                应用场景
+            </h2><div class="application-grid"><div class="app-card"><span class="app-icon">📚</span><h4>实现其他数据结构</h4><p>栈、队列、图的邻接表等</p></div><div class="app-card"><span class="app-icon">🔄</span><h4>动态内存管理</h4><p>操作系统的内存分配器</p></div><div class="app-card"><span class="app-icon">🎵</span><h4>音乐播放列表</h4><p>歌曲的动态添加和删除</p></div><div class="app-card"><span class="app-icon">🌐</span><h4>浏览器历史</h4><p>网页访问历史的管理</p></div></div></div></div><!-- 学习提示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💡</span>
+                学习建议
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">🎯</span><strong>理解指针：</strong>深入理解指针的概念和内存地址的关系。
+                </div><div class="info-box info-box-success"><span class="info-icon">✏️</span><strong>画图练习：</strong>通过画图来理解链表的结构和操作过程。
+                </div><div class="info-box info-box-warning"><span class="info-icon">🐛</span><strong>注意边界：</strong>特别注意空链表和单节点链表的边界情况。
+                </div><div class="info-box info-box-info"><span class="info-icon">🔄</span><strong>变种练习：</strong>学习双链表、循环链表等变种结构。
+                </div></div></div></div></div><style>.interactive-demo {background:#f8f9fa;border-radius:12px;padding:25px;margin:20px 0}.demo-controls {display:flex;align-items:center;gap:15px;margin-bottom:20px;flex-wrap:wrap}.demo-controls input {padding:8px 12px;border:1px solid #ddd;border-radius:6px;width:120px}.demo-btn {padding:8px 16px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:500;transition:all 0.3s ease}.demo-btn:hover {background:#0056b3;transform:translateY(-1px)}.list-display {min-height:80px;background:white;border:2px dashed #ddd;border-radius:8px;padding:20px;display:flex;align-items:center;justify-content:center;margin:20px 0;overflow-x:auto}.empty-list {color:#999;font-style:italic}.node {display:flex;align-items:center;animation:slideIn 0.5s ease-out}.node-box {background:#007bff;color:white;padding:10px 15px;border-radius:8px;font-weight:600;margin-right:10px;box-shadow:0 2px 8px rgba(0,123,255,0.3)}.arrow {color:#666;font-size:20px;margin-right:10px}.null-pointer {color:#999;font-style:italic;padding:10px}.operation-info {display:flex;justify-content:space-around;margin-top:20px;padding:15px;background:white;border-radius:8px;border:1px solid #e9ecef}.info-item {text-align:center}.info-label {display:block;font-size:14px;color:#666;margin-bottom:5px}.info-item span:last-child {font-size:18px;font-weight:600;color:#007bff}.operations-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:20px;margin:20px 0}.operation-card {background:#f8f9fa;padding:20px;border-radius:12px;border:1px solid #e9ecef;text-align:center}.operation-title {color:#333;margin-bottom:15px;display:flex;align-items:center;justify-content:center;gap:10px}.op-icon {font-size:1.2rem}.operation-details p {margin:8px 0;color:#555;font-size:14px}.comparison-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px;margin:20px 0}.comparison-card {padding:20px;border-radius:12px;border:1px solid #e9ecef}.comparison-card.pros {background:linear-gradient(135deg, #d4edda, #c3e6cb);border-color:#c3e6cb}.comparison-card.cons {background:linear-gradient(135deg, #f8d7da, #f5c6cb);border-color:#f5c6cb}.comparison-title {display:flex;align-items:center;gap:10px;margin-bottom:15px;color:#333}.comparison-list {list-style:none;padding:0}.comparison-list li {padding:8px 0;color:#555;position:relative;padding-left:20px}.comparison-list li:before {content:"•";position:absolute;left:0;color:#007bff;font-weight:bold}.application-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:20px;margin:20px 0}.app-card {background:#f8f9fa;padding:20px;border-radius:12px;text-align:center;border:1px solid #e9ecef;transition:all 0.3s ease}.app-card:hover {transform:translateY(-5px);box-shadow:0 8px 25px rgba(0,0,0,0.1);background:white}.app-icon {font-size:2rem;display:block;margin-bottom:15px}.app-card h4 {color:#333;margin-bottom:10px}.app-card p {color:#666;font-size:14px}@keyframes slideIn {from {opacity:0;transform:translateX(-20px)}to {opacity:1;transform:translateX(0)}}@media (max-width:768px) {.demo-controls {flex-direction:column;align-items:stretch}.demo-controls > * {margin-bottom:10px}.operation-info {flex-direction:column;gap:10px}.operations-grid, .comparison-grid, .application-grid {grid-template-columns:1fr}.list-display {flex-direction:column;align-items:flex-start}.node {margin-bottom:10px}}</style><script>class VisualNode { constructor(val) { this.val = val; this.next = null; } } class VisualLinkedList { constructor() { this.head = null; this.size = 0; } insertAtHead(val) { const newNode = new VisualNode(val); newNode.next = this.head; this.head = newNode; this.size++; this.updateDisplay(); this.updateInfo(`插入节点 ${val} 到头部`); } deleteHead() { if (this.head) { const deletedVal = this.head.val; this.head = this.head.next; this.size--; this.updateDisplay(); this.updateInfo(`删除头节点 ${deletedVal}`); return true; } this.updateInfo('链表为空，无法删除'); return false; } clear() { this.head = null; this.size = 0; this.updateDisplay(); this.updateInfo('清空链表'); } updateDisplay() { const displayElement = document.getElementById('linked-list-display'); if (!this.head) { displayElement.innerHTML = '<div class="empty-list">链表为空</div>'; return; } let html = ''; let current = this.head; while (current) { html += ` <div class="node"><div class="node-box">${current.val}</div> ${current.next ? '<div class="arrow">→</div>' : '<div class="null-pointer">NULL</div>'} </div> `; current = current.next; } displayElement.innerHTML = html; } updateInfo(operation) { document.getElementById('node-count').textContent = this.size; document.getElementById('last-operation').textContent = operation; } } const linkedList = new VisualLinkedList(); function insertNode() { const input = document.getElementById('node-value'); const value = parseInt(input.value); if (isNaN(value) || value < 1 || value > 99) { alert('请输入1-99之间的数字'); return; } linkedList.insertAtHead(value); input.value = ''; } function deleteNode() { linkedList.deleteHead(); } function clearList() { linkedList.clear(); } function copyCode(elementId) { const codeElement = document.getElementById(elementId); const text = codeElement.textContent; navigator.clipboard.writeText(text).then(() => { alert('代码已复制到剪贴板！'); }).catch(() => { alert('复制失败，请手动复制'); }); } document.addEventListener('DOMContentLoaded', function() { linkedList.updateDisplay(); document.getElementById('node-value').addEventListener('keypress', function(e) { if (e.key === 'Enter') { insertNode(); } }); });</script>
+
+{% endblock %}

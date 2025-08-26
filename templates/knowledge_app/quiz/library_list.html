@@ -1,0 +1,74 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+
+{% block title %}题库列表 - {{ block.super }}{% endblock %}
+
+{% block quiz_breadcrumb %}
+<div class="quiz-breadcrumb"><a href="{% url 'knowledge_app:quiz_dashboard' %}">🏠 个人题库</a><span class="quiz-breadcrumb-separator">></span><span>📚 题库列表</span></div>
+{% endblock %}
+
+{% block quiz_content %}
+<!-- 页面头部 --><div class="quiz-card"><div class="quiz-card-header"><h1 class="quiz-card-title">📚 我的题库</h1><p class="quiz-card-subtitle">管理你的个人题库</p></div><div class="quiz-card-body"><!-- 搜索和操作栏 --><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;"><form method="get" style="display: flex; gap: 1rem; align-items: center;"><input type="text" name="search" value="{{ search }}" placeholder="搜索题库..." 
+                       class="quiz-form-control" style="width: 300px;"><button type="submit" class="quiz-btn quiz-btn-primary">🔍 搜索</button>
+                {% if search %}
+                <a href="{% url 'knowledge_app:quiz_library_list' %}" class="quiz-btn quiz-btn-outline">清除</a>
+                {% endif %}
+            </form><a href="{% url 'knowledge_app:quiz_create_library' %}" class="quiz-btn quiz-btn-success"><span>➕</span><span>创建题库</span></a></div><!-- 题库网格 -->
+        {% if page_obj %}
+        <div class="quiz-grid quiz-grid-3">
+            {% for library in page_obj %}
+            <div class="quiz-card" style="margin-bottom: 0; cursor: pointer;" onclick="window.location.href='{% url 'knowledge_app:quiz_library_detail' library.id %}'"><div style="padding: 1.5rem;"><div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;"><h3 style="margin: 0; color: black !important; font-size: 1.2rem;">{{ library.name }}</h3><span class="quiz-tag quiz-tag-primary">{{ library.total_questions }}题</span></div><p style="color: black !important; margin-bottom: 1.5rem; line-height: 1.5;">
+                        {{ library.description|truncatechars:100|default:"暂无描述" }}
+                    </p><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><div style="display: flex; gap: 0.5rem;"><span class="quiz-tag">{{ library.created_at|date:"m-d" }}</span>
+                            {% if library.is_active %}
+                            <span class="quiz-tag quiz-tag-success">启用</span>
+                            {% else %}
+                            <span class="quiz-tag quiz-tag-warning">禁用</span>
+                            {% endif %}
+                        </div></div><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;"><a href="{% url 'knowledge_app:quiz_start' library.id %}"
+                           class="quiz-btn quiz-btn-success"
+                           style="font-size: 0.8rem; padding: 0.5rem 1rem; flex: 1; color: white;"
+                           onclick="event.stopPropagation();"><span>🎯</span><span>开始练习</span></a><a href="{% url 'knowledge_app:quiz_library_detail' library.id %}"
+                           class="quiz-btn quiz-btn-outline"
+                           style="font-size: 0.8rem; padding: 0.5rem 1rem; color: var(--quiz-primary);"
+                           onclick="event.stopPropagation();"><span>📋</span><span>管理</span></a><a href="{% url 'knowledge_app:quiz_export_library_pdf' library.id %}"
+                           class="quiz-btn quiz-btn-warning"
+                           style="font-size: 0.8rem; padding: 0.5rem 1rem; color: white;"
+                           onclick="event.stopPropagation();" target="_blank"><span>📄</span><span>PDF</span></a></div></div></div>
+            {% endfor %}
+        </div><!-- 分页 -->
+        {% if page_obj.has_other_pages %}
+        <div style="display: flex; justify-content: center; margin-top: 2rem;"><div style="display: flex; gap: 0.5rem; align-items: center;">
+                {% if page_obj.has_previous %}
+                <a href="?page=1{% if search %}&search={{ search }}{% endif %}" class="quiz-btn quiz-btn-outline">首页</a><a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}" class="quiz-btn quiz-btn-outline">上一页</a>
+                {% endif %}
+                
+                <span style="padding: 0.75rem 1rem; color: var(--quiz-gray-600);">
+                    第 {{ page_obj.number }} 页，共 {{ page_obj.paginator.num_pages }} 页
+                </span>
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}" class="quiz-btn quiz-btn-outline">下一页</a><a href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}" class="quiz-btn quiz-btn-outline">末页</a>
+                {% endif %}
+            </div></div>
+        {% endif %}
+
+        {% else %}
+        <!-- 空状态 --><div style="text-align: center; padding: 4rem 2rem;">
+            {% if search %}
+            <div style="font-size: 4rem; margin-bottom: 2rem; opacity: 0.5;">🔍</div><h2 style="color: var(--quiz-gray-600); margin-bottom: 1rem;">没有找到相关题库</h2><p style="color: var(--quiz-gray-500); margin-bottom: 2rem;">尝试使用其他关键词搜索</p><a href="{% url 'knowledge_app:quiz_library_list' %}" class="quiz-btn quiz-btn-outline">查看全部题库</a>
+            {% else %}
+            <div style="font-size: 4rem; margin-bottom: 2rem; opacity: 0.5;">📚</div><h2 style="color: var(--quiz-gray-600); margin-bottom: 1rem;">还没有题库</h2><p style="color: var(--quiz-gray-500); margin-bottom: 2rem;">创建你的第一个题库，开始学习之旅吧！</p><a href="{% url 'knowledge_app:quiz_create_library' %}" class="quiz-btn quiz-btn-primary"><span>➕</span><span>创建第一个题库</span></a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div></div><!-- 统计信息 -->
+{% if page_obj %}
+<div class="quiz-card"><div class="quiz-card-body"><h2 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800);">📊 统计信息</h2><div class="quiz-grid quiz-grid-4"><div class="quiz-stat-card"><span class="quiz-stat-icon">📚</span><div class="quiz-stat-value">{{ page_obj.paginator.count }}</div><div class="quiz-stat-label">总题库数</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">📝</span><div class="quiz-stat-value">
+                    {% for library in page_obj %}{{ library.total_questions }}{% if not forloop.last %}+{% endif %}{% endfor %}
+                </div><div class="quiz-stat-label">总题目数</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">✅</span><div class="quiz-stat-value">
+                    {{ page_obj|length|add:0 }}
+                </div><div class="quiz-stat-label">启用题库</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">📅</span><div class="quiz-stat-value">今日</div><div class="quiz-stat-label">最近更新</div></div></div></div></div>
+{% endif %}
+
+<!-- 快速操作 --><div style="text-align: center; margin-top: 2rem;"><div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;"><a href="{% url 'knowledge_app:quiz_dashboard' %}" class="quiz-btn quiz-btn-outline"><span>🏠</span><span>返回仪表板</span></a><a href="{% url 'knowledge_app:quiz_create_library' %}" class="quiz-btn quiz-btn-primary"><span>➕</span><span>创建题库</span></a><a href="{% url 'knowledge_app:quiz_wrong_answers' %}" class="quiz-btn quiz-btn-warning"><span>❌</span><span>错题本</span></a></div></div>
+{% endblock %}

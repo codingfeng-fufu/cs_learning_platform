@@ -1,0 +1,349 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}二叉树——顺序存储 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>二叉树——顺序存储</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🗃️</span>
+            二叉树——顺序存储
+        </h1><p>掌握二叉树的数组表示方法，理解索引映射关系和存储优化策略</p></div><!-- 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="concept-overview"><div class="core-concept"><h3>🎯 核心概念</h3><p>顺序存储是使用数组来表示二叉树的方法。通过巧妙的索引映射关系，可以在数组中完美模拟树的层次结构，无需额外的指针开销。</p></div><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">📚</span><strong>学习难度：</strong>入门到进阶
+                    </div><div class="info-box info-box-warning"><span class="info-icon">⚡</span><strong>前置知识：</strong>数组概念、二叉树基础、完全二叉树性质
+                    </div></div><div class="key-terms"><h4>🔑 关键术语</h4><div class="terms-grid"><div class="term-item"><strong>顺序存储：</strong>使用连续的内存空间（数组）存储数据
+                        </div><div class="term-item"><strong>索引映射：</strong>通过数学公式确定父子节点的数组下标关系
+                        </div><div class="term-item"><strong>空间利用率：</strong>实际存储的节点数与分配空间的比率
+                        </div><div class="term-item"><strong>层序遍历：</strong>按层次从上到下、从左到右的遍历顺序
+                        </div><div class="term-item"><strong>堆结构：</strong>完全二叉树的典型应用场景
+                        </div></div></div></div></div></div><!-- 顺序存储原理 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                顺序存储原理
+            </h2><div class="storage-principles"><div class="principle-category"><h3>📊 基本映射关系</h3><div class="mapping-rules"><div class="rule-item fundamental"><div class="rule-header"><span class="rule-number">规则1</span><h4>根节点位置</h4></div><div class="rule-content"><div class="formula"><strong>根节点存储在数组下标 1 的位置</strong></div><p><strong>说明：</strong>下标0通常空置不用，这样可以简化父子关系的计算公式。</p><div class="example"><strong>例子：</strong>arr[1] = 根节点的值
+                                </div></div></div><div class="rule-item critical"><div class="rule-header"><span class="rule-number">规则2</span><h4>父子关系映射</h4></div><div class="rule-content"><div class="formula"><strong>对于节点i：</strong><br>
+                                    • 父节点：⌊i/2⌋<br>
+                                    • 左孩子：2×i<br>
+                                    • 右孩子：2×i+1
+                                </div><div class="mapping-demo"><div>节点1: 父-无, 左-2, 右-3</div><div>节点2: 父-1, 左-4, 右-5</div><div>节点3: 父-1, 左-6, 右-7</div><div>节点4: 父-2, 左-8, 右-9</div></div></div></div><div class="rule-item"><div class="rule-header"><span class="rule-number">规则3</span><h4>层序存储顺序</h4></div><div class="rule-content"><div class="formula"><strong>按层序遍历的顺序依次存储节点</strong></div><p><strong>顺序：</strong>从根节点开始，逐层从左到右填充数组</p><div class="layer-order"><div>第1层: arr[1]</div><div>第2层: arr[2], arr[3]</div><div>第3层: arr[4], arr[5], arr[6], arr[7]</div><div>第4层: arr[8], arr[9], arr[10], arr[11], arr[12], arr[13], arr[14], arr[15]</div></div></div></div></div></div><div class="principle-category"><h3>🎯 适用场景分析</h3><div class="scenario-analysis"><div class="scenario-item optimal"><h4>🟢 最适合：完全二叉树</h4><div class="scenario-content"><p><strong>优势：</strong></p><ul><li>空间利用率接近100%</li><li>无需存储指针，节省内存</li><li>父子关系通过计算获得，速度快</li><li>缓存友好，连续内存访问</li></ul><div class="space-efficiency"><strong>空间效率：</strong>n个节点只需要n+1个数组空间
+                                </div></div></div><div class="scenario-item good"><h4>🟡 较适合：近似完全二叉树</h4><div class="scenario-content"><p><strong>特点：</strong></p><ul><li>空间利用率较高（70-90%）</li><li>仍然保持较好的性能</li><li>适合动态调整的堆结构</li></ul></div></div><div class="scenario-item poor"><h4>🔴 不适合：严重不平衡的树</h4><div class="scenario-content"><p><strong>问题：</strong></p><ul><li>大量空间浪费</li><li>可能导致数组越界</li><li>内存使用效率极低</li></ul><div class="waste-example"><strong>极端情况：</strong>链状树的高度为n-1，需要2^n空间存储n个节点
+                                </div></div></div></div></div></div></div></div><!-- 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                顺序存储可视化
+            </h2><div class="visualization-container"><div class="viz-controls"><button id="showComplete" class="unified-btn unified-btn-primary">完全二叉树示例</button><button id="showPartial" class="unified-btn unified-btn-secondary">部分填充示例</button><button id="showMapping" class="unified-btn unified-btn-success">映射关系演示</button><button id="showTraversal" class="unified-btn unified-btn-warning">遍历过程</button><button id="resetViz" class="unified-btn unified-btn-outline">重置</button></div><div class="viz-display"><div class="tree-display"><h4>🌳 树形结构</h4><canvas id="treeCanvas" width="400" height="300"></canvas></div><div class="array-display"><h4>🗃️ 数组存储</h4><div id="arrayVisualization" class="array-viz"><div class="array-indices"><div class="index-cell">索引</div><div class="index-cell">0</div><div class="index-cell">1</div><div class="index-cell">2</div><div class="index-cell">3</div><div class="index-cell">4</div><div class="index-cell">5</div><div class="index-cell">6</div><div class="index-cell">7</div><div class="index-cell">8</div><div class="index-cell">9</div><div class="index-cell">10</div><div class="index-cell">11</div></div><div class="array-values"><div class="value-cell header">数值</div><div class="value-cell unused">×</div><div class="value-cell" id="cell-1">-</div><div class="value-cell" id="cell-2">-</div><div class="value-cell" id="cell-3">-</div><div class="value-cell" id="cell-4">-</div><div class="value-cell" id="cell-5">-</div><div class="value-cell" id="cell-6">-</div><div class="value-cell" id="cell-7">-</div><div class="value-cell" id="cell-8">-</div><div class="value-cell" id="cell-9">-</div><div class="value-cell" id="cell-10">-</div><div class="value-cell" id="cell-11">-</div></div></div></div></div><div class="viz-info"><div id="vizDescription" class="viz-description">
+                        点击上方按钮开始顺序存储演示
+                    </div><div id="storageStats" class="storage-stats"><div class="stat-item"><span class="stat-label">使用空间:</span><span class="stat-value" id="usedSpace">0</span></div><div class="stat-item"><span class="stat-label">总分配空间:</span><span class="stat-value" id="totalSpace">11</span></div><div class="stat-item"><span class="stat-label">空间利用率:</span><span class="stat-value" id="efficiency">0%</span></div><div class="stat-item"><span class="stat-label">最大深度:</span><span class="stat-value" id="maxDepth">0</span></div></div></div></div><!-- 交互式构建器 --><div class="tree-builder"><h3>🛠️ 交互式树构建器</h3><div class="builder-controls"><div class="input-section"><label>在位置添加节点:</label><input type="number" id="positionInput" min="1" max="15" placeholder="位置(1-15)"><input type="text" id="valueInput" placeholder="节点值" maxlength="3"><button id="addNodeBtn" class="unified-btn unified-btn-primary">添加节点</button></div><div class="input-section"><label>删除位置的节点:</label><input type="number" id="removePositionInput" min="1" max="15" placeholder="位置(1-15)"><button id="removeNodeBtn" class="unified-btn unified-btn-danger">删除节点</button></div><div class="input-section"><button id="clearAllBtn" class="unified-btn unified-btn-outline">清空所有</button><button id="fillCompleteBtn" class="unified-btn unified-btn-success">填充完全二叉树</button></div></div><div class="builder-tips"><h4>💡 构建提示</h4><ul><li>节点编号从1开始，符合标准的顺序存储规则</li><li>父节点必须存在才能添加子节点</li><li>删除节点时会自动删除其所有子树</li><li>观察数组利用率的变化</li></ul></div></div></div></div><!-- 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                顺序存储的实际应用
+            </h2><div class="applications"><div class="app-item"><h3>🔥 堆数据结构</h3><p>二叉堆是顺序存储的最典型应用。优先队列、堆排序等算法都基于此实现，利用数组的连续性获得优秀的缓存性能。</p><div class="app-details"><strong>应用场景：</strong>任务调度、事件驱动、最值查找
+                    </div></div><div class="app-item"><h3>🌳 完全二叉树存储</h3><p>文件系统的目录索引、数据库的B+树叶子层等，都可以用顺序存储提高访问效率和减少指针开销。</p><div class="app-details"><strong>优势：</strong>无指针开销、缓存友好、计算简单
+                    </div></div><div class="app-item"><h3>🎯 线段树和树状数组</h3><p>在算法竞赛和高效查询场景中，顺序存储的二叉树提供了极佳的性能表现，支持快速的区间操作。</p><div class="app-details"><strong>特点：</strong>O(log n)查询更新、内存连续、实现简洁
+                    </div></div></div><!-- 代码示例 --><div class="code-examples"><h3>💻 顺序存储实现</h3><div class="code-tabs"><button class="tab-btn active" data-lang="cpp">C++</button><button class="tab-btn" data-lang="java">Java</button><button class="tab-btn" data-lang="python">Python</button></div><div class="code-container"><div class="code-header"><span class="code-title">二叉树顺序存储实现</span><button class="copy-btn" data-lang="cpp">📋 复制</button></div><pre id="code-cpp" class="code-block active"><code>// C++ 二叉树顺序存储实现
+#include <vector>
+#include <iostream>
+using namespace std;
+
+class SequentialBinaryTree {
+private:
+    vector<int> tree;
+    int capacity;
+
+public:
+    SequentialBinaryTree(int cap) : capacity(cap) {
+        tree.resize(cap + 1, -1); // 下标0不使用
+    }
+
+    // 插入节点
+    bool insert(int index, int value) {
+        if (index < 1 || index > capacity) return false;
+
+        // 检查父节点是否存在（除了根节点）
+        if (index > 1 && tree[index / 2] == -1) {
+            cout << "父节点不存在，无法插入！" << endl;
+            return false;
+        }
+
+        tree[index] = value;
+        return true;
+    }
+
+    // 删除节点及其子树
+    void remove(int index) {
+        if (index < 1 || index > capacity) return;
+
+        // 递归删除子树
+        if (2 * index <= capacity) remove(2 * index);     // 左子树
+        if (2 * index + 1 <= capacity) remove(2 * index + 1); // 右子树
+
+        tree[index] = -1;
+    }
+
+    // 获取父节点索引
+    int getParent(int index) {
+        if (index <= 1) return -1;
+        return index / 2;
+    }
+
+    // 获取左孩子索引
+    int getLeftChild(int index) {
+        int left = 2 * index;
+        return (left <= capacity) ? left : -1;
+    }
+
+    // 获取右孩子索引
+    int getRightChild(int index) {
+        int right = 2 * index + 1;
+        return (right <= capacity) ? right : -1;
+    }
+
+    // 层序遍历
+    void levelOrder() {
+        cout << "层序遍历: ";
+        for (int i = 1; i <= capacity; i++) {
+            if (tree[i] != -1) {
+                cout << tree[i] << " ";
+            }
+        }
+        cout << endl;
+    }
+
+    // 前序遍历
+    void preOrder(int index) {
+        if (index > capacity || tree[index] == -1) return;
+
+        cout << tree[index] << " ";
+        preOrder(2 * index);       // 左子树
+        preOrder(2 * index + 1);   // 右子树
+    }
+
+    // 显示数组状态
+    void display() {
+        cout << "数组存储状态:" << endl;
+        cout << "索引: ";
+        for (int i = 0; i <= capacity; i++) {
+            cout << i << "\t";
+        }
+        cout << endl << "数值: ";
+        for (int i = 0; i <= capacity; i++) {
+            if (i == 0 || tree[i] == -1) {
+                cout << "×\t";
+            } else {
+                cout << tree[i] << "\t";
+            }
+        }
+        cout << endl;
+    }
+};</code></pre><pre id="code-java" class="code-block"><code>// Java 二叉树顺序存储实现
+import java.util.*;
+
+public class SequentialBinaryTree {
+    private int[] tree;
+    private int capacity;
+
+    public SequentialBinaryTree(int cap) {
+        this.capacity = cap;
+        this.tree = new int[cap + 1];
+        Arrays.fill(tree, -1); // -1表示空节点
+    }
+
+    // 插入节点
+    public boolean insert(int index, int value) {
+        if (index < 1 || index > capacity) return false;
+
+        // 检查父节点是否存在（除了根节点）
+        if (index > 1 && tree[index / 2] == -1) {
+            System.out.println("父节点不存在，无法插入！");
+            return false;
+        }
+
+        tree[index] = value;
+        return true;
+    }
+
+    // 删除节点及其子树
+    public void remove(int index) {
+        if (index < 1 || index > capacity) return;
+
+        // 递归删除子树
+        if (2 * index <= capacity) remove(2 * index);
+        if (2 * index + 1 <= capacity) remove(2 * index + 1);
+
+        tree[index] = -1;
+    }
+
+    // 获取父节点索引
+    public int getParent(int index) {
+        return (index <= 1) ? -1 : index / 2;
+    }
+
+    // 获取左孩子索引
+    public int getLeftChild(int index) {
+        int left = 2 * index;
+        return (left <= capacity) ? left : -1;
+    }
+
+    // 获取右孩子索引
+    public int getRightChild(int index) {
+        int right = 2 * index + 1;
+        return (right <= capacity) ? right : -1;
+    }
+
+    // 层序遍历
+    public void levelOrder() {
+        System.out.print("层序遍历: ");
+        for (int i = 1; i <= capacity; i++) {
+            if (tree[i] != -1) {
+                System.out.print(tree[i] + " ");
+            }
+        }
+        System.out.println();
+    }
+
+    // 前序遍历
+    public void preOrder(int index) {
+        if (index > capacity || tree[index] == -1) return;
+
+        System.out.print(tree[index] + " ");
+        preOrder(2 * index);       // 左子树
+        preOrder(2 * index + 1);   // 右子树
+    }
+
+    // 显示数组状态
+    public void display() {
+        System.out.println("数组存储状态:");
+        System.out.print("索引: ");
+        for (int i = 0; i <= capacity; i++) {
+            System.out.print(i + "\t");
+        }
+        System.out.print("\n数值: ");
+        for (int i = 0; i <= capacity; i++) {
+            if (i == 0 || tree[i] == -1) {
+                System.out.print("×\t");
+            } else {
+                System.out.print(tree[i] + "\t");
+            }
+        }
+        System.out.println();
+    }
+}</code></pre><pre id="code-python" class="code-block"><code># Python 二叉树顺序存储实现
+class SequentialBinaryTree:
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.tree = [-1] * (capacity + 1)  # 下标0不使用，-1表示空节点
+
+    def insert(self, index, value):
+        """插入节点"""
+        if index < 1 or index > self.capacity:
+            return False
+
+        # 检查父节点是否存在（除了根节点）
+        if index > 1 and self.tree[index // 2] == -1:
+            print("父节点不存在，无法插入！")
+            return False
+
+        self.tree[index] = value
+        return True
+
+    def remove(self, index):
+        """删除节点及其子树"""
+        if index < 1 or index > self.capacity:
+            return
+
+        # 递归删除子树
+        if 2 * index <= self.capacity:
+            self.remove(2 * index)      # 左子树
+        if 2 * index + 1 <= self.capacity:
+            self.remove(2 * index + 1)  # 右子树
+
+        self.tree[index] = -1
+
+    def get_parent(self, index):
+        """获取父节点索引"""
+        return -1 if index <= 1 else index // 2
+
+    def get_left_child(self, index):
+        """获取左孩子索引"""
+        left = 2 * index
+        return left if left <= self.capacity else -1
+
+    def get_right_child(self, index):
+        """获取右孩子索引"""
+        right = 2 * index + 1
+        return right if right <= self.capacity else -1
+
+    def level_order(self):
+        """层序遍历"""
+        result = []
+        for i in range(1, self.capacity + 1):
+            if self.tree[i] != -1:
+                result.append(self.tree[i])
+        print("层序遍历:", " ".join(map(str, result)))
+
+    def pre_order(self, index=1):
+        """前序遍历"""
+        if index > self.capacity or self.tree[index] == -1:
+            return
+
+        print(self.tree[index], end=" ")
+        self.pre_order(2 * index)       # 左子树
+        self.pre_order(2 * index + 1)   # 右子树
+
+    def display(self):
+        """显示数组状态"""
+        print("数组存储状态:")
+        print("索引:", end=" ")
+        for i in range(self.capacity + 1):
+            print(f"{i}\t", end="")
+        print("\n数值:", end=" ")
+        for i in range(self.capacity + 1):
+            if i == 0 or self.tree[i] == -1:
+                print("×\t", end="")
+            else:
+                print(f"{self.tree[i]}\t", end="")
+        print()
+
+    def get_space_efficiency(self):
+        """计算空间利用率"""
+        used = sum(1 for i in range(1, self.capacity + 1) if self.tree[i] != -1)
+        return (used / self.capacity) * 100 if self.capacity > 0 else 0</code></pre></div></div></div></div><!-- 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                掌握程度检验
+            </h2><div class="quiz-container"><div class="quiz-item"><div class="question"><h4>🤔 问题1：在顺序存储的二叉树中，如果节点15的值为'M'，那么它的父节点、左孩子、右孩子分别在数组的哪个位置？</h4><button class="show-answer-btn" data-answer="1">显示答案</button></div><div class="answer" id="answer-1" style="display: none;"><div class="answer-content"><strong>答案：</strong>父节点在位置7，左孩子在位置30，右孩子在位置31<br><strong>计算过程：</strong><br>
+                            • 父节点：⌊15/2⌋ = ⌊7.5⌋ = 7<br>
+                            • 左孩子：2×15 = 30<br>
+                            • 右孩子：2×15+1 = 31<br><strong>注意：</strong>子节点是否真实存在需要检查数组容量
+                        </div></div></div><div class="quiz-item"><div class="question"><h4>🤔 问题2：一个完全二叉树有10个节点，用顺序存储需要多大的数组？如果是一个只有右子树的偏斜树（10个节点），又需要多大数组？</h4><button class="show-answer-btn" data-answer="2">显示答案</button></div><div class="answer" id="answer-2" style="display: none;"><div class="answer-content"><strong>答案：</strong><br><strong>完全二叉树：</strong>需要长度为11的数组（下标0-10，其中0不用）<br><strong>右偏斜树：</strong>需要长度为1024的数组<br><strong>解释：</strong><br>
+                            • 完全二叉树：节点连续存储在下标1-10<br>
+                            • 右偏斜树：最深节点在第10层，位置为2^9=512，实际需要2^10=1024空间<br>
+                            • 空间利用率：完全二叉树≈91%，偏斜树≈1%
+                        </div></div></div><div class="quiz-item"><div class="question"><h4>🤔 问题3：在顺序存储中，如何判断某个位置i是否为叶子节点？如何找到某个节点的兄弟节点？</h4><button class="show-answer-btn" data-answer="3">显示答案</button></div><div class="answer" id="answer-3" style="display: none;"><div class="answer-content"><strong>叶子节点判断：</strong><br>
+                            位置i是叶子节点当且仅当：<br>
+                            • 左孩子位置2×i超出数组范围 或 arr[2×i]为空<br>
+                            • 右孩子位置2×i+1超出数组范围 或 arr[2×i+1]为空<br><br><strong>兄弟节点查找：</strong><br>
+                            • 如果i是偶数（左孩子），兄弟节点在i+1<br>
+                            • 如果i是奇数（右孩子），兄弟节点在i-1<br>
+                            • 根节点（i=1）没有兄弟节点
+                        </div></div></div><div class="quiz-item"><div class="question"><h4>🤔 问题4：比较顺序存储和链式存储的优缺点，什么情况下应该选择顺序存储？</h4><button class="show-answer-btn" data-answer="4">显示答案</button></div><div class="answer" id="answer-4" style="display: none;"><div class="answer-content"><strong>顺序存储优点：</strong><br>
+                            • 节省指针空间（每节点省8-16字节）<br>
+                            • 缓存友好，连续内存访问<br>
+                            • 父子关系计算简单，O(1)时间<br>
+                            • 实现简单，无内存碎片<br><br><strong>顺序存储缺点：</strong><br>
+                            • 不平衡树空间浪费严重<br>
+                            • 插入删除需要大量移动<br>
+                            • 数组大小固定，扩容困难<br><br><strong>选择顺序存储的情况：</strong><br>
+                            • 完全二叉树或近似完全二叉树<br>
+                            • 主要进行查找操作，很少插入删除<br>
+                            • 内存受限，需要高效利用空间<br>
+                            • 需要高性能的堆操作
+                        </div></div></div><div class="quiz-item"><div class="question"><h4>🤔 问题5：如何在顺序存储的二叉树中实现插入和删除操作？需要注意什么问题？</h4><button class="show-answer-btn" data-answer="5">显示答案</button></div><div class="answer" id="answer-5" style="display: none;"><div class="answer-content"><strong>插入操作：</strong><br>
+                            1. 检查插入位置是否有效（1≤i≤capacity）<br>
+                            2. 检查父节点是否存在（i>1时需要arr[i/2]≠空）<br>
+                            3. 直接在指定位置赋值<br><br><strong>删除操作：</strong><br>
+                            1. 删除指定节点<br>
+                            2. 递归删除所有子节点（左子树和右子树）<br>
+                            3. 更新相关统计信息<br><br><strong>注意事项：</strong><br>
+                            • 保持树的结构完整性<br>
+                            • 避免产生"孤儿"节点<br>
+                            • 考虑数组越界问题<br>
+                            • 合理处理空节点标记<br>
+                            • 对于堆等特殊结构，需要维护特定性质
+                        </div></div></div></div><div class="learning-path"><h3>🎯 进阶学习建议</h3><div class="unified-grid unified-grid-2"><div class="path-item"><h4>📚 掌握后继续学习</h4><ul><li>堆的实现和应用（最大堆、最小堆）</li><li>优先队列的设计与优化</li><li>线段树和树状数组</li><li>完全二叉树的高级应用</li><li>内存池和缓存优化技术</li></ul></div><div class="path-item"><h4>🛠️ 推荐练习</h4><ul><li>实现一个完整的堆数据结构</li><li>编写堆排序算法</li><li>设计支持动态扩容的顺序存储</li><li>比较不同存储方式的性能</li><li>解决TopK问题和优先队列应用</li></ul></div></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.concept-overview {background:linear-gradient(135deg, #f8f9ff 0%, #e8f4f8 100%);padding:25px;border-radius:12px;margin-bottom:20px}.core-concept {background:white;padding:20px;border-radius:8px;margin-bottom:20px;border-left:4px solid #007bff}.key-terms {background:white;padding:20px;border-radius:8px}.terms-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:15px;margin-top:15px}.term-item {background:#f8f9fa;padding:12px;border-radius:6px;border-left:3px solid #28a745}.storage-principles {margin-bottom:20px}.principle-category {background:#f8f9ff;padding:25px;border-radius:12px;margin-bottom:25px}.principle-category h3 {color:#495057;margin-bottom:20px;font-size:1.3em;font-weight:bold}.mapping-rules {margin-bottom:20px}.rule-item {background:white;border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);border:1px solid #e9ecef;margin-bottom:20px}.rule-item.fundamental {border-left:5px solid #dc3545}.rule-item.critical {border-left:5px solid #007bff}.rule-header {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:15px 20px;display:flex;align-items:center;gap:15px}.rule-number {background:rgba(255,255,255,0.2);padding:5px 12px;border-radius:20px;font-weight:bold;font-size:0.9em}.rule-header h4 {margin:0;font-size:1.1em}.rule-content {padding:20px}.formula {background:#e8f5e8;padding:15px;border-radius:8px;border-left:4px solid #28a745;margin-bottom:15px;text-align:center;font-size:1.1em}.example {background:#fff3cd;padding:12px;border-radius:6px;border-left:3px solid #ffc107;margin-top:10px}.mapping-demo, .layer-order {background:#f8f9fa;padding:15px;border-radius:6px;margin-top:10px}.mapping-demo div, .layer-order div {margin:5px 0;font-family:'Courier New', monospace}.scenario-analysis {display:grid;grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));gap:20px}.scenario-item {background:white;padding:20px;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,0.1)}.scenario-item.optimal {border-left:5px solid #28a745}.scenario-item.good {border-left:5px solid #ffc107}.scenario-item.poor {border-left:5px solid #dc3545}.scenario-content ul {margin:10px 0 0 20px}.space-efficiency, .waste-example {background:#f8f9fa;padding:10px;border-radius:6px;margin-top:10px;font-family:'Courier New', monospace}.visualization-container {background:#f8f9fa;padding:20px;border-radius:12px;text-align:center}.viz-controls {margin-bottom:20px;display:flex;justify-content:center;gap:10px;flex-wrap:wrap}.viz-display {display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}.tree-display, .array-display {background:white;padding:15px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.1)}#treeCanvas {border:1px solid #dee2e6;border-radius:4px;background:white}.array-viz {margin-top:10px}.array-indices, .array-values {display:flex;gap:2px;margin-bottom:5px}.index-cell, .value-cell {width:40px;height:30px;display:flex;align-items:center;justify-content:center;font-size:12px;border:1px solid #dee2e6;background:white}.index-cell {background:#e9ecef;font-weight:bold}.value-cell.header {background:#6c757d;color:white;font-weight:bold}.value-cell.unused {background:#f8d7da;color:#721c24}.value-cell.filled {background:#d4edda;color:#155724;font-weight:bold}.value-cell.highlighted {background:#fff3cd;border-color:#ffc107;animation:pulse 1s ease-in-out}@keyframes pulse {0% {transform:scale(1)}50% {transform:scale(1.1)}100% {transform:scale(1)}}.viz-description {background:white;padding:15px;border-radius:8px;margin-bottom:15px;border-left:4px solid #007bff}.storage-stats {display:grid;grid-template-columns:repeat(auto-fit, minmax(120px, 1fr));gap:10px}.stat-item {background:white;padding:10px;border-radius:6px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.1)}.stat-label {display:block;font-size:0.9em;color:#6c757d;margin-bottom:5px}.stat-value {display:block;font-size:1.2em;font-weight:bold;color:#007bff}.tree-builder {background:linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);padding:20px;border-radius:12px;margin-top:20px}.builder-controls {background:white;padding:20px;border-radius:8px;margin-bottom:15px}.input-section {display:flex;align-items:center;gap:10px;margin-bottom:15px;flex-wrap:wrap}.input-section label {font-weight:bold;white-space:nowrap;min-width:120px}.input-section input {padding:8px 12px;border:1px solid #ced4da;border-radius:4px;width:120px}.builder-tips {background:white;padding:15px;border-radius:8px}.builder-tips h4 {margin-bottom:10px;color:#495057}.builder-tips ul {margin:0 0 0 20px}.builder-tips li {margin-bottom:5px}.applications {display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px}.app-item {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:20px;border-radius:10px}.app-details {background:rgba(255,255,255,0.1);padding:10px;border-radius:6px;margin-top:10px}.code-examples {margin-top:30px}.code-tabs {display:flex;gap:5px;margin-bottom:0}.tab-btn {background:#6c757d;color:white;border:none;padding:10px 20px;border-radius:8px 8px 0 0;cursor:pointer;transition:background-color 0.3s}.tab-btn.active {background:#007bff}.tab-btn:hover {background:#5a6268}.tab-btn.active:hover {background:#0056b3}.code-container {background:#2d3748;border-radius:0 8px 8px 8px;overflow:hidden}.code-header {background:#1a202c;padding:10px 15px;display:flex;justify-content:space-between;align-items:center;color:#e2e8f0}.copy-btn {background:#4299e1;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px}.copy-btn:hover {background:#3182ce}.code-block {display:none;margin:0;padding:20px;background:#2d3748;color:#e2e8f0;font-family:'Courier New', monospace;line-height:1.5;overflow-x:auto}.code-block.active {display:block}.quiz-container {margin-bottom:20px}.quiz-item {background:#f8f9fa;border-radius:10px;overflow:hidden;margin-bottom:20px}.question {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:20px;display:flex;justify-content:space-between;align-items:center}.show-answer-btn {background:rgba(255,255,255,0.2);color:white;border:1px solid rgba(255,255,255,0.3);padding:8px 16px;border-radius:6px;cursor:pointer;transition:all 0.3s;white-space:nowrap}.show-answer-btn:hover {background:rgba(255,255,255,0.3)}.answer {background:white;padding:20px;border-top:1px solid #e9ecef}.answer-content {background:#e8f5e8;padding:15px;border-radius:6px;border-left:4px solid #28a745;line-height:1.6}.learning-path {background:linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);padding:25px;border-radius:12px;margin-top:30px}.path-item {background:white;padding:20px;border-radius:8px}@media (max-width:768px) {.viz-controls {flex-direction:column;align-items:center}.viz-display {grid-template-columns:1fr}.question {flex-direction:column;gap:15px;text-align:center}.terms-grid {grid-template-columns:1fr}.scenario-analysis {grid-template-columns:1fr}.input-section {flex-direction:column;align-items:stretch}.input-section input {width:100%}.array-indices, .array-values {flex-wrap:wrap}.index-cell, .value-cell {width:35px;height:25px;font-size:10px}}</style><script>let canvas, ctx; let arrayData = new Array(12).fill(null); let currentDemo = ''; let animationId; class TreeNode { constructor(x, y, value, index) { this.x = x; this.y = y; this.value = value; this.index = index; this.radius = 20; this.color = '#007bff'; this.highlight = false; } draw() { if (!ctx) return; ctx.fillStyle = this.highlight ? '#ffc107' : this.color; ctx.strokeStyle = '#343a40'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI); ctx.fill(); ctx.stroke(); ctx.fillStyle = 'white'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(this.value, this.x, this.y); ctx.fillStyle = '#666'; ctx.font = '10px Arial'; ctx.fillText(`[${this.index}]`, this.x, this.y + 30); } } function initCanvas() { canvas = document.getElementById('treeCanvas'); if (!canvas) return; ctx = canvas.getContext('2d'); canvas.width = 400; canvas.height = 300; } function clearAll() { if (ctx) { ctx.clearRect(0, 0, canvas.width, canvas.height); } arrayData = new Array(12).fill(null); updateArrayDisplay(); updateStats(); if (animationId) { cancelAnimationFrame(animationId); } } function updateArrayDisplay() { for (let i = 1; i <= 11; i++) { const cell = document.getElementById(`cell-${i}`); if (!cell) continue; cell.className = 'value-cell'; if (arrayData[i] !== null) { cell.textContent = arrayData[i]; cell.classList.add('filled'); } else { cell.textContent = '-'; } } } function updateStats() { const usedCount = arrayData.slice(1).filter(x => x !== null).length; const efficiency = ((usedCount / 11) * 100).toFixed(1); const maxDepth = getMaxDepth(); const elements = { usedSpace: document.getElementById('usedSpace'), efficiency: document.getElementById('efficiency'), maxDepth: document.getElementById('maxDepth') }; if (elements.usedSpace) elements.usedSpace.textContent = usedCount; if (elements.efficiency) elements.efficiency.textContent = efficiency + '%'; if (elements.maxDepth) elements.maxDepth.textContent = maxDepth; } function getMaxDepth() { let maxDepth = 0; for (let i = 1; i <= 11; i++) { if (arrayData[i] !== null) { const depth = Math.floor(Math.log2(i)); maxDepth = Math.max(maxDepth, depth); } } return maxDepth; } function drawTree() { if (!ctx) return; ctx.clearRect(0, 0, canvas.width, canvas.height); const nodes = []; const positions = { 1: {x: 200, y: 40}, 2: {x: 120, y: 90}, 3: {x: 280, y: 90}, 4: {x: 80, y: 140}, 5: {x: 160, y: 140}, 6: {x: 240, y: 140}, 7: {x: 320, y: 140}, 8: {x: 60, y: 190}, 9: {x: 100, y: 190}, 10: {x: 140, y: 190}, 11: {x: 180, y: 190} }; for (let i = 1; i <= 11; i++) { if (arrayData[i] !== null && positions[i]) { const node = new TreeNode(positions[i].x, positions[i].y, arrayData[i], i); nodes.push(node); } } ctx.strokeStyle = '#6c757d'; ctx.lineWidth = 1; for (let i = 1; i <= 11; i++) { if (arrayData[i] !== null) { const leftChild = 2 * i; if (leftChild <= 11 && arrayData[leftChild] !== null && positions[i] && positions[leftChild]) { ctx.beginPath(); ctx.moveTo(positions[i].x, positions[i].y); ctx.lineTo(positions[leftChild].x, positions[leftChild].y); ctx.stroke(); } const rightChild = 2 * i + 1; if (rightChild <= 11 && arrayData[rightChild] !== null && positions[i] && positions[rightChild]) { ctx.beginPath(); ctx.moveTo(positions[i].x, positions[i].y); ctx.lineTo(positions[rightChild].x, positions[rightChild].y); ctx.stroke(); } } } nodes.forEach(node => node.draw()); } function highlightCell(index, duration = 1000) { const cell = document.getElementById(`cell-${index}`); if (!cell) return; cell.classList.add('highlighted'); setTimeout(() => { cell.classList.remove('highlighted'); }, duration); } function showComplete() { clearAll(); currentDemo = 'complete'; const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = '完全二叉树演示：按层序顺序填充，空间利用率最高'; } const values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']; let index = 1; function addNext() { if (index <= 11) { arrayData[index] = values[index - 1]; updateArrayDisplay(); highlightCell(index); drawTree(); updateStats(); index++; setTimeout(addNext, 500); } else { if (descEl) { descEl.innerHTML += '<br>✅ 完全二叉树构建完成！空间利用率100%'; } } } addNext(); } function showPartial() { clearAll(); currentDemo = 'partial'; const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = '部分填充演示：观察不完整树的空间利用情况'; } const positions = [1, 2, 4, 5, 8, 9]; const values = ['A', 'B', 'D', 'E', 'H', 'I']; let index = 0; function addNext() { if (index < positions.length) { const pos = positions[index]; arrayData[pos] = values[index]; updateArrayDisplay(); highlightCell(pos); drawTree(); updateStats(); index++; setTimeout(addNext, 600); } else { if (descEl) { const efficiency = ((6 / 11) * 100).toFixed(1); descEl.innerHTML += `<br>✅ 部分填充完成！空间利用率${efficiency}%，存在空洞`; } } } addNext(); } function showMapping() { clearAll(); currentDemo = 'mapping'; const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = '映射关系演示：父子节点的索引计算规律'; } arrayData[1] = 'A'; arrayData[2] = 'B'; arrayData[3] = 'C'; arrayData[4] = 'D'; arrayData[5] = 'E'; arrayData[6] = 'F'; arrayData[7] = 'G'; updateArrayDisplay(); drawTree(); updateStats(); const demonstrations = [ {index: 1, desc: '节点1(A): 根节点，无父节点，左孩子=2，右孩子=3'}, {index: 2, desc: '节点2(B): 父节点=⌊2/2⌋=1，左孩子=2×2=4，右孩子=2×2+1=5'}, {index: 3, desc: '节点3(C): 父节点=⌊3/2⌋=1，左孩子=2×3=6，右孩子=2×3+1=7'}, {index: 4, desc: '节点4(D): 父节点=⌊4/2⌋=2，左孩子=2×4=8，右孩子=2×4+1=9'}, {index: 5, desc: '节点5(E): 父节点=⌊5/2⌋=2，左孩子=2×5=10，右孩子=2×5+1=11'} ]; let demoIndex = 0; function showNextMapping() { if (demoIndex < demonstrations.length) { const demo = demonstrations[demoIndex]; highlightCell(demo.index, 2000); if (descEl) { descEl.innerHTML = `映射关系演示：${demo.desc}`; } demoIndex++; setTimeout(showNextMapping, 2500); } else { if (descEl) { descEl.innerHTML = '映射关系演示完成！掌握了父子节点的计算公式'; } } } setTimeout(showNextMapping, 1000); } function showTraversal() { clearAll(); currentDemo = 'traversal'; const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = '遍历演示：层序遍历就是按数组索引顺序访问'; } const values = ['A', 'B', 'C', 'D', 'E', 'F', 'G']; for (let i = 1; i <= 7; i++) { arrayData[i] = values[i - 1]; } updateArrayDisplay(); drawTree(); updateStats(); let index = 1; function highlightNext() { if (index <= 7) { highlightCell(index, 1000); if (descEl) { descEl.innerHTML = `层序遍历：访问节点${arrayData[index]}（位置${index}）`; } index++; setTimeout(highlightNext, 1200); } else { if (descEl) { descEl.innerHTML = '遍历完成！层序遍历 = 数组顺序访问：A B C D E F G'; } } } setTimeout(highlightNext, 1000); } function addNode() { const posInput = document.getElementById('positionInput'); const valInput = document.getElementById('valueInput'); if (!posInput || !valInput) return; const position = parseInt(posInput.value); const value = valInput.value.trim(); if (!position || position < 1 || position > 11) { alert('请输入1-11之间的有效位置'); return; } if (!value) { alert('请输入节点值'); return; } if (position > 1) { const parentPos = Math.floor(position / 2); if (arrayData[parentPos] === null) { alert(`无法添加节点：父节点（位置${parentPos}）不存在`); return; } } arrayData[position] = value; updateArrayDisplay(); highlightCell(position); drawTree(); updateStats(); posInput.value = ''; valInput.value = ''; const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = `成功添加节点"${value}"到位置${position}`; } } function removeNode() { const removeInput = document.getElementById('removePositionInput'); if (!removeInput) return; const position = parseInt(removeInput.value); if (!position || position < 1 || position > 11) { alert('请输入1-11之间的有效位置'); return; } if (arrayData[position] === null) { alert('该位置没有节点'); return; } function removeSubtree(pos) { if (pos > 11) return; arrayData[pos] = null; const leftChild = 2 * pos; if (leftChild <= 11) removeSubtree(leftChild); const rightChild = 2 * pos + 1; if (rightChild <= 11) removeSubtree(rightChild); } removeSubtree(position); updateArrayDisplay(); drawTree(); updateStats(); removeInput.value = ''; const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = `删除位置${position}的节点及其子树`; } } function fillCompleteTree() { clearAll(); const values = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K']; for (let i = 1; i <= 11; i++) { arrayData[i] = values[i - 1]; } updateArrayDisplay(); drawTree(); updateStats(); const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = '已填充完全二叉树，空间利用率100%'; } } function initCodeTabs() { const tabBtns = document.querySelectorAll('.tab-btn'); const codeBlocks = document.querySelectorAll('.code-block'); const copyBtns = document.querySelectorAll('.copy-btn'); tabBtns.forEach(btn => { btn.addEventListener('click', () => { const lang = btn.dataset.lang; tabBtns.forEach(tab => tab.classList.remove('active')); btn.classList.add('active'); codeBlocks.forEach(block => { block.classList.remove('active'); if (block.id === `code-${lang}`) { block.classList.add('active'); } }); copyBtns.forEach(copyBtn => { copyBtn.dataset.lang = lang; }); }); }); copyBtns.forEach(btn => { btn.addEventListener('click', () => { const lang = btn.dataset.lang; const codeBlock = document.getElementById(`code-${lang}`); if (!codeBlock) return; const code = codeBlock.textContent; if (navigator.clipboard) { navigator.clipboard.writeText(code).then(() => { btn.textContent = '✅ 已复制'; setTimeout(() => { btn.textContent = '📋 复制'; }, 2000); }).catch(() => { fallbackCopyTextToClipboard(code, btn); }); } else { fallbackCopyTextToClipboard(code, btn); } }); }); } function fallbackCopyTextToClipboard(text, btn) { const textArea = document.createElement("textarea"); textArea.value = text; textArea.style.top = "0"; textArea.style.left = "0"; textArea.style.position = "fixed"; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { const successful = document.execCommand('copy'); if (successful) { btn.textContent = '✅ 已复制'; setTimeout(() => { btn.textContent = '📋 复制'; }, 2000); } } catch (err) { console.error('复制失败', err); } document.body.removeChild(textArea); } function initQuizAnswers() { const answerBtns = document.querySelectorAll('.show-answer-btn'); answerBtns.forEach(btn => { btn.addEventListener('click', () => { const answerId = btn.dataset.answer; const answerDiv = document.getElementById(`answer-${answerId}`); if (!answerDiv) return; if (answerDiv.style.display === 'none') { answerDiv.style.display = 'block'; btn.textContent = '隐藏答案'; } else { answerDiv.style.display = 'none'; btn.textContent = '显示答案'; } }); }); } document.addEventListener('DOMContentLoaded', () => { initCanvas(); initCodeTabs(); initQuizAnswers(); updateArrayDisplay(); updateStats(); const vizButtons = { showComplete: document.getElementById('showComplete'), showPartial: document.getElementById('showPartial'), showMapping: document.getElementById('showMapping'), showTraversal: document.getElementById('showTraversal'), resetViz: document.getElementById('resetViz') }; if (vizButtons.showComplete) { vizButtons.showComplete.addEventListener('click', showComplete); } if (vizButtons.showPartial) { vizButtons.showPartial.addEventListener('click', showPartial); } if (vizButtons.showMapping) { vizButtons.showMapping.addEventListener('click', showMapping); } if (vizButtons.showTraversal) { vizButtons.showTraversal.addEventListener('click', showTraversal); } if (vizButtons.resetViz) { vizButtons.resetViz.addEventListener('click', () => { clearAll(); const descEl = document.getElementById('vizDescription'); if (descEl) { descEl.innerHTML = '点击上方按钮开始顺序存储演示'; } }); } const builderButtons = { addNodeBtn: document.getElementById('addNodeBtn'), removeNodeBtn: document.getElementById('removeNodeBtn'), clearAllBtn: document.getElementById('clearAllBtn'), fillCompleteBtn: document.getElementById('fillCompleteBtn') }; if (builderButtons.addNodeBtn) { builderButtons.addNodeBtn.addEventListener('click', addNode); } if (builderButtons.removeNodeBtn) { builderButtons.removeNodeBtn.addEventListener('click', removeNode); } if (builderButtons.clearAllBtn) { builderButtons.clearAllBtn.addEventListener('click', clearAll); } if (builderButtons.fillCompleteBtn) { builderButtons.fillCompleteBtn.addEventListener('click', fillCompleteTree); } const inputs = { positionInput: document.getElementById('positionInput'), valueInput: document.getElementById('valueInput'), removePositionInput: document.getElementById('removePositionInput') }; if (inputs.positionInput) { inputs.positionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNode(); }); } if (inputs.valueInput) { inputs.valueInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNode(); }); } if (inputs.removePositionInput) { inputs.removePositionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') removeNode(); }); } }); window.addEventListener('resize', () => { if (canvas) { canvas.width = 400; canvas.height = 300; if (arrayData.some(x => x !== null)) { drawTree(); } } }); window.addEventListener('error', (e) => { console.error('页面错误:', e.error); });</script>
+
+{% endblock %}

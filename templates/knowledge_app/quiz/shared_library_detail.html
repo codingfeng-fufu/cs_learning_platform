@@ -1,0 +1,76 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+
+{% block title %}{{ library.name }} - 分享题库{% endblock %}
+
+{% block content %}
+<div class="quiz-container"><!-- 分享信息横幅 --><div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: var(--quiz-radius-lg); margin-bottom: 2rem; text-align: center;"><div style="font-size: 2rem; margin-bottom: 0.5rem;">🤝</div><h2 style="margin: 0 0 0.5rem 0; color: white !important;">{{ share.shared_by.username }} 分享的题库</h2><p style="margin: 0; opacity: 0.9; color: white !important;">{{ share.get_share_type_display }} • {{ share.get_permission_display }}</p></div><div class="quiz-card"><!-- 题库基本信息 --><div style="text-align: center; margin-bottom: 2rem;"><h1 style="color: black !important; margin-bottom: 1rem;">📚 {{ library.name }}</h1>
+            {% if library.description %}
+            <p style="color: black !important; font-size: 1.1rem; margin-bottom: 1.5rem;">{{ library.description }}</p>
+            {% endif %}
+            
+            <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;"><div style="text-align: center;"><div style="font-size: 2rem; color: var(--quiz-primary);">📊</div><div style="font-weight: 600; color: black !important;">{{ library.total_questions }}</div><div style="font-size: 0.9rem; color: black !important;">道题目</div></div><div style="text-align: center;"><div style="font-size: 2rem; color: var(--quiz-success);">👤</div><div style="font-weight: 600; color: black !important;">{{ share.shared_by.username }}</div><div style="font-size: 0.9rem; color: black !important;">分享者</div></div><div style="text-align: center;"><div style="font-size: 2rem; color: var(--quiz-warning);">👁️</div><div style="font-weight: 600; color: black !important;">{{ share.access_count }}</div><div style="font-size: 0.9rem; color: black !important;">访问次数</div></div></div></div><!-- 分享留言 -->
+        {% if share.message %}
+        <div style="background: rgba(99, 102, 241, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg); margin-bottom: 2rem; border-left: 4px solid var(--quiz-primary);"><h4 style="color: var(--quiz-primary) !important; margin: 0 0 0.5rem 0;">💬 分享者留言</h4><p style="color: black !important; margin: 0; font-style: italic;">"{{ share.message }}"</p></div>
+        {% endif %}
+
+        <!-- 操作按钮 --><div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; flex-wrap: wrap;">
+            {% if user.is_authenticated %}
+            <a href="{% url 'knowledge_app:quiz_start' library.id %}" class="quiz-btn quiz-btn-primary"><span>🎯</span><span>开始练习</span></a>
+            
+            {% if can_copy %}
+            <button onclick="copyLibrary({{ share.id }})" class="quiz-btn quiz-btn-success"><span>📋</span><span>复制到我的题库</span></button>
+            {% endif %}
+            {% else %}
+            <div style="text-align: center; padding: 1rem; background: var(--quiz-gray-50); border-radius: var(--quiz-radius); color: black !important;"><p style="margin: 0 0 1rem 0; color: black !important;">登录后可以练习和复制题库</p><a href="{% url 'users:login' %}" class="quiz-btn quiz-btn-primary"><span>🔑</span><span>登录</span></a></div>
+            {% endif %}
+        </div><!-- 题目列表 -->
+        {% if questions %}
+        <div style="margin-top: 2rem;"><h3 style="color: black !important; margin-bottom: 1.5rem; text-align: center;">📝 题目预览</h3><div style="display: grid; gap: 1.5rem;">
+                {% for question in questions %}
+                <div class="quiz-card" style="border: 1px solid var(--quiz-gray-200); padding: 1.5rem;"><div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;"><h4 style="color: black !important; margin: 0; flex: 1;">{{ forloop.counter }}. {{ question.title }}</h4><div style="display: flex; gap: 0.5rem;">
+                            {% if question.question_type == 'single_choice' %}
+                            <span class="quiz-tag quiz-tag-primary">单选题</span>
+                            {% elif question.question_type == 'multiple_choice' %}
+                            <span class="quiz-tag quiz-tag-success">多选题</span>
+                            {% elif question.question_type == 'fill_blank' %}
+                            <span class="quiz-tag quiz-tag-warning">填空题</span>
+                            {% elif question.question_type == 'short_answer' %}
+                            <span class="quiz-tag quiz-tag-danger">简答题</span>
+                            {% endif %}
+                            
+                            {% if question.difficulty == 'easy' %}
+                            <span class="quiz-tag">🟢 简单</span>
+                            {% elif question.difficulty == 'medium' %}
+                            <span class="quiz-tag">🟡 中等</span>
+                            {% elif question.difficulty == 'hard' %}
+                            <span class="quiz-tag">🔴 困难</span>
+                            {% endif %}
+                        </div></div><p style="color: black !important; line-height: 1.6; margin-bottom: 1rem;">{{ question.content }}</p>
+                    
+                    {% if question.question_type in 'single_choice,multiple_choice' %}
+                    <div style="margin-left: 1rem;">
+                        {% for key, value in question.options.items %}
+                        <div style="margin-bottom: 0.5rem; color: black !important;"><strong>{{ key }}.</strong> {{ value }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if question.tags.all %}
+                    <div style="margin-top: 1rem;">
+                        {% for tag in question.tags.all %}
+                        <span class="quiz-tag" style="margin-right: 0.5rem;">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div></div>
+        {% endif %}
+
+        <!-- 分享信息 --><div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--quiz-gray-200); text-align: center; color: black !important;"><div style="display: flex; justify-content: center; gap: 2rem; font-size: 0.9rem; flex-wrap: wrap;"><span>📅 分享时间：{{ share.created_at|date:"Y-m-d H:i" }}</span>
+                {% if share.expires_at %}
+                <span>⏰ 过期时间：{{ share.expires_at|date:"Y-m-d H:i" }}</span>
+                {% endif %}
+                <span>👁️ 访问次数：{{ share.access_count }}</span></div></div></div></div><script>function copyLibrary(shareId) { if (!confirm('确定要复制这个题库到你的个人题库吗？')) { return; } const button = event.target.closest('button'); const originalText = button.innerHTML; button.innerHTML = '<span>⏳</span><span>复制中...</span>'; button.disabled = true; const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || getCookie('csrftoken'); console.log('CSRF Token:', csrfToken ? 'Found' : 'Not found'); fetch(`/quiz/shares/${shareId}/copy/`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrfToken } }) .then(response => { console.log('Response status:', response.status); if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } return response.json(); }) .then(data => { console.log('Response data:', data); if (data.success) { alert(data.message); if (data.redirect_url) { window.location.href = data.redirect_url; } } else { alert('复制失败：' + data.error); button.innerHTML = originalText; button.disabled = false; } }) .catch(error => { console.error('Fetch error:', error); alert('复制失败，请重试: ' + error.message); button.innerHTML = originalText; button.disabled = false; }); } function getCookie(name) { let cookieValue = null; if (document.cookie && document.cookie !== '') { const cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i++) { const cookie = cookies[i].trim(); if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; } } } return cookieValue; }</script>
+{% endblock %}

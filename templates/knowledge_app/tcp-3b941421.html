@@ -1,0 +1,24 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"学习内容" }} - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>{{ breadcrumb_category|default:"学习内容" }}</span><span>></span><span>{{ page_title|default:"当前页面" }}</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">{{ page_icon|default:"📚" }}</span>
+            {{ page_title|default:"学习内容" }}
+        </h1><p>{{ page_description|default:"深入学习计算机科学的核心概念和实践技能" }}</p></div><!-- 主要内容 --><div class="content-card slide-in-right"><!-- 内容开发中 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🚧</span>
+                内容开发中
+            </h2><div class="placeholder-content"><div class="placeholder-icon">🚧</div><h3 class="placeholder-title">功能开发中</h3><p class="placeholder-description">
+                    这个页面的具体内容正在开发中，我们正在努力为您提供最好的学习体验。
+                    敬请期待更多精彩内容！
+                </p><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">丰富内容</h4><p class="card-description">详细的理论知识和实践案例</p></div><div class="grid-card"><span class="card-icon">🎯</span><h4 class="card-title">互动学习</h4><p class="card-description">可视化演示和交互式练习</p></div><div class="grid-card"><span class="card-icon">💡</span><h4 class="card-title">深入理解</h4><p class="card-description">从基础到高级的完整学习路径</p></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+                返回首页
+            </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+                探索CS宇宙
+            </a></div></div><!-- 学习提示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💡</span>
+                学习建议
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">📚</span><strong>理论学习：</strong>先理解基本概念和原理，建立扎实的理论基础。
+                </div><div class="info-box info-box-success"><span class="info-icon">💻</span><strong>实践练习：</strong>通过编程实现和练习题来巩固所学知识。
+                </div><div class="info-box info-box-warning"><span class="info-icon">🔄</span><strong>反复复习：</strong>定期回顾已学内容，加深理解和记忆。
+                </div><div class="info-box info-box-info"><span class="info-icon">🤝</span><strong>交流讨论：</strong>与同学讨论问题，分享学习心得和经验。
+                </div></div></div></div></div>
+{% endblock %}

@@ -1,0 +1,433 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}双向链表 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>双向链表</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔗</span>
+            双向链表 (Doubly Linked List)
+        </h1><p>一种可以双向遍历的动态数据结构，每个节点都有指向前一个和后一个节点的指针</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>双向链表是一种线性数据结构，每个节点包含数据和两个指针（前驱指针和后继指针），可以从任意方向遍历整个链表。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><h4>🔑 关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>节点(Node)：</strong>包含数据和指针的基本单元</li><li><strong>前驱指针(Prev)：</strong>指向前一个节点</li><li><strong>后继指针(Next)：</strong>指向后一个节点</li><li><strong>头节点(Head)：</strong>链表的第一个节点</li><li><strong>尾节点(Tail)：</strong>链表的最后一个节点</li></ul></div><div class="grid-card"><h4>📊 学习信息</h4><div style="text-align: left;"><p><strong>难度等级：</strong><span style="color: #f39c12;">⭐⭐ 进阶</span></p><p><strong>前置知识：</strong></p><ul style="margin: 5px 0;"><li>指针/引用概念</li><li>单向链表</li><li>基础编程语法</li></ul></div></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div style="margin: 20px 0;"><h3 style="color: #3498db; margin-bottom: 15px;">💡 生活类比：双向道路</h3><p style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #3498db;">
+                    想象一条双向道路上的车辆队列：每辆车（节点）都知道前面一辆车和后面一辆车的位置。
+                    你可以从队列的任意位置向前开到队头，也可以向后退到队尾。这就是双向链表的工作原理！
+                </p></div><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">✅</span><strong>vs 单向链表：</strong>双向链表可以双向遍历，删除节点更高效，但需要额外内存存储前驱指针。
+                </div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易混淆点：</strong>初学者常忘记在插入/删除时同时更新前驱和后继指针，导致链表断裂。
+                </div></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                动画演示
+            </h2><!-- 静态结构图 --><div style="margin: 20px 0;"><h3 style="color: #e74c3c;">🏗️ 静态结构图</h3><div style="background: #fff; padding: 20px; border: 2px solid #ddd; border-radius: 10px; text-align: center;"><div style="font-family: monospace; font-size: 14px;"><div style="margin: 10px 0;"><span style="background: #f39c12; color: white; padding: 5px 10px; border-radius: 5px;">HEAD</span></div><div style="display: flex; justify-content: center; align-items: center; gap: 10px; margin: 20px 0;"><!-- 节点1 --><div style="border: 2px solid #3498db; border-radius: 8px; padding: 10px; background: #ecf0f1;"><div style="font-size: 12px; color: #7f8c8d;">NULL</div><div style="font-weight: bold; color: #2c3e50;">Data: A</div><div style="font-size: 12px; color: #7f8c8d;">→</div></div><span style="font-size: 20px;">⟷</span><!-- 节点2 --><div style="border: 2px solid #3498db; border-radius: 8px; padding: 10px; background: #ecf0f1;"><div style="font-size: 12px; color: #7f8c8d;">←</div><div style="font-weight: bold; color: #2c3e50;">Data: B</div><div style="font-size: 12px; color: #7f8c8d;">→</div></div><span style="font-size: 20px;">⟷</span><!-- 节点3 --><div style="border: 2px solid #3498db; border-radius: 8px; padding: 10px; background: #ecf0f1;"><div style="font-size: 12px; color: #7f8c8d;">←</div><div style="font-weight: bold; color: #2c3e50;">Data: C</div><div style="font-size: 12px; color: #7f8c8d;">NULL</div></div></div><div style="margin: 10px 0;"><span style="background: #e74c3c; color: white; padding: 5px 10px; border-radius: 5px;">TAIL</span></div></div></div></div><!-- Canvas动画演示 --><div style="margin: 30px 0;"><h3 style="color: #e74c3c;">🎬 交互式动画演示</h3><div style="background: #f8f9fa; padding: 20px; border-radius: 10px;"><div style="text-align: center; margin-bottom: 20px;"><button id="btn-insert-middle" class="animation-btn">中间插入</button><button id="btn-delete-node" class="animation-btn">删除节点</button><button id="btn-insert-head" class="animation-btn">头部插入</button><button id="btn-reset" class="animation-btn reset-btn">重置</button></div><canvas id="linkedListCanvas" width="800" height="300" style="border: 2px solid #ddd; border-radius: 8px; background: white; display: block; margin: 0 auto; max-width: 100%;"></canvas><div id="animation-info" style="text-align: center; margin-top: 15px; font-weight: bold; color: #2c3e50;">
+                        点击按钮开始动画演示
+                    </div></div></div></div></div><!-- 💻 代码实现 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><!-- 语言选择器 --><div style="margin: 20px 0; text-align: center;"><button class="lang-btn active" data-lang="python">🐍 Python</button><button class="lang-btn" data-lang="java">☕ Java</button><button class="lang-btn" data-lang="cpp">⚡ C++</button></div><!-- Python代码 --><div id="code-python" class="code-section active"><div class="code-header"><span>🐍 Python 实现</span><button class="copy-btn" data-code="python">📋 复制代码</button></div><div class="code-content"><pre><code class="python-code">class DoublyLinkedListNode:
+    def __init__(self, data):
+        self.data = data
+        self.prev = None  # 前驱指针
+        self.next = None  # 后继指针
+
+class DoublyLinkedList:
+    def __init__(self):
+        self.head = None
+        self.tail = None
+        self.size = 0
+
+    def insert_head(self, data):
+        """在头部插入节点"""
+        new_node = DoublyLinkedListNode(data)
+        if not self.head:
+            self.head = self.tail = new_node
+        else:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+        self.size += 1
+
+    def insert_tail(self, data):
+        """在尾部插入节点"""
+        new_node = DoublyLinkedListNode(data)
+        if not self.tail:
+            self.head = self.tail = new_node
+        else:
+            new_node.prev = self.tail
+            self.tail.next = new_node
+            self.tail = new_node
+        self.size += 1
+
+    def insert_at_position(self, data, position):
+        """在指定位置插入节点"""
+        if position <= 0:
+            self.insert_head(data)
+            return
+        if position >= self.size:
+            self.insert_tail(data)
+            return
+
+        new_node = DoublyLinkedListNode(data)
+        current = self.head
+        for _ in range(position):
+            current = current.next
+
+        # 插入节点
+        new_node.next = current
+        new_node.prev = current.prev
+        current.prev.next = new_node
+        current.prev = new_node
+        self.size += 1
+
+    def delete_node(self, data):
+        """删除指定数据的节点"""
+        current = self.head
+        while current:
+            if current.data == data:
+                # 更新前驱节点的next指针
+                if current.prev:
+                    current.prev.next = current.next
+                else:
+                    self.head = current.next
+
+                # 更新后继节点的prev指针
+                if current.next:
+                    current.next.prev = current.prev
+                else:
+                    self.tail = current.prev
+
+                self.size -= 1
+                return True
+            current = current.next
+        return False
+
+    def display_forward(self):
+        """正向遍历显示"""
+        result = []
+        current = self.head
+        while current:
+            result.append(str(current.data))
+            current = current.next
+        return " ⟷ ".join(result)
+
+    def display_backward(self):
+        """反向遍历显示"""
+        result = []
+        current = self.tail
+        while current:
+            result.append(str(current.data))
+            current = current.prev
+        return " ⟷ ".join(result)
+
+# 使用示例
+dll = DoublyLinkedList()
+dll.insert_tail("A")
+dll.insert_tail("B")
+dll.insert_tail("C")
+print("正向遍历:", dll.display_forward())
+print("反向遍历:", dll.display_backward())
+</code></pre></div></div><!-- Java代码 --><div id="code-java" class="code-section"><div class="code-header"><span>☕ Java 实现</span><button class="copy-btn" data-code="java">📋 复制代码</button></div><div class="code-content"><pre><code class="java-code">class DoublyLinkedListNode<T> {
+    T data;
+    DoublyLinkedListNode<T> prev;
+    DoublyLinkedListNode<T> next;
+
+    public DoublyLinkedListNode(T data) {
+        this.data = data;
+        this.prev = null;
+        this.next = null;
+    }
+}
+
+public class DoublyLinkedList<T> {
+    private DoublyLinkedListNode<T> head;
+    private DoublyLinkedListNode<T> tail;
+    private int size;
+
+    public DoublyLinkedList() {
+        this.head = null;
+        this.tail = null;
+        this.size = 0;
+    }
+
+    // 在头部插入节点
+    public void insertHead(T data) {
+        DoublyLinkedListNode<T> newNode = new DoublyLinkedListNode<>(data);
+        if (head == null) {
+            head = tail = newNode;
+        } else {
+            newNode.next = head;
+            head.prev = newNode;
+            head = newNode;
+        }
+        size++;
+    }
+
+    // 在尾部插入节点
+    public void insertTail(T data) {
+        DoublyLinkedListNode<T> newNode = new DoublyLinkedListNode<>(data);
+        if (tail == null) {
+            head = tail = newNode;
+        } else {
+            newNode.prev = tail;
+            tail.next = newNode;
+            tail = newNode;
+        }
+        size++;
+    }
+
+    // 在指定位置插入节点
+    public void insertAtPosition(T data, int position) {
+        if (position <= 0) {
+            insertHead(data);
+            return;
+        }
+        if (position >= size) {
+            insertTail(data);
+            return;
+        }
+
+        DoublyLinkedListNode<T> newNode = new DoublyLinkedListNode<>(data);
+        DoublyLinkedListNode<T> current = head;
+        for (int i = 0; i < position; i++) {
+            current = current.next;
+        }
+
+        // 插入节点
+        newNode.next = current;
+        newNode.prev = current.prev;
+        current.prev.next = newNode;
+        current.prev = newNode;
+        size++;
+    }
+
+    // 删除指定数据的节点
+    public boolean deleteNode(T data) {
+        DoublyLinkedListNode<T> current = head;
+        while (current != null) {
+            if (current.data.equals(data)) {
+                // 更新前驱节点的next指针
+                if (current.prev != null) {
+                    current.prev.next = current.next;
+                } else {
+                    head = current.next;
+                }
+
+                // 更新后继节点的prev指针
+                if (current.next != null) {
+                    current.next.prev = current.prev;
+                } else {
+                    tail = current.prev;
+                }
+
+                size--;
+                return true;
+            }
+            current = current.next;
+        }
+        return false;
+    }
+
+    // 正向遍历显示
+    public String displayForward() {
+        StringBuilder sb = new StringBuilder();
+        DoublyLinkedListNode<T> current = head;
+        while (current != null) {
+            sb.append(current.data);
+            if (current.next != null) {
+                sb.append(" ⟷ ");
+            }
+            current = current.next;
+        }
+        return sb.toString();
+    }
+
+    // 反向遍历显示
+    public String displayBackward() {
+        StringBuilder sb = new StringBuilder();
+        DoublyLinkedListNode<T> current = tail;
+        while (current != null) {
+            sb.append(current.data);
+            if (current.prev != null) {
+                sb.append(" ⟷ ");
+            }
+            current = current.prev;
+        }
+        return sb.toString();
+    }
+
+    public int size() {
+        return size;
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        DoublyLinkedList<String> dll = new DoublyLinkedList<>();
+        dll.insertTail("A");
+        dll.insertTail("B");
+        dll.insertTail("C");
+        System.out.println("正向遍历: " + dll.displayForward());
+        System.out.println("反向遍历: " + dll.displayBackward());
+    }
+}
+</code></pre></div></div><!-- C++代码 --><div id="code-cpp" class="code-section"><div class="code-header"><span>⚡ C++ 实现</span><button class="copy-btn" data-code="cpp">📋 复制代码</button></div><div class="code-content"><pre><code class="cpp-code">#include <iostream>
+#include <string>
+using namespace std;
+
+template<typename T>
+struct DoublyLinkedListNode {
+    T data;
+    DoublyLinkedListNode* prev;
+    DoublyLinkedListNode* next;
+
+    DoublyLinkedListNode(T value) : data(value), prev(nullptr), next(nullptr) {}
+};
+
+template<typename T>
+class DoublyLinkedList {
+private:
+    DoublyLinkedListNode<T>* head;
+    DoublyLinkedListNode<T>* tail;
+    int size;
+
+public:
+    DoublyLinkedList() : head(nullptr), tail(nullptr), size(0) {}
+
+    ~DoublyLinkedList() {
+        while (head != nullptr) {
+            DoublyLinkedListNode<T>* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+
+    // 在头部插入节点
+    void insertHead(T data) {
+        DoublyLinkedListNode<T>* newNode = new DoublyLinkedListNode<T>(data);
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+        size++;
+    }
+
+    // 在尾部插入节点
+    void insertTail(T data) {
+        DoublyLinkedListNode<T>* newNode = new DoublyLinkedListNode<T>(data);
+        if (tail == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->prev = tail;
+            tail->next = newNode;
+            tail = newNode;
+        }
+        size++;
+    }
+
+    // 在指定位置插入节点
+    void insertAtPosition(T data, int position) {
+        if (position <= 0) {
+            insertHead(data);
+            return;
+        }
+        if (position >= size) {
+            insertTail(data);
+            return;
+        }
+
+        DoublyLinkedListNode<T>* newNode = new DoublyLinkedListNode<T>(data);
+        DoublyLinkedListNode<T>* current = head;
+        for (int i = 0; i < position; i++) {
+            current = current->next;
+        }
+
+        // 插入节点
+        newNode->next = current;
+        newNode->prev = current->prev;
+        current->prev->next = newNode;
+        current->prev = newNode;
+        size++;
+    }
+
+    // 删除指定数据的节点
+    bool deleteNode(T data) {
+        DoublyLinkedListNode<T>* current = head;
+        while (current != nullptr) {
+            if (current->data == data) {
+                // 更新前驱节点的next指针
+                if (current->prev != nullptr) {
+                    current->prev->next = current->next;
+                } else {
+                    head = current->next;
+                }
+
+                // 更新后继节点的prev指针
+                if (current->next != nullptr) {
+                    current->next->prev = current->prev;
+                } else {
+                    tail = current->prev;
+                }
+
+                delete current;
+                size--;
+                return true;
+            }
+            current = current->next;
+        }
+        return false;
+    }
+
+    // 正向遍历显示
+    string displayForward() {
+        string result = "";
+        DoublyLinkedListNode<T>* current = head;
+        while (current != nullptr) {
+            result += to_string(current->data);
+            if (current->next != nullptr) {
+                result += " ⟷ ";
+            }
+            current = current->next;
+        }
+        return result;
+    }
+
+    // 反向遍历显示
+    string displayBackward() {
+        string result = "";
+        DoublyLinkedListNode<T>* current = tail;
+        while (current != nullptr) {
+            result += to_string(current->data);
+            if (current->prev != nullptr) {
+                result += " ⟷ ";
+            }
+            current = current->prev;
+        }
+        return result;
+    }
+
+    int getSize() { return size; }
+};
+
+// 使用示例
+int main() {
+    DoublyLinkedList<int> dll;
+    dll.insertTail(1);
+    dll.insertTail(2);
+    dll.insertTail(3);
+    cout << "正向遍历: " << dll.displayForward() << endl;
+    cout << "反向遍历: " << dll.displayBackward() << endl;
+    return 0;
+}
+</code></pre></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🌐</span><h4 class="card-title">浏览器历史记录</h4><p class="card-description">前进/后退按钮需要双向导航功能</p></div><div class="grid-card"><span class="card-icon">🎵</span><h4 class="card-title">音乐播放器</h4><p class="card-description">上一首/下一首歌曲切换</p></div><div class="grid-card"><span class="card-icon">📝</span><h4 class="card-title">文本编辑器</h4><p class="card-description">撤销/重做操作的实现</p></div></div><!-- 典型案例分析 --><div style="margin: 30px 0;"><h3 style="color: #e74c3c;">🔍 典型案例：LRU缓存实现</h3><div style="background: #f8f9fa; padding: 20px; border-radius: 10px;"><p><strong>问题：</strong>设计一个固定大小的缓存，当缓存满时淘汰最近最少使用的数据。</p><p><strong>解决方案：</strong>使用双向链表 + 哈希表</p><ul style="text-align: left; margin: 15px 0;"><li>双向链表维护访问顺序（头部=最近使用，尾部=最少使用）</li><li>哈希表提供O(1)的查找性能</li><li>访问时将节点移到头部，淘汰时删除尾部节点</li></ul><div style="background: #e8f5e8; padding: 10px; border-radius: 5px; margin-top: 15px;"><strong>🎯 学习工具推荐：</strong> VisuAlgo、LeetCode图解、Algorithm Visualizer
+                    </div></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div style="margin: 20px 0;"><h3 style="color: #e74c3c;">🤔 精选问题</h3><!-- 问题1 --><div class="question-card"><div class="question-header" onclick="toggleAnswer('answer1')"><span class="question-icon">1️⃣</span><span class="question-text"><strong>基础理解：</strong>双向链表相比单向链表的主要优势是什么？请举例说明。</span><span class="toggle-icon">▼</span></div><div id="answer1" class="answer-content"><div class="answer-box"><h4>✅ 参考答案：</h4><p><strong>主要优势：</strong></p><ul><li><strong>双向遍历：</strong>可以从任意节点向前或向后遍历，单向链表只能单方向遍历</li><li><strong>删除效率高：</strong>已知节点指针时，删除操作为O(1)，不需要遍历找前驱节点</li><li><strong>插入灵活：</strong>在任意位置插入更容易，因为有前驱指针</li></ul><p><strong>举例：</strong>在文本编辑器的撤销/重做功能中，需要在操作历史中双向移动，双向链表比单向链表更适合。</p><p><strong>代价：</strong>每个节点需要额外的前驱指针，内存开销增加约33%。</p></div></div></div><!-- 问题2 --><div class="question-card"><div class="question-header" onclick="toggleAnswer('answer2')"><span class="question-icon">2️⃣</span><span class="question-text"><strong>操作分析：</strong>在双向链表中间插入一个节点需要修改几个指针？请详细说明每一步。</span><span class="toggle-icon">▼</span></div><div id="answer2" class="answer-content"><div class="answer-box"><h4>✅ 参考答案：</h4><p><strong>总共需要修改4个指针：</strong></p><ol><li><strong>新节点的next指针：</strong>指向原来的后继节点</li><li><strong>新节点的prev指针：</strong>指向原来的前驱节点</li><li><strong>前驱节点的next指针：</strong>从指向原后继节点改为指向新节点</li><li><strong>后继节点的prev指针：</strong>从指向原前驱节点改为指向新节点</li></ol><p><strong>操作顺序很重要：</strong>通常先设置新节点的指针，再修改相邻节点的指针，避免丢失引用。</p><div style="background: #fff3cd; padding: 10px; border-radius: 5px; margin-top: 10px;"><strong>💡 记忆技巧：</strong>双向链表插入 = 新节点连接2个指针 + 相邻节点各修改1个指针 = 共4个指针
+                            </div></div></div></div><!-- 问题3 --><div class="question-card"><div class="question-header" onclick="toggleAnswer('answer3')"><span class="question-icon">3️⃣</span><span class="question-text"><strong>性能思考：</strong>为什么双向链表的删除操作比单向链表更高效？</span><span class="toggle-icon">▼</span></div><div id="answer3" class="answer-content"><div class="answer-box"><h4>✅ 参考答案：</h4><p><strong>关键区别在于是否需要查找前驱节点：</strong></p><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 15px 0;"><div style="background: #ffebee; padding: 15px; border-radius: 8px;"><h5 style="color: #c62828;">🔴 单向链表删除</h5><ul style="font-size: 14px;"><li>需要从头遍历找到前驱节点</li><li>时间复杂度：O(n)</li><li>必须知道头节点才能删除</li></ul></div><div style="background: #e8f5e9; padding: 15px; border-radius: 8px;"><h5 style="color: #2e7d32;">🟢 双向链表删除</h5><ul style="font-size: 14px;"><li>直接通过prev指针获取前驱</li><li>时间复杂度：O(1)</li><li>只需要当前节点指针即可</li></ul></div></div><p><strong>实际应用：</strong>在LRU缓存中，需要频繁删除任意位置的节点，双向链表的O(1)删除性能是关键优势。</p></div></div></div><!-- 问题4 --><div class="question-card"><div class="question-header" onclick="toggleAnswer('answer4')"><span class="question-icon">4️⃣</span><span class="question-text"><strong>应用场景：</strong>什么情况下你会选择双向链表而不是数组或单向链表？</span><span class="toggle-icon">▼</span></div><div id="answer4" class="answer-content"><div class="answer-box"><h4>✅ 参考答案：</h4><p><strong>选择双向链表的典型场景：</strong></p><div style="margin: 15px 0;"><h5 style="color: #1976d2;">🆚 相比数组的优势：</h5><ul><li>需要频繁在中间插入/删除元素</li><li>不知道数据量大小，需要动态扩容</li><li>不需要随机访问（通过索引快速定位）</li></ul></div><div style="margin: 15px 0;"><h5 style="color: #1976d2;">🆚 相比单向链表的优势：</h5><ul><li>需要双向遍历（如播放器的上一首/下一首）</li><li>需要高效删除任意节点（如缓存淘汰）</li><li>需要在任意位置前后插入元素</li></ul></div><div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-top: 15px;"><h5 style="color: #1565c0;">🎯 最佳应用场景：</h5><p>LRU缓存、浏览器历史记录、音乐播放列表、文本编辑器的撤销栈、操作系统的进程调度队列等。</p></div></div></div></div></div><div style="margin: 30px 0;"><h3 style="color: #e74c3c;">📈 进阶学习路径</h3><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🟢</span><h4 class="card-title">掌握基础</h4><p class="card-description">能够实现基本的增删改查操作</p></div><div class="grid-card"><span class="card-icon">🟡</span><h4 class="card-title">应用实践</h4><p class="card-description">实现LRU缓存、双向队列等应用</p></div><div class="grid-card"><span class="card-icon">🔴</span><h4 class="card-title">深入优化</h4><p class="card-description">内存管理、线程安全、性能优化</p></div></div></div><!-- 学习资源推荐 --><div style="margin: 30px 0;"><h3 style="color: #e74c3c;">🔗 推荐学习资源</h3><div class="unified-grid unified-grid-2"><div class="info-box info-box-info"><span class="info-icon">📖</span><strong>理论学习：</strong>《算法导论》第10章、《数据结构与算法分析》
+                    </div><div class="info-box info-box-success"><span class="info-icon">💻</span><strong>在线练习：</strong>LeetCode 链表专题、牛客网数据结构练习
+                    </div></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.content-card {background:white;border-radius:12px;padding:30px;margin:20px 0;box-shadow:0 4px 6px rgba(0, 0, 0, 0.1);transition:transform 0.3s ease}.content-card:hover {transform:translateY(-2px)}.section-title {color:#2c3e50;border-bottom:3px solid #3498db;padding-bottom:10px;margin-bottom:20px}.info-box {padding:15px;border-radius:8px;margin:10px 0;border-left:4px solid}.info-box-info {background:#e3f2fd;border-color:#2196f3}.info-box-success {background:#e8f5e9;border-color:#4caf50}.info-box-warning {background:#fff3e0;border-color:#ff9800}.grid-card {background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:20px;text-align:center;transition:all 0.3s ease}.grid-card:hover {background:#e9ecef;transform:translateY(-3px)}.unified-grid {display:grid;gap:20px;margin:20px 0}.unified-grid-1 {grid-template-columns:1fr}.unified-grid-2 {grid-template-columns:repeat(auto-fit, minmax(300px, 1fr))}.unified-grid-3 {grid-template-columns:repeat(auto-fit, minmax(250px, 1fr))}.unified-btn {display:inline-block;padding:12px 24px;margin:10px;border-radius:8px;text-decoration:none;font-weight:bold;transition:all 0.3s ease}.unified-btn-primary {background:linear-gradient(45deg, #3498db, #2980b9);color:white}.unified-btn-secondary {background:linear-gradient(45deg, #95a5a6, #7f8c8d);color:white}.unified-btn:hover {transform:translateY(-2px);box-shadow:0 4px 8px rgba(0, 0, 0, 0.2)}.animation-btn {background:linear-gradient(45deg, #3498db, #2980b9);color:white;border:none;padding:10px 20px;margin:5px;border-radius:6px;cursor:pointer;font-weight:bold;transition:all 0.3s ease}.animation-btn:hover {background:linear-gradient(45deg, #2980b9, #1f5f8b);transform:translateY(-2px)}.reset-btn {background:linear-gradient(45deg, #e74c3c, #c0392b) !important}.reset-btn:hover {background:linear-gradient(45deg, #c0392b, #a93226) !important}.lang-btn {background:#f8f9fa;border:2px solid #dee2e6;padding:10px 20px;margin:0 5px;border-radius:6px;cursor:pointer;font-weight:bold;transition:all 0.3s ease}.lang-btn.active, .lang-btn:hover {background:#3498db;color:white;border-color:#3498db}.code-section {display:none;margin:20px 0}.code-section.active {display:block}.code-header {background:#2c3e50;color:white;padding:15px 20px;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center}.copy-btn {background:#34495e;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;font-size:14px;transition:background 0.3s ease}.copy-btn:hover {background:#4a6278}.code-content {background:#2d3748;color:#e2e8f0;border-radius:0 0 8px 8px;overflow-x:auto}.code-content pre {margin:0;padding:20px;font-family:'Courier New', monospace;font-size:14px;line-height:1.5}.question-card {background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;margin:15px 0;overflow:hidden;transition:all 0.3s ease}.question-card:hover {box-shadow:0 2px 8px rgba(0, 0, 0, 0.1)}.question-header {padding:20px;cursor:pointer;display:flex;align-items:center;gap:15px;background:#fff;transition:background 0.3s ease}.question-header:hover {background:#f8f9fa}.question-icon {font-size:20px;flex-shrink:0}.question-text {flex:1;font-size:16px}.toggle-icon {font-size:16px;color:#6c757d;transition:transform 0.3s ease}.question-header.active .toggle-icon {transform:rotate(180deg)}.answer-content {display:none;background:#fff;border-top:1px solid #dee2e6}.answer-content.show {display:block;animation:slideDown 0.3s ease-out}@keyframes slideDown {from {opacity:0;max-height:0}to {opacity:1;max-height:1000px}}.answer-box {padding:20px;background:#f8f9fa;margin:20px;border-radius:8px;border-left:4px solid #28a745}.answer-box h4 {color:#28a745;margin-bottom:15px}.answer-box ul, .answer-box ol {text-align:left;margin:10px 0;padding-left:20px}.answer-box li {margin:8px 0;line-height:1.6}@media (max-width:768px) {.unified-grid-2, .unified-grid-3 {grid-template-columns:1fr}.content-card {padding:20px;margin:15px 0}#linkedListCanvas {width:100%;height:auto}.code-header {flex-direction:column;gap:10px;align-items:flex-start}.lang-btn {padding:8px 15px;font-size:14px}.question-header {padding:15px;flex-direction:column;align-items:flex-start;gap:10px}.question-text {font-size:15px}}</style><script>let canvas, ctx; let nodes = []; let animationStep = 0; let currentAnimation = ''; let animationPointers = []; function initCanvas() { canvas = document.getElementById('linkedListCanvas'); ctx = canvas.getContext('2d'); const rect = canvas.getBoundingClientRect(); canvas.width = rect.width; canvas.height = 300; resetNodes(); drawLinkedList(); } function resetNodes() { nodes = [ { data: 'A', x: 150, y: 150, color: '#3498db', highlight: false }, { data: 'B', x: 350, y: 150, color: '#3498db', highlight: false }, { data: 'C', x: 550, y: 150, color: '#3498db', highlight: false } ]; animationPointers = []; animationStep = 0; } function drawLinkedList() { ctx.clearRect(0, 0, canvas.width, canvas.height); for (let i = 0; i < nodes.length - 1; i++) { drawNodeConnection(nodes[i], nodes[i + 1]); } nodes.forEach(node => { drawNode(node); }); animationPointers.forEach(pointer => { drawAnimationPointer(pointer); }); if (nodes.length > 0) { drawHeadTailLabel('HEAD', nodes[0].x, nodes[0].y - 60, '#f39c12'); drawHeadTailLabel('TAIL', nodes[nodes.length - 1].x, nodes[nodes.length - 1].y - 60, '#e74c3c'); } } function drawNode(node) { const width = 80; const height = 50; const x = node.x - width/2; const y = node.y - height/2; const cornerRadius = 8; ctx.fillStyle = 'rgba(0, 0, 0, 0.2)'; drawRoundedRect(x + 3, y + 3, width, height, cornerRadius); ctx.fill(); const gradient = ctx.createLinearGradient(x, y, x, y + height); if (node.highlight) { gradient.addColorStop(0, '#ff6b6b'); gradient.addColorStop(1, '#ee5a52'); } else { gradient.addColorStop(0, '#74b9ff'); gradient.addColorStop(1, '#0984e3'); } ctx.fillStyle = gradient; drawRoundedRect(x, y, width, height, cornerRadius); ctx.fill(); ctx.strokeStyle = node.highlight ? '#d63031' : '#2d3436'; ctx.lineWidth = 2; drawRoundedRect(x, y, width, height, cornerRadius); ctx.stroke(); ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x + 20, y + 5); ctx.lineTo(x + 20, y + height - 5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x + width - 20, y + 5); ctx.lineTo(x + width - 20, y + height - 5); ctx.stroke(); const labelBg = 'rgba(255, 255, 255, 0.9)'; const labelColor = '#2d3436'; ctx.fillStyle = labelBg; ctx.fillRect(x + 3, y + height - 16, 14, 12); ctx.fillStyle = labelColor; ctx.font = 'bold 9px Arial'; ctx.textAlign = 'center'; ctx.fillText('prev', x + 10, y + height - 8); ctx.fillStyle = labelBg; ctx.fillRect(x + width - 17, y + height - 16, 14, 12); ctx.fillStyle = labelColor; ctx.fillText('next', x + width - 10, y + height - 8); ctx.fillStyle = 'white'; ctx.font = 'bold 18px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(node.data, node.x, node.y); const highlightGradient = ctx.createLinearGradient(x, y, x, y + height/2); highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)'); highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)'); ctx.fillStyle = highlightGradient; drawRoundedRect(x, y, width, height/2, cornerRadius); ctx.fill(); } function drawRoundedRect(x, y, width, height, radius) { ctx.beginPath(); ctx.moveTo(x + radius, y); ctx.lineTo(x + width - radius, y); ctx.quadraticCurveTo(x + width, y, x + width, y + radius); ctx.lineTo(x + width, y + height - radius); ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height); ctx.lineTo(x + radius, y + height); ctx.quadraticCurveTo(x, y + height, x, y + height - radius); ctx.lineTo(x, y + radius); ctx.quadraticCurveTo(x, y, x + radius, y); ctx.closePath(); } function drawNodeConnection(node1, node2) { const arrowSize = 10; const nextGradient = ctx.createLinearGradient(node1.x, node1.y - 15, node2.x, node2.y - 15); nextGradient.addColorStop(0, '#00b894'); nextGradient.addColorStop(1, '#00a085'); ctx.strokeStyle = nextGradient; ctx.lineWidth = 4; ctx.lineCap = 'round'; const startX = node1.x + 30; const endX = node2.x - 30; const nextY = node1.y - 15; ctx.beginPath(); ctx.moveTo(startX, nextY); const controlY = nextY - 8; ctx.quadraticCurveTo((startX + endX) / 2, controlY, endX, nextY); ctx.stroke(); drawArrowHead(endX, nextY, 0, arrowSize, '#00b894'); drawLabel('next', (startX + endX) / 2, nextY - 15, '#00b894', true); const prevGradient = ctx.createLinearGradient(node2.x, node2.y + 15, node1.x, node1.y + 15); prevGradient.addColorStop(0, '#fd79a8'); prevGradient.addColorStop(1, '#e84393'); ctx.strokeStyle = prevGradient; ctx.lineWidth = 4; const prevY = node1.y + 15; ctx.beginPath(); ctx.moveTo(endX, prevY); const prevControlY = prevY + 8; ctx.quadraticCurveTo((startX + endX) / 2, prevControlY, startX, prevY); ctx.stroke(); drawArrowHead(startX, prevY, Math.PI, arrowSize, '#fd79a8'); drawLabel('prev', (startX + endX) / 2, prevY + 20, '#fd79a8', true); } function drawArrowHead(x, y, angle, size, color) { ctx.save(); ctx.translate(x, y); ctx.rotate(angle); ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; ctx.beginPath(); ctx.moveTo(1, 1); ctx.lineTo(-size + 1, -size/2 + 1); ctx.lineTo(-size/2 + 1, 1); ctx.lineTo(-size + 1, size/2 + 1); ctx.closePath(); ctx.fill(); const arrowGradient = ctx.createLinearGradient(-size, 0, 0, 0); arrowGradient.addColorStop(0, color); arrowGradient.addColorStop(1, adjustBrightness(color, 1.2)); ctx.fillStyle = arrowGradient; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-size, -size/2); ctx.lineTo(-size/2, 0); ctx.lineTo(-size, size/2); ctx.closePath(); ctx.fill(); ctx.strokeStyle = adjustBrightness(color, 0.8); ctx.lineWidth = 1; ctx.stroke(); ctx.restore(); } function adjustBrightness(color, factor) { if (color === '#00b894') return factor > 1 ? '#00d2a0' : '#007a63'; if (color === '#fd79a8') return factor > 1 ? '#ff9cc5' : '#d14d82'; return color; } function drawAnimationPointer(pointer) { const dashOffset = (Date.now() * 0.01) % 20; ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)'; ctx.lineWidth = 6; ctx.setLineDash([8, 4]); ctx.lineDashOffset = dashOffset + 2; ctx.beginPath(); ctx.moveTo(pointer.fromX + 2, pointer.fromY + 2); ctx.lineTo(pointer.toX + 2, pointer.toY + 2); ctx.stroke(); const gradient = ctx.createLinearGradient(pointer.fromX, pointer.fromY, pointer.toX, pointer.toY); gradient.addColorStop(0, pointer.color); gradient.addColorStop(0.5, adjustBrightness(pointer.color, 1.3)); gradient.addColorStop(1, pointer.color); ctx.strokeStyle = gradient; ctx.lineWidth = 5; ctx.setLineDash([10, 6]); ctx.lineDashOffset = dashOffset; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(pointer.fromX, pointer.fromY); ctx.lineTo(pointer.toX, pointer.toY); ctx.stroke(); const angle = Math.atan2(pointer.toY - pointer.fromY, pointer.toX - pointer.fromX); const arrowSize = 12; ctx.setLineDash([]); drawArrowHead(pointer.toX, pointer.toY, angle, arrowSize, pointer.color); const labelX = (pointer.fromX + pointer.toX) / 2; const labelY = (pointer.fromY + pointer.toY) / 2 - 15; const pulseScale = 1 + Math.sin(Date.now() * 0.005) * 0.1; ctx.save(); ctx.translate(labelX, labelY); ctx.scale(pulseScale, pulseScale); drawLabel(pointer.label, 0, 0, pointer.color, true); ctx.restore(); } function drawLabel(text, x, y, color, hasBackground = false) { if (hasBackground) { const metrics = ctx.measureText(text); const width = metrics.width + 12; const height = 20; ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; drawRoundedRect(x - width/2 + 2, y - height/2 + 2, width, height, 6); ctx.fill(); const bgGradient = ctx.createLinearGradient(x, y - height/2, x, y + height/2); bgGradient.addColorStop(0, 'rgba(255, 255, 255, 0.95)'); bgGradient.addColorStop(1, 'rgba(248, 249, 250, 0.95)'); ctx.fillStyle = bgGradient; drawRoundedRect(x - width/2, y - height/2, width, height, 6); ctx.fill(); ctx.strokeStyle = adjustBrightness(color, 0.8); ctx.lineWidth = 2; drawRoundedRect(x - width/2, y - height/2, width, height, 6); ctx.stroke(); } ctx.fillStyle = color; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, x, y); } function drawHeadTailLabel(text, x, y, color) { const width = 60; const height = 25; ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; drawRoundedRect(x - width/2 + 3, y - height/2 + 3, width, height, 8); ctx.fill(); const gradient = ctx.createLinearGradient(x, y - height/2, x, y + height/2); if (color === '#f39c12') { gradient.addColorStop(0, '#fdcb6e'); gradient.addColorStop(1, '#e17055'); } else { gradient.addColorStop(0, '#fd79a8'); gradient.addColorStop(1, '#e84393'); } ctx.fillStyle = gradient; drawRoundedRect(x - width/2, y - height/2, width, height, 8); ctx.fill(); ctx.strokeStyle = adjustBrightness(color, 0.8); ctx.lineWidth = 2; drawRoundedRect(x - width/2, y - height/2, width, height, 8); ctx.stroke(); ctx.fillStyle = 'white'; ctx.font = 'bold 14px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(text, x, y); const highlightGradient = ctx.createLinearGradient(x, y - height/2, x, y); highlightGradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)'); highlightGradient.addColorStop(1, 'rgba(255, 255, 255, 0.1)'); ctx.fillStyle = highlightGradient; drawRoundedRect(x - width/2, y - height/2, width, height/2, 8); ctx.fill(); } function updateAnimationInfo(text) { document.getElementById('animation-info').textContent = text; } function animateInsertMiddle() { resetNodes(); currentAnimation = 'insertMiddle'; animationStep = 0; const steps = [ () => { updateAnimationInfo('重置链表到初始状态：A ⟷ B ⟷ C'); drawLinkedList(); }, () => { updateAnimationInfo('步骤1: 创建新节点X'); const newNode = { data: 'X', x: 450, y: 80, color: '#e74c3c', highlight: true }; nodes.push(newNode); drawLinkedList(); }, () => { updateAnimationInfo('步骤2: 设置X.next = C（新节点的next指针指向C）'); animationPointers.push({ fromX: 450 + 30, fromY: 80, toX: 550 - 30, toY: 150, color: '#27ae60', label: 'X.next = C' }); drawLinkedList(); }, () => { updateAnimationInfo('步骤3: 设置X.prev = B（新节点的prev指针指向B）'); animationPointers.push({ fromX: 450 - 30, fromY: 80, toX: 350 + 30, toY: 150, color: '#e67e22', label: 'X.prev = B' }); drawLinkedList(); }, () => { updateAnimationInfo('步骤4: 设置B.next = X（B的next指针改为指向X）'); nodes[1].highlight = true; animationPointers = [{ fromX: 350 + 30, fromY: 150 - 10, toX: 450 - 30, toY: 80 + 10, color: '#27ae60', label: 'B.next = X' }]; drawLinkedList(); }, () => { updateAnimationInfo('步骤5: 设置C.prev = X（C的prev指针改为指向X）'); nodes[1].highlight = false; nodes[2].highlight = true; animationPointers = [{ fromX: 550 - 30, fromY: 150 + 10, toX: 450 + 30, toY: 80 - 10, color: '#e67e22', label: 'C.prev = X' }]; drawLinkedList(); }, () => { updateAnimationInfo('步骤6: 移动X到正确位置，完成插入'); nodes[2].highlight = false; nodes[3].highlight = false; nodes[3].color = '#3498db'; nodes[0].x = 120; nodes[1].x = 280; nodes[3].x = 440; nodes[3].y = 150; nodes[2].x = 600; const newNode = nodes.pop(); nodes.splice(2, 0, newNode); animationPointers = []; drawLinkedList(); }, () => { updateAnimationInfo('插入完成！新链表：A ⟷ B ⟷ X ⟷ C'); drawLinkedList(); } ]; function runStep() { if (animationStep < steps.length) { steps[animationStep](); animationStep++; setTimeout(runStep, 2000); } } runStep(); } function animateDeleteNode() { resetNodes(); currentAnimation = 'deleteNode'; animationStep = 0; const steps = [ () => { updateAnimationInfo('重置链表到初始状态：A ⟷ B ⟷ C'); drawLinkedList(); }, () => { updateAnimationInfo('步骤1: 定位要删除的节点B'); nodes[1].highlight = true; drawLinkedList(); }, () => { updateAnimationInfo('步骤2: 获取B.prev（前驱节点A）和B.next（后继节点C）'); animationPointers = [ { fromX: 350 - 30, fromY: 150, toX: 150 + 30, toY: 150, color: '#e67e22', label: 'B.prev' }, { fromX: 350 + 30, fromY: 150, toX: 550 - 30, toY: 150, color: '#27ae60', label: 'B.next' } ]; drawLinkedList(); }, () => { updateAnimationInfo('步骤3: 设置A.next = C（跳过B节点）'); nodes[0].highlight = true; animationPointers = [{ fromX: 150 + 30, fromY: 140, toX: 550 - 30, toY: 140, color: '#27ae60', label: 'A.next = C' }]; drawLinkedList(); }, () => { updateAnimationInfo('步骤4: 设置C.prev = A（跳过B节点）'); nodes[0].highlight = false; nodes[2].highlight = true; animationPointers = [{ fromX: 550 - 30, fromY: 160, toX: 150 + 30, toY: 160, color: '#e67e22', label: 'C.prev = A' }]; drawLinkedList(); }, () => { updateAnimationInfo('步骤5: 删除节点B，释放内存'); nodes[1].color = '#95a5a6'; nodes[2].highlight = false; animationPointers = []; drawLinkedList(); setTimeout(() => { addDeleteEffect(350, 150); }, 500); }, () => { updateAnimationInfo('步骤6: 调整节点位置'); nodes.splice(1, 1); nodes[0].x = 250; nodes[1].x = 450; animationPointers = []; drawLinkedList(); }, () => { updateAnimationInfo('删除完成！新链表：A ⟷ C'); drawLinkedList(); } ]; function runStep() { if (animationStep < steps.length) { steps[animationStep](); animationStep++; setTimeout(runStep, 2000); } } runStep(); } function animateInsertHead() { resetNodes(); currentAnimation = 'insertHead'; animationStep = 0; const steps = [ () => { updateAnimationInfo('重置链表到初始状态：A ⟷ B ⟷ C'); drawLinkedList(); }, () => { updateAnimationInfo('步骤1: 创建新节点X'); const newNode = { data: 'X', x: 80, y: 80, color: '#e74c3c', highlight: true }; nodes.unshift(newNode); drawLinkedList(); }, () => { updateAnimationInfo('步骤2: 设置X.next = A（新节点的next指针指向原头节点A）'); animationPointers = [{ fromX: 80 + 30, fromY: 80, toX: 150 - 30, toY: 150, color: '#27ae60', label: 'X.next = A' }]; drawLinkedList(); }, () => { updateAnimationInfo('步骤3: 设置X.prev = NULL（新头节点的prev为空）'); animationPointers = [{ fromX: 80 - 30, fromY: 80, toX: 20, toY: 80, color: '#e67e22', label: 'X.prev = NULL' }]; drawNullIndicator(20, 80); drawLinkedList(); }, () => { updateAnimationInfo('步骤4: 设置A.prev = X（原头节点A的prev指针指向新节点X）'); nodes[1].highlight = true; animationPointers = [{ fromX: 150 - 30, fromY: 150 + 10, toX: 80 + 30, toY: 80 - 10, color: '#e67e22', label: 'A.prev = X' }]; drawLinkedList(); }, () => { updateAnimationInfo('步骤5: 更新HEAD指针指向X'); nodes[1].highlight = false; animationPointers = []; drawLinkedList(); }, () => { updateAnimationInfo('步骤6: 移动X到正确位置，完成头部插入'); nodes[0].highlight = false; nodes[0].color = '#3498db'; nodes[0].y = 150; nodes[0].x = 120; nodes[1].x = 280; nodes[2].x = 440; nodes[3].x = 600; animationPointers = []; drawLinkedList(); }, () => { updateAnimationInfo('头部插入完成！新链表：X ⟷ A ⟷ B ⟷ C'); drawLinkedList(); } ]; function runStep() { if (animationStep < steps.length) { steps[animationStep](); animationStep++; setTimeout(runStep, 2000); } } runStep(); } function drawNullIndicator(x, y) { const width = 40; const height = 20; ctx.fillStyle = 'rgba(0, 0, 0, 0.3)'; drawRoundedRect(x - width/2 + 2, y - height/2 + 2, width, height, 6); ctx.fill(); ctx.fillStyle = '#ddd'; drawRoundedRect(x - width/2, y - height/2, width, height, 6); ctx.fill(); ctx.strokeStyle = '#95a5a6'; ctx.lineWidth = 2; drawRoundedRect(x - width/2, y - height/2, width, height, 6); ctx.stroke(); ctx.fillStyle = '#636e72'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('NULL', x, y); } function addDeleteEffect(x, y) { const width = 80; const height = 50; const deleteGradient = ctx.createRadialGradient(x, y, 0, x, y, 50); deleteGradient.addColorStop(0, 'rgba(231, 76, 60, 0.8)'); deleteGradient.addColorStop(1, 'rgba(231, 76, 60, 0.2)'); ctx.fillStyle = deleteGradient; drawRoundedRect(x - width/2, y - height/2, width, height, 8); ctx.fill(); ctx.fillStyle = 'white'; ctx.font = 'bold 16px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('已删除', x, y); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.setLineDash([5, 5]); ctx.lineDashOffset = Date.now() * 0.02; drawRoundedRect(x - width/2, y - height/2, width, height, 8); ctx.stroke(); ctx.setLineDash([]); } let typewriterText = ''; let typewriterTarget = ''; let typewriterIndex = 0; function updateAnimationInfo(text) { typewriterTarget = text; typewriterIndex = 0; typewriterText = ''; function typeWriter() { if (typewriterIndex < typewriterTarget.length) { typewriterText += typewriterTarget.charAt(typewriterIndex); document.getElementById('animation-info').textContent = typewriterText + '|'; typewriterIndex++; setTimeout(typeWriter, 50); } else { document.getElementById('animation-info').textContent = typewriterText; } } typeWriter(); } function animationLoop() { if (animationPointers.length > 0) { drawLinkedList(); } requestAnimationFrame(animationLoop); } function resetAnimation() { resetNodes(); drawLinkedList(); updateAnimationInfo('点击按钮开始动画演示'); } function setupLanguageSwitcher() { const langBtns = document.querySelectorAll('.lang-btn'); const codeSections = document.querySelectorAll('.code-section'); langBtns.forEach(btn => { btn.addEventListener('click', () => { const lang = btn.dataset.lang; langBtns.forEach(b => b.classList.remove('active')); btn.classList.add('active'); codeSections.forEach(section => { section.classList.remove('active'); }); document.getElementById(`code-${lang}`).classList.add('active'); }); }); } function setupCodeCopy() { const copyBtns = document.querySelectorAll('.copy-btn'); copyBtns.forEach(btn => { btn.addEventListener('click', () => { const lang = btn.dataset.code; const codeElement = document.querySelector(`#code-${lang} .code-content code`); const text = codeElement.textContent; navigator.clipboard.writeText(text).then(() => { btn.textContent = '✅ 已复制'; setTimeout(() => { btn.textContent = '📋 复制代码'; }, 2000); }).catch(() => { btn.textContent = '❌ 复制失败'; setTimeout(() => { btn.textContent = '📋 复制代码'; }, 2000); }); }); }); } function toggleAnswer(answerId) { const answerElement = document.getElementById(answerId); const headerElement = answerElement.previousElementSibling; if (answerElement.classList.contains('show')) { answerElement.classList.remove('show'); headerElement.classList.remove('active'); } else { document.querySelectorAll('.answer-content.show').forEach(el => { el.classList.remove('show'); }); document.querySelectorAll('.question-header.active').forEach(el => { el.classList.remove('active'); }); answerElement.classList.add('show'); headerElement.classList.add('active'); } } document.addEventListener('DOMContentLoaded', () => { initCanvas(); setupLanguageSwitcher(); setupCodeCopy(); document.getElementById('btn-insert-middle').addEventListener('click', animateInsertMiddle); document.getElementById('btn-delete-node').addEventListener('click', animateDeleteNode); document.getElementById('btn-insert-head').addEventListener('click', animateInsertHead); document.getElementById('btn-reset').addEventListener('click', resetAnimation); animationLoop(); window.addEventListener('resize', () => { setTimeout(initCanvas, 100); }); });</script>
+{% endblock %}

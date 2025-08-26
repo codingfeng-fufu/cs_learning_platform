@@ -1,0 +1,75 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}历史名词 - 计算机科学学习平台{% endblock %}
+
+{% block extra_css %}
+<style>* {box-sizing:border-box}body {font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;line-height:1.6;color:var(--text-primary);background:linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);min-height:100vh;margin:0;padding:0}.page-layout {min-height:100vh;display:flex;flex-direction:column}.main-content {flex:1;width:100%}.history-container {max-width:1400px;margin:0 auto;padding:40px 40px;min-height:100vh;position:relative;z-index:1}.page-header {background:rgba(255, 255, 255, 0.1);backdrop-filter:blur(15px);border-radius:24px;padding:60px 40px;margin-bottom:40px;color:var(--text-inverse);text-align:center;position:relative;z-index:2;box-shadow:var(--shadow-md)}.page-title {font-size:3.5rem;font-weight:800;margin-bottom:20px;letter-spacing:-0.02em;text-shadow:0 2px 8px rgba(0, 0, 0, 0.1);display:flex;align-items:center;justify-content:center;gap:20px}.page-subtitle {font-size:1.3rem;opacity:0.92;margin-bottom:0;font-weight:400;line-height:1.5}.filter-section {background:var(--bg-card);border-radius:var(--border-radius-lg);padding:32px;margin-bottom:32px;box-shadow:var(--shadow-md);border:1px solid rgba(0, 0, 0, 0.06)}.filter-form {display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:20px;align-items:end}.filter-group {display:flex;flex-direction:column;gap:8px}.filter-label {font-weight:600;color:#2c3e50;font-size:0.9rem}.filter-input, .filter-select {padding:12px 16px;border:2px solid #e2e8f0;border-radius:12px;font-size:0.95rem;transition:all 0.3s ease;background:var(--bg-card)}.filter-input:focus, .filter-select:focus {outline:none;border-color:var(--primary-color);box-shadow:0 0 0 3px rgba(102, 126, 234, 0.1)}.filter-btn {padding:12px 24px;background:linear-gradient(135deg, var(--primary-color), var(--secondary-color));color:var(--text-inverse);border:none;border-radius:12px;font-weight:600;cursor:pointer;transition:all 0.3s ease;height:fit-content}.filter-btn:hover {transform:translateY(-2px);box-shadow:0 8px 24px rgba(102, 126, 234, 0.3)}.terms-grid {display:grid;grid-template-columns:repeat(auto-fill, minmax(350px, 1fr));gap:24px;margin-bottom:40px}.term-card {background:var(--bg-card);border-radius:var(--border-radius-lg);padding:32px;box-shadow:var(--shadow-md);transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);text-decoration:none;color:inherit;border:1px solid rgba(0, 0, 0, 0.04);position:relative;overflow:hidden;cursor:pointer}.term-card::before {content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(135deg, var(--accent-color), #44a08d, var(--primary-color));transform:scaleX(0);transition:transform 0.3s ease}.term-card:hover {transform:translateY(-8px);box-shadow:var(--shadow-md);text-decoration:none;color:inherit;border-color:rgba(78, 205, 196, 0.2)}.term-card:hover::before {transform:scaleX(1)}.term-header {display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}.term-date {color:var(--text-muted);font-size:0.85rem;font-weight:500;background:#f7fafc;padding:6px 12px;border-radius:12px}.term-title {font-size:1.4rem;font-weight:700;color:#2c3e50;margin-bottom:12px;line-height:1.3}.term-meta {display:flex;gap:12px;margin-bottom:16px}.meta-badge {padding:6px 12px;border-radius:12px;font-size:0.8rem;font-weight:600}.category-badge {background:#e3f2fd;color:#1976d2}.difficulty-badge {background:#f3e5f5;color:#7b1fa2}.difficulty-beginner {background:#e8f5e8;color:#2e7d32}.difficulty-intermediate {background:#fff3e0;color:#f57c00}.difficulty-advanced {background:#ffebee;color:#d32f2f}.term-description {color:var(--text-secondary);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-size:0.95rem}.term-stats {display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:0.85rem;color:var(--text-muted)}.pagination-container {display:flex;justify-content:center;margin-top:40px}.pagination {display:flex;gap:8px;align-items:center}.page-link {padding:12px 16px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;text-decoration:none;color:var(--text-secondary);font-weight:500;transition:all 0.3s ease}.page-link:hover {background:var(--primary-color);color:var(--text-inverse);text-decoration:none;transform:translateY(-2px);box-shadow:0 4px 12px rgba(102, 126, 234, 0.3)}.page-link.current {background:var(--primary-color);color:var(--text-inverse);border-color:var(--primary-color)}.page-link.disabled {opacity:0.5;cursor:not-allowed;pointer-events:none}.empty-state {text-align:center;padding:80px 40px;background:var(--bg-card);border-radius:var(--border-radius-lg);box-shadow:var(--shadow-md)}.empty-icon {font-size:4rem;margin-bottom:24px;opacity:0.6}.empty-title {font-size:1.5rem;font-weight:700;color:#2c3e50;margin-bottom:12px}.empty-description {color:var(--text-muted);font-size:1rem;margin-bottom:24px}.empty-action {display:inline-block;padding:12px 24px;background:linear-gradient(135deg, var(--primary-color), var(--secondary-color));color:var(--text-inverse);text-decoration:none;border-radius:12px;font-weight:600;transition:all 0.3s ease}.empty-action:hover {transform:translateY(-2px);box-shadow:0 8px 24px rgba(102, 126, 234, 0.3);text-decoration:none;color:var(--text-inverse)}@media (max-width:768px) {.history-container {padding:28px 20px}.page-header {padding:40px 32px}.page-title {font-size:2.8rem}.filter-section {padding:24px}.filter-form {grid-template-columns:1fr;gap:16px}.terms-grid {grid-template-columns:1fr;gap:20px}.term-card {padding:24px}.term-header {flex-direction:column;gap:8px;align-items:flex-start}}@keyframes fadeInUp {from {opacity:0;transform:translateY(30px)}to {opacity:1;transform:translateY(0)}}.history-container {animation:fadeInUp 0.8s ease-out}.term-card {animation:fadeInUp 0.6s ease-out both}.term-card:nth-child(1) {animation-delay:0.1s}.term-card:nth-child(2) {animation-delay:0.2s}.term-card:nth-child(3) {animation-delay:0.3s}.term-card:nth-child(4) {animation-delay:0.4s}.term-card:nth-child(5) {animation-delay:0.5s}.term-card:nth-child(6) {animation-delay:0.6s}</style>
+{% endblock %}
+
+{% block content %}
+<main class="page-layout" role="main"><div class="main-content"><div class="history-container"><!-- 页面头部 --><header class="page-header"><h1 class="page-title"><span>📜</span><span>历史名词</span></h1><p class="page-subtitle">回顾过往学习的计算机科学专业名词</p></header><!-- 筛选区域 --><section class="filter-section"><form method="get" class="filter-form"><div class="filter-group"><label class="filter-label" for="search">关键词搜索</label><input type="text" 
+                               id="search" 
+                               name="search" 
+                               class="filter-input" 
+                               placeholder="搜索名词或描述..."
+                               value="{{ current_search }}"></div><div class="filter-group"><label class="filter-label" for="category">分类筛选</label><select id="category" name="category" class="filter-select"><option value="">全部分类</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat }}" {% if cat == current_category %}selected{% endif %}>
+                                {{ cat }}
+                            </option>
+                            {% endfor %}
+                        </select></div><div class="filter-group"><label class="filter-label" for="difficulty">难度筛选</label><select id="difficulty" name="difficulty" class="filter-select"><option value="">全部难度</option><option value="beginner" {% if current_difficulty == 'beginner' %}selected{% endif %}>初级</option><option value="intermediate" {% if current_difficulty == 'intermediate' %}selected{% endif %}>中级</option><option value="advanced" {% if current_difficulty == 'advanced' %}selected{% endif %}>高级</option></select></div><div class="filter-group"><button type="submit" class="filter-btn">🔍 筛选</button></div></form></section><!-- 名词列表 -->
+            {% if page_obj %}
+            <section class="terms-grid">
+                {% for term in page_obj %}
+                <article class="term-card" onclick="window.location.href='{% url 'knowledge_app:daily_term_detail' term.id %}'"><header class="term-header"><time class="term-date" datetime="{{ term.display_date|date:'Y-m-d' }}">
+                            {{ term.display_date|date:"m月d日" }}
+                        </time></header><h2 class="term-title">{{ term.term }}</h2><div class="term-meta">
+                        {% if term.category %}
+                        <span class="meta-badge category-badge">{{ term.category }}</span>
+                        {% endif %}
+                        <span class="meta-badge difficulty-badge difficulty-{{ term.difficulty_level }}">
+                            {% if term.difficulty_level == 'beginner' %}初级
+                            {% elif term.difficulty_level == 'intermediate' %}中级
+                            {% elif term.difficulty_level == 'advanced' %}高级
+                            {% else %}{{ term.get_difficulty_level_display }}{% endif %}
+                        </span></div><p class="term-description">{{ term.explanation }}</p><footer class="term-stats"><span>👀 {{ term.view_count }} 次浏览</span><span>👍 {{ term.like_count }} 个赞</span></footer></article>
+                {% endfor %}
+            </section><!-- 分页 -->
+            {% if page_obj.has_other_pages %}
+            <nav class="pagination-container" aria-label="分页导航"><div class="pagination">
+                    {% if page_obj.has_previous %}
+                    <a href="?page=1{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_difficulty %}&difficulty={{ current_difficulty }}{% endif %}" 
+                       class="page-link">首页</a><a href="?page={{ page_obj.previous_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_difficulty %}&difficulty={{ current_difficulty }}{% endif %}" 
+                       class="page-link">上一页</a>
+                    {% else %}
+                    <span class="page-link disabled">首页</span><span class="page-link disabled">上一页</span>
+                    {% endif %}
+
+                    <span class="page-link current">
+                        第 {{ page_obj.number }} 页 / 共 {{ page_obj.paginator.num_pages }} 页
+                    </span>
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_difficulty %}&difficulty={{ current_difficulty }}{% endif %}" 
+                       class="page-link">下一页</a><a href="?page={{ page_obj.paginator.num_pages }}{% if current_search %}&search={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_difficulty %}&difficulty={{ current_difficulty }}{% endif %}" 
+                       class="page-link">末页</a>
+                    {% else %}
+                    <span class="page-link disabled">下一页</span><span class="page-link disabled">末页</span>
+                    {% endif %}
+                </div></nav>
+            {% endif %}
+
+            {% else %}
+            <!-- 空状态 --><section class="empty-state"><div class="empty-icon">📚</div><h2 class="empty-title">暂无匹配的名词</h2><p class="empty-description">
+                    {% if current_search or current_category or current_difficulty %}
+                    没有找到符合筛选条件的名词，请尝试调整筛选条件。
+                    {% else %}
+                    还没有任何历史名词记录。
+                    {% endif %}
+                </p><a href="{% url 'knowledge_app:daily_term' %}" class="empty-action">
+                    查看今日名词
+                </a></section>
+            {% endif %}
+        </div></div></main><script>document.addEventListener('DOMContentLoaded', function() { document.querySelectorAll('.term-card').forEach(card => { card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); } }); card.setAttribute('tabindex', '0'); card.setAttribute('role', 'button'); card.setAttribute('aria-label', `查看${card.querySelector('.term-title').textContent}详情`); }); });</script>
+{% endblock %}

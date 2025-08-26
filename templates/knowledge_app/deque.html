@@ -1,0 +1,381 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}双端队列 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>.page-container {max-width:1200px;margin:0 auto;padding:20px;font-family:'Arial', sans-serif}.knowledge-section {background:white;border-radius:12px;box-shadow:0 4px 6px rgba(0,0,0,0.1);margin-bottom:30px;padding:30px;border-left:5px solid #3498db}.section-header {display:flex;align-items:center;margin-bottom:25px;border-bottom:2px solid #ecf0f1;padding-bottom:15px}.section-icon {font-size:2em;margin-right:15px}.section-title {font-size:1.8em;color:#2c3e50;margin:0}.concept-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:20px;margin:20px 0}.concept-card {background:#f8f9fa;border:1px solid #e9ecef;border-radius:8px;padding:20px;text-align:center;transition:transform 0.3s ease}.concept-card:hover {transform:translateY(-5px);box-shadow:0 4px 12px rgba(0,0,0,0.15)}.canvas-container {background:#f8f9fa;border:2px solid #dee2e6;border-radius:8px;padding:20px;margin:20px 0;text-align:center}.canvas-controls {margin:15px 0;display:flex;flex-wrap:wrap;justify-content:center;gap:10px}.control-group {display:flex;flex-direction:column;align-items:center;margin:0 10px}.control-label {font-size:14px;font-weight:bold;color:#2c3e50;margin-bottom:8px}.btn {background:#3498db;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;margin:2px;font-size:13px;font-weight:bold;transition:all 0.3s ease;box-shadow:0 4px 15px rgba(52, 152, 219, 0.3);position:relative;overflow:hidden}.btn:hover {transform:translateY(-2px);box-shadow:0 6px 20px rgba(52, 152, 219, 0.4)}.btn:active {transform:translateY(0);box-shadow:0 2px 10px rgba(52, 152, 219, 0.2)}.btn:disabled {background:#95a5a6;cursor:not-allowed;transform:none;box-shadow:none}.btn-front {background:linear-gradient(135deg, #27ae60, #2ecc71)}.btn-front:hover {background:linear-gradient(135deg, #229954, #27ae60)}.btn-back {background:linear-gradient(135deg, #e74c3c, #ec7063)}.btn-back:hover {background:linear-gradient(135deg, #c0392b, #e74c3c)}.btn-reset {background:linear-gradient(135deg, #f39c12, #f7dc6f)}.btn-reset:hover {background:linear-gradient(135deg, #d68910, #f39c12)}.btn-demo {background:linear-gradient(135deg, #9b59b6, #bb8fce)}.btn-demo:hover {background:linear-gradient(135deg, #8e44ad, #9b59b6)}.btn::before {content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);transition:left 0.5s}.btn:hover::before {left:100%}.input-group {display:flex;align-items:center;margin:10px}.input-group input {padding:8px 12px;border-radius:6px;border:2px solid #3498db;font-size:14px;outline:none;transition:all 0.3s ease;width:80px;text-align:center}.input-group input:focus {border-color:#2980b9;box-shadow:0 0 10px rgba(52, 152, 219, 0.3)}.code-container {background:#2c3e50;color:#ecf0f1;border-radius:8px;margin:20px 0;overflow:hidden}.code-tabs {display:flex;background:#34495e}.code-tab {padding:12px 20px;cursor:pointer;border:none;background:transparent;color:#bdc3c7;font-weight:bold;transition:all 0.3s ease}.code-tab.active {background:#3498db;color:white}.code-content {position:relative;padding:20px;font-family:'Courier New', monospace;line-height:1.6;overflow-x:auto}.copy-btn {position:absolute;top:10px;right:10px;background:#27ae60;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px}.copy-btn:hover {background:#229954}.quiz-question {background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px;padding:20px;margin:15px 0}.quiz-answer {background:#d1ecf1;border:1px solid #bee5eb;border-radius:8px;padding:15px;margin-top:10px;display:none}.show-answer-btn {background:#17a2b8;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;margin-top:10px}.analogy-box {background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:25px;border-radius:12px;margin:20px 0}.highlight {background:#ffffcc;padding:2px 4px;border-radius:3px;font-weight:bold}.difficulty-badge {display:inline-block;padding:5px 15px;border-radius:20px;font-size:0.9em;font-weight:bold;color:white;background:#9b59b6}.key-point {border-left:4px solid #e74c3c;background:#fdf2f2;padding:15px;margin:15px 0;border-radius:0 8px 8px 0}.comparison-grid {display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin:20px 0}.comparison-card {padding:20px;border-radius:8px;border:2px solid;text-align:center}.vs-stack {border-color:#e74c3c;background:#fdf2f2}.vs-queue {border-color:#f39c12;background:#fef9e7}.vs-deque {border-color:#27ae60;background:#eafaf1}.operation-grid {display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}.operation-card {padding:15px;border-radius:8px;border:2px solid #3498db;background:#f8f9fa}</style><div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>双端队列</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">⟷</span>
+            双端队列 (Deque - Double-ended Queue)
+        </h1><p>两端都能操作的强大数据结构，集栈和队列功能于一体</p></div><!-- 📋 知识点概述 --><div class="knowledge-section slide-in-right"><div class="section-header"><span class="section-icon">📋</span><h2 class="section-title">知识点概述</h2></div><div class="key-point"><strong>核心概念：</strong>双端队列是一种允许在前端（front）和后端（back）都可以进行插入和删除操作的线性数据结构，是栈和队列的泛化。
+        </div><div class="concept-grid"><div class="concept-card"><h3>⬅️ 前端操作</h3><p>addFirst() - 前端插入<br>removeFirst() - 前端删除</p></div><div class="concept-card"><h3>➡️ 后端操作</h3><p>addLast() - 后端插入<br>removeLast() - 后端删除</p></div><div class="concept-card"><h3>🔍 查看操作</h3><p>peekFirst() - 查看前端<br>peekLast() - 查看后端</p></div><div class="concept-card"><h3>⚡ 高效性</h3><p>所有基本操作都是O(1)时间复杂度</p></div></div><p><span class="difficulty-badge">高级</span><strong>前置知识：</strong>栈、队列、数组或链表基础操作</p></div><!-- 🔍 概念详解 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">概念详解</h2></div><div class="analogy-box"><h3>🚪 生活类比：双开门电梯</h3><p>想象一个两边都有门的电梯：</p><ul><li><strong>前门</strong> = front端（可以进人，也可以出人）</li><li><strong>后门</strong> = back端（也可以进人，也可以出人）</li><li><strong>乘客</strong> = 数据元素</li><li><strong>灵活进出</strong> = 可以从任一端进出，适应不同场景</li></ul><p>💡 关键：<span class="highlight">双端队列提供了最大的操作灵活性！</span></p></div><h3>🆚 与栈和队列的关系</h3><div class="comparison-grid"><div class="comparison-card vs-stack"><h4>📚 栈 (Stack)</h4><p><strong>LIFO</strong></p><ul><li>只能一端操作</li><li>push/pop</li><li>受限的双端队列</li></ul></div><div class="comparison-card vs-queue"><h4>🚀 队列 (Queue)</h4><p><strong>FIFO</strong></p><ul><li>两端各司其职</li><li>enqueue/dequeue</li><li>受限的双端队列</li></ul></div><div class="comparison-card vs-deque"><h4>⟷ 双端队列 (Deque)</h4><p><strong>灵活</strong></p><ul><li>两端都可操作</li><li>四种基本操作</li><li>栈+队列的功能</li></ul></div></div><h3>🎯 四种核心操作</h3><div class="operation-grid"><div class="operation-card"><h4>⬅️ 前端操作</h4><ul><li><strong>addFirst(x)</strong>：在前端插入元素x</li><li><strong>removeFirst()</strong>：删除并返回前端元素</li><li><strong>peekFirst()</strong>：查看前端元素但不删除</li></ul></div><div class="operation-card"><h4>➡️ 后端操作</h4><ul><li><strong>addLast(x)</strong>：在后端插入元素x</li><li><strong>removeLast()</strong>：删除并返回后端元素</li><li><strong>peekLast()</strong>：查看后端元素但不删除</li></ul></div></div><div class="key-point"><strong>⚠️ 初学者易混淆点：</strong><ul><li>理解"双端"：不是两个队列，而是一个队列的两端都能操作</li><li>操作对称性：addFirst对应removeLast，addLast对应removeFirst</li><li>实现复杂度：需要同时维护前后两个指针或索引</li><li>空队列判断：当size为0或front与back相遇时</li></ul></div></div><!-- 📊 可视化展示 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">📊</span><h2 class="section-title">可视化展示</h2></div><div class="canvas-container"><h3>⟷ 双端队列动态演示</h3><canvas id="dequeCanvas" width="900" height="350" style="border: 2px solid #3498db; border-radius: 8px; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);"></canvas><div class="canvas-controls"><div class="control-group"><div class="control-label">🔢 输入数据</div><div class="input-group"><input type="number" id="inputValue" placeholder="1-99" min="1" max="99"></div></div><div class="control-group"><div class="control-label">⬅️ 前端操作</div><div><button class="btn btn-front" onclick="addFirst()">⬅️ 前端插入</button><button class="btn btn-front" onclick="removeFirst()">⬅️ 前端删除</button></div></div><div class="control-group"><div class="control-label">➡️ 后端操作</div><div><button class="btn btn-back" onclick="addLast()">后端插入 ➡️</button><button class="btn btn-back" onclick="removeLast()">后端删除 ➡️</button></div></div><div class="control-group"><div class="control-label">🎮 控制</div><div><button class="btn btn-reset" onclick="resetDeque()">🔄 重置</button><button class="btn btn-demo" onclick="startDemo()">✨ 演示</button></div></div></div><div id="dequeStatus" style="margin-top: 15px; font-weight: bold; color: #2c3e50; padding: 10px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #3498db;"></div></div></div><!-- 💻 代码实现 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">💻</span><h2 class="section-title">代码实现</h2></div><div class="code-container"><div class="code-tabs"><button class="code-tab active" onclick="showCode('cpp')">C++</button><button class="code-tab" onclick="showCode('java')">Java</button><button class="code-tab" onclick="showCode('python')">Python</button></div><div id="cpp-code" class="code-content"><button class="copy-btn" onclick="copyCode('cpp', this)">📋 复制</button><pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+template&lt;typename T&gt;
+class Deque {
+private:
+    vector&lt;T&gt; data;
+    int frontIndex;
+    int backIndex;
+    int size;
+    int capacity;
+
+public:
+    Deque(int cap = 10) {
+        capacity = cap;
+        data.resize(capacity);
+        frontIndex = 0;
+        backIndex = 0;
+        size = 0;
+    }
+
+    // 前端插入
+    bool addFirst(T element) {
+        if (isFull()) {
+            cout << "双端队列已满!" << endl;
+            return false;
+        }
+
+        frontIndex = (frontIndex - 1 + capacity) % capacity;
+        data[frontIndex] = element;
+        size++;
+        cout << "前端插入: " << element << endl;
+        return true;
+    }
+
+    // 后端插入
+    bool addLast(T element) {
+        if (isFull()) {
+            cout << "双端队列已满!" << endl;
+            return false;
+        }
+
+        data[backIndex] = element;
+        backIndex = (backIndex + 1) % capacity;
+        size++;
+        cout << "后端插入: " << element << endl;
+        return true;
+    }
+
+    // 前端删除
+    T removeFirst() {
+        if (isEmpty()) {
+            cout << "双端队列为空!" << endl;
+            return T();
+        }
+
+        T element = data[frontIndex];
+        frontIndex = (frontIndex + 1) % capacity;
+        size--;
+        cout << "前端删除: " << element << endl;
+        return element;
+    }
+
+    // 后端删除
+    T removeLast() {
+        if (isEmpty()) {
+            cout << "双端队列为空!" << endl;
+            return T();
+        }
+
+        backIndex = (backIndex - 1 + capacity) % capacity;
+        T element = data[backIndex];
+        size--;
+        cout << "后端删除: " << element << endl;
+        return element;
+    }
+
+    // 查看前端元素
+    T peekFirst() {
+        if (isEmpty()) {
+            cout << "双端队列为空!" << endl;
+            return T();
+        }
+        return data[frontIndex];
+    }
+
+    // 查看后端元素
+    T peekLast() {
+        if (isEmpty()) {
+            cout << "双端队列为空!" << endl;
+            return T();
+        }
+        return data[(backIndex - 1 + capacity) % capacity];
+    }
+
+    // 判断是否为空
+    bool isEmpty() {
+        return size == 0;
+    }
+
+    // 判断是否已满
+    bool isFull() {
+        return size == capacity;
+    }
+
+    // 获取大小
+    int getSize() {
+        return size;
+    }
+
+    // 显示双端队列
+    void display() {
+        if (isEmpty()) {
+            cout << "双端队列为空" << endl;
+            return;
+        }
+
+        cout << "双端队列内容: ";
+        for (int i = 0; i < size; i++) {
+            int index = (frontIndex + i) % capacity;
+            cout << data[index] << " ";
+        }
+        cout << endl;
+    }
+};</code></pre></div><div id="java-code" class="code-content" style="display: none;"><button class="copy-btn" onclick="copyCode('java', this)">📋 复制</button><pre><code>import java.util.ArrayList;
+
+public class Deque&lt;T&gt; {
+    private ArrayList&lt;T&gt; data;
+    private int frontIndex;
+    private int backIndex;
+    private int size;
+    private int capacity;
+
+    public Deque(int capacity) {
+        this.capacity = capacity;
+        this.data = new ArrayList&lt;&gt;(capacity);
+        for (int i = 0; i < capacity; i++) {
+            this.data.add(null);
+        }
+        this.frontIndex = 0;
+        this.backIndex = 0;
+        this.size = 0;
+    }
+
+    // 前端插入
+    public boolean addFirst(T element) {
+        if (isFull()) {
+            System.out.println("双端队列已满!");
+            return false;
+        }
+
+        frontIndex = (frontIndex - 1 + capacity) % capacity;
+        data.set(frontIndex, element);
+        size++;
+        System.out.println("前端插入: " + element);
+        return true;
+    }
+
+    // 后端插入
+    public boolean addLast(T element) {
+        if (isFull()) {
+            System.out.println("双端队列已满!");
+            return false;
+        }
+
+        data.set(backIndex, element);
+        backIndex = (backIndex + 1) % capacity;
+        size++;
+        System.out.println("后端插入: " + element);
+        return true;
+    }
+
+    // 前端删除
+    public T removeFirst() {
+        if (isEmpty()) {
+            System.out.println("双端队列为空!");
+            return null;
+        }
+
+        T element = data.get(frontIndex);
+        frontIndex = (frontIndex + 1) % capacity;
+        size--;
+        System.out.println("前端删除: " + element);
+        return element;
+    }
+
+    // 后端删除
+    public T removeLast() {
+        if (isEmpty()) {
+            System.out.println("双端队列为空!");
+            return null;
+        }
+
+        backIndex = (backIndex - 1 + capacity) % capacity;
+        T element = data.get(backIndex);
+        size--;
+        System.out.println("后端删除: " + element);
+        return element;
+    }
+
+    // 查看前端元素
+    public T peekFirst() {
+        if (isEmpty()) {
+            System.out.println("双端队列为空!");
+            return null;
+        }
+        return data.get(frontIndex);
+    }
+
+    // 查看后端元素
+    public T peekLast() {
+        if (isEmpty()) {
+            System.out.println("双端队列为空!");
+            return null;
+        }
+        return data.get((backIndex - 1 + capacity) % capacity);
+    }
+
+    // 判断是否为空
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    // 判断是否已满
+    public boolean isFull() {
+        return size == capacity;
+    }
+
+    // 获取大小
+    public int getSize() {
+        return size;
+    }
+
+    // 显示双端队列
+    public void display() {
+        if (isEmpty()) {
+            System.out.println("双端队列为空");
+            return;
+        }
+
+        System.out.print("双端队列内容: ");
+        for (int i = 0; i < size; i++) {
+            int index = (frontIndex + i) % capacity;
+            System.out.print(data.get(index) + " ");
+        }
+        System.out.println();
+    }
+}</code></pre></div><div id="python-code" class="code-content" style="display: none;"><button class="copy-btn" onclick="copyCode('python', this)">📋 复制</button><pre><code>class Deque:
+    """双端队列类"""
+
+    def __init__(self, capacity=10):
+        self.capacity = capacity
+        self.data = [None] * capacity
+        self.front_index = 0
+        self.back_index = 0
+        self.size = 0
+
+    def add_first(self, element):
+        """前端插入"""
+        if self.is_full():
+            print("双端队列已满!")
+            return False
+
+        self.front_index = (self.front_index - 1 + self.capacity) % self.capacity
+        self.data[self.front_index] = element
+        self.size += 1
+        print(f"前端插入: {element}")
+        return True
+
+    def add_last(self, element):
+        """后端插入"""
+        if self.is_full():
+            print("双端队列已满!")
+            return False
+
+        self.data[self.back_index] = element
+        self.back_index = (self.back_index + 1) % self.capacity
+        self.size += 1
+        print(f"后端插入: {element}")
+        return True
+
+    def remove_first(self):
+        """前端删除"""
+        if self.is_empty():
+            print("双端队列为空!")
+            return None
+
+        element = self.data[self.front_index]
+        self.front_index = (self.front_index + 1) % self.capacity
+        self.size -= 1
+        print(f"前端删除: {element}")
+        return element
+
+    def remove_last(self):
+        """后端删除"""
+        if self.is_empty():
+            print("双端队列为空!")
+            return None
+
+        self.back_index = (self.back_index - 1 + self.capacity) % self.capacity
+        element = self.data[self.back_index]
+        self.size -= 1
+        print(f"后端删除: {element}")
+        return element
+
+    def peek_first(self):
+        """查看前端元素"""
+        if self.is_empty():
+            print("双端队列为空!")
+            return None
+        return self.data[self.front_index]
+
+    def peek_last(self):
+        """查看后端元素"""
+        if self.is_empty():
+            print("双端队列为空!")
+            return None
+        return self.data[(self.back_index - 1 + self.capacity) % self.capacity]
+
+    def is_empty(self):
+        """判断是否为空"""
+        return self.size == 0
+
+    def is_full(self):
+        """判断是否已满"""
+        return self.size == self.capacity
+
+    def get_size(self):
+        """获取大小"""
+        return self.size
+
+    def display(self):
+        """显示双端队列"""
+        if self.is_empty():
+            print("双端队列为空")
+            return
+
+        result = []
+        for i in range(self.size):
+            index = (self.front_index + i) % self.capacity
+            result.append(str(self.data[index]))
+
+        print("双端队列内容:", " ".join(result))
+
+# 使用示例
+if __name__ == "__main__":
+    deque = Deque(6)
+
+    # 测试各种操作
+    deque.add_last(10)
+    deque.add_last(20)
+    deque.add_first(5)
+    deque.add_first(1)
+
+    deque.display()
+
+    print(f"前端元素: {deque.peek_first()}")
+    print(f"后端元素: {deque.peek_last()}")
+
+    deque.remove_first()
+    deque.remove_last()
+
+    deque.display()
+
+    print(f"队列大小: {deque.get_size()}")
+    print(f"是否为空: {deque.is_empty()}")
+    print(f"是否已满: {deque.is_full()}")</code></pre></div></div></div><!-- 🌟 实际应用 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">🌟</span><h2 class="section-title">实际应用</h2></div><div class="concept-grid"><div class="concept-card"><h3>🌐 浏览器历史</h3><p><strong>前进后退功能</strong></p><p>用户可以在浏览历史中前进和后退，双端操作很自然</p></div><div class="concept-card"><h3>✂️ 撤销重做</h3><p><strong>操作历史管理</strong></p><p>编辑器中的撤销(undo)和重做(redo)功能实现</p></div><div class="concept-card"><h3>🎮 游戏开发</h3><p><strong>技能冷却队列</strong></p><p>管理游戏中的技能冷却时间和优先级处理</p></div></div><div class="key-point"><h3>🔍 深度案例：工作窃取调度</h3><p>在多线程程序中，双端队列是工作窃取调度算法的核心：</p><ul><li>🏭 <strong>工作线程</strong>：从自己队列的一端取任务（通常是队尾）</li><li>🔄 <strong>窃取线程</strong>：从其他线程队列的另一端窃取任务（通常是队头）</li><li>⚡ <strong>减少竞争</strong>：两端操作减少了线程间的锁竞争</li><li>📊 <strong>负载均衡</strong>：空闲线程能够从忙碌线程那里分担工作</li><li>🎯 <strong>性能优化</strong>：Java的ForkJoinPool就使用了这种机制</li></ul></div><h3>💡 双端队列的独特优势</h3><div class="comparison-grid"><div class="comparison-card vs-deque"><h4>🔄 替代栈</h4><ul><li>只使用一端操作</li><li>addFirst + removeFirst</li><li>LIFO行为</li></ul></div><div class="comparison-card vs-deque"><h4>🔄 替代队列</h4><ul><li>一端插入，另一端删除</li><li>addLast + removeFirst</li><li>FIFO行为</li></ul></div><div class="comparison-card vs-deque"><h4>⚡ 独特功能</h4><ul><li>滑动窗口最值</li><li>回文检查</li><li>双向BFS</li></ul></div></div></div><!-- ✅ 学习检验 --><div class="knowledge-section"><div class="section-header"><span class="section-icon">✅</span><h2 class="section-title">学习检验</h2></div><div class="quiz-question"><h4>🤔 问题1：双端队列如何实现栈的功能？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer1')">显示答案</button><div id="answer1" class="quiz-answer"><strong>答案：</strong>只使用双端队列的一端进行操作<br><strong>实现方式：</strong><ul><li><strong>方案1</strong>：只使用前端 - addFirst()作为push，removeFirst()作为pop</li><li><strong>方案2</strong>：只使用后端 - addLast()作为push，removeLast()作为pop</li><li><strong>效果</strong>：实现了栈的LIFO（后进先出）特性</li><li><strong>优势</strong>：一个数据结构同时具备栈和队列功能</li></ul></div></div><div class="quiz-question"><h4>🤔 问题2：双端队列如何实现队列的功能？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer2')">显示答案</button><div id="answer2" class="quiz-answer"><strong>答案：</strong>一端插入，另一端删除<br><strong>实现方式：</strong><ul><li><strong>标准方案</strong>：addLast()作为enqueue，removeFirst()作为dequeue</li><li><strong>反向方案</strong>：addFirst()作为enqueue，removeLast()作为dequeue</li><li><strong>效果</strong>：实现了队列的FIFO（先进先出）特性</li><li><strong>选择建议</strong>：通常选择标准方案，符合直觉</li></ul></div></div><div class="quiz-question"><h4>🤔 问题3：对空的双端队列执行：addFirst(1), addLast(2), addFirst(3), removeLast(), removeFirst()，最终结果？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer3')">显示答案</button><div id="answer3" class="quiz-answer"><strong>答案：</strong>队列中只剩下元素1<br><strong>步骤分析：</strong><ul><li>初始：[] (空队列)</li><li>addFirst(1)：[1]</li><li>addLast(2)：[1, 2]</li><li>addFirst(3)：[3, 1, 2]</li><li>removeLast()：[3, 1] (删除了2)</li><li>removeFirst()：[1] (删除了3)</li></ul></div></div><div class="quiz-question"><h4>🤔 问题4：双端队列相比单独使用栈和队列的优势是什么？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer4')">显示答案</button><div id="answer4" class="quiz-answer"><strong>主要优势：</strong><ul><li><strong>统一接口</strong>：一个数据结构提供栈和队列的所有功能</li><li><strong>内存效率</strong>：不需要维护两个不同的数据结构</li><li><strong>操作灵活</strong>：可以根据需要在任一端操作，适应性强</li><li><strong>算法支持</strong>：某些算法（如滑动窗口最值）需要双端操作</li><li><strong>性能优化</strong>：避免数据在不同结构间复制转移</li></ul></div></div><div class="quiz-question"><h4>🤔 问题5：什么是滑动窗口最值问题，双端队列如何解决？</h4><button class="show-answer-btn" onclick="toggleAnswer('answer5')">显示答案</button><div id="answer5" class="quiz-answer"><strong>问题描述：</strong>给定数组和窗口大小k，求每个窗口的最大值<br><strong>双端队列解法：</strong><ul><li><strong>存储策略</strong>：队列中存储数组索引，按值的大小排序</li><li><strong>维护单调性</strong>：保持队列中的值单调递减</li><li><strong>前端操作</strong>：removeFirst()移除过期的索引</li><li><strong>后端操作</strong>：removeLast()移除较小的值，addLast()添加新索引</li><li><strong>查询最值</strong>：peekFirst()得到当前窗口最大值的索引</li><li><strong>时间复杂度</strong>：O(n)，每个元素最多进出队列一次</li></ul></div></div><h3>📚 进一步学习建议</h3><ul><li>🔄 <strong>单调队列</strong>：使用双端队列解决滑动窗口问题</li><li>🌳 <strong>双端队列的树遍历</strong>：层序遍历的变种算法</li><li>🧵 <strong>并发双端队列</strong>：线程安全的实现方式</li><li>🎯 <strong>STL中的deque</strong>：C++标准库中双端队列的实现原理</li></ul></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><script>class Particle { constructor(x, y, color) { this.x = x; this.y = y; this.vx = (Math.random() - 0.5) * 6; this.vy = (Math.random() - 0.5) * 6; this.life = 1.0; this.decay = 0.02; this.color = color; this.size = Math.random() * 4 + 2; } update() { this.x += this.vx; this.y += this.vy; this.life -= this.decay; this.size *= 0.98; } draw(ctx) { ctx.save(); ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore(); } isDead() { return this.life <= 0 || this.size <= 0.1; } } class DequeVisual { constructor(canvasId, capacity = 8) { this.canvas = document.getElementById(canvasId); this.ctx = this.canvas.getContext('2d'); this.capacity = capacity; this.data = new Array(capacity); this.frontIndex = 0; this.backIndex = 0; this.size = 0; this.animating = false; this.particles = []; this.cellWidth = 70; this.cellHeight = 60; this.spacing = 10; this.startX = (this.canvas.width - (this.cellWidth + this.spacing) * capacity) / 2; this.startY = this.canvas.height / 2 - this.cellHeight / 2; this.hoveredIndex = -1; this.glowIntensity = 0; this.glowDirection = 1; this.startAnimationLoop(); this.draw(); this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e)); this.canvas.addEventListener('mouseleave', () => this.hoveredIndex = -1); } handleMouseMove(e) { const rect = this.canvas.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; this.hoveredIndex = -1; for (let i = 0; i < this.capacity; i++) { const cellX = this.startX + i * (this.cellWidth + this.spacing); if (x >= cellX && x <= cellX + this.cellWidth && y >= this.startY && y <= this.startY + this.cellHeight) { this.hoveredIndex = i; break; } } } startAnimationLoop() { const animate = () => { this.glowIntensity += this.glowDirection * 0.02; if (this.glowIntensity >= 1) { this.glowIntensity = 1; this.glowDirection = -1; } else if (this.glowIntensity <= 0) { this.glowIntensity = 0; this.glowDirection = 1; } this.particles = this.particles.filter(particle => { particle.update(); return !particle.isDead(); }); if (!this.animating) { this.draw(); } requestAnimationFrame(animate); }; animate(); } createParticles(x, y, color, count = 15) { for (let i = 0; i < count; i++) { this.particles.push(new Particle(x, y, color)); } } draw() { this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height); gradient.addColorStop(0, '#f8f9fa'); gradient.addColorStop(1, '#e9ecef'); this.ctx.fillStyle = gradient; this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); this.ctx.fillStyle = '#2c3e50'; this.ctx.font = 'bold 20px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText('⟷ 双端队列可视化 - 两端都能操作', this.canvas.width / 2, 35); this.ctx.font = '14px Arial'; this.ctx.fillStyle = '#7f8c8d'; this.ctx.fillText('绿色=前端区域 | 橙色=后端区域 | 蓝色=数据元素 | 灰色=空位', this.canvas.width / 2, 55); this.drawDequeFramework(); this.drawPointers(); this.drawOperationIndicators(); this.particles.forEach(particle => particle.draw(this.ctx)); this.updateStatus(); } drawDequeFramework() { for (let i = 0; i < this.capacity; i++) { this.drawCell(i); } } drawCell(index) { const x = this.startX + index * (this.cellWidth + this.spacing); const y = this.startY; const isInDeque = this.isIndexInDeque(index); const isHovered = this.hoveredIndex === index; const isFrontRegion = this.isFrontRegion(index); const isBackRegion = this.isBackRegion(index); let fillColor, strokeColor; if (isInDeque) { if (index === this.frontIndex) { fillColor = '#27ae60'; strokeColor = '#229954'; } else if (index === (this.backIndex - 1 + this.capacity) % this.capacity && this.size > 0) { fillColor = '#e74c3c'; strokeColor = '#c0392b'; } else { fillColor = '#3498db'; strokeColor = '#2980b9'; } } else { if (isFrontRegion) { fillColor = '#d5f4e6'; strokeColor = '#27ae60'; } else if (isBackRegion) { fillColor = '#fdeaea'; strokeColor = '#e74c3c'; } else { fillColor = '#ffffff'; strokeColor = '#bdc3c7'; } } if (isHovered || isInDeque) { this.ctx.shadowColor = 'rgba(0, 0, 0, 0.2)'; this.ctx.shadowBlur = isHovered ? 15 : 8; this.ctx.shadowOffsetX = 2; this.ctx.shadowOffsetY = 2; } this.ctx.fillStyle = fillColor; this.ctx.strokeStyle = strokeColor; this.ctx.lineWidth = isHovered ? 3 : 2; this.ctx.fillRect(x, y, this.cellWidth, this.cellHeight); this.ctx.strokeRect(x, y, this.cellWidth, this.cellHeight); this.ctx.shadowBlur = 0; this.ctx.shadowOffsetX = 0; this.ctx.shadowOffsetY = 0; if (isInDeque && this.glowIntensity > 0) { this.ctx.save(); this.ctx.globalAlpha = this.glowIntensity * 0.3; this.ctx.strokeStyle = fillColor; this.ctx.lineWidth = 4; this.ctx.strokeRect(x - 2, y - 2, this.cellWidth + 4, this.cellHeight + 4); this.ctx.restore(); } if (isInDeque && this.data[index] !== undefined) { this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 18px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(this.data[index].toString(), x + this.cellWidth/2, y + this.cellHeight/2 + 6); } this.ctx.fillStyle = '#7f8c8d'; this.ctx.font = 'bold 12px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(`[${index}]`, x + this.cellWidth/2, y + this.cellHeight + 20); if (isHovered) { this.drawTooltip(x, y, index); } } drawPointers() { if (this.size === 0) return; const frontX = this.startX + this.frontIndex * (this.cellWidth + this.spacing) + this.cellWidth/2; const frontY = this.startY - 30; this.ctx.fillStyle = '#27ae60'; this.ctx.font = 'bold 16px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText('⬅️ Front', frontX, frontY); this.drawArrow(frontX, frontY + 5, frontX, this.startY - 5, '#27ae60'); const backX = this.startX + this.backIndex * (this.cellWidth + this.spacing) + this.cellWidth/2; const backY = this.startY + this.cellHeight + 50; this.ctx.fillStyle = '#e74c3c'; this.ctx.fillText('Back ➡️', backX, backY); this.drawArrow(backX, backY - 15, backX, this.startY + this.cellHeight + 5, '#e74c3c'); } drawOperationIndicators() { this.ctx.fillStyle = 'rgba(39, 174, 96, 0.1)'; this.ctx.fillRect(this.startX - 20, this.startY - 10, this.cellWidth + 40, this.cellHeight + 20); this.ctx.strokeStyle = '#27ae60'; this.ctx.lineWidth = 2; this.ctx.setLineDash([5, 5]); this.ctx.strokeRect(this.startX - 20, this.startY - 10, this.cellWidth + 40, this.cellHeight + 20); this.ctx.fillStyle = '#27ae60'; this.ctx.font = 'bold 12px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText('前端操作区', this.startX + this.cellWidth/2, this.startY - 15); const lastCellX = this.startX + (this.capacity - 1) * (this.cellWidth + this.spacing); this.ctx.fillStyle = 'rgba(231, 76, 60, 0.1)'; this.ctx.fillRect(lastCellX - 20, this.startY - 10, this.cellWidth + 40, this.cellHeight + 20); this.ctx.strokeStyle = '#e74c3c'; this.ctx.lineWidth = 2; this.ctx.setLineDash([5, 5]); this.ctx.strokeRect(lastCellX - 20, this.startY - 10, this.cellWidth + 40, this.cellHeight + 20); this.ctx.fillStyle = '#e74c3c'; this.ctx.fillText('后端操作区', lastCellX + this.cellWidth/2, this.startY - 15); this.ctx.setLineDash([]); } drawArrow(fromX, fromY, toX, toY, color) { this.ctx.strokeStyle = color; this.ctx.fillStyle = color; this.ctx.lineWidth = 3; this.ctx.beginPath(); this.ctx.moveTo(fromX, fromY); this.ctx.lineTo(toX, toY); this.ctx.stroke(); const headSize = 8; const angle = Math.atan2(toY - fromY, toX - fromX); this.ctx.beginPath(); this.ctx.moveTo(toX, toY); this.ctx.lineTo(toX - headSize * Math.cos(angle - Math.PI/6), toY - headSize * Math.sin(angle - Math.PI/6)); this.ctx.lineTo(toX - headSize * Math.cos(angle + Math.PI/6), toY - headSize * Math.sin(angle + Math.PI/6)); this.ctx.closePath(); this.ctx.fill(); } drawTooltip(x, y, index) { const isInDeque = this.isIndexInDeque(index); let text = `索引 ${index}`; if (isInDeque) { text += `\n数据: ${this.data[index]}`; if (index === this.frontIndex) { text += '\n位置: 前端 (Front)'; } else if (index === (this.backIndex - 1 + this.capacity) % this.capacity && this.size > 0) { text += '\n位置: 后端 (Back-1)'; } else { text += '\n位置: 中间元素'; } } else { if (index === this.backIndex) { text += '\n状态: 下一个后端插入位置'; } else if (this.isFrontRegion(index)) { text += '\n状态: 前端操作区域'; } else if (this.isBackRegion(index)) { text += '\n状态: 后端操作区域'; } else { text += '\n状态: 空闲位置'; } } const lines = text.split('\n'); const padding = 10; const lineHeight = 16; const tooltipWidth = 160; const tooltipHeight = lines.length * lineHeight + padding * 2; let tooltipX = x + this.cellWidth/2 - tooltipWidth/2; let tooltipY = y - tooltipHeight - 10; if (tooltipX < 0) tooltipX = 0; if (tooltipX + tooltipWidth > this.canvas.width) tooltipX = this.canvas.width - tooltipWidth; if (tooltipY < 0) tooltipY = y + this.cellHeight + 10; this.ctx.fillStyle = 'rgba(44, 62, 80, 0.95)'; this.ctx.fillRect(tooltipX, tooltipY, tooltipWidth, tooltipHeight); this.ctx.fillStyle = '#ffffff'; this.ctx.font = '12px Arial'; this.ctx.textAlign = 'center'; lines.forEach((line, i) => { this.ctx.fillText(line, tooltipX + tooltipWidth/2, tooltipY + padding + (i + 1) * lineHeight); }); } isIndexInDeque(index) { if (this.size === 0) return false; if (this.frontIndex <= this.backIndex - 1) { return index >= this.frontIndex && index < this.backIndex; } else { return index >= this.frontIndex || index < this.backIndex; } } isFrontRegion(index) { return index <= 1; } isBackRegion(index) { return index >= this.capacity - 2; } async addFirst(value) { if (this.animating) return false; if (this.size >= this.capacity) { this.showMessage('双端队列已满！', '#e74c3c'); return false; } this.animating = true; const newFrontIndex = (this.frontIndex - 1 + this.capacity) % this.capacity; const cellX = this.startX + newFrontIndex * (this.cellWidth + this.spacing) + this.cellWidth/2; const cellY = this.startY + this.cellHeight/2; this.createParticles(cellX, cellY, '#27ae60', 12); await this.animateAddFirst(value, newFrontIndex); this.frontIndex = newFrontIndex; this.data[this.frontIndex] = value; this.size++; this.animating = false; this.showMessage(`前端插入: ${value}`, '#27ae60'); return true; } async addLast(value) { if (this.animating) return false; if (this.size >= this.capacity) { this.showMessage('双端队列已满！', '#e74c3c'); return false; } this.animating = true; const cellX = this.startX + this.backIndex * (this.cellWidth + this.spacing) + this.cellWidth/2; const cellY = this.startY + this.cellHeight/2; this.createParticles(cellX, cellY, '#e74c3c', 12); await this.animateAddLast(value); this.data[this.backIndex] = value; this.backIndex = (this.backIndex + 1) % this.capacity; this.size++; this.animating = false; this.showMessage(`后端插入: ${value}`, '#e74c3c'); return true; } async removeFirst() { if (this.animating) return null; if (this.size === 0) { this.showMessage('双端队列为空！', '#e74c3c'); return null; } this.animating = true; const value = this.data[this.frontIndex]; const cellX = this.startX + this.frontIndex * (this.cellWidth + this.spacing) + this.cellWidth/2; const cellY = this.startY + this.cellHeight/2; this.createParticles(cellX, cellY, '#f39c12', 12); await this.animateRemoveFirst(); delete this.data[this.frontIndex]; this.frontIndex = (this.frontIndex + 1) % this.capacity; this.size--; this.animating = false; this.showMessage(`前端删除: ${value}`, '#f39c12'); return value; } async removeLast() { if (this.animating) return null; if (this.size === 0) { this.showMessage('双端队列为空！', '#e74c3c'); return null; } this.animating = true; const lastIndex = (this.backIndex - 1 + this.capacity) % this.capacity; const value = this.data[lastIndex]; const cellX = this.startX + lastIndex * (this.cellWidth + this.spacing) + this.cellWidth/2; const cellY = this.startY + this.cellHeight/2; this.createParticles(cellX, cellY, '#9b59b6', 12); await this.animateRemoveLast(); delete this.data[lastIndex]; this.backIndex = lastIndex; this.size--; this.animating = false; this.showMessage(`后端删除: ${value}`, '#9b59b6'); return value; } async animateAddFirst(value, targetIndex) { return new Promise(resolve => { let step = 0; const maxSteps = 30; const animate = () => { this.draw(); const targetX = this.startX + targetIndex * (this.cellWidth + this.spacing); const progress = this.easeOutCubic(step / maxSteps); const currentX = targetX - 100 + 100 * progress; const currentY = this.startY - 20 + 20 * progress; this.ctx.save(); this.ctx.globalAlpha = Math.min(1, step / 10); this.ctx.shadowColor = 'rgba(39, 174, 96, 0.5)'; this.ctx.shadowBlur = 15; this.ctx.shadowOffsetX = 3; this.ctx.shadowOffsetY = 3; this.ctx.fillStyle = '#27ae60'; this.ctx.strokeStyle = '#229954'; this.ctx.lineWidth = 3; this.ctx.fillRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.strokeRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.shadowBlur = 0; this.ctx.shadowOffsetX = 0; this.ctx.shadowOffsetY = 0; this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 18px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(value.toString(), currentX + this.cellWidth/2, currentY + this.cellHeight/2 + 6); this.ctx.restore(); step++; if (step <= maxSteps) { setTimeout(animate, 30); } else { resolve(); } }; animate(); }); } async animateAddLast(value) { return new Promise(resolve => { let step = 0; const maxSteps = 30; const animate = () => { this.draw(); const targetX = this.startX + this.backIndex * (this.cellWidth + this.spacing); const progress = this.easeOutCubic(step / maxSteps); const currentX = targetX + 100 - 100 * progress; const currentY = this.startY - 20 + 20 * progress; this.ctx.save(); this.ctx.globalAlpha = Math.min(1, step / 10); this.ctx.shadowColor = 'rgba(231, 76, 60, 0.5)'; this.ctx.shadowBlur = 15; this.ctx.shadowOffsetX = 3; this.ctx.shadowOffsetY = 3; this.ctx.fillStyle = '#e74c3c'; this.ctx.strokeStyle = '#c0392b'; this.ctx.lineWidth = 3; this.ctx.fillRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.strokeRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.shadowBlur = 0; this.ctx.shadowOffsetX = 0; this.ctx.shadowOffsetY = 0; this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 18px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(value.toString(), currentX + this.cellWidth/2, currentY + this.cellHeight/2 + 6); this.ctx.restore(); step++; if (step <= maxSteps) { setTimeout(animate, 30); } else { resolve(); } }; animate(); }); } async animateRemoveFirst() { return new Promise(resolve => { let step = 0; const maxSteps = 30; const animate = () => { this.draw(); const startX = this.startX + this.frontIndex * (this.cellWidth + this.spacing); const progress = this.easeInCubic(step / maxSteps); const currentX = startX - 100 * progress; const currentY = this.startY - 20 * progress; this.ctx.save(); this.ctx.globalAlpha = 1 - progress; this.ctx.fillStyle = '#f39c12'; this.ctx.strokeStyle = '#d68910'; this.ctx.lineWidth = 3; this.ctx.fillRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.strokeRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 18px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(this.data[this.frontIndex].toString(), currentX + this.cellWidth/2, currentY + this.cellHeight/2 + 6); this.ctx.restore(); step++; if (step <= maxSteps) { setTimeout(animate, 30); } else { resolve(); } }; animate(); }); } async animateRemoveLast() { return new Promise(resolve => { let step = 0; const maxSteps = 30; const lastIndex = (this.backIndex - 1 + this.capacity) % this.capacity; const animate = () => { this.draw(); const startX = this.startX + lastIndex * (this.cellWidth + this.spacing); const progress = this.easeInCubic(step / maxSteps); const currentX = startX + 100 * progress; const currentY = this.startY - 20 * progress; this.ctx.save(); this.ctx.globalAlpha = 1 - progress; this.ctx.fillStyle = '#9b59b6'; this.ctx.strokeStyle = '#8e44ad'; this.ctx.lineWidth = 3; this.ctx.fillRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.strokeRect(currentX, currentY, this.cellWidth, this.cellHeight); this.ctx.fillStyle = '#ffffff'; this.ctx.font = 'bold 18px Arial'; this.ctx.textAlign = 'center'; this.ctx.fillText(this.data[lastIndex].toString(), currentX + this.cellWidth/2, currentY + this.cellHeight/2 + 6); this.ctx.restore(); step++; if (step <= maxSteps) { setTimeout(animate, 30); } else { resolve(); } }; animate(); }); } easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); } easeInCubic(t) { return t * t * t; } showMessage(message, color) { const statusDiv = document.getElementById('dequeStatus'); statusDiv.innerHTML += `<div style="color: ${color}; margin-top: 5px;">🔔 ${message}</div>`; setTimeout(() => { this.updateStatus(); }, 3000); } updateStatus() { const statusDiv = document.getElementById('dequeStatus'); const frontData = this.size > 0 ? this.data[this.frontIndex] : 'N/A'; const lastIndex = this.size > 0 ? (this.backIndex - 1 + this.capacity) % this.capacity : -1; const backData = lastIndex >= 0 ? this.data[lastIndex] : 'N/A'; statusDiv.innerHTML = ` <div style="display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap;"><span><strong>队列大小:</strong> ${this.size}/${this.capacity}</span><span><strong>Front索引:</strong> ${this.frontIndex}</span><span><strong>Back索引:</strong> ${this.backIndex}</span><span><strong>前端数据:</strong> ${frontData}</span><span><strong>后端数据:</strong> ${backData}</span></div><div style="margin-top: 10px; font-size: 14px; color: #7f8c8d;"><strong>操作说明:</strong> 前端操作影响Front指针，后端操作影响Back指针，两端都可以插入和删除 </div> `; } reset() { this.data = new Array(this.capacity); this.frontIndex = 0; this.backIndex = 0; this.size = 0; this.particles = []; this.showMessage('双端队列已重置', '#3498db'); } async demo() { if (this.animating) return; this.reset(); await new Promise(resolve => setTimeout(resolve, 500)); this.showMessage('演示开始：展示双端队列的灵活操作', '#9b59b6'); await this.addLast(10); await new Promise(resolve => setTimeout(resolve, 800)); await this.addLast(20); await new Promise(resolve => setTimeout(resolve, 800)); await this.addFirst(5); await new Promise(resolve => setTimeout(resolve, 800)); await this.addFirst(1); await new Promise(resolve => setTimeout(resolve, 800)); this.showMessage('现在队列：[1, 5, 10, 20]', '#3498db'); await new Promise(resolve => setTimeout(resolve, 1000)); await this.removeFirst(); await new Promise(resolve => setTimeout(resolve, 800)); await this.removeLast(); await new Promise(resolve => setTimeout(resolve, 800)); await this.addLast(30); await new Promise(resolve => setTimeout(resolve, 800)); await this.addFirst(2); await new Promise(resolve => setTimeout(resolve, 800)); this.showMessage('演示完成！体验双端队列的强大灵活性', '#27ae60'); } } let deque = new DequeVisual('dequeCanvas', 8); async function addFirst() { const input = document.getElementById('inputValue'); const value = parseInt(input.value); if (isNaN(value) || value < 1 || value > 99) { alert('请输入1-99之间的有效数字！'); return; } const success = await deque.addFirst(value); if (success) { input.value = ''; } } async function addLast() { const input = document.getElementById('inputValue'); const value = parseInt(input.value); if (isNaN(value) || value < 1 || value > 99) { alert('请输入1-99之间的有效数字！'); return; } const success = await deque.addLast(value); if (success) { input.value = ''; } } async function removeFirst() { await deque.removeFirst(); } async function removeLast() { await deque.removeLast(); } function resetDeque() { deque.reset(); } async function startDemo() { await deque.demo(); } function showCode(language) { document.querySelectorAll('.code-content').forEach(el => el.style.display = 'none'); document.querySelectorAll('.code-tab').forEach(el => el.classList.remove('active')); document.getElementById(language + '-code').style.display = 'block'; event.target.classList.add('active'); } function copyCode(language, button) { const codeElement = document.querySelector(`#${language}-code pre code`); const text = codeElement.textContent; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => { showCopySuccess(button); }).catch(() => { fallbackCopyText(text, button); }); } else { fallbackCopyText(text, button); } } function fallbackCopyText(text, button) { const textArea = document.createElement('textarea'); textArea.value = text; textArea.style.position = 'fixed'; textArea.style.left = '-999999px'; textArea.style.top = '-999999px'; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { document.execCommand('copy'); showCopySuccess(button); } catch (err) { console.error('复制失败:', err); alert('复制失败，请手动复制代码'); } document.body.removeChild(textArea); } function showCopySuccess(button) { const originalText = button.textContent; const originalBg = button.style.background; button.textContent = '✅ 已复制'; button.style.background = '#27ae60'; button.style.transform = 'scale(1.1)'; setTimeout(() => { button.textContent = originalText; button.style.background = originalBg; button.style.transform = 'scale(1)'; }, 2000); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); const btn = event.target; if (answer.style.display === 'none' || answer.style.display === '') { answer.style.display = 'block'; btn.textContent = '隐藏答案'; btn.style.background = '#e74c3c'; } else { answer.style.display = 'none'; btn.textContent = '显示答案'; btn.style.background = '#17a2b8'; } } document.getElementById('inputValue').addEventListener('keypress', function(e) { if (e.key === 'Enter') { addLast(); } }); document.getElementById('inputValue').addEventListener('focus', function() { this.style.borderColor = '#3498db'; this.style.boxShadow = '0 0 10px rgba(52, 152, 219, 0.3)'; }); document.getElementById('inputValue').addEventListener('blur', function() { this.style.borderColor = '#3498db'; this.style.boxShadow = 'none'; });</script>
+{% endblock %}

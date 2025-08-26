@@ -1,0 +1,2461 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图的广度优先搜索 (BFS) 可视化</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 350px 300px;
+            height: 100vh;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .main-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-container {
+            flex: 1;
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .section h3 {
+            color: #4ecdc4;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .speed-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            accent-color: #4ecdc4;
+        }
+
+        .algorithm-info {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .queue-display {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 60px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        .queue-item {
+            display: inline-block;
+            background: linear-gradient(45deg, #9b59b6, #3498db);
+            color: white;
+            padding: 5px 10px;
+            margin: 2px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            animation: queueEnqueue 0.3s ease;
+        }
+
+        @keyframes queueEnqueue {
+            from { transform: translateX(-30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .visited-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .visited-node {
+            background: rgba(78, 205, 196, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            animation: fadeInScale 0.5s ease;
+        }
+
+        @keyframes fadeInScale {
+            from { transform: scale(0) rotate(180deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .graph-examples {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .example-btn {
+            padding: 8px;
+            font-size: 0.8em;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .status-indicator {
+            padding: 8px 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .status-ready { background: rgba(78, 205, 196, 0.8); }
+        .status-running { background: rgba(255, 193, 7, 0.8); }
+        .status-completed { background: rgba(40, 167, 69, 0.8); }
+
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.8em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* 存储结构面板样式 */
+        .storage-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .storage-toggle {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-btn {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid transparent;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border-color: #4ecdc4;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 邻接表样式 */
+        .adjacency-list {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.6;
+        }
+
+        .list-item {
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .list-item.highlight {
+            background: rgba(243, 156, 18, 0.3);
+            border-left-color: #f39c12;
+            transform: translateX(5px);
+        }
+
+        .list-item.visited {
+            background: rgba(46, 204, 113, 0.2);
+            border-left-color: #2ecc71;
+        }
+
+        .node-label {
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .neighbors {
+            color: #ecf0f1;
+        }
+
+        .neighbor-node {
+            display: inline-block;
+            margin: 0 4px;
+            padding: 2px 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .neighbor-node.active {
+            background: #f39c12;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .neighbor-node.visited {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .neighbor-node.queued {
+            background: #9b59b6;
+            color: white;
+        }
+
+        /* 邻接矩阵样式 */
+        .adjacency-matrix {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            padding: 6px 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .matrix-table th {
+            background: rgba(78, 205, 196, 0.3);
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .matrix-table td {
+            color: #ecf0f1;
+        }
+
+        .matrix-table td.highlight {
+            background: rgba(243, 156, 18, 0.5);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .matrix-table td.visited {
+            background: rgba(46, 204, 113, 0.3);
+        }
+
+        .matrix-explanation {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(52, 152, 219, 0.2);
+            border-radius: 6px;
+            font-size: 0.8em;
+            border-left: 4px solid #3498db;
+        }
+
+        /* 代码语言切换样式 */
+        .language-selector {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .lang-btn {
+            padding: 6px 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid transparent;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border-color: #4ecdc4;
+        }
+
+        .lang-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .code-container {
+            position: relative;
+        }
+
+        .code-display {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8em;
+            line-height: 1.4;
+            border-left: 4px solid #4ecdc4;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+
+        .code-display .keyword { color: #ff79c6; }
+        .code-display .string { color: #f1fa8c; }
+        .code-display .comment { color: #6272a4; font-style: italic; }
+        .code-display .function { color: #50fa7b; }
+        .code-display .type { color: #8be9fd; }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(78, 205, 196, 0.8);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .copy-btn:hover {
+            background: rgba(78, 205, 196, 1);
+            transform: translateY(-1px);
+        }
+
+        .copy-btn.copied {
+            background: rgba(46, 204, 113, 0.9);
+        }
+
+        /* 使用说明模态框样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 800px;
+            max-height: 80vh;
+            width: 90%;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .instruction-section {
+            margin-bottom: 25px;
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .instruction-section h3 {
+            color: #4ecdc4;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instruction-section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .instruction-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .instruction-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .instruction-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #4ecdc4;
+            font-weight: bold;
+        }
+
+        .highlight-text {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-item {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .feature-item h4 {
+            color: #ff6b6b;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .feature-item p {
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr auto auto;
+            }
+
+            .control-panel, .storage-panel {
+                max-height: 300px;
+            }
+
+            .language-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+            }
+
+            .modal-title {
+                font-size: 1.4em;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .instruction-section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="main-panel">
+            <div class="canvas-container">
+                <canvas id="graphCanvas"></canvas>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <h1>🔍 BFS 算法可视化</h1>
+
+            <div class="section">
+                <div id="status" class="status-indicator status-ready">
+                    准备开始 - 选择起始节点
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🎮 控制面板</h3>
+                <div class="controls">
+                    <button id="startBtn" onclick="startBFS()">开始 BFS</button>
+                    <button id="pauseBtn" onclick="togglePause()" disabled>暂停</button>
+                    <button id="resetBtn" onclick="resetVisualization()">重置</button>
+                    <button id="stepBtn" onclick="stepBFS()" disabled>单步执行</button>
+                </div>
+
+                <div class="speed-control">
+                    <span>速度:</span>
+                    <input type="range" id="speedSlider" min="1" max="10" value="5">
+                    <span id="speedValue">5</span>
+                </div>
+
+                <button class="full-width" onclick="showInstructions()" style="background: linear-gradient(45deg, #9b59b6, #3498db); margin-top: 10px;">
+                    📖 使用说明
+                </button>
+            </div>
+
+            <div class="section">
+                <h3>📊 预设图例</h3>
+                <div class="graph-examples">
+                    <button class="example-btn" onclick="loadExample('simple')">简单图</button>
+                    <button class="example-btn" onclick="loadExample('tree')">树结构</button>
+                    <button class="example-btn" onclick="loadExample('cycle')">环形图</button>
+                    <button class="example-btn" onclick="loadExample('complex')">复杂图</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📚 BFS 队列</h3>
+                <div id="queueDisplay" class="queue-display">
+                    队列为空
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>✅ 访问顺序</h3>
+                <div id="visitedList" class="visited-list">
+                    尚未开始
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🎨 图例</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>未访问</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #f39c12;"></div>
+                        <span>正在访问</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2ecc71;"></div>
+                        <span>已访问</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #3498db;"></div>
+                        <span>起始节点</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>💻 BFS 算法代码</h3>
+                <div class="language-selector">
+                    <button class="lang-btn active" data-lang="javascript" onclick="changeCodeLanguage('javascript')">JavaScript</button>
+                    <button class="lang-btn" data-lang="python" onclick="changeCodeLanguage('python')">Python</button>
+                    <button class="lang-btn" data-lang="cpp" onclick="changeCodeLanguage('cpp')">C++</button>
+                    <button class="lang-btn" data-lang="java" onclick="changeCodeLanguage('java')">Java</button>
+                </div>
+                <div class="code-container">
+                    <button class="copy-btn" onclick="copyCode()" id="copyBtn">📋 复制</button>
+                    <div id="codeDisplay" class="code-display"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="storage-panel">
+            <h1>🗃️ 图的存储结构</h1>
+
+            <div class="storage-toggle">
+                <button class="toggle-btn active" id="listToggle" onclick="showAdjacencyList()">邻接表</button>
+                <button class="toggle-btn" id="matrixToggle" onclick="showAdjacencyMatrix()">邻接矩阵</button>
+            </div>
+
+            <div id="adjacencyListView" class="section">
+                <h3>📋 邻接表 (Adjacency List)</h3>
+                <div class="adjacency-list" id="adjacencyListContent">
+                    选择图例后显示邻接表
+                </div>
+                <div class="matrix-explanation">
+                    💡 邻接表用链表存储每个节点的邻居，空间效率高，适合稀疏图。
+                </div>
+            </div>
+
+            <div id="adjacencyMatrixView" class="section" style="display: none;">
+                <h3>📊 邻接矩阵 (Adjacency Matrix)</h3>
+                <div class="adjacency-matrix" id="adjacencyMatrixContent">
+                    选择图例后显示邻接矩阵
+                </div>
+                <div class="matrix-explanation">
+                    💡 邻接矩阵用二维数组存储，查询边的存在性为O(1)，适合稠密图。
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>🔍 当前操作</h3>
+                <div id="currentOperation" class="algorithm-info">
+                    等待开始BFS...
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>📚 BFS vs DFS 对比</h3>
+                <div class="algorithm-info" style="font-size: 0.75em;">
+<strong>广度优先搜索 (BFS):</strong><br>
+• 数据结构: 队列 (FIFO)<br>
+• 搜索策略: 层次遍历<br>
+• 时间复杂度: O(V + E)<br>
+• 空间复杂度: O(V)<br>
+• 应用: 最短路径、连通性<br><br>
+<strong>深度优先搜索 (DFS):</strong><br>
+• 数据结构: 栈 (LIFO)<br>
+• 搜索策略: 深度遍历<br>
+• 时间复杂度: O(V + E)<br>
+• 空间复杂度: O(V)<br>
+• 应用: 拓扑排序、环检测
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使用说明模态框 -->
+    <div id="instructionModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">📖 BFS 可视化工具使用说明</h2>
+                <button class="close-btn" onclick="hideInstructions()">×</button>
+            </div>
+
+            <div class="instruction-section">
+                <h3>🚀 快速开始</h3>
+                <ul class="instruction-list">
+                    <li>选择一个预设图例或保持默认的简单图</li>
+                    <li><span class="highlight-text">点击任意节点</span>选择为起始节点（节点会变成蓝色）</li>
+                    <li>点击<span class="highlight-text">"开始 BFS"</span>按钮观看算法执行</li>
+                    <li>使用速度滑块调节动画速度（1-10级）</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <h3>🎮 控制功能</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>▶️ 开始 BFS</h4>
+                        <p>启动广度优先搜索算法的自动执行</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>⏸️ 暂停/继续</h4>
+                        <p>暂停或恢复正在执行的算法动画</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🔄 重置</h4>
+                        <p>清除所有状态，重新开始演示</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>👆 单步执行</h4>
+                        <p>逐步执行算法，深入理解每一步</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instruction-section">
+                <h3>🔍 BFS vs DFS 核心差异</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>🌊 BFS - 层层扩散</h4>
+                        <p>像水波一样层次扩散，先访问所有距离为1的节点，再访问距离为2的节点</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🏔️ DFS - 深度探索</h4>
+                        <p>尽可能深入地探索，直到无路可走才回头</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📐 队列 vs 栈</h4>
+                        <p>BFS使用队列(先进先出)，DFS使用栈(后进先出)</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>🎯 应用场景</h4>
+                        <p>BFS适合最短路径问题，DFS适合拓扑排序和环检测</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instruction-section">
+                <h3>🎨 可视化元素</h3>
+                <ul class="instruction-list">
+                    <li><span style="color: #e74c3c;">●</span> <span class="highlight-text">红色节点</span>：未访问的节点</li>
+                    <li><span style="color: #3498db;">●</span> <span class="highlight-text">蓝色节点</span>：选中的起始节点</li>
+                    <li><span style="color: #f39c12;">●</span> <span class="highlight-text">橙色节点</span>：正在访问的节点（带脉冲效果）</li>
+                    <li><span style="color: #2ecc71;">●</span> <span class="highlight-text">绿色节点</span>：已访问完成的节点</li>
+                    <li><span style="color: #f39c12;">➤</span> <span class="highlight-text">橙色边</span>：当前正在遍历的边</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <h3>📚 队列可视化</h3>
+                <p>与DFS的栈不同，BFS使用队列来管理待访问节点：</p>
+                <ul class="instruction-list">
+                    <li><span class="highlight-text">队头（左侧）</span>：下一个要处理的节点</li>
+                    <li><span class="highlight-text">队尾（右侧）</span>：最新加入的节点</li>
+                    <li><span class="highlight-text">先进先出</span>：保证按距离顺序访问</li>
+                    <li><span class="highlight-text">层次遍历</span>：同一层的节点会连续处理</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <h3>🗃️ 存储结构</h3>
+                <p>在右侧面板可以切换查看两种图的存储方式：</p>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>📋 邻接表</h4>
+                        <p>每个节点存储其邻居列表，BFS会将所有邻居加入队列</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>📊 邻接矩阵</h4>
+                        <p>二维表格存储，便于快速查询节点间连接关系</p>
+                    </div>
+                </div>
+                <p><span class="highlight-text">实时高亮</span>：算法执行时会高亮显示当前处理的节点行</p>
+            </div>
+
+            <div class="instruction-section">
+                <h3>💻 代码学习</h3>
+                <p>底部提供四种编程语言的BFS实现：</p>
+                <ul class="instruction-list">
+                    <li><span class="highlight-text">JavaScript</span>：现代Web开发，适合前端学习</li>
+                    <li><span class="highlight-text">Python</span>：语法简洁，初学者友好</li>
+                    <li><span class="highlight-text">C++</span>：高性能实现，算法竞赛常用</li>
+                    <li><span class="highlight-text">Java</span>：企业级开发，面向对象</li>
+                </ul>
+                <p>点击<span class="highlight-text">"📋 复制"</span>按钮可以一键复制代码到剪贴板！</p>
+            </div>
+
+            <div class="instruction-section">
+                <h3>💡 学习建议</h3>
+                <ul class="instruction-list">
+                    <li><span class="highlight-text">对比DFS和BFS</span>，理解两种搜索策略的差异</li>
+                    <li><span class="highlight-text">观察队列变化</span>，理解先进先出的原理</li>
+                    <li><span class="highlight-text">注意层次遍历</span>，BFS会逐层访问节点</li>
+                    <li><span class="highlight-text">思考应用场景</span>，什么时候用BFS更合适</li>
+                    <li><span class="highlight-text">比较存储结构</span>，不同结构对算法的影响</li>
+                    <li><span class="highlight-text">练习代码实现</span>，加深对算法的理解</li>
+                </ul>
+            </div>
+
+            <div class="instruction-section">
+                <h3>🎯 常见问题</h3>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <h4>Q: BFS为什么能找到最短路径？</h4>
+                        <p>A: 因为BFS按层次遍历，先到达的路径必然最短</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>Q: 队列和栈的区别？</h4>
+                        <p>A: 队列先进先出，栈后进先出，导致不同的遍历顺序</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>Q: BFS的空间复杂度？</h4>
+                        <p>A: 最坏情况O(V)，队列可能存储一整层的节点</p>
+                    </div>
+                    <div class="feature-item">
+                        <h4>Q: 何时选择BFS？</h4>
+                        <p>A: 需要最短路径、层次遍历或最小步数时优选BFS</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        const canvas = document.getElementById('graphCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let graph = {};
+        let nodes = [];
+        let edges = [];
+        let selectedNode = null;
+        let isRunning = false;
+        let isPaused = false;
+        let bfsState = {
+            visited: new Set(),
+            queue: [],
+            currentNode: null,
+            visitOrder: [],
+            step: 0
+        };
+
+        let animationSpeed = 1000; // 毫秒
+        let storageView = 'list'; // 'list' or 'matrix'
+        let currentLanguage = 'javascript'; // 当前选择的编程语言
+
+        // 队列可视化相关
+        let queueVisualization = {
+            x: 0, // 将在resizeCanvas中设置
+            y: 50,
+            width: 120,
+            itemHeight: 40,
+            items: [], // {value, x, animating, action} action: 'enqueue' | 'dequeue'
+            animations: []
+        };
+
+        // 多语言BFS代码实现
+        const bfsCodeImplementations = {
+            javascript: `<span class="comment">// JavaScript 实现 - 标准队列版本</span>
+<span class="keyword">function</span> <span class="function">BFS</span>(graph, start) {
+    <span class="keyword">let</span> visited = <span class="keyword">new</span> <span class="type">Set</span>();
+    <span class="keyword">let</span> queue = [start];
+    <span class="keyword">let</span> result = [];
+
+    <span class="keyword">while</span> (queue.length > <span class="string">0</span>) {
+        <span class="keyword">let</span> node = queue.<span class="function">shift</span>(); <span class="comment">// 出队（从头部取）</span>
+
+        <span class="keyword">if</span> (!visited.<span class="function">has</span>(node)) {
+            visited.<span class="function">add</span>(node);
+            result.<span class="function">push</span>(node);
+
+            <span class="comment">// 将所有未访问的邻居加入队列</span>
+            <span class="keyword">for</span> (<span class="keyword">let</span> neighbor <span class="keyword">of</span> graph[node]) {
+                <span class="keyword">if</span> (!visited.<span class="function">has</span>(neighbor)) {
+                    queue.<span class="function">push</span>(neighbor); <span class="comment">// 入队（从尾部加）</span>
+                }
+            }
+        }
+    }
+
+    <span class="keyword">return</span> result;
+}
+
+<span class="comment">// 使用示例</span>
+<span class="keyword">const</span> graph = {
+    <span class="string">'A'</span>: [<span class="string">'B'</span>, <span class="string">'C'</span>],
+    <span class="string">'B'</span>: [<span class="string">'A'</span>, <span class="string">'D'</span>, <span class="string">'E'</span>],
+    <span class="string">'C'</span>: [<span class="string">'A'</span>, <span class="string">'F'</span>],
+    <span class="string">'D'</span>: [<span class="string">'B'</span>],
+    <span class="string">'E'</span>: [<span class="string">'B'</span>],
+    <span class="string">'F'</span>: [<span class="string">'C'</span>]
+};
+<span class="keyword">const</span> result = <span class="function">BFS</span>(graph, <span class="string">'A'</span>);`,
+
+            python: `<span class="comment"># Python 实现 - 使用collections.deque</span>
+<span class="keyword">from</span> collections <span class="keyword">import</span> deque
+
+<span class="keyword">def</span> <span class="function">bfs</span>(graph, start):
+    visited = <span class="function">set</span>()
+    queue = <span class="function">deque</span>([start])  <span class="comment"># 双端队列，效率更高</span>
+    result = []
+
+    <span class="keyword">while</span> queue:
+        node = queue.<span class="function">popleft</span>()  <span class="comment"># 出队（从左侧取）</span>
+
+        <span class="keyword">if</span> node <span class="keyword">not in</span> visited:
+            visited.<span class="function">add</span>(node)
+            result.<span class="function">append</span>(node)
+
+            <span class="comment"># 将所有未访问的邻居加入队列</span>
+            <span class="keyword">for</span> neighbor <span class="keyword">in</span> graph[node]:
+                <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                    queue.<span class="function">append</span>(neighbor)  <span class="comment"># 入队（从右侧加）</span>
+
+    <span class="keyword">return</span> result
+
+<span class="comment"># 使用示例</span>
+graph = {
+    <span class="string">'A'</span>: [<span class="string">'B'</span>, <span class="string">'C'</span>],
+    <span class="string">'B'</span>: [<span class="string">'A'</span>, <span class="string">'D'</span>, <span class="string">'E'</span>],
+    <span class="string">'C'</span>: [<span class="string">'A'</span>, <span class="string">'F'</span>],
+    <span class="string">'D'</span>: [<span class="string">'B'</span>],
+    <span class="string">'E'</span>: [<span class="string">'B'</span>],
+    <span class="string">'F'</span>: [<span class="string">'C'</span>]
+}
+result = <span class="function">bfs</span>(graph, <span class="string">'A'</span>)
+<span class="function">print</span>(result)  <span class="comment"># 输出: ['A', 'B', 'C', 'D', 'E', 'F']</span>`,
+
+            cpp: `<span class="comment">// C++ 实现</span>
+<span class="keyword">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;vector&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;queue&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;unordered_set&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;unordered_map&gt;</span>
+
+<span class="keyword">using namespace</span> std;
+
+<span class="type">vector</span>&lt;<span class="type">int</span>&gt; <span class="function">BFS</span>(<span class="type">unordered_map</span>&lt;<span class="type">int</span>, <span class="type">vector</span>&lt;<span class="type">int</span>&gt;&gt;& graph, <span class="type">int</span> start) {
+    <span class="type">unordered_set</span>&lt;<span class="type">int</span>&gt; visited;
+    <span class="type">queue</span>&lt;<span class="type">int</span>&gt; q;
+    <span class="type">vector</span>&lt;<span class="type">int</span>&gt; result;
+
+    q.<span class="function">push</span>(start);
+
+    <span class="keyword">while</span> (!q.<span class="function">empty</span>()) {
+        <span class="type">int</span> node = q.<span class="function">front</span>();
+        q.<span class="function">pop</span>();  <span class="comment">// 出队</span>
+
+        <span class="keyword">if</span> (visited.<span class="function">find</span>(node) == visited.<span class="function">end</span>()) {
+            visited.<span class="function">insert</span>(node);
+            result.<span class="function">push_back</span>(node);
+
+            <span class="comment">// 将所有未访问的邻居加入队列</span>
+            <span class="keyword">for</span> (<span class="type">int</span> neighbor : graph[node]) {
+                <span class="keyword">if</span> (visited.<span class="function">find</span>(neighbor) == visited.<span class="function">end</span>()) {
+                    q.<span class="function">push</span>(neighbor);  <span class="comment">// 入队</span>
+                }
+            }
+        }
+    }
+
+    <span class="keyword">return</span> result;
+}
+
+<span class="comment">// 主函数示例</span>
+<span class="type">int</span> <span class="function">main</span>() {
+    <span class="type">unordered_map</span>&lt;<span class="type">int</span>, <span class="type">vector</span>&lt;<span class="type">int</span>&gt;&gt; graph = {
+        {<span class="string">1</span>, {<span class="string">2</span>, <span class="string">3</span>}},
+        {<span class="string">2</span>, {<span class="string">1</span>, <span class="string">4</span>, <span class="string">5</span>}},
+        {<span class="string">3</span>, {<span class="string">1</span>, <span class="string">6</span>}},
+        {<span class="string">4</span>, {<span class="string">2</span>}},
+        {<span class="string">5</span>, {<span class="string">2</span>}},
+        {<span class="string">6</span>, {<span class="string">3</span>}}
+    };
+
+    <span class="type">vector</span>&lt;<span class="type">int</span>&gt; result = <span class="function">BFS</span>(graph, <span class="string">1</span>);
+
+    <span class="keyword">for</span> (<span class="type">int</span> node : result) {
+        cout &lt;&lt; node &lt;&lt; <span class="string">" "</span>;
+    }
+
+    <span class="keyword">return</span> <span class="string">0</span>;
+}`,
+
+            java: `<span class="comment">// Java 实现</span>
+<span class="keyword">import</span> java.util.*;
+
+<span class="keyword">public class</span> <span class="type">BFSImplementation</span> {
+
+    <span class="keyword">public static</span> <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; <span class="function">BFS</span>(<span class="type">Map</span>&lt;<span class="type">Integer</span>, <span class="type">List</span>&lt;<span class="type">Integer</span>&gt;&gt; graph, <span class="type">int</span> start) {
+        <span class="type">Set</span>&lt;<span class="type">Integer</span>&gt; visited = <span class="keyword">new</span> <span class="type">HashSet</span>&lt;&gt;();
+        <span class="type">Queue</span>&lt;<span class="type">Integer</span>&gt; queue = <span class="keyword">new</span> <span class="type">LinkedList</span>&lt;&gt;();
+        <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; result = <span class="keyword">new</span> <span class="type">ArrayList</span>&lt;&gt;();
+
+        queue.<span class="function">offer</span>(start);  <span class="comment">// 入队</span>
+
+        <span class="keyword">while</span> (!queue.<span class="function">isEmpty</span>()) {
+            <span class="type">int</span> node = queue.<span class="function">poll</span>();  <span class="comment">// 出队</span>
+
+            <span class="keyword">if</span> (!visited.<span class="function">contains</span>(node)) {
+                visited.<span class="function">add</span>(node);
+                result.<span class="function">add</span>(node);
+
+                <span class="comment">// 将所有未访问的邻居加入队列</span>
+                <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; neighbors = graph.<span class="function">get</span>(node);
+                <span class="keyword">if</span> (neighbors != <span class="keyword">null</span>) {
+                    <span class="keyword">for</span> (<span class="type">int</span> neighbor : neighbors) {
+                        <span class="keyword">if</span> (!visited.<span class="function">contains</span>(neighbor)) {
+                            queue.<span class="function">offer</span>(neighbor);  <span class="comment">// 入队</span>
+                        }
+                    }
+                }
+            }
+        }
+
+        <span class="keyword">return</span> result;
+    }
+
+    <span class="comment">// 主函数示例</span>
+    <span class="keyword">public static</span> <span class="keyword">void</span> <span class="function">main</span>(<span class="type">String</span>[] args) {
+        <span class="type">Map</span>&lt;<span class="type">Integer</span>, <span class="type">List</span>&lt;<span class="type">Integer</span>&gt;&gt; graph = <span class="keyword">new</span> <span class="type">HashMap</span>&lt;&gt;();
+        graph.<span class="function">put</span>(<span class="string">1</span>, <span class="type">Arrays</span>.<span class="function">asList</span>(<span class="string">2</span>, <span class="string">3</span>));
+        graph.<span class="function">put</span>(<span class="string">2</span>, <span class="type">Arrays</span>.<span class="function">asList</span>(<span class="string">1</span>, <span class="string">4</span>, <span class="string">5</span>));
+        graph.<span class="function">put</span>(<span class="string">3</span>, <span class="type">Arrays</span>.<span class="function">asList</span>(<span class="string">1</span>, <span class="string">6</span>));
+        graph.<span class="function">put</span>(<span class="string">4</span>, <span class="type">Arrays</span>.<span class="function">asList</span>(<span class="string">2</span>));
+        graph.<span class="function">put</span>(<span class="string">5</span>, <span class="type">Arrays</span>.<span class="function">asList</span>(<span class="string">2</span>));
+        graph.<span class="function">put</span>(<span class="string">6</span>, <span class="type">Arrays</span>.<span class="function">asList</span>(<span class="string">3</span>));
+
+        <span class="type">List</span>&lt;<span class="type">Integer</span>&gt; result = <span class="function">BFS</span>(graph, <span class="string">1</span>);
+        <span class="type">System</span>.out.<span class="function">println</span>(result);
+    }
+}`
+        };
+
+        // 获取纯文本代码（用于复制）
+        const bfsCodePlainText = {
+            javascript: `// JavaScript 实现 - 标准队列版本
+function BFS(graph, start) {
+    let visited = new Set();
+    let queue = [start];
+    let result = [];
+
+    while (queue.length > 0) {
+        let node = queue.shift(); // 出队（从头部取）
+
+        if (!visited.has(node)) {
+            visited.add(node);
+            result.push(node);
+
+            // 将所有未访问的邻居加入队列
+            for (let neighbor of graph[node]) {
+                if (!visited.has(neighbor)) {
+                    queue.push(neighbor); // 入队（从尾部加）
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+// 使用示例
+const graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B'],
+    'F': ['C']
+};
+const result = BFS(graph, 'A');`,
+
+            python: `# Python 实现 - 使用collections.deque
+from collections import deque
+
+def bfs(graph, start):
+    visited = set()
+    queue = deque([start])  # 双端队列，效率更高
+    result = []
+
+    while queue:
+        node = queue.popleft()  # 出队（从左侧取）
+
+        if node not in visited:
+            visited.add(node)
+            result.append(node)
+
+            # 将所有未访问的邻居加入队列
+            for neighbor in graph[node]:
+                if neighbor not in visited:
+                    queue.append(neighbor)  # 入队（从右侧加）
+
+    return result
+
+# 使用示例
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B'],
+    'F': ['C']
+}
+result = bfs(graph, 'A')
+print(result)  # 输出: ['A', 'B', 'C', 'D', 'E', 'F']`,
+
+            cpp: `// C++ 实现
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <unordered_set>
+#include <unordered_map>
+
+using namespace std;
+
+vector<int> BFS(unordered_map<int, vector<int>>& graph, int start) {
+    unordered_set<int> visited;
+    queue<int> q;
+    vector<int> result;
+
+    q.push(start);
+
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();  // 出队
+
+        if (visited.find(node) == visited.end()) {
+            visited.insert(node);
+            result.push_back(node);
+
+            // 将所有未访问的邻居加入队列
+            for (int neighbor : graph[node]) {
+                if (visited.find(neighbor) == visited.end()) {
+                    q.push(neighbor);  // 入队
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+// 主函数示例
+int main() {
+    unordered_map<int, vector<int>> graph = {
+        {1, {2, 3}},
+        {2, {1, 4, 5}},
+        {3, {1, 6}},
+        {4, {2}},
+        {5, {2}},
+        {6, {3}}
+    };
+
+    vector<int> result = BFS(graph, 1);
+
+    for (int node : result) {
+        cout << node << " ";
+    }
+
+    return 0;
+}`,
+
+            java: `// Java 实现
+import java.util.*;
+
+public class BFSImplementation {
+
+    public static List<Integer> BFS(Map<Integer, List<Integer>> graph, int start) {
+        Set<Integer> visited = new HashSet<>();
+        Queue<Integer> queue = new LinkedList<>();
+        List<Integer> result = new ArrayList<>();
+
+        queue.offer(start);  // 入队
+
+        while (!queue.isEmpty()) {
+            int node = queue.poll();  // 出队
+
+            if (!visited.contains(node)) {
+                visited.add(node);
+                result.add(node);
+
+                // 将所有未访问的邻居加入队列
+                List<Integer> neighbors = graph.get(node);
+                if (neighbors != null) {
+                    for (int neighbor : neighbors) {
+                        if (!visited.contains(neighbor)) {
+                            queue.offer(neighbor);  // 入队
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    // 主函数示例
+    public static void main(String[] args) {
+        Map<Integer, List<Integer>> graph = new HashMap<>();
+        graph.put(1, Arrays.asList(2, 3));
+        graph.put(2, Arrays.asList(1, 4, 5));
+        graph.put(3, Arrays.asList(1, 6));
+        graph.put(4, Arrays.asList(2));
+        graph.put(5, Arrays.asList(2));
+        graph.put(6, Arrays.asList(3));
+
+        List<Integer> result = BFS(graph, 1);
+        System.out.println(result);
+    }
+}`
+        };
+
+        // 画布设置
+        function resizeCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width * devicePixelRatio;
+            canvas.height = rect.height * devicePixelRatio;
+            ctx.scale(devicePixelRatio, devicePixelRatio);
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+
+            // 设置队列可视化位置（右侧）
+            queueVisualization.x = rect.width - 150;
+            queueVisualization.maxHeight = rect.height - 100;
+        }
+
+        // 节点类
+        class Node {
+            constructor(id, x, y) {
+                this.id = id;
+                this.x = x;
+                this.y = y;
+                this.radius = 25;
+                this.state = 'unvisited'; // unvisited, visiting, visited
+                this.visitOrder = -1;
+            }
+
+            draw() {
+                ctx.save();
+
+                // 绘制节点
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+
+                // 根据状态设置颜色
+                let color;
+                switch(this.state) {
+                    case 'unvisited': color = '#e74c3c'; break;
+                    case 'visiting': color = '#f39c12'; break;
+                    case 'visited': color = '#2ecc71'; break;
+                    case 'start': color = '#3498db'; break;
+                }
+
+                if (this.state === 'visiting') {
+                    // 脉冲效果
+                    const pulse = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
+                    ctx.globalAlpha = pulse;
+                }
+
+                ctx.fillStyle = color;
+                ctx.fill();
+
+                // 边框
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+
+                // 发光效果
+                if (this.state === 'visiting' || this.state === 'start') {
+                    ctx.shadowBlur = 20;
+                    ctx.shadowColor = color;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+
+                // 绘制节点标签
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.id, this.x, this.y);
+
+                // 绘制访问顺序
+                if (this.visitOrder >= 0) {
+                    ctx.fillStyle = '#ffdc00';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.fillText(this.visitOrder + 1, this.x + 20, this.y - 20);
+                }
+            }
+
+            contains(x, y) {
+                const dx = x - this.x;
+                const dy = y - this.y;
+                return dx * dx + dy * dy <= this.radius * this.radius;
+            }
+        }
+
+        // 边类
+        class Edge {
+            constructor(from, to) {
+                this.from = from;
+                this.to = to;
+                this.isActive = false;
+            }
+
+            draw() {
+                const fromNode = nodes.find(n => n.id === this.from);
+                const toNode = nodes.find(n => n.id === this.to);
+
+                if (!fromNode || !toNode) return;
+
+                ctx.save();
+
+                // 计算边的起点和终点（避免与节点重叠）
+                const dx = toNode.x - fromNode.x;
+                const dy = toNode.y - fromNode.y;
+                const length = Math.sqrt(dx * dx + dy * dy);
+                const unitX = dx / length;
+                const unitY = dy / length;
+
+                const startX = fromNode.x + unitX * fromNode.radius;
+                const startY = fromNode.y + unitY * fromNode.radius;
+                const endX = toNode.x - unitX * toNode.radius;
+                const endY = toNode.y - unitY * toNode.radius;
+
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+
+                if (this.isActive) {
+                    ctx.strokeStyle = '#f39c12';
+                    ctx.lineWidth = 4;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = '#f39c12';
+                } else {
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                    ctx.lineWidth = 2;
+                }
+
+                ctx.stroke();
+                ctx.restore();
+
+                // 绘制箭头
+                this.drawArrow(endX, endY, Math.atan2(dy, dx));
+            }
+
+            drawArrow(x, y, angle) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-15, -8);
+                ctx.lineTo(-15, 8);
+                ctx.closePath();
+
+                if (this.isActive) {
+                    ctx.fillStyle = '#f39c12';
+                } else {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                }
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        // 绘制函数
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 绘制网格背景
+            drawGrid();
+
+            // 绘制边
+            edges.forEach(edge => edge.draw());
+
+            // 绘制节点
+            nodes.forEach(node => node.draw());
+
+            // 绘制队列可视化
+            drawQueueVisualization();
+
+            requestAnimationFrame(draw);
+        }
+
+        function drawGrid() {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = 1;
+
+            const gridSize = 30;
+            const rect = canvas.getBoundingClientRect();
+            const maxX = rect.width - 180; // 给队列留出空间
+
+            for (let x = 0; x < maxX; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, rect.height);
+                ctx.stroke();
+            }
+
+            for (let y = 0; y < rect.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(maxX, y);
+                ctx.stroke();
+            }
+
+            ctx.restore();
+        }
+
+        // 队列可视化绘制函数
+        function drawQueueVisualization() {
+            const queue = queueVisualization;
+
+            // 绘制队列容器背景
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.fillRect(queue.x - 10, queue.y - 10, queue.width + 20, queue.maxHeight + 20);
+            ctx.strokeRect(queue.x - 10, queue.y - 10, queue.width + 20, queue.maxHeight + 20);
+
+            // 绘制标题
+            ctx.fillStyle = '#4ecdc4';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('BFS 队列', queue.x + queue.width / 2, queue.y - 20);
+
+            // 绘制队头和队尾指示
+            if (queue.items.length > 0) {
+                // 队头指示
+                ctx.fillStyle = '#f39c12';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('队头 →', queue.x - 60, queue.y + 20);
+
+                // 队尾指示
+                const tailY = queue.y + queue.items.length * 50;
+                ctx.fillText('队尾 →', queue.x - 60, Math.min(tailY, queue.y + queue.maxHeight - 20));
+            }
+
+            ctx.restore();
+
+            // 绘制队列中的元素
+            queue.items.forEach((item, index) => {
+                drawQueueItem(item, index);
+            });
+        }
+
+        function drawQueueItem(item, index) {
+            const queue = queueVisualization;
+            let y = item.y || (queue.y + index * 50);
+
+            ctx.save();
+
+            // 根据动画状态设置透明度和位置
+            let alpha = 1;
+            let x = queue.x + queue.width / 2;
+
+            if (item.animating) {
+                if (item.action === 'enqueue') {
+                    const progress = (Date.now() - item.animationStart) / 300;
+                    alpha = Math.min(1, progress);
+                    x = queue.x + queue.width / 2 - (1 - progress) * 50; // 从左侧滑入
+                } else if (item.action === 'dequeue') {
+                    const progress = (Date.now() - item.animationStart) / 500;
+                    alpha = Math.max(0, 1 - progress);
+                    x = queue.x + queue.width / 2 + progress * 50; // 向右侧滑出
+                }
+            }
+
+            ctx.globalAlpha = alpha;
+
+            // 绘制队列元素背景
+            ctx.save();
+            ctx.translate(x, y + 25);
+
+            // 元素背景
+            let gradient = ctx.createLinearGradient(-40, -20, 40, 20);
+            if (item.action === 'enqueue') {
+                gradient.addColorStop(0, '#9b59b6');
+                gradient.addColorStop(1, '#3498db');
+            } else if (item.action === 'dequeue') {
+                gradient.addColorStop(0, '#f39c12');
+                gradient.addColorStop(1, '#e74c3c');
+            } else {
+                gradient.addColorStop(0, '#667eea');
+                gradient.addColorStop(1, '#764ba2');
+            }
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(-40, -20, 80, 40);
+
+            // 边框
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-40, -20, 80, 40);
+
+            // 发光效果
+            if (item.animating) {
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = item.action === 'enqueue' ? '#3498db' : '#f39c12';
+                ctx.fillRect(-40, -20, 80, 40);
+            }
+
+            ctx.restore();
+
+            // 绘制文字
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(item.value, x, y + 25);
+
+            ctx.restore();
+        }
+
+        // 队列动画函数
+        function enqueueToVisualization(value) {
+            const newItem = {
+                value: value,
+                animating: true,
+                action: 'enqueue',
+                animationStart: Date.now()
+            };
+
+            queueVisualization.items.push(newItem);
+
+            // 动画结束后移除动画状态
+            setTimeout(() => {
+                newItem.animating = false;
+                newItem.action = null;
+            }, 300);
+        }
+
+        function dequeueFromVisualization() {
+            if (queueVisualization.items.length === 0) return null;
+
+            const item = queueVisualization.items[0];
+            item.animating = true;
+            item.action = 'dequeue';
+            item.animationStart = Date.now();
+
+            // 动画结束后移除元素
+            setTimeout(() => {
+                queueVisualization.items.shift();
+            }, 500);
+
+            return item;
+        }
+
+        function clearQueueVisualization() {
+            queueVisualization.items = [];
+        }
+
+        // 预设图例
+        function loadExample(type) {
+            resetVisualization();
+
+            switch(type) {
+                case 'simple':
+                    loadSimpleGraph();
+                    break;
+                case 'tree':
+                    loadTreeGraph();
+                    break;
+                case 'cycle':
+                    loadCycleGraph();
+                    break;
+                case 'complex':
+                    loadComplexGraph();
+                    break;
+            }
+        }
+
+        function loadSimpleGraph() {
+            nodes = [
+                new Node('A', 100, 100),
+                new Node('B', 250, 100),
+                new Node('C', 100, 250),
+                new Node('D', 250, 250)
+            ];
+
+            edges = [
+                new Edge('A', 'B'),
+                new Edge('A', 'C'),
+                new Edge('B', 'D'),
+                new Edge('C', 'D')
+            ];
+
+            buildGraph();
+        }
+
+        function loadTreeGraph() {
+            nodes = [
+                new Node('A', 200, 80),
+                new Node('B', 120, 180),
+                new Node('C', 280, 180),
+                new Node('D', 70, 280),
+                new Node('E', 170, 280),
+                new Node('F', 230, 280),
+                new Node('G', 330, 280)
+            ];
+
+            edges = [
+                new Edge('A', 'B'),
+                new Edge('A', 'C'),
+                new Edge('B', 'D'),
+                new Edge('B', 'E'),
+                new Edge('C', 'F'),
+                new Edge('C', 'G')
+            ];
+
+            buildGraph();
+        }
+
+        function loadCycleGraph() {
+            const centerX = 180;
+            const centerY = 180;
+            const radius = 80;
+            const nodeCount = 6;
+
+            nodes = [];
+            edges = [];
+
+            for (let i = 0; i < nodeCount; i++) {
+                const angle = (i / nodeCount) * Math.PI * 2 - Math.PI / 2;
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+                nodes.push(new Node(String.fromCharCode(65 + i), x, y));
+            }
+
+            for (let i = 0; i < nodeCount; i++) {
+                const from = String.fromCharCode(65 + i);
+                const to = String.fromCharCode(65 + (i + 1) % nodeCount);
+                edges.push(new Edge(from, to));
+            }
+
+            buildGraph();
+        }
+
+        function loadComplexGraph() {
+            nodes = [
+                new Node('A', 100, 100),
+                new Node('B', 250, 80),
+                new Node('C', 400, 100),
+                new Node('D', 150, 200),
+                new Node('E', 300, 180),
+                new Node('F', 350, 280),
+                new Node('G', 200, 300),
+                new Node('H', 450, 250)
+            ];
+
+            edges = [
+                new Edge('A', 'B'),
+                new Edge('A', 'D'),
+                new Edge('B', 'C'),
+                new Edge('B', 'E'),
+                new Edge('C', 'E'),
+                new Edge('C', 'H'),
+                new Edge('D', 'G'),
+                new Edge('E', 'F'),
+                new Edge('F', 'G'),
+                new Edge('F', 'H')
+            ];
+
+            buildGraph();
+        }
+
+        function buildGraph() {
+            graph = {};
+            nodes.forEach(node => {
+                graph[node.id] = [];
+            });
+
+            edges.forEach(edge => {
+                if (graph[edge.from]) {
+                    graph[edge.from].push(edge.to);
+                }
+            });
+
+            // 更新存储结构显示
+            updateStorageStructure();
+        }
+
+        // 存储结构相关函数
+        function showAdjacencyList() {
+            storageView = 'list';
+            document.getElementById('listToggle').classList.add('active');
+            document.getElementById('matrixToggle').classList.remove('active');
+            document.getElementById('adjacencyListView').style.display = 'block';
+            document.getElementById('adjacencyMatrixView').style.display = 'none';
+            updateStorageStructure();
+        }
+
+        function showAdjacencyMatrix() {
+            storageView = 'matrix';
+            document.getElementById('matrixToggle').classList.add('active');
+            document.getElementById('listToggle').classList.remove('active');
+            document.getElementById('adjacencyListView').style.display = 'none';
+            document.getElementById('adjacencyMatrixView').style.display = 'block';
+            updateStorageStructure();
+        }
+
+        function updateStorageStructure() {
+            if (storageView === 'list') {
+                updateAdjacencyList();
+            } else {
+                updateAdjacencyMatrix();
+            }
+        }
+
+        function updateAdjacencyList() {
+            const container = document.getElementById('adjacencyListContent');
+            if (nodes.length === 0) {
+                container.innerHTML = '选择图例后显示邻接表';
+                return;
+            }
+
+            let html = '';
+            const sortedNodes = nodes.map(n => n.id).sort();
+
+            sortedNodes.forEach(nodeId => {
+                const neighbors = graph[nodeId] || [];
+                const isHighlight = bfsState.currentNode === nodeId;
+                const isVisited = bfsState.visited.has(nodeId);
+
+                let listItemClass = 'list-item';
+                if (isHighlight) listItemClass += ' highlight';
+                else if (isVisited) listItemClass += ' visited';
+
+                html += `<div class="${listItemClass}">`;
+                html += `<span class="node-label">${nodeId}</span> → `;
+
+                if (neighbors.length === 0) {
+                    html += `<span class="neighbors">[ ]</span>`;
+                } else {
+                    html += `<span class="neighbors">[ `;
+                    neighbors.forEach((neighbor, index) => {
+                        let neighborClass = 'neighbor-node';
+                        if (bfsState.queue.includes(neighbor) && isHighlight) {
+                            neighborClass += ' queued';
+                        } else if (bfsState.visited.has(neighbor)) {
+                            neighborClass += ' visited';
+                        }
+
+                        html += `<span class="${neighborClass}">${neighbor}</span>`;
+                        if (index < neighbors.length - 1) html += ', ';
+                    });
+                    html += ` ]</span>`;
+                }
+                html += '</div>';
+            });
+
+            container.innerHTML = html;
+        }
+
+        function updateAdjacencyMatrix() {
+            const container = document.getElementById('adjacencyMatrixContent');
+            if (nodes.length === 0) {
+                container.innerHTML = '选择图例后显示邻接矩阵';
+                return;
+            }
+
+            const sortedNodes = nodes.map(n => n.id).sort();
+            const size = sortedNodes.length;
+
+            // 构建邻接矩阵
+            const matrix = {};
+            sortedNodes.forEach(from => {
+                matrix[from] = {};
+                sortedNodes.forEach(to => {
+                    matrix[from][to] = 0;
+                });
+            });
+
+            edges.forEach(edge => {
+                if (matrix[edge.from] && matrix[edge.from][edge.to] !== undefined) {
+                    matrix[edge.from][edge.to] = 1;
+                }
+            });
+
+            // 生成HTML表格
+            let html = '<table class="matrix-table">';
+
+            // 表头
+            html += '<tr><th></th>';
+            sortedNodes.forEach(nodeId => {
+                html += `<th>${nodeId}</th>`;
+            });
+            html += '</tr>';
+
+            // 表格内容
+            sortedNodes.forEach(fromNode => {
+                html += `<tr><th>${fromNode}</th>`;
+                sortedNodes.forEach(toNode => {
+                    const value = matrix[fromNode][toNode];
+                    let cellClass = '';
+
+                    if (bfsState.currentNode === fromNode) {
+                        cellClass = 'highlight';
+                    } else if (bfsState.visited.has(fromNode)) {
+                        cellClass = 'visited';
+                    }
+
+                    html += `<td class="${cellClass}">${value}</td>`;
+                });
+                html += '</tr>';
+            });
+            html += '</table>';
+
+            container.innerHTML = html;
+        }
+
+        function updateCurrentOperation(operation) {
+            document.getElementById('currentOperation').innerHTML = operation;
+        }
+
+        // 代码语言切换功能
+        function changeCodeLanguage(language) {
+            currentLanguage = language;
+
+            // 更新按钮状态
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.lang === language) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // 更新代码显示
+            updateCodeDisplay();
+        }
+
+        function updateCodeDisplay() {
+            const codeDisplay = document.getElementById('codeDisplay');
+            codeDisplay.innerHTML = bfsCodeImplementations[currentLanguage];
+        }
+
+        // 复制代码功能
+        async function copyCode() {
+            const copyBtn = document.getElementById('copyBtn');
+            const codeText = bfsCodePlainText[currentLanguage];
+
+            try {
+                await navigator.clipboard.writeText(codeText);
+
+                // 更新按钮状态
+                copyBtn.textContent = '✅ 已复制';
+                copyBtn.classList.add('copied');
+
+                // 2秒后恢复原状
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 复制';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+
+            } catch (err) {
+                // 如果clipboard API不可用，使用传统方法
+                fallbackCopyTextToClipboard(codeText);
+                copyBtn.textContent = '✅ 已复制';
+                copyBtn.classList.add('copied');
+
+                setTimeout(() => {
+                    copyBtn.textContent = '📋 复制';
+                    copyBtn.classList.remove('copied');
+                }, 2000);
+            }
+        }
+
+        // 备用复制方法
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+
+            // 避免滚动到底部
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                console.error('无法复制代码', err);
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        // 使用说明模态框控制
+        function showInstructions() {
+            document.getElementById('instructionModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止背景滚动
+        }
+
+        function hideInstructions() {
+            document.getElementById('instructionModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // 恢复滚动
+        }
+
+        // 点击模态框外部关闭
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('instructionModal');
+            if (e.target === modal) {
+                hideInstructions();
+            }
+        });
+
+        // 按ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideInstructions();
+            }
+        });
+
+        // BFS算法实现
+        async function startBFS() {
+            if (!selectedNode) {
+                updateStatus('请先点击选择起始节点！', 'ready');
+                return;
+            }
+
+            isRunning = true;
+            isPaused = false;
+            updateControls();
+            updateStatus('BFS 执行中...', 'running');
+
+            // 初始化状态
+            bfsState = {
+                visited: new Set(),
+                queue: [selectedNode.id],
+                currentNode: null,
+                visitOrder: [],
+                step: 0
+            };
+
+            selectedNode.state = 'start';
+
+            // 初始化队列可视化
+            clearQueueVisualization();
+            enqueueToVisualization(selectedNode.id);
+
+            updateQueueDisplay();
+            updateCurrentOperation(`
+                <div style="padding: 15px; background: rgba(52, 152, 219, 0.3); border-radius: 10px; border-left: 5px solid #3498db;">
+                    <h4 style="color: #3498db; margin: 0 0 10px 0;">🚀 BFS算法开始！</h4>
+                    <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
+                        <strong>起始节点：</strong><span style="color: #f39c12; font-size: 1.1em;">${selectedNode.id}</span>
+                    </div>
+                    <p style="margin: 0; font-size: 0.9em;">📥 <strong>初始化：</strong>将起始节点加入队列</p>
+                    <p style="margin: 5px 0 0 0; font-size: 0.8em; opacity: 0.9;">💡 BFS使用队列确保按距离层次访问节点</p>
+                </div>
+            `);
+            updateStorageStructure();
+
+            await sleep(500); // 给一点时间显示初始状态
+
+            // 执行BFS
+            await executeBFS();
+        }
+
+        async function executeBFS() {
+            while (bfsState.queue.length > 0 && isRunning) {
+                if (isPaused) {
+                    await new Promise(resolve => {
+                        const checkPause = () => {
+                            if (!isPaused || !isRunning) {
+                                resolve();
+                            } else {
+                                setTimeout(checkPause, 100);
+                            }
+                        };
+                        checkPause();
+                    });
+                }
+
+                if (!isRunning) break;
+
+                await stepBFSInternal();
+                await sleep(animationSpeed);
+            }
+
+            if (isRunning) {
+                updateStatus('BFS 完成！', 'completed');
+                updateCurrentOperation(`
+                    <div style="padding: 15px; background: rgba(39, 174, 96, 0.3); border-radius: 10px; border-left: 5px solid #27ae60;">
+                        <h4 style="color: #27ae60; margin: 0 0 10px 0;">🎉 BFS遍历完成！</h4>
+                        <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
+                            <strong>访问顺序：</strong><span style="color: #f39c12;">[${bfsState.visitOrder.join(' → ')}]</span>
+                        </div>
+                        <p style="margin: 0; font-size: 0.9em;">✅ 所有可达节点都已按层次顺序访问完毕</p>
+                        <p style="margin: 5px 0 0 0; font-size: 0.8em; opacity: 0.9;">📊 总共访问了 ${bfsState.visitOrder.length} 个节点</p>
+                    </div>
+                `);
+                isRunning = false;
+                updateControls();
+            }
+        }
+
+        async function stepBFSInternal() {
+            if (bfsState.queue.length === 0) return false;
+
+            const nodeId = bfsState.queue.shift(); // 出队（从队头取）
+            const node = nodes.find(n => n.id === nodeId);
+
+            // 队列可视化出队动画
+            dequeueFromVisualization();
+
+            updateCurrentOperation(`
+                <div style="padding: 10px; background: rgba(52, 152, 219, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                    <h4 style="color: #3498db; margin: 0 0 8px 0;">🔍 第${bfsState.step + 1}步：出队操作</h4>
+                    <p style="margin: 0; font-size: 0.9em;">从队列<strong>队头</strong>取出节点 <strong style="color: #f39c12;">${nodeId}</strong></p>
+                    <p style="margin: 0; font-size: 0.8em; opacity: 0.8;">💡 BFS使用队列：先进先出，保证按距离层次访问</p>
+                </div>
+            `);
+            updateStorageStructure();
+
+            await sleep(animationSpeed / 2);
+
+            if (!bfsState.visited.has(nodeId)) {
+                updateCurrentOperation(`
+                    <div style="padding: 10px; background: rgba(46, 204, 113, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                        <h4 style="color: #2ecc71; margin: 0 0 8px 0;">✅ 访问新节点</h4>
+                        <p style="margin: 0; font-size: 0.9em;">正在访问节点 <strong style="color: #f39c12;">${nodeId}</strong>（第${bfsState.visitOrder.length + 1}个访问的节点）</p>
+                        <p style="margin: 0; font-size: 0.8em; opacity: 0.8;">📝 将节点标记为已访问，加入访问序列</p>
+                    </div>
+                `);
+
+                // 访问节点
+                bfsState.visited.add(nodeId);
+                bfsState.visitOrder.push(nodeId);
+                bfsState.currentNode = nodeId;
+
+                if (node.state !== 'start') {
+                    node.state = 'visiting';
+                }
+                node.visitOrder = bfsState.visitOrder.length - 1;
+
+                // 更新显示
+                updateQueueDisplay();
+                updateVisitedList();
+                updateStorageStructure();
+
+                await sleep(animationSpeed / 2);
+
+                // 添加邻居到队列中
+                const neighbors = graph[nodeId] || [];
+                if (neighbors.length > 0) {
+                    updateCurrentOperation(`
+                        <div style="padding: 10px; background: rgba(155, 89, 182, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                            <h4 style="color: #9b59b6; margin: 0 0 8px 0;">🔍 查找邻居节点</h4>
+                            <p style="margin: 0; font-size: 0.9em;">节点 <strong>${nodeId}</strong> 的邻居有：<strong style="color: #e67e22;">[${neighbors.join(', ')}]</strong></p>
+                            <p style="margin: 0; font-size: 0.8em; opacity: 0.8;">🎯 准备将未访问的邻居加入队列</p>
+                        </div>
+                    `);
+                } else {
+                    updateCurrentOperation(`
+                        <div style="padding: 10px; background: rgba(149, 165, 166, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                            <h4 style="color: #95a5a6; margin: 0 0 8px 0;">📭 没有邻居</h4>
+                            <p style="margin: 0; font-size: 0.9em;">节点 <strong>${nodeId}</strong> 没有连接的邻居节点</p>
+                            <p style="margin: 0; font-size: 0.8em; opacity: 0.8;">⏭️ 继续处理队列中的下一个节点</p>
+                        </div>
+                    `);
+                }
+
+                await sleep(animationSpeed / 3);
+
+                const unvisitedNeighbors = [];
+                const alreadyInQueue = [];
+                const alreadyVisited = [];
+
+                for (let neighbor of neighbors) {
+                    if (bfsState.visited.has(neighbor)) {
+                        alreadyVisited.push(neighbor);
+                    } else if (bfsState.queue.includes(neighbor)) {
+                        alreadyInQueue.push(neighbor);
+                    } else {
+                        unvisitedNeighbors.push(neighbor);
+                        bfsState.queue.push(neighbor); // 入队（从队尾加）
+
+                        // 队列可视化入队动画
+                        enqueueToVisualization(neighbor);
+
+                        // 高亮边
+                        const edge = edges.find(e => e.from === nodeId && e.to === neighbor);
+                        if (edge) {
+                            edge.isActive = true;
+                            setTimeout(() => {
+                                edge.isActive = false;
+                            }, animationSpeed);
+                        }
+
+                        await sleep(animationSpeed / 4);
+                    }
+                }
+
+                // 详细说明邻居处理结果
+                let neighborSummary = `
+                    <div style="padding: 10px; background: rgba(52, 73, 94, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                        <h4 style="color: #34495e; margin: 0 0 8px 0;">📊 邻居处理结果</h4>
+                `;
+
+                if (unvisitedNeighbors.length > 0) {
+                    neighborSummary += `<p style="margin: 0; font-size: 0.9em;">🆕 新加入队列：<strong style="color: #2ecc71;">[${unvisitedNeighbors.join(', ')}]</strong></p>`;
+                }
+                if (alreadyVisited.length > 0) {
+                    neighborSummary += `<p style="margin: 0; font-size: 0.9em;">✅ 已访问过：<strong style="color: #95a5a6;">[${alreadyVisited.join(', ')}]</strong></p>`;
+                }
+                if (alreadyInQueue.length > 0) {
+                    neighborSummary += `<p style="margin: 0; font-size: 0.9em;">⏳ 已在队列中：<strong style="color: #f39c12;">[${alreadyInQueue.join(', ')}]</strong></p>`;
+                }
+
+                neighborSummary += `<p style="margin: 5px 0 0 0; font-size: 0.8em; opacity: 0.8;">💡 BFS只将未访问且不在队列中的邻居加入队列</p>`;
+                neighborSummary += `</div>`;
+
+                updateCurrentOperation(neighborSummary);
+
+                await sleep(animationSpeed / 2);
+
+                if (node.state !== 'start') {
+                    node.state = 'visited';
+                }
+
+                updateCurrentOperation(`
+                    <div style="padding: 10px; background: rgba(39, 174, 96, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                        <h4 style="color: #27ae60; margin: 0 0 8px 0;">✨ 节点处理完成</h4>
+                        <p style="margin: 0; font-size: 0.9em;">节点 <strong>${nodeId}</strong> 处理完毕，标记为已访问</p>
+                        <p style="margin: 0; font-size: 0.8em; opacity: 0.8;">📈 当前队列长度：${bfsState.queue.length}，已访问节点：${bfsState.visited.size}</p>
+                    </div>
+                `);
+
+                bfsState.step++;
+            } else {
+                updateCurrentOperation(`
+                    <div style="padding: 10px; background: rgba(230, 126, 34, 0.2); border-radius: 8px; margin-bottom: 10px;">
+                        <h4 style="color: #e67e22; margin: 0 0 8px 0;">⚠️ 节点已访问</h4>
+                        <p style="margin: 0; font-size: 0.9em;">节点 <strong>${nodeId}</strong> 之前已经访问过了</p>
+                        <p style="margin: 0; font-size: 0.8em; opacity: 0.8;">⏭️ 跳过此节点，继续处理队列中的下一个</p>
+                    </div>
+                `);
+            }
+
+            updateQueueDisplay();
+            updateStorageStructure();
+            return true;
+        }
+
+        function stepBFS() {
+            if (isRunning && !isPaused) return;
+
+            if (!selectedNode) {
+                updateStatus('请先选择起始节点！', 'ready');
+                return;
+            }
+
+            if (bfsState.queue.length === 0 && bfsState.visitOrder.length === 0) {
+                // 初始化
+                bfsState = {
+                    visited: new Set(),
+                    queue: [selectedNode.id],
+                    currentNode: null,
+                    visitOrder: [],
+                    step: 0
+                };
+                selectedNode.state = 'start';
+
+                // 初始化队列可视化
+                clearQueueVisualization();
+                enqueueToVisualization(selectedNode.id);
+
+                updateQueueDisplay();
+                updateCurrentOperation(`
+                    <div style="padding: 15px; background: rgba(155, 89, 182, 0.3); border-radius: 10px; border-left: 5px solid #9b59b6;">
+                        <h4 style="color: #9b59b6; margin: 0 0 10px 0;">👆 单步模式启动</h4>
+                        <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
+                            <strong>起始节点：</strong><span style="color: #f39c12; font-size: 1.1em;">${selectedNode.id}</span>
+                        </div>
+                        <p style="margin: 0; font-size: 0.9em;">📥 <strong>准备：</strong>起始节点已加入队列</p>
+                        <p style="margin: 5px 0 0 0; font-size: 0.8em; opacity: 0.9;">🎮 点击"单步执行"查看每一步的详细过程</p>
+                    </div>
+                `);
+                updateStorageStructure();
+                updateStatus('单步模式 - 按下"单步执行"继续', 'running');
+            } else {
+                stepBFSInternal();
+                if (bfsState.queue.length === 0) {
+                    updateStatus('BFS 完成！', 'completed');
+                    updateCurrentOperation(`
+                        <div style="padding: 15px; background: rgba(39, 174, 96, 0.3); border-radius: 10px; border-left: 5px solid #27ae60;">
+                            <h4 style="color: #27ae60; margin: 0 0 10px 0;">🎉 单步模式 - BFS完成！</h4>
+                            <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 5px; margin-bottom: 8px;">
+                                <strong>最终访问顺序：</strong><span style="color: #f39c12;">[${bfsState.visitOrder.join(' → ')}]</span>
+                            </div>
+                            <p style="margin: 0; font-size: 0.9em;">✅ 队列为空，所有可达节点都已访问</p>
+                            <p style="margin: 5px 0 0 0; font-size: 0.8em; opacity: 0.9;">🔄 点击"重置"开始新的演示</p>
+                        </div>
+                    `);
+                }
+            }
+        }
+
+        function togglePause() {
+            isPaused = !isPaused;
+            document.getElementById('pauseBtn').textContent = isPaused ? '继续' : '暂停';
+
+            if (!isPaused && isRunning) {
+                executeBFS();
+            }
+        }
+
+        function resetVisualization() {
+            isRunning = false;
+            isPaused = false;
+            selectedNode = null;
+
+            // 重置所有节点状态
+            nodes.forEach(node => {
+                node.state = 'unvisited';
+                node.visitOrder = -1;
+            });
+
+            // 重置所有边状态
+            edges.forEach(edge => {
+                edge.isActive = false;
+            });
+
+            // 重置BFS状态
+            bfsState = {
+                visited: new Set(),
+                queue: [],
+                currentNode: null,
+                visitOrder: [],
+                step: 0
+            };
+
+            // 清空队列可视化
+            clearQueueVisualization();
+
+            updateControls();
+            updateQueueDisplay();
+            updateVisitedList();
+            updateStorageStructure();
+            updateCurrentOperation('等待开始BFS...');
+            updateStatus('准备开始 - 选择起始节点', 'ready');
+        }
+
+        // UI更新函数
+        function updateControls() {
+            document.getElementById('startBtn').disabled = isRunning || !selectedNode;
+            document.getElementById('pauseBtn').disabled = !isRunning;
+            document.getElementById('stepBtn').disabled = isRunning && !isPaused;
+            document.getElementById('pauseBtn').textContent = isPaused ? '继续' : '暂停';
+        }
+
+        function updateStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status-indicator status-${type}`;
+        }
+
+        function updateQueueDisplay() {
+            const queueEl = document.getElementById('queueDisplay');
+            if (bfsState.queue.length === 0) {
+                queueEl.innerHTML = '队列为空';
+            } else {
+                queueEl.innerHTML = bfsState.queue
+                    .map((nodeId, index) => {
+                        if (index === 0) {
+                            return `<span class="queue-item" style="border: 2px solid #f39c12;">${nodeId} (队头)</span>`;
+                        } else if (index === bfsState.queue.length - 1) {
+                            return `<span class="queue-item" style="border: 2px solid #9b59b6;">${nodeId} (队尾)</span>`;
+                        } else {
+                            return `<span class="queue-item">${nodeId}</span>`;
+                        }
+                    })
+                    .join('');
+            }
+        }
+
+        function updateVisitedList() {
+            const visitedEl = document.getElementById('visitedList');
+            if (bfsState.visitOrder.length === 0) {
+                visitedEl.innerHTML = '尚未开始';
+            } else {
+                visitedEl.innerHTML = bfsState.visitOrder
+                    .map((nodeId, index) => `<span class="visited-node">${index + 1}. ${nodeId}</span>`)
+                    .join('');
+            }
+        }
+
+        // 工具函数
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 事件监听
+        canvas.addEventListener('click', (e) => {
+            if (isRunning) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // 检查是否点击了节点
+            const clickedNode = nodes.find(node => node.contains(x, y));
+
+            if (clickedNode) {
+                // 重置之前选择的节点
+                if (selectedNode) {
+                    selectedNode.state = 'unvisited';
+                }
+
+                selectedNode = clickedNode;
+                selectedNode.state = 'start';
+                updateStatus(`已选择起始节点: ${selectedNode.id}`, 'ready');
+                updateControls();
+            }
+        });
+
+        // 速度控制
+        document.getElementById('speedSlider').addEventListener('input', (e) => {
+            const speed = parseInt(e.target.value);
+            animationSpeed = 2000 - (speed - 1) * 180; // 200ms to 1800ms
+            document.getElementById('speedValue').textContent = speed;
+        });
+
+        // 初始化
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            loadExample('simple');
+            updateCodeDisplay(); // 初始化代码显示
+            draw();
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+    </script>
+</body>
+</html>

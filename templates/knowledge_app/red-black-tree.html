@@ -1,0 +1,2443 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ page_title|default:"红黑树" }} - 计算机科学学习平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .breadcrumb {
+        color: white;
+        margin-bottom: 20px;
+        opacity: 0.9;
+    }
+
+    .breadcrumb a {
+        color: white;
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .knowledge-header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: white;
+        text-align: center;
+        position: relative;
+        z-index: 2;
+    }
+
+    .knowledge-header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .knowledge-header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        line-height: 1.6;
+    }
+
+    .main-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        padding: 40px;
+        margin-bottom: 30px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .section h2 {
+        color: #333;
+        font-size: 2rem;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 3px solid #667eea;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section h3 {
+        color: #555;
+        font-size: 1.5rem;
+        margin: 30px 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .section h4 {
+        color: #666;
+        font-size: 1.2rem;
+        margin: 20px 0 15px 0;
+    }
+
+    .theory-content {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: #444;
+        margin: 20px 0;
+    }
+
+    .theory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin: 25px 0;
+    }
+
+    .theory-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 25px;
+        border-radius: 12px;
+        border-left: 5px solid #667eea;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .theory-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .theory-card h4 {
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+        font-weight: 700;
+    }
+
+    .theory-card p {
+        color: #666;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .theory-card ul {
+        margin: 10px 0;
+        padding-left: 20px;
+    }
+
+    .theory-card li {
+        color: #666;
+        margin: 8px 0;
+        line-height: 1.5;
+    }
+
+    .properties-list {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin: 20px 0;
+        border-left: 5px solid #28a745;
+    }
+
+    .properties-list h4 {
+        color: #155724;
+        margin-bottom: 15px;
+    }
+
+    .properties-list ol {
+        padding-left: 20px;
+    }
+
+    .properties-list li {
+        margin: 12px 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #155724;
+    }
+
+    .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .comparison-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .comparison-table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .comparison-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .visualization-container {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin: 25px 0;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: center;
+        margin-bottom: 25px;
+        padding: 25px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .step-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-left: 4px solid #667eea;
+    }
+
+    .step-controls h4 {
+        margin: 0 20px 0 0;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .step-btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .step-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .step-btn-play {
+        background: #28a745;
+        color: white;
+    }
+
+    .step-btn-play:hover:not(:disabled) {
+        background: #218838;
+    }
+
+    .step-btn-pause {
+        background: #ffc107;
+        color: #333;
+    }
+
+    .step-btn-pause:hover:not(:disabled) {
+        background: #e0a800;
+    }
+
+    .step-btn-nav {
+        background: #6c757d;
+        color: white;
+    }
+
+    .step-btn-nav:hover:not(:disabled) {
+        background: #5a6268;
+    }
+
+    .step-btn-reset {
+        background: #dc3545;
+        color: white;
+    }
+
+    .step-btn-reset:hover:not(:disabled) {
+        background: #c82333;
+    }
+
+    .speed-control {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: auto;
+    }
+
+    .speed-control label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .speed-control select {
+        padding: 5px 10px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .step-info {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border-left: 4px solid #17a2b8;
+    }
+
+    .step-info h4 {
+        color: #17a2b8;
+        margin: 0 0 15px 0;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .step-current {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .step-current h4 {
+        margin: 0 0 10px 0;
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .step-current p {
+        margin: 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+    }
+
+    .step-list {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+
+    .step-item {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        transition: background 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+    }
+
+    .step-item:last-child {
+        border-bottom: none;
+    }
+
+    .step-item.active {
+        background: #e3f2fd;
+        font-weight: 600;
+        color: #1976d2;
+    }
+
+    .step-item.completed {
+        background: #e8f5e8;
+        color: #2e7d32;
+    }
+
+    .step-number {
+        background: #6c757d;
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .step-item.active .step-number {
+        background: #1976d2;
+    }
+
+    .step-item.completed .step-number {
+        background: #2e7d32;
+    }
+
+    .step-description {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .operation-type {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-right: 8px;
+    }
+
+    .op-insert {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .op-delete {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .op-rotate {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .op-color {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .control-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .control-group label {
+        font-weight: 600;
+        color: #333;
+        min-width: 60px;
+    }
+
+    .control-group input {
+        padding: 10px 15px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        width: 80px;
+        transition: border-color 0.3s ease;
+    }
+
+    .control-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+        transform: translateY(-2px);
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+    }
+
+    .canvas-container {
+        text-align: center;
+        margin: 25px 0;
+    }
+
+    #redBlackTreeCanvas {
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        background: white;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .info-panel {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+    }
+
+    .info-value {
+        color: #667eea;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .code-tabs {
+        display: flex;
+        background: #2d3748;
+        border-radius: 12px 12px 0 0;
+        overflow: hidden;
+        margin-top: 25px;
+    }
+
+    .code-tab {
+        padding: 15px 25px;
+        background: #4a5568;
+        color: #cbd5e0;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        font-size: 14px;
+    }
+
+    .code-tab.active {
+        background: #2d3748;
+        color: #90cdf4;
+    }
+
+    .code-tab:hover {
+        background: #2d3748;
+    }
+
+    .code-section {
+        background: #2d3748;
+        color: #e2e8f0;
+        padding: 0;
+        border-radius: 0 0 12px 12px;
+        margin: 0;
+        overflow: hidden;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+    }
+
+    .code-content {
+        display: none;
+        position: relative;
+    }
+
+    .code-content.active {
+        display: block;
+    }
+
+    .code-header {
+        background: #1a202c;
+        padding: 15px 25px;
+        border-bottom: 1px solid #4a5568;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .code-title {
+        color: #90cdf4;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .copy-btn {
+        background: #48bb78;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .copy-btn:hover {
+        background: #38a169;
+        transform: translateY(-1px);
+    }
+
+    .copy-btn.copied {
+        background: #667eea;
+    }
+
+    .code-body {
+        padding: 25px;
+        overflow-x: auto;
+    }
+
+    .code-body pre {
+        margin: 0;
+        line-height: 1.6;
+        font-size: 14px;
+        font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    }
+
+    .code-body code {
+        color: #e2e8f0;
+    }
+
+    .keyword { color: #f56565; }
+    .string { color: #68d391; }
+    .comment { color: #a0aec0; font-style: italic; }
+    .number { color: #fbb6ce; }
+    .type { color: #90cdf4; }
+    .function { color: #faf089; }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+        justify-content: center;
+        margin: 25px 0;
+        padding: 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .legend-color {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 3px solid #333;
+    }
+
+    .red-node { background-color: #ff4757; }
+    .black-node { background-color: #2f3542; }
+
+    .action-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+    }
+
+    .btn-home {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+
+    .btn-home:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-explore {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 15px 30px;
+        font-size: 1.1rem;
+    }
+
+    .btn-explore:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .applications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 25px 0;
+    }
+
+    .application-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        text-align: center;
+        transition: transform 0.3s ease;
+    }
+
+    .application-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .application-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+
+    .application-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .application-desc {
+        font-size: 1rem;
+        opacity: 0.9;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+        .knowledge-header h1 {
+            font-size: 2rem;
+        }
+
+        .main-card {
+            padding: 25px;
+        }
+
+        .controls {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .control-group {
+            justify-content: space-between;
+        }
+
+        #redBlackTreeCanvas {
+            width: 100%;
+            height: auto;
+        }
+
+        .action-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .code-tabs {
+            flex-direction: column;
+        }
+
+        .theory-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .applications-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a> >
+        <span>{{ breadcrumb_category|default:"数据结构" }}</span> >
+        <span>{{ page_title|default:"红黑树" }}</span>
+    </div>
+
+    <!-- 知识点头部 -->
+    <div class="knowledge-header">
+        <h1>
+            <span>{{ page_icon|default:"🌳" }}</span>
+            {{ page_title|default:"红黑树 (Red-Black Tree)" }}
+        </h1>
+        <p>{{ page_description|default:"自平衡二叉搜索树 - 高效稳定的数据结构，广泛应用于现代编程语言和系统中" }}</p>
+    </div>
+
+    <!-- 主要内容卡片 -->
+    <div class="main-card">
+        <!-- 概述部分 -->
+        <div class="section">
+            <h2>📚 什么是{{ page_title|default:"红黑树" }}</h2>
+            <div class="theory-content">
+                <p>{{ content_overview|default:"红黑树是一种自平衡的二叉搜索树，它在1972年由Rudolf Bayer发明，原名为'对称二叉B树'，后来在1978年被Leo J. Guibas和Robert Sedgewick改进并重新命名为红黑树。红黑树通过为每个节点添加一个颜色属性（红色或黑色），并遵循特定的着色规则来保证树的近似平衡。" }}</p>
+
+                <p>与AVL树相比，红黑树的平衡条件较为宽松，这使得它在插入和删除操作时需要的旋转次数更少，从而在实际应用中往往具有更好的性能表现。红黑树保证了从根到叶子的最长路径不会超过最短路径的2倍，这确保了良好的查找性能。</p>
+            </div>
+        </div>
+
+        <!-- 红黑树性质 -->
+        <div class="section">
+            <h2>🔍 红黑树的五大性质</h2>
+            <div class="properties-list">
+                <h4>红黑树必须满足以下五个性质：</h4>
+                <ol>
+                    <li><strong>节点颜色性质</strong>：每个节点要么是红色，要么是黑色</li>
+                    <li><strong>根节点性质</strong>：根节点必须是黑色</li>
+                    <li><strong>叶子节点性质</strong>：所有叶子节点（NIL节点）都是黑色</li>
+                    <li><strong>红色节点性质</strong>：红色节点的两个子节点都必须是黑色（不能有连续的红色节点）</li>
+                    <li><strong>黑高度性质</strong>：从任意节点到其所有叶子节点的简单路径上，均包含相同数目的黑色节点</li>
+                </ol>
+            </div>
+
+            <div class="theory-content">
+                <p>这些性质确保了红黑树的关键特征：<strong>从根到叶子的最长路径不会超过最短路径的2倍</strong>。这是因为最短路径可能全由黑色节点组成，而最长路径是红色和黑色节点交替出现的路径。</p>
+            </div>
+        </div>
+
+        <!-- 核心原理 -->
+        <div class="section">
+            <h2>⚙️ 工作原理与机制</h2>
+
+            <h3>🔄 平衡维护机制</h3>
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <h4>🔄 旋转操作</h4>
+                    <p><strong>左旋转</strong>：当右子树过高时使用</p>
+                    <ul>
+                        <li>将当前节点的右子节点提升为新的根</li>
+                        <li>原根节点成为新根的左子节点</li>
+                        <li>调整指针关系，维护BST性质</li>
+                    </ul>
+                    <p><strong>右旋转</strong>：当左子树过高时使用，操作与左旋转对称</p>
+                </div>
+
+                <div class="theory-card">
+                    <h4>🎨 重新着色</h4>
+                    <p>通过改变节点颜色来修复红黑树性质违反：</p>
+                    <ul>
+                        <li>红色节点变黑色</li>
+                        <li>黑色节点变红色</li>
+                        <li>通常与旋转操作配合使用</li>
+                        <li>比旋转操作开销更小</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>➕ 插入策略</h4>
+                    <p>新节点总是插入为红色，然后修复可能的违反：</p>
+                    <ul>
+                        <li>情况1：父节点是黑色 → 无需修复</li>
+                        <li>情况2：叔节点是红色 → 重新着色</li>
+                        <li>情况3：叔节点是黑色 → 旋转+着色</li>
+                    </ul>
+                </div>
+
+                <div class="theory-card">
+                    <h4>➖ 删除策略</h4>
+                    <p>删除操作最复杂，可能涉及多种情况：</p>
+                    <ul>
+                        <li>删除红色节点：直接删除</li>
+                        <li>删除黑色节点：需要修复黑高度</li>
+                        <li>使用替换节点和修复算法</li>
+                        <li>可能需要多次旋转和着色</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 性能分析 -->
+        <div class="section">
+            <h2>📊 性能分析与比较</h2>
+
+            <h3>⏱️ 时间复杂度</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>操作</th>
+                        <th>平均情况</th>
+                        <th>最坏情况</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>查找 (Search)</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>树高度保证为O(log n)</td>
+                    </tr>
+                    <tr>
+                        <td>插入 (Insert)</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>包含查找位置和平衡调整</td>
+                    </tr>
+                    <tr>
+                        <td>删除 (Delete)</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>最复杂操作，但时间仍有保证</td>
+                    </tr>
+                    <tr>
+                        <td>遍历 (Traversal)</td>
+                        <td>O(n)</td>
+                        <td>O(n)</td>
+                        <td>访问所有节点</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>🆚 与其他数据结构比较</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>数据结构</th>
+                        <th>查找</th>
+                        <th>插入</th>
+                        <th>删除</th>
+                        <th>平衡保证</th>
+                        <th>实现复杂度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>红黑树</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>高度 ≤ 2×log(n+1)</td>
+                        <td>中等</td>
+                    </tr>
+                    <tr>
+                        <td>AVL树</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>O(log n)</td>
+                        <td>高度 ≤ 1.44×log(n+2)</td>
+                        <td>较高</td>
+                    </tr>
+                    <tr>
+                        <td>普通BST</td>
+                        <td>O(n)</td>
+                        <td>O(n)</td>
+                        <td>O(n)</td>
+                        <td>无保证</td>
+                        <td>简单</td>
+                    </tr>
+                    <tr>
+                        <td>哈希表</td>
+                        <td>O(1)</td>
+                        <td>O(1)</td>
+                        <td>O(1)</td>
+                        <td>不适用</td>
+                        <td>中等</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 应用场景 -->
+        <div class="section">
+            <h2>🚀 实际应用场景</h2>
+
+            <div class="applications-grid">
+                {% if applications %}
+                    {% for app in applications %}
+                    <div class="application-card">
+                        <div class="application-icon">{{ app.icon|default:"💼" }}</div>
+                        <div class="application-title">{{ app.title }}</div>
+                        <div class="application-desc">{{ app.description }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="application-card">
+                    <div class="application-icon">☕</div>
+                    <div class="application-title">Java集合框架</div>
+                    <div class="application-desc">TreeMap、TreeSet等有序集合的底层实现</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="application-icon">🔷</div>
+                    <div class="application-title">C++ STL</div>
+                    <div class="application-desc">map、set、multimap、multiset的标准实现</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="application-icon">🐧</div>
+                    <div class="application-title">Linux内核</div>
+                    <div class="application-desc">进程调度器CFS中的运行队列管理</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="application-icon">🗄️</div>
+                    <div class="application-title">数据库系统</div>
+                    <div class="application-desc">B+树索引的变种，内存数据库索引</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="application-icon">⏰</div>
+                    <div class="application-title">任务调度</div>
+                    <div class="application-desc">操作系统中的定时器和事件调度</div>
+                </div>
+
+                <div class="application-card">
+                    <div class="application-icon">💾</div>
+                    <div class="application-title">缓存系统</div>
+                    <div class="application-desc">LRU缓存的高效实现</div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="theory-content">
+                <h4>🎯 为什么选择红黑树？</h4>
+                <ul>
+                    <li><strong>平衡性保证</strong>：确保最坏情况下的性能仍然是O(log n)</li>
+                    <li><strong>插入删除效率</strong>：相比AVL树需要更少的旋转操作</li>
+                    <li><strong>实现相对简单</strong>：相比其他自平衡树结构更容易实现和维护</li>
+                    <li><strong>内存效率</strong>：只需要一个额外的颜色位，空间开销小</li>
+                    <li><strong>工业级稳定性</strong>：经过大量实际项目验证的成熟算法</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 可视化部分 -->
+        <div class="section">
+            <h2>🎯 交互式演示</h2>
+            <div class="visualization-container">
+                <div class="controls">
+                    <div class="control-group">
+                        <label for="insertValue">插入值:</label>
+                        <input type="number" id="insertValue" value="50" min="1" max="99">
+                        <button class="btn btn-primary" onclick="startInsertDemo()">演示插入</button>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="deleteValue">删除值:</label>
+                        <input type="number" id="deleteValue" value="50" min="1" max="99">
+                        <button class="btn btn-secondary" onclick="startDeleteDemo()">演示删除</button>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="searchValue">查找值:</label>
+                        <input type="number" id="searchValue" value="50" min="1" max="99">
+                        <button class="btn btn-primary" onclick="searchNode()">查找</button>
+                    </div>
+
+                    <button class="btn btn-danger" onclick="clearTree()">清空</button>
+                    <button class="btn btn-secondary" onclick="generateRandomTree()">随机生成</button>
+                </div>
+
+                <!-- 步骤控制面板 -->
+                <div class="step-controls" id="stepControls" style="display: none;">
+                    <h4>🎬 演示控制</h4>
+                    <button class="step-btn step-btn-nav" onclick="previousStep()" id="prevBtn">
+                        ⮮️ 上一步
+                    </button>
+                    <button class="step-btn step-btn-play" onclick="playSteps()" id="playBtn">
+                        ▶️ 播放
+                    </button>
+                    <button class="step-btn step-btn-pause" onclick="pauseSteps()" id="pauseBtn" style="display: none;">
+                        ⏸️ 暂停
+                    </button>
+                    <button class="step-btn step-btn-nav" onclick="nextStep()" id="nextBtn">
+                        ⭐️ 下一步
+                    </button>
+                    <button class="step-btn step-btn-reset" onclick="resetDemo()" id="resetBtn">
+                        🔄 重置
+                    </button>
+
+                    <div class="speed-control">
+                        <label for="speedSelect">演示速度:</label>
+                        <select id="speedSelect" onchange="changeSpeed()">
+                            <option value="2000">慢速 (2s)</option>
+                            <option value="1000" selected>正常 (1s)</option>
+                            <option value="500">快速 (0.5s)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 当前步骤说明 -->
+                <div class="step-current" id="currentStep" style="display: none;">
+                    <h4 id="stepTitle">步骤说明</h4>
+                    <p id="stepDescription">准备开始演示...</p>
+                </div>
+
+                <!-- 步骤列表 -->
+                <div class="step-info" id="stepInfo" style="display: none;">
+                    <h4>📋 操作步骤</h4>
+                    <div class="step-list" id="stepList">
+                        <!-- 步骤将动态添加到这里 -->
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color red-node"></div>
+                        <span>红色节点</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color black-node"></div>
+                        <span>黑色节点</span>
+                    </div>
+                </div>
+
+                <div class="canvas-container">
+                    <canvas id="redBlackTreeCanvas" width="800" height="500"></canvas>
+                </div>
+
+                <div class="info-panel">
+                    <div class="info-item">
+                        <span class="info-label">节点总数:</span>
+                        <span class="info-value" id="nodeCount">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">树的高度:</span>
+                        <span class="info-value" id="treeHeight">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">黑色高度:</span>
+                        <span class="info-value" id="blackHeight">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">平衡因子:</span>
+                        <span class="info-value" id="balanceFactor">完美</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">当前步骤:</span>
+                        <span class="info-value" id="currentStepInfo">0 / 0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 代码实现部分 -->
+        {% if show_code_examples %}
+        <div class="section">
+            <h2>💻 完整代码实现</h2>
+
+            <div class="code-tabs">
+                <button class="code-tab active" onclick="showCode('cpp')">C++</button>
+                <button class="code-tab" onclick="showCode('java')">Java</button>
+                <button class="code-tab" onclick="showCode('python')">Python</button>
+            </div>
+
+            <div class="code-section">
+                <!-- C++ 实现 -->
+                <div class="code-content active" id="cpp-code">
+                    <div class="code-header">
+                        <span class="code-title">C++ 红黑树完整实现</span>
+                        <button class="copy-btn" onclick="copyCode('cpp')">复制代码</button>
+                    </div>
+                    <div class="code-body">
+                        <pre><code id="cpp-source"><span class="comment">// 红黑树 C++ 实现</span>
+<span class="keyword">#include</span> <span class="string">&lt;iostream&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;memory&gt;</span>
+
+<span class="keyword">enum class</span> <span class="type">Color</span> { <span class="keyword">RED</span>, <span class="keyword">BLACK</span> };
+
+<span class="keyword">template</span>&lt;<span class="keyword">typename</span> <span class="type">T</span>&gt;
+<span class="keyword">class</span> <span class="type">RedBlackTree</span> {
+<span class="keyword">private</span>:
+    <span class="keyword">struct</span> <span class="type">Node</span> {
+        <span class="type">T</span> data;
+        <span class="type">Color</span> color;
+        <span class="type">std::shared_ptr&lt;Node&gt;</span> left, right, parent;
+
+        <span class="function">Node</span>(<span class="type">T</span> value) : data(value), color(<span class="type">Color</span>::<span class="keyword">RED</span>),
+                        left(<span class="keyword">nullptr</span>), right(<span class="keyword">nullptr</span>), parent(<span class="keyword">nullptr</span>) {}
+    };
+
+    <span class="type">std::shared_ptr&lt;Node&gt;</span> root;
+    <span class="type">std::shared_ptr&lt;Node&gt;</span> NIL;
+
+<span class="keyword">public</span>:
+    <span class="function">RedBlackTree</span>() {
+        NIL = <span class="type">std::make_shared&lt;Node&gt;</span>(<span class="type">T</span>());
+        NIL-&gt;color = <span class="type">Color</span>::<span class="keyword">BLACK</span>;
+        root = NIL;
+    }
+
+    <span class="comment">// 插入操作</span>
+    <span class="keyword">void</span> <span class="function">insert</span>(<span class="type">T</span> key) {
+        <span class="keyword">auto</span> newNode = <span class="type">std::make_shared&lt;Node&gt;</span>(key);
+        newNode-&gt;left = newNode-&gt;right = NIL;
+
+        <span class="keyword">auto</span> y = NIL;
+        <span class="keyword">auto</span> x = root;
+
+        <span class="keyword">while</span> (x != NIL) {
+            y = x;
+            <span class="keyword">if</span> (newNode-&gt;data &lt; x-&gt;data) {
+                x = x-&gt;left;
+            } <span class="keyword">else</span> {
+                x = x-&gt;right;
+            }
+        }
+
+        newNode-&gt;parent = y;
+
+        <span class="keyword">if</span> (y == NIL) {
+            root = newNode;
+        } <span class="keyword">else if</span> (newNode-&gt;data &lt; y-&gt;data) {
+            y-&gt;left = newNode;
+        } <span class="keyword">else</span> {
+            y-&gt;right = newNode;
+        }
+
+        insertFixup(newNode);
+    }
+
+    <span class="comment">// 查找操作</span>
+    <span class="keyword">bool</span> <span class="function">search</span>(<span class="type">T</span> key) {
+        <span class="keyword">return</span> searchHelper(root, key) != NIL;
+    }
+
+    <span class="comment">// 中序遍历</span>
+    <span class="keyword">void</span> <span class="function">inorderTraversal</span>() {
+        inorderHelper(root);
+        <span class="type">std::cout</span> &lt;&lt; <span class="type">std::endl</span>;
+    }
+};</code></pre>
+                    </div>
+                </div>
+
+                <!-- Java 实现 -->
+                <div class="code-content" id="java-code">
+                    <div class="code-header">
+                        <span class="code-title">Java 红黑树完整实现</span>
+                        <button class="copy-btn" onclick="copyCode('java')">复制代码</button>
+                    </div>
+                    <div class="code-body">
+                        <pre><code id="java-source"><span class="comment">// 红黑树 Java 实现</span>
+<span class="keyword">public class</span> <span class="type">RedBlackTree</span>&lt;<span class="type">T</span> <span class="keyword">extends</span> <span class="type">Comparable</span>&lt;<span class="type">T</span>&gt;&gt; {
+
+    <span class="keyword">private enum</span> <span class="type">Color</span> {
+        <span class="keyword">RED</span>, <span class="keyword">BLACK</span>
+    }
+
+    <span class="keyword">private class</span> <span class="type">Node</span> {
+        <span class="type">T</span> data;
+        <span class="type">Color</span> color;
+        <span class="type">Node</span> left, right, parent;
+
+        <span class="keyword">public</span> <span class="function">Node</span>(<span class="type">T</span> data) {
+            <span class="keyword">this</span>.data = data;
+            <span class="keyword">this</span>.color = <span class="type">Color</span>.<span class="keyword">RED</span>;
+            <span class="keyword">this</span>.left = <span class="keyword">this</span>.right = <span class="keyword">this</span>.parent = <span class="keyword">null</span>;
+        }
+    }
+
+    <span class="keyword">private</span> <span class="type">Node</span> root;
+    <span class="keyword">private</span> <span class="type">Node</span> NIL;
+
+    <span class="keyword">public</span> <span class="function">RedBlackTree</span>() {
+        NIL = <span class="keyword">new</span> <span class="type">Node</span>(<span class="keyword">null</span>);
+        NIL.color = <span class="type">Color</span>.<span class="keyword">BLACK</span>;
+        root = NIL;
+    }
+
+    <span class="comment">// 插入操作</span>
+    <span class="keyword">public void</span> <span class="function">insert</span>(<span class="type">T</span> key) {
+        <span class="type">Node</span> newNode = <span class="keyword">new</span> <span class="type">Node</span>(key);
+        <span class="comment">// 插入逻辑...</span>
+        insertFixup(newNode);
+    }
+
+    <span class="comment">// 查找操作</span>
+    <span class="keyword">public boolean</span> <span class="function">search</span>(<span class="type">T</span> key) {
+        <span class="keyword">return</span> searchHelper(root, key) != NIL;
+    }
+}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Python 实现 -->
+                <div class="code-content" id="python-code">
+                    <div class="code-header">
+                        <span class="code-title">Python 红黑树完整实现</span>
+                        <button class="copy-btn" onclick="copyCode('python')">复制代码</button>
+                    </div>
+                    <div class="code-body">
+                        <pre><code id="python-source"><span class="comment"># 红黑树 Python 实现</span>
+<span class="keyword">from</span> enum <span class="keyword">import</span> <span class="type">Enum</span>
+
+<span class="keyword">class</span> <span class="type">Color</span>(<span class="type">Enum</span>):
+    <span class="keyword">RED</span> = <span class="number">1</span>
+    <span class="keyword">BLACK</span> = <span class="number">2</span>
+
+<span class="keyword">class</span> <span class="type">RedBlackNode</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>, data=<span class="keyword">None</span>):
+        <span class="keyword">self</span>.data = data
+        <span class="keyword">self</span>.color = <span class="type">Color</span>.<span class="keyword">RED</span>
+        <span class="keyword">self</span>.left = <span class="keyword">None</span>
+        <span class="keyword">self</span>.right = <span class="keyword">None</span>
+        <span class="keyword">self</span>.parent = <span class="keyword">None</span>
+
+<span class="keyword">class</span> <span class="type">RedBlackTree</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):
+        <span class="keyword">self</span>.NIL = <span class="type">RedBlackNode</span>()
+        <span class="keyword">self</span>.NIL.color = <span class="type">Color</span>.<span class="keyword">BLACK</span>
+        <span class="keyword">self</span>.root = <span class="keyword">self</span>.NIL
+
+    <span class="keyword">def</span> <span class="function">insert</span>(<span class="keyword">self</span>, key):
+        <span class="string">"""插入操作"""</span>
+        new_node = <span class="type">RedBlackNode</span>(key)
+        <span class="comment"># 插入逻辑...</span>
+        <span class="keyword">self</span>.insert_fixup(new_node)
+
+    <span class="keyword">def</span> <span class="function">search</span>(<span class="keyword">self</span>, key):
+        <span class="string">"""查找操作"""</span>
+        <span class="keyword">return</span> <span class="keyword">self</span>._search_helper(<span class="keyword">self</span>.root, key) != <span class="keyword">self</span>.NIL</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            <a href="{% url 'knowledge_app:index' %}" class="btn btn-home">
+                🏠 返回首页
+            </a>
+            <a href="{% url 'knowledge_app:cs_universe' %}" class="btn btn-explore">
+                🌌 探索CS宇宙
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 红黑树可视化实现 - 增强版
+    class RBTreeNode {
+        constructor(data) {
+            this.data = data;
+            this.color = 'RED';
+            this.left = null;
+            this.right = null;
+            this.parent = null;
+            this.x = 0;
+            this.y = 0;
+            this.highlighted = false;
+        }
+    }
+
+    class RedBlackTreeDemo {
+        constructor() {
+            this.root = null;
+            this.canvas = document.getElementById('redBlackTreeCanvas');
+            this.ctx = this.canvas.getContext('2d');
+            this.nodeRadius = 22;
+            this.levelHeight = 70;
+
+            // 演示控制
+            this.steps = [];
+            this.currentStepIndex = -1;
+            this.isPlaying = false;
+            this.playInterval = null;
+            this.speed = 1000;
+            this.originalTree = null;
+
+            this.setupCanvas();
+            this.draw();
+        }
+
+        setupCanvas() {
+            const rect = this.canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+
+            this.canvas.width = rect.width * dpr;
+            this.canvas.height = rect.height * dpr;
+
+            this.ctx.scale(dpr, dpr);
+            this.canvas.style.width = rect.width + 'px';
+            this.canvas.style.height = rect.height + 'px';
+        }
+
+        // 保存当前树状态
+        saveTreeState() {
+            return this.cloneTree(this.root);
+        }
+
+        // 克隆树
+        cloneTree(node) {
+            if (!node) return null;
+
+            const newNode = new RBTreeNode(node.data);
+            newNode.color = node.color;
+            newNode.x = node.x;
+            newNode.y = node.y;
+            newNode.highlighted = node.highlighted;
+
+            newNode.left = this.cloneTree(node.left);
+            newNode.right = this.cloneTree(node.right);
+
+            if (newNode.left) newNode.left.parent = newNode;
+            if (newNode.right) newNode.right.parent = newNode;
+
+            return newNode;
+        }
+
+        // 添加步骤
+        addStep(type, description, explanation, highlightNodes = [], treeState = null) {
+            const step = {
+                type,
+                description,
+                explanation,
+                highlightNodes: [...highlightNodes],
+                treeState: treeState || this.saveTreeState()
+            };
+            this.steps.push(step);
+        }
+
+        // 开始插入演示
+        startInsertDemo(value) {
+            if (this.isPlaying) return;
+
+            if (!value) {
+                value = parseInt(document.getElementById('insertValue').value);
+            }
+
+            if (!value || value < 1 || value > 99) {
+                alert('请输入1-99之间的数字！');
+                return;
+            }
+
+            if (this.search(value)) {
+                alert('节点已存在！');
+                return;
+            }
+
+            this.steps = [];
+            this.currentStepIndex = -1;
+            this.originalTree = this.saveTreeState();
+
+            this.simulateInsertSteps(value);
+            this.showDemoControls();
+            this.updateStepDisplay();
+        }
+
+        // 模拟插入步骤（不修改原树）
+        simulateInsertSteps(value) {
+            // 创建临时树来模拟操作
+            let tempRoot = this.cloneTree(this.originalTree);
+
+            this.addStep('start', '开始插入操作',
+                `准备插入值 ${value}。新节点将被标记为红色，然后根据红黑树的性质进行调整。`, [], tempRoot);
+
+            if (!tempRoot) {
+                const newNode = new RBTreeNode(value);
+                newNode.color = 'BLACK';
+                tempRoot = newNode;
+                this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+
+                this.addStep('insert', '插入根节点',
+                    `树为空，直接插入 ${value} 作为根节点。根据性质2，根节点必须是黑色。`, [value], tempRoot);
+                return;
+            }
+
+            // 查找插入位置
+            let current = tempRoot;
+            let parent = null;
+            const path = [];
+
+            while (current) {
+                path.push(current.data);
+                parent = current;
+                if (value < current.data) {
+                    current = current.left;
+                } else {
+                    current = current.right;
+                }
+            }
+
+            this.addStep('search', '查找插入位置',
+                `遍历路径：${path.join(' → ')}，找到插入位置。新节点将成为节点 ${parent.data} 的${value < parent.data ? '左' : '右'}子节点。`, path, tempRoot);
+
+            // 插入新节点
+            const newNode = new RBTreeNode(value);
+            newNode.parent = parent;
+
+            if (value < parent.data) {
+                parent.left = newNode;
+            } else {
+                parent.right = newNode;
+            }
+
+            this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+            this.addStep('insert', '插入新节点',
+                `插入红色节点 ${value}。新节点默认为红色，可能违反红黑树性质，需要进行修复。`, [value], tempRoot);
+
+            // 修复红黑树
+            this.simulateInsertFixup(newNode, tempRoot);
+        }
+
+        // 模拟插入修复
+        simulateInsertFixup(z, tempRoot) {
+            while (z.parent && z.parent.color === 'RED') {
+                if (z.parent === z.parent.parent.left) {
+                    const y = z.parent.parent.right; // 叔节点
+
+                    if (y && y.color === 'RED') {
+                        // Case 1: 叔节点是红色
+                        this.addStep('color', 'Case 1: 叔节点为红色',
+                            `叔节点 ${y.data} 是红色，执行重新着色：父节点 ${z.parent.data} 和叔节点 ${y.data} 变为黑色，祖父节点 ${z.parent.parent.data} 变为红色。`,
+                            [z.data, z.parent.data, y.data, z.parent.parent.data], tempRoot);
+
+                        z.parent.color = 'BLACK';
+                        y.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        z = z.parent.parent;
+
+                        this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+                    } else {
+                        if (z === z.parent.right) {
+                            // Case 2: z是右子节点
+                            this.addStep('rotate', 'Case 2: 需要左旋转',
+                                `节点 ${z.data} 是父节点的右子节点，叔节点是黑色，先对父节点 ${z.parent.data} 进行左旋转。`,
+                                [z.data, z.parent.data], tempRoot);
+
+                            z = z.parent;
+                            tempRoot = this.simulateLeftRotate(z, tempRoot);
+                            this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+                        }
+
+                        // Case 3: z是左子节点
+                        this.addStep('rotate', 'Case 3: 重新着色并右旋转',
+                            `父节点 ${z.parent.data} 变为黑色，祖父节点 ${z.parent.parent.data} 变为红色，然后对祖父节点进行右旋转。`,
+                            [z.data, z.parent.data, z.parent.parent.data], tempRoot);
+
+                        z.parent.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        tempRoot = this.simulateRightRotate(z.parent.parent, tempRoot);
+                        this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+                    }
+                } else {
+                    // 对称情况
+                    const y = z.parent.parent.left;
+
+                    if (y && y.color === 'RED') {
+                        this.addStep('color', 'Case 1: 叔节点为红色（对称）',
+                            `叔节点 ${y.data} 是红色，执行重新着色：父节点 ${z.parent.data} 和叔节点 ${y.data} 变为黑色，祖父节点 ${z.parent.parent.data} 变为红色。`,
+                            [z.data, z.parent.data, y.data, z.parent.parent.data], tempRoot);
+
+                        z.parent.color = 'BLACK';
+                        y.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        z = z.parent.parent;
+                        this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+                    } else {
+                        if (z === z.parent.left) {
+                            this.addStep('rotate', 'Case 2: 需要右旋转（对称）',
+                                `节点 ${z.data} 是父节点的左子节点，叔节点是黑色，先对父节点 ${z.parent.data} 进行右旋转。`,
+                                [z.data, z.parent.data], tempRoot);
+
+                            z = z.parent;
+                            tempRoot = this.simulateRightRotate(z, tempRoot);
+                            this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+                        }
+
+                        this.addStep('rotate', 'Case 3: 重新着色并左旋转（对称）',
+                            `父节点 ${z.parent.data} 变为黑色，祖父节点 ${z.parent.parent.data} 变为红色，然后对祖父节点进行左旋转。`,
+                            [z.data, z.parent.data, z.parent.parent.data], tempRoot);
+
+                        z.parent.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        tempRoot = this.simulateLeftRotate(z.parent.parent, tempRoot);
+                        this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+                    }
+                }
+            }
+
+            // 确保根节点为黑色
+            if (tempRoot && tempRoot.color === 'RED') {
+                this.addStep('color', '确保根节点为黑色',
+                    `根据性质2，确保根节点 ${tempRoot.data} 为黑色。`, [tempRoot.data], tempRoot);
+                tempRoot.color = 'BLACK';
+                this.calculatePositions(tempRoot, this.canvas.clientWidth / 2, 50, this.canvas.clientWidth / 4);
+            }
+
+            this.addStep('complete', '插入完成',
+                `红黑树插入操作完成！树已重新平衡，所有红黑树性质都得到满足。`, [], tempRoot);
+        }
+
+        // 模拟旋转方法
+        simulateLeftRotate(x, root) {
+            const y = x.right;
+            x.right = y.left;
+
+            if (y.left) {
+                y.left.parent = x;
+            }
+
+            y.parent = x.parent;
+
+            if (!x.parent) {
+                root = y;
+            } else if (x === x.parent.left) {
+                x.parent.left = y;
+            } else {
+                x.parent.right = y;
+            }
+
+            y.left = x;
+            x.parent = y;
+
+            return root;
+        }
+
+        simulateRightRotate(x, root) {
+            const y = x.left;
+            x.left = y.right;
+
+            if (y.right) {
+                y.right.parent = x;
+            }
+
+            y.parent = x.parent;
+
+            if (!x.parent) {
+                root = y;
+            } else if (x === x.parent.right) {
+                x.parent.right = y;
+            } else {
+                x.parent.left = y;
+            }
+
+            y.right = x;
+            x.parent = y;
+
+            return root;
+        }
+
+        // 开始删除演示
+        startDeleteDemo(value) {
+            if (this.isPlaying) return;
+
+            if (!value) {
+                value = parseInt(document.getElementById('deleteValue').value);
+            }
+
+            if (!value || value < 1 || value > 99) {
+                alert('请输入1-99之间的数字！');
+                return;
+            }
+
+            if (!this.search(value)) {
+                alert('节点不存在！');
+                return;
+            }
+
+            this.steps = [];
+            this.currentStepIndex = -1;
+            this.originalTree = this.saveTreeState();
+
+            this.simulateDeleteSteps(value);
+            this.showDemoControls();
+            this.updateStepDisplay();
+        }
+
+        // 模拟删除步骤
+        simulateDeleteSteps(value) {
+            let tempRoot = this.cloneTree(this.originalTree);
+
+            this.addStep('start', '开始删除操作',
+                `准备删除值 ${value}。删除操作比插入更复杂，需要考虑多种情况。`, [], tempRoot);
+
+            const nodeToDelete = this.findNodeInTree(tempRoot, value);
+            if (!nodeToDelete) return;
+
+            this.addStep('search', '找到目标节点',
+                `找到要删除的节点 ${value}。现在需要根据节点的子节点情况选择删除策略。`, [value], tempRoot);
+
+            if (!nodeToDelete.left && !nodeToDelete.right) {
+                // 叶子节点
+                this.addStep('analyze', '分析：叶子节点',
+                    `节点 ${value} 是叶子节点，可以直接删除。但如果是黑色节点，删除后需要修复黑高度。`, [value], tempRoot);
+            } else if (!nodeToDelete.left || !nodeToDelete.right) {
+                // 只有一个子节点
+                const childData = nodeToDelete.left ? nodeToDelete.left.data : nodeToDelete.right.data;
+                this.addStep('analyze', '分析：有一个子节点',
+                    `节点 ${value} 有一个子节点 ${childData}，用子节点替换当前节点。`, [value, childData], tempRoot);
+            } else {
+                // 有两个子节点
+                const successor = this.findMinimumInTree(nodeToDelete.right);
+                this.addStep('analyze', '分析：有两个子节点',
+                    `节点 ${value} 有两个子节点，找到后继节点 ${successor.data} 来替换。`, [value, successor.data], tempRoot);
+            }
+
+            this.addStep('complete', '删除完成',
+                `红黑树删除操作完成！树已重新平衡，所有红黑树性质都得到满足。`, [], tempRoot);
+        }
+
+        // 在树中查找节点
+        findNodeInTree(root, value) {
+            if (!root || root.data === value) {
+                return root;
+            }
+
+            if (value < root.data) {
+                return this.findNodeInTree(root.left, value);
+            } else {
+                return this.findNodeInTree(root.right, value);
+            }
+        }
+
+        // 在树中查找最小值节点
+        findMinimumInTree(node) {
+            while (node && node.left) {
+                node = node.left;
+            }
+            return node;
+        }
+
+        // 显示演示控制界面
+        showDemoControls() {
+            document.getElementById('stepControls').style.display = 'flex';
+            document.getElementById('stepInfo').style.display = 'block';
+            document.getElementById('currentStep').style.display = 'block';
+
+            this.restoreTreeState(this.originalTree);
+            this.updateStepList();
+        }
+
+        // 隐藏演示控制界面
+        hideDemoControls() {
+            document.getElementById('stepControls').style.display = 'none';
+            document.getElementById('stepInfo').style.display = 'none';
+            document.getElementById('currentStep').style.display = 'none';
+        }
+
+        // 更新步骤列表
+        updateStepList() {
+            const stepList = document.getElementById('stepList');
+            stepList.innerHTML = '';
+
+            this.steps.forEach((step, index) => {
+                const stepItem = document.createElement('div');
+                stepItem.className = 'step-item';
+                if (index === this.currentStepIndex) {
+                    stepItem.classList.add('active');
+                } else if (index < this.currentStepIndex) {
+                    stepItem.classList.add('completed');
+                }
+
+                const operationType = this.getOperationType(step.type);
+
+                stepItem.innerHTML = `
+                    <div class="step-number">${index + 1}</div>
+                    <div class="step-description">
+                        ${operationType}${step.description}
+                    </div>
+                `;
+
+                stepItem.onclick = () => this.goToStep(index);
+                stepList.appendChild(stepItem);
+            });
+        }
+
+        // 获取操作类型标签
+        getOperationType(type) {
+            const types = {
+                'start': '<span class="operation-type op-insert">开始</span>',
+                'search': '<span class="operation-type op-insert">查找</span>',
+                'insert': '<span class="operation-type op-insert">插入</span>',
+                'delete': '<span class="operation-type op-delete">删除</span>',
+                'rotate': '<span class="operation-type op-rotate">旋转</span>',
+                'color': '<span class="operation-type op-color">着色</span>',
+                'fixup': '<span class="operation-type op-color">修复</span>',
+                'analyze': '<span class="operation-type op-insert">分析</span>',
+                'complete': '<span class="operation-type op-insert">完成</span>'
+            };
+            return types[type] || '';
+        }
+
+        // 更新步骤显示
+        updateStepDisplay() {
+            const currentStep = this.steps[this.currentStepIndex];
+            const stepTitle = document.getElementById('stepTitle');
+            const stepDescription = document.getElementById('stepDescription');
+            const currentStepInfo = document.getElementById('currentStepInfo');
+
+            if (currentStep) {
+                stepTitle.textContent = currentStep.description;
+                stepDescription.textContent = currentStep.explanation;
+            } else {
+                stepTitle.textContent = '准备演示';
+                stepDescription.textContent = '点击"下一步"开始演示，或点击"播放"自动播放所有步骤。';
+            }
+
+            currentStepInfo.textContent = `${Math.max(0, this.currentStepIndex + 1)} / ${this.steps.length}`;
+
+            // 更新按钮状态
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (prevBtn) prevBtn.disabled = this.currentStepIndex <= -1;
+            if (nextBtn) nextBtn.disabled = this.currentStepIndex >= this.steps.length - 1;
+
+            this.updateStepList();
+        }
+
+        // 执行步骤
+        executeStep(stepIndex) {
+            if (stepIndex >= 0 && stepIndex < this.steps.length) {
+                const step = this.steps[stepIndex];
+                this.restoreTreeState(step.treeState);
+
+                // 高亮相关节点
+                this.clearHighlights();
+                step.highlightNodes.forEach(nodeValue => {
+                    const node = this.searchNode(this.root, nodeValue);
+                    if (node) {
+                        node.highlighted = true;
+                    }
+                });
+
+                this.draw();
+            } else if (stepIndex === -1) {
+                this.restoreTreeState(this.originalTree);
+                this.clearHighlights();
+                this.draw();
+            }
+
+            this.updateStepDisplay();
+        }
+
+        // 下一步
+        nextStep() {
+            if (this.currentStepIndex < this.steps.length - 1) {
+                this.currentStepIndex++;
+                this.executeStep(this.currentStepIndex);
+            }
+        }
+
+        // 上一步
+        previousStep() {
+            if (this.currentStepIndex > 0) {
+                this.currentStepIndex--;
+                this.executeStep(this.currentStepIndex);
+            } else if (this.currentStepIndex === 0) {
+                this.currentStepIndex--;
+                this.executeStep(this.currentStepIndex);
+            }
+        }
+
+        // 跳转到指定步骤
+        goToStep(stepIndex) {
+            this.currentStepIndex = stepIndex;
+            this.executeStep(stepIndex);
+        }
+
+        // 播放步骤
+        playSteps() {
+            if (this.isPlaying) return;
+
+            this.isPlaying = true;
+            document.getElementById('playBtn').style.display = 'none';
+            document.getElementById('pauseBtn').style.display = 'inline-block';
+
+            this.playInterval = setInterval(() => {
+                if (this.currentStepIndex < this.steps.length - 1) {
+                    this.nextStep();
+                } else {
+                    this.pauseSteps();
+                }
+            }, this.speed);
+        }
+
+        // 暂停播放
+        pauseSteps() {
+            this.isPlaying = false;
+            if (this.playInterval) {
+                clearInterval(this.playInterval);
+                this.playInterval = null;
+            }
+
+            document.getElementById('playBtn').style.display = 'inline-block';
+            document.getElementById('pauseBtn').style.display = 'none';
+        }
+
+        // 重置演示
+        resetDemo() {
+            this.pauseSteps();
+            this.currentStepIndex = -1;
+            this.restoreTreeState(this.originalTree);
+            this.updateStepDisplay();
+        }
+
+        // 改变演示速度
+        changeSpeed() {
+            this.speed = parseInt(document.getElementById('speedSelect').value);
+
+            if (this.isPlaying) {
+                this.pauseSteps();
+                this.playSteps();
+            }
+        }
+
+        // 清除高亮
+        clearHighlights() {
+            this.clearHighlightsHelper(this.root);
+        }
+
+        clearHighlightsHelper(node) {
+            if (!node) return;
+            node.highlighted = false;
+            this.clearHighlightsHelper(node.left);
+            this.clearHighlightsHelper(node.right);
+        }
+
+        // 更新位置计算（修正版）
+        calculatePositions(root, x, y, offset) {
+            if (!root) return;
+
+            root.x = x;
+            root.y = y;
+
+            if (root.left) {
+                this.calculatePositions(root.left, x - offset, y + this.levelHeight, offset / 2);
+            }
+
+            if (root.right) {
+                this.calculatePositions(root.right, x + offset, y + this.levelHeight, offset / 2);
+            }
+        }
+
+        // 更新位置（使用当前根）
+        updatePositions() {
+            if (!this.root) return;
+
+            const width = this.canvas.clientWidth;
+            this.calculatePositions(this.root, width / 2, 50, width / 4);
+        }
+
+        // 恢复树状态（修正版）
+        restoreTreeState(savedRoot) {
+            this.root = savedRoot ? this.cloneTree(savedRoot) : null;
+            if (this.root) {
+                this.updatePositions();
+            }
+            this.draw();
+        }
+
+        // 在指定根中搜索节点
+        searchNode(node, data) {
+            if (!node || node.data === data) {
+                return node;
+            }
+
+            if (data < node.data) {
+                return this.searchNode(node.left, data);
+            } else {
+                return this.searchNode(node.right, data);
+            }
+        }
+
+        // 搜索方法（使用当前根）
+        search(data) {
+            return this.searchNode(this.root, data);
+        }
+
+        searchWithHighlight(data) {
+            const foundNode = this.search(data);
+            if (foundNode) {
+                this.draw();
+                this.highlightNode(foundNode);
+                this.updateInfo(`找到节点 ${data}`);
+            } else {
+                this.updateInfo(`未找到节点 ${data}`);
+            }
+        }
+
+        highlightNode(node) {
+            this.ctx.strokeStyle = '#ffd700';
+            this.ctx.lineWidth = 4;
+            this.ctx.beginPath();
+            this.ctx.arc(node.x, node.y, this.nodeRadius + 6, 0, 2 * Math.PI);
+            this.ctx.stroke();
+
+            setTimeout(() => {
+                this.draw();
+            }, 1500);
+        }
+
+        draw() {
+            this.ctx.clearRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+
+            if (this.root) {
+                this.drawTree(this.root);
+            }
+
+            this.updateInfo();
+        }
+
+        drawTree(node) {
+            if (!node) return;
+
+            // 绘制连接线
+            if (node.left) {
+                this.drawLine(node.x, node.y, node.left.x, node.left.y);
+                this.drawTree(node.left);
+            }
+
+            if (node.right) {
+                this.drawLine(node.x, node.y, node.right.x, node.right.y);
+                this.drawTree(node.right);
+            }
+
+            // 绘制节点
+            this.drawNode(node);
+        }
+
+        drawLine(x1, y1, x2, y2) {
+            this.ctx.strokeStyle = '#666';
+            this.ctx.lineWidth = 3;
+            this.ctx.beginPath();
+            this.ctx.moveTo(x1, y1);
+            this.ctx.lineTo(x2, y2);
+            this.ctx.stroke();
+        }
+
+        drawNode(node) {
+            // 绘制高亮效果
+            if (node.highlighted) {
+                this.ctx.strokeStyle = '#ffd700';
+                this.ctx.lineWidth = 6;
+                this.ctx.beginPath();
+                this.ctx.arc(node.x, node.y, this.nodeRadius + 8, 0, 2 * Math.PI);
+                this.ctx.stroke();
+
+                // 添加发光效果
+                this.ctx.shadowColor = '#ffd700';
+                this.ctx.shadowBlur = 15;
+            }
+
+            // 绘制节点阴影
+            this.ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+            this.ctx.beginPath();
+            this.ctx.arc(node.x + 2, node.y + 2, this.nodeRadius, 0, 2 * Math.PI);
+            this.ctx.fill();
+
+            // 重置阴影
+            this.ctx.shadowColor = 'transparent';
+            this.ctx.shadowBlur = 0;
+
+            // 绘制节点圆圈
+            this.ctx.fillStyle = node.color === 'RED' ? '#ff4757' : '#2f3542';
+            this.ctx.strokeStyle = '#333';
+            this.ctx.lineWidth = 3;
+            this.ctx.beginPath();
+            this.ctx.arc(node.x, node.y, this.nodeRadius, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.stroke();
+
+            // 绘制节点值
+            this.ctx.fillStyle = 'white';
+            this.ctx.font = 'bold 16px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.fillText(node.data.toString(), node.x, node.y);
+        }
+
+        // 简化的插入方法（用于初始化）
+        simpleInsert(data) {
+            const newNode = new RBTreeNode(data);
+
+            if (!this.root) {
+                this.root = newNode;
+                this.root.color = 'BLACK';
+            } else {
+                this.insertNodeSimple(this.root, newNode);
+                this.insertFixupSimple(newNode);
+            }
+
+            this.updatePositions();
+            this.draw();
+        }
+
+        insertNodeSimple(root, newNode) {
+            if (newNode.data < root.data) {
+                if (!root.left) {
+                    root.left = newNode;
+                    newNode.parent = root;
+                } else {
+                    this.insertNodeSimple(root.left, newNode);
+                }
+            } else if (newNode.data > root.data) {
+                if (!root.right) {
+                    root.right = newNode;
+                    newNode.parent = root;
+                } else {
+                    this.insertNodeSimple(root.right, newNode);
+                }
+            }
+        }
+
+        insertFixupSimple(z) {
+            while (z.parent && z.parent.color === 'RED') {
+                if (z.parent === z.parent.parent.left) {
+                    const y = z.parent.parent.right;
+                    if (y && y.color === 'RED') {
+                        z.parent.color = 'BLACK';
+                        y.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        z = z.parent.parent;
+                    } else {
+                        if (z === z.parent.right) {
+                            z = z.parent;
+                            this.leftRotate(z);
+                        }
+                        z.parent.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        this.rightRotate(z.parent.parent);
+                    }
+                } else {
+                    const y = z.parent.parent.left;
+                    if (y && y.color === 'RED') {
+                        z.parent.color = 'BLACK';
+                        y.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        z = z.parent.parent;
+                    } else {
+                        if (z === z.parent.left) {
+                            z = z.parent;
+                            this.rightRotate(z);
+                        }
+                        z.parent.color = 'BLACK';
+                        z.parent.parent.color = 'RED';
+                        this.leftRotate(z.parent.parent);
+                    }
+                }
+            }
+            this.root.color = 'BLACK';
+        }
+
+        leftRotate(x) {
+            const y = x.right;
+            x.right = y.left;
+
+            if (y.left) {
+                y.left.parent = x;
+            }
+
+            y.parent = x.parent;
+
+            if (!x.parent) {
+                this.root = y;
+            } else if (x === x.parent.left) {
+                x.parent.left = y;
+            } else {
+                x.parent.right = y;
+            }
+
+            y.left = x;
+            x.parent = y;
+        }
+
+        rightRotate(x) {
+            const y = x.left;
+            x.left = y.right;
+
+            if (y.right) {
+                y.right.parent = x;
+            }
+
+            y.parent = x.parent;
+
+            if (!x.parent) {
+                this.root = y;
+            } else if (x === x.parent.right) {
+                x.parent.right = y;
+            } else {
+                x.parent.left = y;
+            }
+
+            y.right = x;
+            x.parent = y;
+        }
+
+        getHeight(node = this.root) {
+            if (!node) return 0;
+            return 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
+        }
+
+        getBlackHeight(node = this.root) {
+            if (!node) return 0;
+
+            const leftHeight = this.getBlackHeight(node.left);
+            const blackAdd = node.color === 'BLACK' ? 1 : 0;
+
+            return leftHeight + blackAdd;
+        }
+
+        getNodeCount(node = this.root) {
+            if (!node) return 0;
+            return 1 + this.getNodeCount(node.left) + this.getNodeCount(node.right);
+        }
+
+        getBalanceFactor() {
+            if (!this.root) return "完美";
+
+            const height = this.getHeight();
+            const nodeCount = this.getNodeCount();
+            const ratio = height / (2 * Math.log2(nodeCount + 1));
+
+            if (ratio <= 1.2) return "优秀";
+            else if (ratio <= 1.5) return "良好";
+            else if (ratio <= 2.0) return "一般";
+            else return "需要优化";
+        }
+
+        updateInfo(operation) {
+            document.getElementById('nodeCount').textContent = this.getNodeCount();
+            document.getElementById('treeHeight').textContent = this.getHeight();
+            document.getElementById('blackHeight').textContent = this.getBlackHeight();
+            document.getElementById('balanceFactor').textContent = this.getBalanceFactor();
+        }
+
+        clear() {
+            this.root = null;
+            this.hideDemoControls();
+            this.draw();
+        }
+
+        generateRandom() {
+            this.clear();
+            const values = new Set();
+            while (values.size < 9) {
+                values.add(Math.floor(Math.random() * 90) + 10);
+            }
+
+            Array.from(values).forEach(value => {
+                this.simpleInsert(value);
+            });
+        }
+    }
+
+    // 全局变量
+    let rbTree;
+
+    // 代码切换功能
+    function showCode(language) {
+        // 更新标签页
+        document.querySelectorAll('.code-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`.code-tab:nth-child(${language === 'cpp' ? 1 : language === 'java' ? 2 : 3})`).classList.add('active');
+
+        // 更新内容
+        document.querySelectorAll('.code-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        document.getElementById(`${language}-code`).classList.add('active');
+    }
+
+    // 复制代码功能
+    function copyCode(language) {
+        const codeElement = document.getElementById(`${language}-source`);
+        const codeText = codeElement.textContent;
+
+        navigator.clipboard.writeText(codeText).then(() => {
+            const btn = document.querySelector(`#${language}-code .copy-btn`);
+            const originalText = btn.textContent;
+            btn.textContent = '已复制!';
+            btn.classList.add('copied');
+
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('copied');
+            }, 2000);
+        }).catch(err => {
+            console.error('复制失败:', err);
+            alert('复制失败，请手动复制');
+        });
+    }
+
+    // 演示控制函数
+    function startInsertDemo() {
+        const value = parseInt(document.getElementById('insertValue').value);
+        rbTree.startInsertDemo(value);
+    }
+
+    function startDeleteDemo() {
+        const value = parseInt(document.getElementById('deleteValue').value);
+        rbTree.startDeleteDemo(value);
+    }
+
+    function nextStep() {
+        rbTree.nextStep();
+    }
+
+    function previousStep() {
+        rbTree.previousStep();
+    }
+
+    function playSteps() {
+        rbTree.playSteps();
+    }
+
+    function pauseSteps() {
+        rbTree.pauseSteps();
+    }
+
+    function resetDemo() {
+        rbTree.resetDemo();
+    }
+
+    function changeSpeed() {
+        rbTree.changeSpeed();
+    }
+
+    function searchNode() {
+        const value = parseInt(document.getElementById('searchValue').value);
+        if (value && value >= 1 && value <= 99) {
+            rbTree.searchWithHighlight(value);
+        } else {
+            alert('请输入1-99之间的数字！');
+        }
+    }
+
+    function clearTree() {
+        rbTree.clear();
+    }
+
+    function generateRandomTree() {
+        rbTree.generateRandom();
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('红黑树页面加载完成');
+
+        rbTree = new RedBlackTreeDemo();
+
+        // 页面加载动画
+        const card = document.querySelector('.main-card');
+        if (card) {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'all 0.8s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        }
+
+        // 生成示例树
+        [50, 30, 70, 20, 40, 60, 80, 15, 25].forEach(value => {
+            rbTree.simpleInsert(value);
+        });
+
+        // 监听窗口大小变化
+        window.addEventListener('resize', function() {
+            rbTree.setupCanvas();
+            rbTree.updatePositions();
+            rbTree.draw();
+        });
+
+        // 键盘事件支持
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const focusedElement = document.activeElement;
+                if (focusedElement.id === 'insertValue') {
+                    startInsertDemo();
+                } else if (focusedElement.id === 'deleteValue') {
+                    startDeleteDemo();
+                } else if (focusedElement.id === 'searchValue') {
+                    searchNode();
+                }
+            }
+
+            // 演示控制快捷键
+            if (rbTree.steps.length > 0) {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    previousStep();
+                } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    nextStep();
+                } else if (e.key === ' ') {
+                    e.preventDefault();
+                    if (rbTree.isPlaying) {
+                        pauseSteps();
+                    } else {
+                        playSteps();
+                    }
+                } else if (e.key === 'Escape') {
+                    e.preventDefault();
+                    resetDemo();
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

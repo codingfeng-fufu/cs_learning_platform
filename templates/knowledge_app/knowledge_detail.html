@@ -1,0 +1,64 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}{{ knowledge_point.title }} - 计算机科学学习平台{% endblock %}
+
+{% block extra_css %}
+<style>.knowledge-container {max-width:1000px;margin:0 auto;padding:20px;min-height:100vh;position:relative;z-index:1}.knowledge-header {background:rgba(255, 255, 255, 0.1);backdrop-filter:blur(15px);border-radius:var(--border-radius-lg);padding:40px;margin-bottom:30px;color:var(--text-inverse);text-align:center;position:relative;z-index:2}.knowledge-icon {font-size:4rem;margin-bottom:20px;display:block}.knowledge-title {font-size:2.5rem;font-weight:700;margin-bottom:15px}.knowledge-meta {display:flex;justify-content:center;gap:30px;margin-top:20px;flex-wrap:wrap}.meta-item {display:flex;align-items:center;gap:8px;background:rgba(255, 255, 255, 0.1);padding:8px 16px;border-radius:var(--border-radius-lg);font-size:0.9rem}.knowledge-content {background:var(--bg-card);border-radius:var(--border-radius-lg);padding:40px;box-shadow:var(--shadow-md);margin-bottom:30px;position:relative;z-index:2}.content-section {margin-bottom:40px}.section-title {font-size:1.5rem;font-weight:600;color:var(--text-primary);margin-bottom:20px;padding-bottom:10px;border-bottom:2px solid var(--accent-color);display:flex;align-items:center;gap:10px}.description {font-size:1.1rem;line-height:1.8;color:#666;margin-bottom:30px}.status-banner {padding:20px;border-radius:var(--border-radius);margin-bottom:30px;text-align:center}.status-implemented {background:linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);color:#155724;border:1px solid #c3e6cb}.status-developing {background:linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);color:#856404;border:1px solid #ffeaa7}.action-buttons {display:flex;gap:15px;justify-content:center;margin-top:30px;flex-wrap:wrap}.btn {padding:12px 24px;border-radius:var(--border-radius);text-decoration:none;font-weight:600;transition:all 0.3s ease;border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;gap:8px}.btn-primary {background:linear-gradient(135deg, var(--accent-color) 0%, #44a08d 100%);color:var(--text-inverse)}.btn-primary:hover {transform:translateY(-2px);box-shadow:0 8px 25px rgba(78, 205, 196, 0.3);text-decoration:none;color:var(--text-inverse);z-index:3}.btn-secondary {background:#f8f9fa;color:var(--text-primary);border:1px solid #ddd}.btn-secondary:hover {background:#e9ecef;transform:translateY(-2px);text-decoration:none;color:var(--text-primary);z-index:3}.related-topics {background:#f8f9fa;border-radius:var(--border-radius);padding:30px;margin-top:30px}.related-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:15px;margin-top:20px}.related-item {background:var(--bg-card);padding:15px;border-radius:var(--border-radius);border:1px solid #e9ecef;transition:all 0.3s ease;text-decoration:none;color:var(--text-primary)}.related-item:hover {transform:translateY(-2px);box-shadow:var(--shadow-md);text-decoration:none;color:var(--accent-color)}.breadcrumb {color:var(--text-inverse);margin-bottom:20px;opacity:0.9}.breadcrumb a {color:var(--text-inverse);text-decoration:none}.breadcrumb a:hover {text-decoration:underline}.progress-section {background:linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);border-radius:var(--border-radius);padding:25px;margin-bottom:30px}.progress-bar {width:100%;height:8px;background:#e9ecef;border-radius:4px;overflow:hidden;margin:15px 0}.progress-fill {height:100%;background:linear-gradient(90deg, var(--accent-color) 0%, #44a08d 100%);border-radius:4px;transition:width 0.3s ease}@media (max-width:768px) {.knowledge-container {padding:15px}.knowledge-header {padding:30px 20px;margin-bottom:20px}.knowledge-title {font-size:2rem}.knowledge-meta {gap:15px;flex-direction:column}.knowledge-content {padding:25px;margin-bottom:20px}.action-buttons {flex-direction:column;align-items:center;gap:10px}.btn {width:100%;max-width:250px;justify-content:center}.related-grid {grid-template-columns:1fr}.btn:hover {transform:translateY(-1px)}.status-banner {padding:15px;margin-bottom:20px}.progress-section {padding:20px;margin-bottom:20px}}</style>
+{% endblock %}
+
+{% block content %}
+<div class="knowledge-container"><!-- 面包屑导航 --><nav class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a> ><a href="{% url 'knowledge_app:search' %}?category={{ knowledge_point.category }}">{{ knowledge_point.category_display }}</a> > 
+        {{ knowledge_point.title }}
+    </nav><!-- 知识点头部 --><div class="knowledge-header"><span class="knowledge-icon">{{ knowledge_point.icon }}</span><h1 class="knowledge-title">{{ knowledge_point.title }}</h1><p class="description">{{ knowledge_point.description }}</p><div class="knowledge-meta"><div class="meta-item"><span>📂</span>
+                {{ knowledge_point.category_display }}
+            </div><div class="meta-item"><span>📊</span>
+                {% if knowledge_point.difficulty == 'beginner' %}初级
+                {% elif knowledge_point.difficulty == 'intermediate' %}中级
+                {% else %}高级{% endif %}
+            </div><div class="meta-item"><span>⭐</span>
+                {% if knowledge_point.is_implemented %}已实现{% else %}开发中{% endif %}
+            </div></div></div><!-- 学习进度（仅登录用户） -->
+    {% if user.is_authenticated and user_progress %}
+    <div class="progress-section"><h3 style="margin: 0 0 15px 0; color: var(--text-primary);">📈 学习进度</h3><div class="progress-bar"><div class="progress-fill" style="width: {{ user_progress.progress_percentage }}%"></div></div><div style="display: flex; justify-content: space-between; font-size: 0.9rem; color: #666;"><span>进度: {{ user_progress.progress_percentage|floatformat:1 }}%</span><span>状态: {{ user_progress.get_status_display }}</span></div></div>
+    {% endif %}
+
+    <!-- 状态横幅 -->
+    {% if knowledge_point.is_implemented %}
+    <div class="status-banner status-implemented"><h3 style="margin: 0 0 10px 0;">✅ 此知识点已实现</h3><p style="margin: 0;">您可以开始学习这个知识点的详细内容</p></div>
+    {% else %}
+    <div class="status-banner status-developing"><h3 style="margin: 0 0 10px 0;">🚧 此知识点正在开发中</h3><p style="margin: 0;">我们正在努力为您准备这个知识点的内容，敬请期待！</p></div>
+    {% endif %}
+
+    <!-- 主要内容 --><div class="knowledge-content">
+        {% if knowledge_point.is_implemented %}
+            <!-- 如果已实现，显示实现状态的内容 --><div class="content-section"><h2 class="section-title"><span>🎯</span> 开始学习
+                </h2><p>这个知识点已经实现，您可以开始详细的学习。</p><p>点击下方的"开始学习"按钮来访问具体的学习内容。</p></div>
+        {% else %}
+            <!-- 如果未实现，显示通用内容 --><div class="content-section"><h2 class="section-title"><span>📖</span> 知识点概述
+                </h2><p>{{ knowledge_point.title }} 是 {{ knowledge_point.category_display }} 领域中的重要概念。</p><p>这个知识点涵盖了相关的理论基础、实际应用和解决方案。</p></div><div class="content-section"><h2 class="section-title"><span>🎯</span> 学习目标
+                </h2><ul><li>理解 {{ knowledge_point.title }} 的基本概念和原理</li><li>掌握相关的算法和数据结构</li><li>能够在实际问题中应用所学知识</li><li>了解最佳实践和常见陷阱</li></ul></div><div class="content-section"><h2 class="section-title"><span>⏰</span> 预计学习时间
+                </h2><p>根据难度级别，建议学习时间：</p><ul>
+                    {% if knowledge_point.difficulty == 'beginner' %}
+                    <li>理论学习：1-2小时</li><li>实践练习：2-3小时</li>
+                    {% elif knowledge_point.difficulty == 'intermediate' %}
+                    <li>理论学习：2-3小时</li><li>实践练习：4-6小时</li>
+                    {% else %}
+                    <li>理论学习：3-4小时</li><li>实践练习：6-8小时</li>
+                    {% endif %}
+                </ul></div>
+        {% endif %}
+    </div><!-- 操作按钮 --><div class="action-buttons">
+        {% if knowledge_point.is_implemented %}
+        <a href="#" class="btn btn-primary" onclick="startLearning('{{ knowledge_point.slug }}')"><span>🚀</span> 开始学习
+        </a>
+        {% endif %}
+        <a href="{% url 'knowledge_app:search' %}?category={{ knowledge_point.category }}" class="btn btn-secondary"><span>📚</span> 浏览相关内容
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="btn btn-secondary"><span>🌌</span> 返回CS宇宙
+        </a></div><!-- 相关主题推荐 --><div class="related-topics"><h3 style="margin: 0 0 20px 0; color: var(--text-primary);">🔗 相关主题</h3><div class="related-grid"><!-- 这里可以添加相关主题的推荐 --><div class="related-item"><h4 style="margin: 0 0 8px 0;">探索更多</h4><p style="margin: 0; font-size: 0.9rem; color: #666;">
+                    在 {{ knowledge_point.category_display }} 分类中发现更多相关内容
+                </p></div></div></div></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>function startLearning(slug) { if (typeof startStudySession === 'function') { startStudySession(slug); } const implementedPages = { 'hamming-code': '/learn/hamming-code/', 'crc-check': '/learn/crc-check/', 'single-linklist': '/learn/single-linklist/', 'graph_dfs': '{% url "knowledge_app:graph_dfs" %}' }; if (implementedPages[slug]) { window.location.href = implementedPages[slug]; } else { alert('此知识点的详细内容正在开发中，敬请期待！'); } } document.addEventListener('DOMContentLoaded', function() { const sections = document.querySelectorAll('.content-section'); sections.forEach((section, index) => { section.style.opacity = '0'; section.style.transform = 'translateY(20px)'; setTimeout(() => { section.style.transition = 'all 0.6s ease'; section.style.opacity = '1'; section.style.transform = 'translateY(0)'; }, index * 200); }); });</script>
+{% endblock %}

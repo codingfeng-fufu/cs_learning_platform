@@ -1,0 +1,572 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}栈——卡特兰数 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<!-- 添加MathJax支持 --><script></script><script>MathJax = { tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']] } };</script><div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>栈——卡特兰数</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">📊</span>
+            栈——卡特兰数
+        </h1><p>探索栈操作序列的数学奥秘，理解组合数学在计算机科学中的美妙应用</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">🎯</span><strong>核心概念：</strong>卡特兰数描述了$n$个元素进栈后能产生多少种不同的出栈序列，揭示了栈操作与组合数学的深层联系。
+            </div><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>卡特兰数：</strong>$C_n = \frac{1}{n+1}\binom{2n}{n}$</li><li><strong>出栈序列：</strong>元素从栈中弹出的顺序</li><li><strong>合法序列：</strong>符合栈LIFO原则的出栈序列</li><li><strong>递推公式：</strong>$C_n = \sum_{i=0}^{n-1} C_i \cdot C_{n-1-i}$</li><li><strong>生成函数：</strong>用于计算卡特兰数的数学工具</li><li><strong>二叉树计数：</strong>$n$个节点的二叉树形态数</li></ul></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">学习指标</h4><div style="text-align: left;"><p><strong>难度等级：</strong><span style="color: #dc3545;">高级</span></p><p><strong>前置知识：</strong></p><ul style="margin: 5px 0;"><li>栈的基本操作和性质</li><li>组合数学基础</li><li>递推关系和动态规划</li><li>二叉树基本概念</li></ul></div></div></div><!-- 卡特兰数序列展示 --><div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;"><h4 style="margin-bottom: 10px;">📈 卡特兰数序列（前10项）</h4><div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"><span style="background: #007bff; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_0 = 1$</span><span style="background: #28a745; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_1 = 1$</span><span style="background: #ffc107; color: #000; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_2 = 2$</span><span style="background: #dc3545; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_3 = 5$</span><span style="background: #6f42c1; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_4 = 14$</span><span style="background: #fd7e14; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_5 = 42$</span><span style="background: #20c997; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_6 = 132$</span><span style="background: #6c757d; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_7 = 429$</span><span style="background: #e83e8c; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_8 = 1430$</span><span style="background: #17a2b8; color: white; padding: 8px 12px; border-radius: 5px; font-weight: bold;">$C_9 = 4862$</span></div></div></div></div><!-- 🔍 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🔍</span>
+                概念详解
+            </h2><div class="unified-grid unified-grid-2"><div class="info-box info-box-success"><span class="info-icon">🎭</span><strong>戏剧演出类比：</strong>想象演员按顺序进入后台(入栈)，但可以任意顺序上台表演(出栈)，卡特兰数告诉我们有多少种不同的演出顺序。
+                </div><div class="info-box info-box-warning"><span class="info-icon">🧮</span><strong>数学美学：</strong>卡特兰数在自然界中频繁出现，从植物叶序到分子结构，体现了数学的普遍性和美感。
+                </div></div><h3>🔹 核心子概念分解</h3><div style="margin: 20px 0;"><h4>1️⃣ 栈操作序列的约束</h4><p>元素必须按顺序入栈$(1,2,3\ldots)$，但可以在任意时刻出栈。关键约束：在某个元素出栈之前，所有在它后面入栈的元素都必须先出栈。</p><h4>2️⃣ 合法性判断原理</h4><p>一个出栈序列合法当且仅当：对于序列中任意位置$i$的元素$a$，在它右边且比$a$小的元素数量不能超过在它左边且比$a$大的元素数量。</p><h4>3️⃣ 递推关系的本质</h4><p>$$C_n = \sum_{i=0}^{n-1} C_i \cdot C_{n-1-i}$$</p><p>这个公式反映了：第一个出栈的元素可以是$1$到$n$中任意一个，将问题分解为两个子问题。</p><h4>4️⃣ 多领域的统一性</h4><p>卡特兰数在二叉树计数、括号匹配、路径问题等多个领域都有应用，体现了数学结构的深层统一性。</p></div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>易错点提醒：</strong><ul style="text-align: left; margin: 10px 0;"><li>混淆"所有排列"和"合法出栈序列"(如：$[2,1,3]$是合法的，但$[3,1,2]$不是)</li><li>忽视递推公式中的边界条件($C_0 = 1$是关键)</li><li>计算时的溢出问题(卡特兰数增长很快)</li><li>误解对应关系($n$个元素对应第$n$个卡特兰数，不是第$n+1$个)</li></ul></div></div></div><!-- 🧮 数学推导 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🧮</span>
+                卡特兰数公式推导
+            </h2><div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;"><h3>📐 方法一：递推关系推导</h3><div style="margin: 15px 0;"><h4><strong>步骤1：建立递推关系</strong></h4><p>考虑$n$个元素的出栈序列，第$k$个元素$(k=1,2,\ldots,n)$最后出栈的情况数：</p><p>$$C_n = \sum_{k=1}^{n} (\text{前}k-1\text{个元素的方案数}) \times (\text{后}n-k\text{个元素的方案数})$$</p><p>即：$$C_n = \sum_{i=0}^{n-1} C_i \cdot C_{n-1-i}$$</p></div><div style="margin: 15px 0;"><h4><strong>步骤2：生成函数方法</strong></h4><p>设生成函数$G(x) = \sum_{n=0}^{\infty} C_n x^n$，由递推关系得：</p><p>$$G(x) = 1 + x \cdot G(x)^2$$</p><p>解这个方程：$$G(x) = \frac{1 \pm \sqrt{1-4x}}{2x}$$</p><p>选择合适的根：$$G(x) = \frac{1 - \sqrt{1-4x}}{2x}$$</p></div><div style="margin: 15px 0;"><h4><strong>步骤3：展开求系数</strong></h4><p>利用广义二项式定理：$$(1-4x)^{1/2} = \sum_{n=0}^{\infty} \binom{1/2}{n} (-4x)^n$$</p><p>其中：$$\binom{1/2}{n} = \frac{(1/2)(1/2-1)\cdots(1/2-n+1)}{n!} = \frac{(-1)^{n-1}}{2^{2n-1}} \binom{2n-2}{n-1}$$</p><p>最终得到：$$C_n = \frac{1}{n+1} \binom{2n}{n}$$</p></div></div><div style="background: #e8f4fd; padding: 20px; border-radius: 8px; margin: 20px 0;"><h3>🛤️ 方法二：路径计数推导</h3><div style="margin: 15px 0;"><p><strong>问题转化：</strong>从$(0,0)$到$(n,n)$的单调格路径，且不越过对角线$y=x$</p><p><strong>总路径数：</strong>$\binom{2n}{n}$（$2n$步中选$n$步向右）</p><p><strong>越过对角线的路径数：</strong>使用<strong>反射原理</strong></p><p>任何越过对角线的路径，第一次接触$y=x+1$后，将剩余部分关于$y=x+1$反射</p><p>这样的路径与从$(0,0)$到$(n-1,n+1)$的路径一一对应</p><p><strong>越过路径数：</strong>$\binom{2n}{n-1}$</p><p><strong>卡特兰数：</strong>$$C_n = \binom{2n}{n} - \binom{2n}{n-1} = \frac{1}{n+1}\binom{2n}{n}$$</p></div></div><div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0;"><h3>🌳 方法三：二叉树递归推导</h3><div style="margin: 15px 0;"><p><strong>问题：</strong>$n$个节点的不同二叉树数量</p><p><strong>递归思想：</strong>根节点分割左右子树</p><p>如果左子树有$i$个节点，右子树有$n-1-i$个节点：</p><p>$$C_n = \sum_{i=0}^{n-1} C_i \cdot C_{n-1-i}$$</p><p>这与栈序列的递推关系完全一致，证明了不同问题的统一性！</p></div></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><div class="demo-container" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;"><h3>🎯 交互式演示：出栈序列生成与卡特兰数计算</h3><!-- 输入区域 --><div style="margin-bottom: 20px;"><label for="nInput" style="display: block; margin-bottom: 8px; font-weight: bold;">输入元素个数 $n$ (1-5)：</label><div style="display: flex; gap: 10px; align-items: center;"><input type="number" id="nInput" min="1" max="5" value="3"
+                               style="width: 80px; padding: 10px; border: 2px solid #007bff; border-radius: 5px; font-size: 16px;"
+                               onchange="updateCatalanDemo()"><button onclick="generateAllSequences()" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                            生成所有序列
+                        </button><button onclick="startSequenceDemo()" style="background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                            演示选中序列
+                        </button></div><div style="margin-top: 8px; font-size: 14px; color: #6c757d;">
+                        💡 先生成所有序列，然后点击任意序列进行详细演示
+                    </div></div><!-- 序列选择器 --><div id="sequenceSelector" style="margin-bottom: 20px; display: none;"><h4>📋 选择要演示的序列：</h4><div id="sequenceButtons" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;"><!-- 动态生成序列按钮 --></div></div><!-- 当前状态显示 --><div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><div style="flex: 1; margin-right: 10px;"><h4>栈状态</h4><div id="stackVisualization" style="height: 150px; background: white; border: 2px solid #28a745; border-radius: 5px; position: relative; overflow: hidden;"><div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #6c757d;">栈底</div></div></div><div style="flex: 1; margin: 0 10px;"><h4>入栈序列</h4><div id="inputSequence" style="height: 150px; background: white; border: 2px solid #007bff; border-radius: 5px; position: relative; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px;"><div style="color: #6c757d;">等待入栈</div></div></div><div style="flex: 1; margin-left: 10px;"><h4>出栈序列</h4><div id="outputSequence" style="height: 150px; background: white; border: 2px solid #dc3545; border-radius: 5px; position: relative; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; padding: 10px;"><div style="color: #6c757d;">出栈结果</div></div></div></div><!-- 卡特兰数计算 --><div style="margin-bottom: 20px; padding: 15px; background: white; border-radius: 8px; border: 2px solid #ffc107;"><h4 style="margin-bottom: 10px;">📊 卡特兰数计算</h4><div id="catalanCalculation" style="font-family: 'Times New Roman', serif; font-size: 16px;">
+                        $C_3 = C_0 \times C_2 + C_1 \times C_1 + C_2 \times C_0 = 1 \times 2 + 1 \times 1 + 2 \times 1 = 5$
+                    </div></div><!-- 控制按钮 --><div style="text-align: center; margin-bottom: 20px;"><button id="stepBtn" onclick="nextDemoStep()" style="background: #007bff; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px;" disabled>下一步</button><button onclick="autoDemoPlay()" id="autoBtn" style="background: #ffc107; color: #000; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px;" disabled>自动演示</button><button onclick="resetCatalanDemo()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 5px; cursor: pointer; margin: 5px;">重置</button></div><!-- 所有序列展示 --><div id="allSequencesDisplay" style="margin-top: 20px;"><h4>🎭 所有可能的出栈序列</h4><div id="sequencesList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px;"><!-- 动态生成序列 --></div></div><div id="demoStepInfo" style="margin-top: 15px; padding: 15px; background: #e3f2fd; border-radius: 5px; min-height: 60px;"><strong>开始探索：</strong>输入元素个数，观察卡特兰数如何描述出栈序列的数量
+                </div></div><div class="unified-grid unified-grid-3"><div class="info-box info-box-info"><span class="info-icon">🌲</span><strong>二叉树对应：</strong><ul style="text-align: left; font-size: 14px;"><li>$C_1 = 1$ 种树形</li><li>$C_2 = 2$ 种树形</li><li>$C_3 = 5$ 种树形</li><li>$C_4 = 14$ 种树形</li></ul></div><div class="info-box info-box-success"><span class="info-icon">🛤️</span><strong>路径计数：</strong><ul style="text-align: left; font-size: 14px;"><li>网格路径不越过对角线</li><li>山脉路径问题</li><li>Dyck路径计数</li><li>单调路径计数</li></ul></div><div class="info-box info-box-warning"><span class="info-icon">🎯</span><strong>计算公式：</strong><ul style="text-align: left; font-size: 14px;"><li>$C_n = \frac{1}{n+1}\binom{2n}{n}$</li><li>$C_n = \frac{(2n)!}{(n+1)!n!}$</li><li>递推：$C_n = \sum C_i \times C_{n-1-i}$</li><li>生成函数解法</li></ul></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">🌳</span><h4 class="card-title">二叉搜索树</h4><p class="card-description">$n$个不同节点能构成多少种不同形态的二叉搜索树？答案就是第$n$个卡特兰数。</p></div><div class="grid-card"><span class="card-icon">🔗</span><h4 class="card-title">编译器设计</h4><p class="card-description">语法分析中的括号匹配、表达式解析、语法树生成都涉及卡特兰数的计算。</p></div><div class="grid-card"><span class="card-icon">🎲</span><h4 class="card-title">组合优化</h4><p class="card-description">背包问题、动态规划、图论算法中经常需要计算路径数量，卡特兰数提供了重要的计数工具。</p></div></div><h3>💡 多语言代码实现</h3><!-- 代码标签页 --><div style="margin: 20px 0;"><div class="code-tabs" style="display: flex; border-bottom: 2px solid #dee2e6;"><button class="tab-btn active" onclick="showCode('python')" data-lang="python">Python</button><button class="tab-btn" onclick="showCode('java')" data-lang="java">Java</button><button class="tab-btn" onclick="showCode('cpp')" data-lang="cpp">C++</button></div><!-- Python代码 --><div id="python-code" class="code-block"><div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d3748; color: white;"><span>Python 实现</span><button onclick="copyCode('python')" style="background: #4a5568; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            📋 复制代码
+                        </button></div><pre id="python-pre" style="margin: 0; background: #f8f9fa; padding: 15px; overflow-x: auto;"><code>class CatalanNumbers:
+    def __init__(self):
+        self.memo = {}
+
+    def catalan_recursive(self, n):
+        """递归计算卡特兰数（带记忆化）"""
+        if n <= 1:
+            return 1
+
+        if n in self.memo:
+            return self.memo[n]
+
+        result = 0
+        for i in range(n):
+            result += self.catalan_recursive(i) * self.catalan_recursive(n - 1 - i)
+
+        self.memo[n] = result
+        return result
+
+    def catalan_dp(self, n):
+        """动态规划计算卡特兰数"""
+        if n <= 1:
+            return 1
+
+        dp = [0] * (n + 1)
+        dp[0] = dp[1] = 1
+
+        for i in range(2, n + 1):
+            for j in range(i):
+                dp[i] += dp[j] * dp[i - 1 - j]
+
+        return dp[n]
+
+    def catalan_formula(self, n):
+        """直接公式计算卡特兰数"""
+        if n <= 1:
+            return 1
+
+        # C_n = (2n)! / ((n+1)! * n!)
+        # 优化：C_n = C(2n, n) / (n + 1)
+        def combination(n, k):
+            if k > n - k:
+                k = n - k
+            result = 1
+            for i in range(k):
+                result = result * (n - i) // (i + 1)
+            return result
+
+        return combination(2 * n, n) // (n + 1)
+
+    def generate_all_sequences(self, n):
+        """生成所有合法的出栈序列"""
+        def backtrack(stack, remaining, output, all_sequences):
+            # 如果没有剩余元素且栈为空，找到一个完整序列
+            if not remaining and not stack:
+                all_sequences.append(output[:])
+                return
+
+            # 尝试入栈操作（如果还有元素可以入栈）
+            if remaining:
+                stack.append(remaining[0])
+                backtrack(stack, remaining[1:], output, all_sequences)
+                stack.pop()  # 回溯
+
+            # 尝试出栈操作（如果栈不为空）
+            if stack:
+                element = stack.pop()
+                output.append(element)
+                backtrack(stack, remaining, output, all_sequences)
+                output.pop()  # 回溯
+                stack.append(element)  # 回溯
+
+        all_sequences = []
+        backtrack([], list(range(1, n + 1)), [], all_sequences)
+        return all_sequences
+
+    def generate_sequence_steps(self, n, target_sequence):
+        """生成特定序列的详细步骤"""
+        steps = []
+        stack = []
+        remaining = list(range(1, n + 1))
+        output = []
+        target_index = 0
+
+        steps.append({
+            'stack': stack[:],
+            'remaining': remaining[:],
+            'output': output[:],
+            'action': f'开始生成序列 {target_sequence}',
+            'info': '初始状态：所有元素在入栈序列中'
+        })
+
+        while target_index < len(target_sequence):
+            target = target_sequence[target_index]
+
+            # 入栈直到目标元素
+            while remaining and remaining[0] <= target:
+                element = remaining.pop(0)
+                stack.append(element)
+                steps.append({
+                    'stack': stack[:],
+                    'remaining': remaining[:],
+                    'output': output[:],
+                    'action': f'元素 {element} 入栈',
+                    'info': f'为了输出 {target}，需要先让 {element} 入栈'
+                })
+
+            # 出栈目标元素
+            if stack and stack[-1] == target:
+                stack.pop()
+                output.append(target)
+                steps.append({
+                    'stack': stack[:],
+                    'remaining': remaining[:],
+                    'output': output[:],
+                    'action': f'元素 {target} 出栈',
+                    'info': f'成功输出元素 {target}'
+                })
+                target_index += 1
+            else:
+                break
+
+        steps.append({
+            'stack': [],
+            'remaining': [],
+            'output': output[:],
+            'action': '序列生成完成',
+            'info': f'最终序列：{output}',
+            'final': True
+        })
+
+        return steps
+
+    def is_valid_sequence(self, sequence):
+        """检查给定序列是否为合法的出栈序列"""
+        n = len(sequence)
+        stack = []
+        next_push = 1
+
+        for num in sequence:
+            # 将需要的元素推入栈中
+            while next_push <= num:
+                stack.append(next_push)
+                next_push += 1
+
+            # 检查栈顶是否是当前需要的元素
+            if not stack or stack[-1] != num:
+                return False
+
+            stack.pop()
+
+        return True
+
+# 测试和演示
+def demonstrate_catalan():
+    calc = CatalanNumbers()
+
+    print("卡特兰数序列（前10项）：")
+    for i in range(10):
+        catalan = calc.catalan_dp(i)
+        print(f"C_{i} = {catalan}")
+
+    print("\n3个元素的所有出栈序列：")
+    sequences = calc.generate_all_sequences(3)
+    for i, seq in enumerate(sequences, 1):
+        print(f"{i}: {seq}")
+
+    print(f"\n验证：C_3 = {calc.catalan_dp(3)}, 实际序列数 = {len(sequences)}")
+
+    # 验证序列合法性
+    test_sequences = [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 2, 1], [3, 1, 2]]
+    print("\n序列合法性检查：")
+    for seq in test_sequences:
+        valid = calc.is_valid_sequence(seq)
+        print(f"{seq}: {'合法' if valid else '非法'}")
+
+if __name__ == "__main__":
+    demonstrate_catalan()
+</code></pre></div><!-- Java代码 --><div id="java-code" class="code-block" style="display: none;"><div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d3748; color: white;"><span>Java 实现</span><button onclick="copyCode('java')" style="background: #4a5568; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            📋 复制代码
+                        </button></div><pre id="java-pre" style="margin: 0; background: #f8f9fa; padding: 15px; overflow-x: auto;"><code>import java.util.*;
+import java.math.BigInteger;
+
+public class CatalanNumbers {
+    private Map&lt;Integer, Long&gt; memo = new HashMap&lt;&gt;();
+
+    /**
+     * 递归计算卡特兰数（带记忆化）
+     */
+    public long catalanRecursive(int n) {
+        if (n &lt;= 1) return 1;
+
+        if (memo.containsKey(n)) {
+            return memo.get(n);
+        }
+
+        long result = 0;
+        for (int i = 0; i &lt; n; i++) {
+            result += catalanRecursive(i) * catalanRecursive(n - 1 - i);
+        }
+
+        memo.put(n, result);
+        return result;
+    }
+
+    /**
+     * 动态规划计算卡特兰数
+     */
+    public long catalanDP(int n) {
+        if (n &lt;= 1) return 1;
+
+        long[] dp = new long[n + 1];
+        dp[0] = dp[1] = 1;
+
+        for (int i = 2; i &lt;= n; i++) {
+            for (int j = 0; j &lt; i; j++) {
+                dp[i] += dp[j] * dp[i - 1 - j];
+            }
+        }
+
+        return dp[n];
+    }
+
+    /**
+     * 直接公式计算卡特兰数（处理大数）
+     */
+    public BigInteger catalanBigInteger(int n) {
+        if (n &lt;= 1) return BigInteger.ONE;
+
+        // C_n = (2n)! / ((n+1)! * n!) = C(2n, n) / (n + 1)
+        BigInteger numerator = BigInteger.ONE;
+        BigInteger denominator = BigInteger.ONE;
+
+        for (int i = 0; i &lt; n; i++) {
+            numerator = numerator.multiply(BigInteger.valueOf(2 * n - i));
+            denominator = denominator.multiply(BigInteger.valueOf(i + 1));
+        }
+
+        return numerator.divide(denominator).divide(BigInteger.valueOf(n + 1));
+    }
+
+    /**
+     * 生成所有合法的出栈序列
+     */
+    public List&lt;List&lt;Integer&gt;&gt; generateAllSequences(int n) {
+        List&lt;List&lt;Integer&gt;&gt; result = new ArrayList&lt;&gt;();
+        generateSequencesHelper(new Stack&lt;&gt;(), createList(1, n),
+                               new ArrayList&lt;&gt;(), result);
+        return result;
+    }
+
+    private void generateSequencesHelper(Stack&lt;Integer&gt; stack,
+                                       List&lt;Integer&gt; remaining,
+                                       List&lt;Integer&gt; output,
+                                       List&lt;List&lt;Integer&gt;&gt; result) {
+        // 如果没有剩余元素且栈为空，找到一个完整序列
+        if (remaining.isEmpty() && stack.isEmpty()) {
+            result.add(new ArrayList&lt;&gt;(output));
+            return;
+        }
+
+        // 尝试入栈操作
+        if (!remaining.isEmpty()) {
+            int element = remaining.remove(0);
+            stack.push(element);
+            generateSequencesHelper(stack, remaining, output, result);
+            stack.pop();
+            remaining.add(0, element);  // 回溯
+        }
+
+        // 尝试出栈操作
+        if (!stack.isEmpty()) {
+            int element = stack.pop();
+            output.add(element);
+            generateSequencesHelper(stack, remaining, output, result);
+            output.remove(output.size() - 1);  // 回溯
+            stack.push(element);  // 回溯
+        }
+    }
+
+    /**
+     * 检查序列是否为合法的出栈序列
+     */
+    public boolean isValidSequence(List&lt;Integer&gt; sequence) {
+        Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+        int nextPush = 1;
+
+        for (int num : sequence) {
+            // 将需要的元素推入栈中
+            while (nextPush &lt;= num) {
+                stack.push(nextPush++);
+            }
+
+            // 检查栈顶是否是当前需要的元素
+            if (stack.isEmpty() || stack.peek() != num) {
+                return false;
+            }
+
+            stack.pop();
+        }
+
+        return true;
+    }
+
+    private List&lt;Integer&gt; createList(int start, int end) {
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+        for (int i = start; i &lt;= end; i++) {
+            list.add(i);
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+        CatalanNumbers calc = new CatalanNumbers();
+
+        System.out.println("卡特兰数序列（前10项）：");
+        for (int i = 0; i &lt; 10; i++) {
+            long catalan = calc.catalanDP(i);
+            System.out.printf("C_%d = %d%n", i, catalan);
+        }
+
+        System.out.println("\n3个元素的所有出栈序列：");
+        List&lt;List&lt;Integer&gt;&gt; sequences = calc.generateAllSequences(3);
+        for (int i = 0; i &lt; sequences.size(); i++) {
+            System.out.printf("%d: %s%n", i + 1, sequences.get(i));
+        }
+
+        System.out.printf("%n验证：C_3 = %d, 实际序列数 = %d%n",
+                         calc.catalanDP(3), sequences.size());
+
+        // 大数计算演示
+        System.out.println("\n大数卡特兰数计算：");
+        for (int i = 10; i &lt;= 20; i++) {
+            BigInteger catalan = calc.catalanBigInteger(i);
+            System.out.printf("C_%d = %s%n", i, catalan);
+        }
+    }
+}
+</code></pre></div><!-- C++代码 --><div id="cpp-code" class="code-block" style="display: none;"><div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #2d3748; color: white;"><span>C++ 实现</span><button onclick="copyCode('cpp')" style="background: #4a5568; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer;">
+                            📋 复制代码
+                        </button></div><pre id="cpp-pre" style="margin: 0; background: #f8f9fa; padding: 15px; overflow-x: auto;"><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;stack&gt;
+#include &lt;unordered_map&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+class CatalanNumbers {
+private:
+    unordered_map&lt;int, long long&gt; memo;
+
+public:
+    /**
+     * 递归计算卡特兰数（带记忆化）
+     */
+    long long catalanRecursive(int n) {
+        if (n &lt;= 1) return 1;
+
+        if (memo.find(n) != memo.end()) {
+            return memo[n];
+        }
+
+        long long result = 0;
+        for (int i = 0; i &lt; n; i++) {
+            result += catalanRecursive(i) * catalanRecursive(n - 1 - i);
+        }
+
+        memo[n] = result;
+        return result;
+    }
+
+    /**
+     * 动态规划计算卡特兰数
+     */
+    long long catalanDP(int n) {
+        if (n &lt;= 1) return 1;
+
+        vector&lt;long long&gt; dp(n + 1, 0);
+        dp[0] = dp[1] = 1;
+
+        for (int i = 2; i &lt;= n; i++) {
+            for (int j = 0; j &lt; i; j++) {
+                dp[i] += dp[j] * dp[i - 1 - j];
+            }
+        }
+
+        return dp[n];
+    }
+
+    /**
+     * 直接公式计算卡特兰数
+     */
+    long long catalanFormula(int n) {
+        if (n &lt;= 1) return 1;
+
+        // C_n = C(2n, n) / (n + 1)
+        long long result = 1;
+
+        // 计算 C(2n, n)
+        for (int i = 0; i &lt; n; i++) {
+            result = result * (2 * n - i) / (i + 1);
+        }
+
+        return result / (n + 1);
+    }
+
+    /**
+     * 生成所有合法的出栈序列
+     */
+    vector&lt;vector&lt;int&gt;&gt; generateAllSequences(int n) {
+        vector&lt;vector&lt;int&gt;&gt; result;
+        stack&lt;int&gt; st;
+        vector&lt;int&gt; remaining;
+        vector&lt;int&gt; output;
+
+        for (int i = 1; i &lt;= n; i++) {
+            remaining.push_back(i);
+        }
+
+        generateHelper(st, remaining, output, result);
+        return result;
+    }
+
+private:
+    void generateHelper(stack&lt;int&gt; st, vector&lt;int&gt; remaining,
+                       vector&lt;int&gt; output, vector&lt;vector&lt;int&gt;&gt;&amp; result) {
+        // 如果没有剩余元素且栈为空，找到一个完整序列
+        if (remaining.empty() && st.empty()) {
+            result.push_back(output);
+            return;
+        }
+
+        // 尝试入栈操作
+        if (!remaining.empty()) {
+            int element = remaining[0];
+            remaining.erase(remaining.begin());
+            st.push(element);
+            generateHelper(st, remaining, output, result);
+            st.pop();
+            remaining.insert(remaining.begin(), element);  // 回溯
+        }
+
+        // 尝试出栈操作
+        if (!st.empty()) {
+            int element = st.top();
+            st.pop();
+            output.push_back(element);
+            generateHelper(st, remaining, output, result);
+            output.pop_back();  // 回溯
+            st.push(element);   // 回溯
+        }
+    }
+
+public:
+    /**
+     * 检查序列是否为合法的出栈序列
+     */
+    bool isValidSequence(const vector&lt;int&gt;&amp; sequence) {
+        stack&lt;int&gt; st;
+        int nextPush = 1;
+
+        for (int num : sequence) {
+            // 将需要的元素推入栈中
+            while (nextPush &lt;= num) {
+                st.push(nextPush++);
+            }
+
+            // 检查栈顶是否是当前需要的元素
+            if (st.empty() || st.top() != num) {
+                return false;
+            }
+
+            st.pop();
+        }
+
+        return true;
+    }
+
+    /**
+     * 计算卡特兰数的多种应用
+     */
+    void demonstrateApplications(int n) {
+        cout &lt;&lt; "=== 卡特兰数的多种应用 (n=" &lt;&lt; n &lt;&lt; ") ===" &lt;&lt; endl;
+
+        long long catalan = catalanDP(n);
+        cout &lt;&lt; "第" &lt;&lt; n &lt;&lt; "个卡特兰数: " &lt;&lt; catalan &lt;&lt; endl;
+        cout &lt;&lt; "应用场景:" &lt;&lt; endl;
+        cout &lt;&lt; "- " &lt;&lt; n &lt;&lt; "个元素的不同出栈序列数: " &lt;&lt; catalan &lt;&lt; endl;
+        cout &lt;&lt; "- " &lt;&lt; n &lt;&lt; "个节点的不同二叉树数: " &lt;&lt; catalan &lt;&lt; endl;
+        cout &lt;&lt; "- " &lt;&lt; n &lt;&lt; "对括号的匹配方式数: " &lt;&lt; catalan &lt;&lt; endl;
+        cout &lt;&lt; "- " &lt;&lt; n+2 &lt;&lt; "边形的三角剖分数: " &lt;&lt; catalan &lt;&lt; endl;
+    }
+};
+
+int main() {
+    CatalanNumbers calc;
+
+    cout &lt;&lt; "卡特兰数序列（前10项）：" &lt;&lt; endl;
+    for (int i = 0; i &lt; 10; i++) {
+        long long catalan = calc.catalanDP(i);
+        cout &lt;&lt; "C_" &lt;&lt; i &lt;&lt; " = " &lt;&lt; catalan &lt;&lt; endl;
+    }
+
+    cout &lt;&lt; "\n3个元素的所有出栈序列：" &lt;&lt; endl;
+    auto sequences = calc.generateAllSequences(3);
+    for (size_t i = 0; i &lt; sequences.size(); i++) {
+        cout &lt;&lt; i + 1 &lt;&lt; ": [";
+        for (size_t j = 0; j &lt; sequences[i].size(); j++) {
+            cout &lt;&lt; sequences[i][j];
+            if (j &lt; sequences[i].size() - 1) cout &lt;&lt; ", ";
+        }
+        cout &lt;&lt; "]" &lt;&lt; endl;
+    }
+
+    cout &lt;&lt; "\n验证：C_3 = " &lt;&lt; calc.catalanDP(3)
+         &lt;&lt; ", 实际序列数 = " &lt;&lt; sequences.size() &lt;&lt; endl;
+
+    // 应用演示
+    cout &lt;&lt; endl;
+    calc.demonstrateApplications(4);
+
+    return 0;
+}
+</code></pre></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div class="unified-grid unified-grid-1" style="gap: 15px;"><!-- 题目1 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q1')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目1：</strong>为什么序列$[3,1,2]$不是合法的出栈序列？请详细说明。</span><span id="q1-icon">🔽</span></div><div id="q1-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：</strong></p><p>序列$[3,1,2]$违反了栈的LIFO(后进先出)原则，让我们分析具体过程：</p><div style="text-align: left;"><p><strong>尝试生成过程：</strong></p><ol style="margin: 10px 0;"><li><strong>目标：</strong>第一个出栈的是3，所以必须先让1,2,3都入栈</li><li><strong>状态：</strong>栈$=[1,2,3]$，然后3出栈</li><li><strong>目标：</strong>下一个出栈的是1，但此时栈顶是2</li><li><strong>问题：</strong>要让1出栈，必须先让2出栈（违反了序列要求）</li></ol><p><strong>关键原理：</strong></p><ul style="margin: 10px 0;"><li>当元素$a$先于元素$b$出栈时，如果$a > b$，说明$b$在$a$入栈前就已经在栈中</li><li>在$[3,1,2]$中，$3$先于$1$出栈，且$3>1$，这是可能的</li><li>但$1$先于$2$出栈，且$1<2$，说明$2$在$1$入栈后才入栈</li><li>这与"$3$先出栈需要$1,2,3$都先入栈"矛盾</li></ul><p><strong>简单判断法：</strong>对于任意元素$a$，在它右边且比$a$小的元素个数，不能超过在它左边且比$a$大的元素个数。</p></div></div></div><!-- 题目2 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q2')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目2：</strong>用递推公式手动计算$C_4$，并解释每一步的组合意义。</span><span id="q2-icon">🔽</span></div><div id="q2-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：$C_4 = 14$</strong></p><div style="text-align: left;"><p><strong>递推公式：</strong>$$C_n = \sum_{i=0}^{n-1} C_i \times C_{n-1-i}$$</p><p><strong>详细计算：</strong></p><div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
+                                $$C_4 = C_0 \times C_3 + C_1 \times C_2 + C_2 \times C_1 + C_3 \times C_0$$
+                                $$= 1 \times 5 + 1 \times 2 + 2 \times 1 + 5 \times 1$$
+                                $$= 5 + 2 + 2 + 5 = 14$$
+                            </div><p><strong>组合意义解释：</strong></p><ul style="margin: 10px 0;"><li><strong>$C_0 \times C_3 = 1 \times 5$：</strong>第1个元素最后出栈，剩下3个元素的排列数</li><li><strong>$C_1 \times C_2 = 1 \times 2$：</strong>第2个元素最后出栈，左边1个元素，右边2个元素的排列数</li><li><strong>$C_2 \times C_1 = 2 \times 1$：</strong>第3个元素最后出栈，左边2个元素，右边1个元素的排列数</li><li><strong>$C_3 \times C_0 = 5 \times 1$：</strong>第4个元素最后出栈，左边3个元素的排列数</li></ul><p><strong>本质理解：</strong>递推公式反映了"选择哪个元素作为根节点"的思想，这在二叉树计数、括号匹配等问题中都有相同的结构。</p></div></div></div><!-- 题目3 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q3')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目3：</strong>卡特兰数的增长速度有多快？分析其时间复杂度和空间优化策略。</span><span id="q3-icon">🔽</span></div><div id="q3-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：</strong></p><div style="text-align: left;"><p><strong>增长速度分析：</strong></p><ul style="margin: 10px 0;"><li><strong>渐近公式：</strong>$C_n \approx \frac{4^n}{\sqrt{\pi} \cdot n^{3/2}}$</li><li><strong>增长率：</strong>约每增加1，卡特兰数增长4倍</li><li><strong>实例：</strong>$C_{10} = 16,796$, $C_{20} = 6,564,120,420$</li><li><strong>超越阶乘：</strong>增长速度介于指数和阶乘之间</li></ul><p><strong>算法复杂度分析：</strong></p><table style="width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px;"><tr style="background: #f8f9fa;"><th style="border: 1px solid #ddd; padding: 6px;">方法</th><th style="border: 1px solid #ddd; padding: 6px;">时间复杂度</th><th style="border: 1px solid #ddd; padding: 6px;">空间复杂度</th><th style="border: 1px solid #ddd; padding: 6px;">优缺点</th></tr><tr><td style="border: 1px solid #ddd; padding: 6px;">朴素递归</td><td style="border: 1px solid #ddd; padding: 6px;">$O(4^n)$</td><td style="border: 1px solid #ddd; padding: 6px;">$O(n)$</td><td style="border: 1px solid #ddd; padding: 6px;">简单但极慢</td></tr><tr><td style="border: 1px solid #ddd; padding: 6px;">记忆化递归</td><td style="border: 1px solid #ddd; padding: 6px;">$O(n^2)$</td><td style="border: 1px solid #ddd; padding: 6px;">$O(n)$</td><td style="border: 1px solid #ddd; padding: 6px;">平衡时空效率</td></tr><tr><td style="border: 1px solid #ddd; padding: 6px;">动态规划</td><td style="border: 1px solid #ddd; padding: 6px;">$O(n^2)$</td><td style="border: 1px solid #ddd; padding: 6px;">$O(n)$</td><td style="border: 1px solid #ddd; padding: 6px;">最实用的方法</td></tr><tr><td style="border: 1px solid #ddd; padding: 6px;">直接公式</td><td style="border: 1px solid #ddd; padding: 6px;">$O(n)$</td><td style="border: 1px solid #ddd; padding: 6px;">$O(1)$</td><td style="border: 1px solid #ddd; padding: 6px;">最快但易溢出</td></tr></table><p><strong>空间优化策略：</strong></p><ul style="margin: 10px 0;"><li><strong>滚动数组：</strong>DP时只保存必要的前几项</li><li><strong>大数处理：</strong>使用BigInteger避免溢出</li><li><strong>流式计算：</strong>边计算边输出，不存储所有结果</li><li><strong>近似计算：</strong>对于超大$n$，使用渐近公式估算</li></ul></div></div></div><!-- 题目4 --><div class="question-card" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;"><div class="question-header" onclick="toggleAnswer('q4')" style="padding: 15px; background: #f8f9fa; cursor: pointer; display: flex; justify-content: space-between; align-items: center;"><span><strong>题目4：</strong>除了栈序列，卡特兰数还在哪些计算机科学问题中出现？举例说明。</span><span id="q4-icon">🔽</span></div><div id="q4-answer" class="answer-content" style="display: none; padding: 15px; background: #e8f4fd;"><p><strong>答案：</strong></p><div style="text-align: left;"><p><strong>主要应用领域：</strong></p><div style="margin: 15px 0;"><h5>🌳 1. 二叉搜索树计数</h5><ul style="margin: 5px 0;"><li><strong>问题：</strong>$n$个不同数字能构成多少种不同的二叉搜索树？</li><li><strong>答案：</strong>第$n$个卡特兰数</li><li><strong>应用：</strong>数据库索引设计、平衡树分析</li></ul></div><div style="margin: 15px 0;"><h5>📐 2. 凸多边形三角剖分</h5><ul style="margin: 5px 0;"><li><strong>问题：</strong>$n+2$边的凸多边形有多少种三角剖分方法？</li><li><strong>答案：</strong>第$n$个卡特兰数</li><li><strong>应用：</strong>计算几何、图形学网格生成</li></ul></div><div style="margin: 15px 0;"><h5>🛤️ 3. 路径计数问题</h5><ul style="margin: 5px 0;"><li><strong>问题：</strong>从$(0,0)$到$(n,n)$且不越过$y=x$直线的路径数</li><li><strong>答案：</strong>第$n$个卡特兰数</li><li><strong>应用：</strong>随机游走、蒙特卡洛模拟</li></ul></div><div style="margin: 15px 0;"><h5>🔗 4. 编译器与语法分析</h5><ul style="margin: 5px 0;"><li><strong>括号序列：</strong>$n$对括号的合法匹配数</li><li><strong>表达式解析：</strong>运算符优先级的处理方案数</li><li><strong>语法树：</strong>抽象语法树的不同形态数</li></ul></div><div style="margin: 15px 0;"><h5>🎯 5. 算法设计与分析</h5><ul style="margin: 5px 0;"><li><strong>分治算法：</strong>最优子结构的划分方案数</li><li><strong>动态规划：</strong>矩阵链乘法的加括号方案数</li><li><strong>递归结构：</strong>递归调用树的形态数</li></ul></div><p><strong>为什么卡特兰数如此普遍？</strong></p><p>因为它描述了一种基本的递归结构：将问题分解为两个子问题的所有可能方式。这种结构在计算机科学中无处不在！</p></div></div></div></div><div class="info-box info-box-info" style="margin-top: 20px;"><span class="info-icon">📚</span><strong>进阶学习路径：</strong>
+                掌握卡特兰数后，可以学习：生成函数理论、组合数学高级主题、图论中的计数问题、概率论中的随机过程、代数几何中的模空间等更深入的数学领域。
+            </div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.code-tabs {background:#f8f9fa}.tab-btn {background:#e9ecef;border:none;padding:12px 24px;cursor:pointer;border-bottom:3px solid transparent;transition:all 0.3s ease}.tab-btn.active {background:#fff;border-bottom-color:#007bff;color:#007bff;font-weight:bold}.tab-btn:hover {background:#fff}.code-block {border:1px solid #dee2e6;border-top:none}.question-card {transition:all 0.3s ease}.question-card:hover {box-shadow:0 2px 8px rgba(0,0,0,0.1)}.question-header {transition:background-color 0.3s ease}.question-header:hover {background:#e9ecef !important}.answer-content {animation:fadeIn 0.3s ease}@keyframes fadeIn {from {opacity:0}to {opacity:1}}.stack-element {animation:slideIn 0.3s ease}@keyframes slideIn {from {opacity:0;transform:translateX(-50%) translateY(20px)}to {opacity:1;transform:translateX(-50%) translateY(0)}}.sequence-item {background:linear-gradient(135deg, #007bff, #0056b3);color:white;padding:8px 12px;border-radius:6px;font-weight:bold;transition:all 0.3s ease;cursor:pointer}.sequence-item:hover {transform:scale(1.05);box-shadow:0 4px 8px rgba(0,123,255,0.3)}.sequence-button {background:linear-gradient(135deg, #28a745, #1e7e34);color:white;padding:8px 12px;border:none;border-radius:6px;font-weight:bold;cursor:pointer;transition:all 0.3s ease;margin:3px}.sequence-button:hover {transform:scale(1.05);box-shadow:0 4px 8px rgba(40,167,69,0.3)}.sequence-button.selected {background:linear-gradient(135deg, #dc3545, #c82333);box-shadow:0 4px 8px rgba(220,53,69,0.4)}</style><script>let currentDemoStep = 0; let currentN = 3; let allSequences = []; let demoSteps = []; let demoAutoInterval; let selectedSequence = null; class CatalanCalculator { constructor() { this.memo = new Map(); } catalan(n) { if (n <= 1) return 1; if (this.memo.has(n)) { return this.memo.get(n); } let result = 0; for (let i = 0; i < n; i++) { result += this.catalan(i) * this.catalan(n - 1 - i); } this.memo.set(n, result); return result; } generateAllSequences(n) { const sequences = []; this.backtrack([], Array.from({length: n}, (_, i) => i + 1), [], sequences); return sequences; } backtrack(stack, remaining, output, sequences) { if (remaining.length === 0 && stack.length === 0) { sequences.push([...output]); return; } if (remaining.length > 0) { const element = remaining.shift(); stack.push(element); this.backtrack(stack, remaining, output, sequences); stack.pop(); remaining.unshift(element); } if (stack.length > 0) { const element = stack.pop(); output.push(element); this.backtrack(stack, remaining, output, sequences); output.pop(); stack.push(element); } } generateSequenceSteps(n, targetSequence) { const steps = []; let stack = []; let remaining = Array.from({length: n}, (_, i) => i + 1); let output = []; let targetIndex = 0; steps.push({ step: 0, stack: [...stack], remaining: [...remaining], output: [...output], action: `开始生成序列 [${targetSequence.join(', ')}]`, info: '初始状态：所有元素在入栈序列中' }); while (targetIndex < targetSequence.length) { const target = targetSequence[targetIndex]; while (remaining.length > 0 && remaining[0] <= target) { const element = remaining.shift(); stack.push(element); steps.push({ step: steps.length, stack: [...stack], remaining: [...remaining], output: [...output], action: `元素 ${element} 入栈`, info: `为了输出 ${target}，需要先让 ${element} 入栈`, highlight: 'push' }); } if (stack.length > 0 && stack[stack.length - 1] === target) { stack.pop(); output.push(target); steps.push({ step: steps.length, stack: [...stack], remaining: [...remaining], output: [...output], action: `元素 ${target} 出栈`, info: `成功输出元素 ${target}`, highlight: 'pop' }); targetIndex++; } else { break; } } steps.push({ step: steps.length, stack: [], remaining: [], output: [...output], action: '序列生成完成', info: `最终序列：[${output.join(', ')}]`, final: true }); return steps; } isValidSequence(sequence) { const stack = []; let nextPush = 1; for (const num of sequence) { while (nextPush <= num) { stack.push(nextPush++); } if (stack.length === 0 || stack[stack.length - 1] !== num) { return false; } stack.pop(); } return true; } getCatalanCalculationString(n) { if (n <= 1) return `$C_1 = 1$`; let parts = []; for (let i = 0; i < n; i++) { parts.push(`C_{${i}} \\times C_{${n-1-i}}`); } let calculation = `$C_{${n}} = ` + parts.join(' + ') + '$'; let valueParts = []; for (let i = 0; i < n; i++) { const leftCatalan = this.catalan(i); const rightCatalan = this.catalan(n - 1 - i); valueParts.push(`${leftCatalan} \\times ${rightCatalan}`); } calculation += ` = $` + valueParts.join(' + ') + '$'; let sum = 0; for (let i = 0; i < n; i++) { sum += this.catalan(i) * this.catalan(n - 1 - i); } const finalParts = []; for (let i = 0; i < n; i++) { const leftCatalan = this.catalan(i); const rightCatalan = this.catalan(n - 1 - i); finalParts.push((leftCatalan * rightCatalan).toString()); } calculation += ` = $` + finalParts.join(' + ') + ` = ${sum}$`; return calculation; } } const calculator = new CatalanCalculator(); function updateCatalanDemo() { const input = document.getElementById('nInput'); const n = parseInt(input.value); if (n < 1 || n > 5) { alert('请输入1-5之间的数字！'); input.value = currentN; return; } currentN = n; const calculation = calculator.getCatalanCalculationString(n); document.getElementById('catalanCalculation').innerHTML = calculation; if (window.MathJax) { MathJax.typesetPromise([document.getElementById('catalanCalculation')]).catch(function (err) { console.log(err.message); }); } resetCatalanDemo(); } function generateAllSequences() { allSequences = calculator.generateAllSequences(currentN); displayAllSequences(); showSequenceSelector(); document.getElementById('demoStepInfo').innerHTML = `<strong>生成完成：</strong>找到了 ${allSequences.length} 种不同的出栈序列，正好等于第${currentN}个卡特兰数 $C_{${currentN}} = ${calculator.catalan(currentN)}$`; if (window.MathJax) { MathJax.typesetPromise([document.getElementById('demoStepInfo')]).catch(function (err) { console.log(err.message); }); } } function displayAllSequences() { const container = document.getElementById('sequencesList'); container.innerHTML = ''; allSequences.forEach((sequence, index) => { const div = document.createElement('div'); div.className = 'sequence-item'; div.textContent = `${index + 1}: [${sequence.join(', ')}]`; div.onclick = () => selectSequence(sequence, index); container.appendChild(div); }); } function showSequenceSelector() { const selector = document.getElementById('sequenceSelector'); const buttonContainer = document.getElementById('sequenceButtons'); buttonContainer.innerHTML = ''; allSequences.forEach((sequence, index) => { const button = document.createElement('button'); button.className = 'sequence-button'; button.textContent = `[${sequence.join(', ')}]`; button.onclick = () => selectSequence(sequence, index); buttonContainer.appendChild(button); }); selector.style.display = 'block'; } function selectSequence(sequence, index) { selectedSequence = sequence; const buttons = document.querySelectorAll('.sequence-button'); buttons.forEach((btn, i) => { if (i === index) { btn.classList.add('selected'); } else { btn.classList.remove('selected'); } }); document.getElementById('demoStepInfo').innerHTML = `<strong>已选择序列：</strong>[${sequence.join(', ')}] - 点击"演示选中序列"查看详细生成过程`; } function startSequenceDemo() { if (!selectedSequence) { alert('请先选择一个序列进行演示！'); return; } demoSteps = calculator.generateSequenceSteps(currentN, selectedSequence); currentDemoStep = 0; updateDemoDisplay(); document.getElementById('stepBtn').disabled = false; document.getElementById('autoBtn').disabled = false; } function updateDemoDisplay() { if (demoSteps.length === 0) return; const step = demoSteps[currentDemoStep]; const stackDiv = document.getElementById('stackVisualization'); stackDiv.innerHTML = '<div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #6c757d;">栈底</div>'; step.stack.forEach((element, index) => { const div = document.createElement('div'); div.className = 'stack-element'; div.style.cssText = ` position: absolute; bottom: ${30 + index * 30}px; left: 50%; transform: translateX(-50%); background: ${step.highlight === 'push' && index === step.stack.length - 1 ? '#ffc107' : '#28a745'}; color: ${step.highlight === 'push' && index === step.stack.length - 1 ? '#000' : 'white'}; padding: 6px 12px; border-radius: 5px; font-weight: bold; font-size: 16px; min-width: 30px; text-align: center; `; div.textContent = element; stackDiv.appendChild(div); }); const sequenceDiv = document.getElementById('inputSequence'); sequenceDiv.innerHTML = ''; if (step.remaining.length === 0) { sequenceDiv.innerHTML = '<div style="color: #6c757d;">序列为空</div>'; } else { step.remaining.forEach((element, index) => { const div = document.createElement('div'); div.style.cssText = ` background: #007bff; color: white; padding: 6px 12px; border-radius: 5px; margin: 2px; font-weight: bold; font-size: 14px; `; div.textContent = element; sequenceDiv.appendChild(div); }); } const outputDiv = document.getElementById('outputSequence'); outputDiv.innerHTML = ''; if (step.output.length === 0) { outputDiv.innerHTML = '<div style="color: #6c757d;">输出序列为空</div>'; } else { step.output.forEach((element, index) => { const div = document.createElement('div'); div.style.cssText = ` background: ${step.highlight === 'pop' && index === step.output.length - 1 ? '#ffc107' : '#dc3545'}; color: ${step.highlight === 'pop' && index === step.output.length - 1 ? '#000' : 'white'}; padding: 6px 12px; border-radius: 5px; margin: 2px; font-weight: bold; font-size: 14px; `; div.textContent = element; outputDiv.appendChild(div); }); } document.getElementById('demoStepInfo').innerHTML = `<strong>第${step.step}步：</strong>${step.action}<br><small>${step.info}</small>`; const stepBtn = document.getElementById('stepBtn'); if (currentDemoStep >= demoSteps.length - 1) { stepBtn.textContent = '演示完成'; stepBtn.disabled = true; } else { stepBtn.textContent = '下一步'; stepBtn.disabled = false; } } function nextDemoStep() { if (currentDemoStep < demoSteps.length - 1) { currentDemoStep++; updateDemoDisplay(); } } function autoDemoPlay() { const autoBtn = document.getElementById('autoBtn'); if (demoAutoInterval) { clearInterval(demoAutoInterval); demoAutoInterval = null; autoBtn.textContent = '自动演示'; return; } autoBtn.textContent = '停止自动'; demoAutoInterval = setInterval(() => { if (currentDemoStep < demoSteps.length - 1) { nextDemoStep(); } else { clearInterval(demoAutoInterval); demoAutoInterval = null; autoBtn.textContent = '自动演示'; } }, 2000); } function resetCatalanDemo() { currentDemoStep = 0; demoSteps = []; allSequences = []; selectedSequence = null; if (demoAutoInterval) { clearInterval(demoAutoInterval); demoAutoInterval = null; document.getElementById('autoBtn').textContent = '自动演示'; } document.getElementById('stackVisualization').innerHTML = '<div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #6c757d;">栈底</div>'; document.getElementById('inputSequence').innerHTML = '<div style="color: #6c757d;">等待入栈</div>'; document.getElementById('outputSequence').innerHTML = '<div style="color: #6c757d;">出栈结果</div>'; document.getElementById('sequencesList').innerHTML = ''; document.getElementById('sequenceSelector').style.display = 'none'; document.getElementById('stepBtn').disabled = true; document.getElementById('autoBtn').disabled = true; document.getElementById('demoStepInfo').innerHTML = '<strong>开始探索：</strong>输入元素个数，观察卡特兰数如何描述出栈序列的数量'; } function showCode(language) { document.querySelectorAll('.code-block').forEach(block => { block.style.display = 'none'; }); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); }); document.getElementById(language + '-code').style.display = 'block'; document.querySelector(`[data-lang="${language}"]`).classList.add('active'); } async function copyCode(language) { const codeElement = document.getElementById(language + '-pre'); const text = codeElement.textContent; try { await navigator.clipboard.writeText(text); const button = document.querySelector(`#${language}-code button`); const originalText = button.innerHTML; button.innerHTML = '✅ 已复制'; button.style.background = '#28a745'; setTimeout(() => { button.innerHTML = originalText; button.style.background = '#4a5568'; }, 2000); } catch (err) { alert('复制失败，请手动选择代码复制'); } } function toggleAnswer(questionId) { const answer = document.getElementById(questionId + '-answer'); const icon = document.getElementById(questionId + '-icon'); if (answer.style.display === 'none') { answer.style.display = 'block'; icon.textContent = '🔼'; if (window.MathJax) { MathJax.typesetPromise([answer]).catch(function (err) { console.log(err.message); }); } } else { answer.style.display = 'none'; icon.textContent = '🔽'; } } document.addEventListener('DOMContentLoaded', function() { updateCatalanDemo(); if (window.MathJax) { MathJax.typesetPromise([document.body]).catch(function (err) { console.log(err.message); }); } });</script>
+
+{% endblock %}

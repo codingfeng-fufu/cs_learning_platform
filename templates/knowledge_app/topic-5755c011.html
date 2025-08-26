@@ -1,0 +1,183 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}树、森林与二叉树的转换 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>.knowledge-container {max-width:1200px;margin:0 auto;padding:20px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif}.section {background:white;border-radius:12px;padding:30px;margin-bottom:30px;box-shadow:0 4px 6px rgba(0, 0, 0, 0.07);border:1px solid #e5e7eb}.section-header {display:flex;align-items:center;margin-bottom:25px;padding-bottom:15px;border-bottom:2px solid #f3f4f6}.section-icon {font-size:2rem;margin-right:15px}.section-title {font-size:1.8rem;font-weight:700;color:#1f2937;margin:0}.difficulty-badge {display:inline-block;background:#fef3c7;color:#d97706;padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:600;margin-left:15px}.concept-grid {display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:20px;margin:20px 0}.concept-card {background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:20px;transition:transform 0.2s, box-shadow 0.2s}.concept-card:hover {transform:translateY(-2px);box-shadow:0 8px 15px rgba(0, 0, 0, 0.1)}.visualization-container {background:#f9fafb;border-radius:12px;padding:30px;margin:25px 0;position:relative}.canvas-container {text-align:center;margin:20px 0;background:white;border-radius:8px;padding:20px;box-shadow:0 2px 4px rgba(0, 0, 0, 0.1)}.controls {display:flex;justify-content:center;gap:15px;margin:20px 0;flex-wrap:wrap}.btn {background:#3b82f6;color:white;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:500;transition:background 0.2s}.btn:hover {background:#2563eb}.btn-secondary {background:#6b7280}.btn-secondary:hover {background:#4b5563}.code-container {background:#1f2937;border-radius:8px;margin:20px 0;overflow:hidden}.code-tabs {display:flex;background:#374151;border-bottom:1px solid #4b5563}.code-tab {background:none;border:none;color:#d1d5db;padding:12px 20px;cursor:pointer;transition:all 0.2s}.code-tab.active {background:#1f2937;color:#f9fafb;border-bottom:2px solid #3b82f6}.code-content {position:relative}.code-block {background:#1f2937;color:#f9fafb;padding:20px;overflow-x:auto;font-family:'Monaco', 'Menlo', 'Ubuntu Mono', monospace;font-size:14px;line-height:1.5;display:none}.code-block.active {display:block}.copy-btn {position:absolute;top:10px;right:10px;background:#4b5563;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px}.copy-btn:hover {background:#374151}.quiz-container {margin:20px 0}.quiz-item {background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;margin:15px 0;padding:20px}.quiz-question {font-weight:600;color:#1f2937;margin-bottom:15px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}.quiz-answer {background:#e0f2fe;border-left:4px solid #0288d1;padding:15px;margin-top:10px;border-radius:0 4px 4px 0;display:none}.toggle-icon {transition:transform 0.3s}.toggle-icon.active {transform:rotate(180deg)}.highlight {background:#fef3c7;padding:2px 4px;border-radius:3px;font-weight:600}.warning-box {background:#fef2f2;border-left:4px solid #ef4444;padding:15px;margin:15px 0;border-radius:0 6px 6px 0}.info-box {background:#eff6ff;border-left:4px solid #3b82f6;padding:15px;margin:15px 0;border-radius:0 6px 6px 0}.step-container {display:flex;flex-wrap:wrap;gap:15px;margin:20px 0}.step {background:white;border:2px solid #e5e7eb;border-radius:8px;padding:15px;flex:1;min-width:200px;text-align:center;position:relative}.step-number {background:#3b82f6;color:white;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;position:absolute;top:-15px;left:50%;transform:translateX(-50%)}.step-title {margin-top:20px;font-weight:600;color:#1f2937}</style><div class="knowledge-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>树、森林与二叉树的转换</span></div><!-- 📋 知识点概述 --><div class="section slide-in-left"><div class="section-header"><span class="section-icon">📋</span><h1 class="section-title">知识点概述</h1><span class="difficulty-badge">进阶</span></div><div class="info-box"><h3>🎯 核心概念</h3><p><strong>树、森林与二叉树的转换</strong>是指通过特定的算法，在一般树、森林和二叉树这三种数据结构之间进行相互转换的过程。这种转换让我们能够用二叉树来表示和处理任意的树形结构。</p></div><div class="concept-grid"><div class="concept-card"><h4>🌳 一般树</h4><p>每个节点可以有任意数量子节点的树形结构</p></div><div class="concept-card"><h4>🌲 森林</h4><p>多个不相交树的集合</p></div><div class="concept-card"><h4>🌿 二叉树</h4><p>每个节点最多有两个子节点的树</p></div><div class="concept-card"><h4>🔄 左孩子右兄弟表示法</h4><p>转换的核心思想：左指针指向第一个孩子，右指针指向下一个兄弟</p></div></div><div class="warning-box"><strong>⚠️ 前置知识：</strong>需要掌握树的基本概念、二叉树的性质和遍历算法
+        </div></div><!-- 🔍 概念详解 --><div class="section slide-in-right"><div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">概念详解</h2></div><h3>🤔 为什么需要转换？</h3><p>想象一下公司的组织结构图：CEO下面有多个副总裁，每个副总裁下面又有多个部门经理...这就是一个典型的<span class="highlight">一般树</span>。但计算机处理二叉树更高效，所以我们需要把这种"多叉树"转换为"二叉树"来处理。</p><h3>🔑 转换的核心思想</h3><div class="step-container"><div class="step"><div class="step-number">1</div><div class="step-title">左指针指向第一个孩子</div><p>就像"大儿子继承家业"</p></div><div class="step"><div class="step-number">2</div><div class="step-title">右指针指向下一个兄弟</div><p>就像"兄弟手拉手排队"</p></div><div class="step"><div class="step-number">3</div><div class="step-title">保持树的结构关系</div><p>转换后仍能恢复原来的关系</p></div></div><div class="warning-box"><strong>⚠️ 初学者常见误区：</strong><ul><li>认为转换会丢失信息（实际上是可逆的）</li><li>混淆"第一个孩子"和"左孩子"的概念</li><li>忘记处理兄弟节点之间的连接关系</li></ul></div></div><!-- 📊 可视化展示 --><div class="section"><div class="section-header"><span class="section-icon">📊</span><h2 class="section-title">可视化展示</h2></div><div class="visualization-container"><h3>🎮 交互式转换演示</h3><div class="canvas-container"><canvas id="conversionCanvas" width="1000" height="400"></canvas></div><div class="controls"><button class="btn" onclick="showOriginalTree()">显示原始树</button><button class="btn" onclick="startConversion()">开始转换</button><button class="btn" onclick="showResult()">跳到结果</button><button class="btn btn-secondary" onclick="resetDemo()">重置演示</button></div><div id="explanation" style="text-align: center; margin-top: 15px; font-weight: 600; color: #374151;"></div></div></div><!-- 💻 代码实现 --><div class="section"><div class="section-header"><span class="section-icon">💻</span><h2 class="section-title">代码实现</h2></div><div class="code-container"><div class="code-tabs"><button class="code-tab active" onclick="showCode('cpp')">C++</button><button class="code-tab" onclick="showCode('java')">Java</button><button class="code-tab" onclick="showCode('python')">Python</button></div><div class="code-content"><button class="copy-btn" onclick="copyCode()">📋 复制代码</button><div id="cpp-code" class="code-block active"><pre><code>// C++ 实现：树转二叉树
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+struct TreeNode {
+    int data;
+    vector&lt;TreeNode*&gt; children;
+    TreeNode(int val) : data(val) {}
+};
+
+struct BinaryNode {
+    int data;
+    BinaryNode* left;   // 指向第一个孩子
+    BinaryNode* right;  // 指向下一个兄弟
+    BinaryNode(int val) : data(val), left(nullptr), right(nullptr) {}
+};
+
+// 树转二叉树的核心函数
+BinaryNode* treeToBinary(TreeNode* root) {
+    if (!root) return nullptr;
+
+    BinaryNode* binaryRoot = new BinaryNode(root-&gt;data);
+
+    if (!root-&gt;children.empty()) {
+        // 第一个孩子成为左子树
+        binaryRoot-&gt;left = treeToBinary(root-&gt;children[0]);
+
+        // 处理兄弟节点
+        BinaryNode* current = binaryRoot-&gt;left;
+        for (int i = 1; i &lt; root-&gt;children.size(); i++) {
+            current-&gt;right = treeToBinary(root-&gt;children[i]);
+            current = current-&gt;right;
+        }
+    }
+
+    return binaryRoot;
+}
+
+// 使用示例
+int main() {
+    // 创建原始树: A有三个孩子B、C、D
+    TreeNode* root = new TreeNode('A');
+    root-&gt;children.push_back(new TreeNode('B'));
+    root-&gt;children.push_back(new TreeNode('C'));
+    root-&gt;children.push_back(new TreeNode('D'));
+
+    // 转换为二叉树
+    BinaryNode* binaryRoot = treeToBinary(root);
+
+    cout &lt;&lt; "转换完成！二叉树根节点: " &lt;&lt; (char)binaryRoot-&gt;data &lt;&lt; endl;
+    return 0;
+}</code></pre></div><div id="java-code" class="code-block"><pre><code>// Java 实现：树转二叉树
+import java.util.*;
+
+class TreeNode {
+    int data;
+    List&lt;TreeNode&gt; children;
+
+    public TreeNode(int data) {
+        this.data = data;
+        this.children = new ArrayList&lt;&gt;();
+    }
+}
+
+class BinaryNode {
+    int data;
+    BinaryNode left;   // 指向第一个孩子
+    BinaryNode right;  // 指向下一个兄弟
+
+    public BinaryNode(int data) {
+        this.data = data;
+        this.left = null;
+        this.right = null;
+    }
+}
+
+public class TreeToBinaryConverter {
+
+    // 树转二叉树的核心方法
+    public static BinaryNode treeToBinary(TreeNode root) {
+        if (root == null) return null;
+
+        BinaryNode binaryRoot = new BinaryNode(root.data);
+
+        if (!root.children.isEmpty()) {
+            // 第一个孩子成为左子树
+            binaryRoot.left = treeToBinary(root.children.get(0));
+
+            // 处理兄弟节点
+            BinaryNode current = binaryRoot.left;
+            for (int i = 1; i &lt; root.children.size(); i++) {
+                current.right = treeToBinary(root.children.get(i));
+                current = current.right;
+            }
+        }
+
+        return binaryRoot;
+    }
+
+    // 使用示例
+    public static void main(String[] args) {
+        // 创建原始树
+        TreeNode root = new TreeNode('A');
+        root.children.add(new TreeNode('B'));
+        root.children.add(new TreeNode('C'));
+        root.children.add(new TreeNode('D'));
+
+        // 转换为二叉树
+        BinaryNode binaryRoot = treeToBinary(root);
+
+        System.out.println("转换完成！二叉树根节点: " + (char)binaryRoot.data);
+    }
+}</code></pre></div><div id="python-code" class="code-block"><pre><code># Python 实现：树转二叉树
+
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.children = []
+
+class BinaryNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None    # 指向第一个孩子
+        self.right = None   # 指向下一个兄弟
+
+def tree_to_binary(root):
+    """树转二叉树的核心函数"""
+    if not root:
+        return None
+
+    binary_root = BinaryNode(root.data)
+
+    if root.children:
+        # 第一个孩子成为左子树
+        binary_root.left = tree_to_binary(root.children[0])
+
+        # 处理兄弟节点
+        current = binary_root.left
+        for i in range(1, len(root.children)):
+            current.right = tree_to_binary(root.children[i])
+            current = current.right
+
+    return binary_root
+
+def print_binary_tree(root, level=0, prefix="Root: "):
+    """打印二叉树结构"""
+    if root:
+        print(" " * (level * 4) + prefix + chr(root.data))
+        if root.left or root.right:
+            print_binary_tree(root.left, level + 1, "L--- ")
+            print_binary_tree(root.right, level + 1, "R--- ")
+
+# 使用示例
+if __name__ == "__main__":
+    # 创建原始树: A有三个孩子B、C、D
+    root = TreeNode(ord('A'))
+    root.children.append(TreeNode(ord('B')))
+    root.children.append(TreeNode(ord('C')))
+    root.children.append(TreeNode(ord('D')))
+
+    # 转换为二叉树
+    binary_root = tree_to_binary(root)
+
+    print("转换完成！二叉树结构：")
+    print_binary_tree(binary_root)</code></pre></div></div></div></div><!-- 🌟 实际应用 --><div class="section"><div class="section-header"><span class="section-icon">🌟</span><h2 class="section-title">实际应用</h2></div><div class="concept-grid"><div class="concept-card"><h4>🏢 组织架构管理</h4><p>公司组织结构可以转换为二叉树，便于查找上下级关系和统计部门信息</p></div><div class="concept-card"><h4>📁 文件系统</h4><p>文件夹的树形结构可以转换为二叉树，提高文件检索和管理效率</p></div><div class="concept-card"><h4>🧬 族谱管理</h4><p>家族关系树转换为二叉树，便于追溯家族历史和关系查询</p></div></div><div class="info-box"><h4>🎯 典型应用案例：表达式树</h4><p>在编译器设计中，复杂的表达式可以表示为多叉树，但为了便于处理，通常转换为二叉树进行语法分析和代码生成。</p></div><div class="warning-box"><strong>🛠️ 推荐学习工具：</strong><ul><li><strong>可视化工具：</strong> VisuAlgo、Tree Visualizer</li><li><strong>编程练习：</strong> LeetCode树相关题目</li><li><strong>模拟器：</strong> Data Structure Visualizations</li></ul></div></div><!-- ✅ 学习检验 --><div class="section"><div class="section-header"><span class="section-icon">✅</span><h2 class="section-title">学习检验</h2></div><div class="quiz-container"><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(1)"><span>1. 在左孩子右兄弟表示法中，二叉树的左指针指向什么？</span><span class="toggle-icon" id="icon1">🔽</span></div><div class="quiz-answer" id="answer1"><strong>答案：</strong>二叉树的左指针指向原树中该节点的<span class="highlight">第一个孩子节点</span>。这是转换算法的核心规则之一，确保了父子关系的正确映射。
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(2)"><span>2. 如果原树中一个节点有4个孩子，转换后的二叉树中这些孩子是什么关系？</span><span class="toggle-icon" id="icon2">🔽</span></div><div class="quiz-answer" id="answer2"><strong>答案：</strong>第一个孩子成为左子树，其余3个孩子通过<span class="highlight">右指针链成一条链表</span>。即：第2个孩子是第1个孩子的右兄弟，第3个孩子是第2个孩子的右兄弟，以此类推。
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(3)"><span>3. 树转换为二叉树后，如何还原原来的树结构？</span><span class="toggle-icon" id="icon3">🔽</span></div><div class="quiz-answer" id="answer3"><strong>答案：</strong>逆向操作即可：对于二叉树中的每个节点，将其<span class="highlight">左子树作为第一个孩子</span>，然后沿着第一个孩子的<span class="highlight">右指针链找到所有兄弟节点</span>，这些节点都是原节点的孩子。转换是完全可逆的。
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(4)"><span>4. 森林如何转换为二叉树？</span><span class="toggle-icon" id="icon4">🔽</span></div><div class="quiz-answer" id="answer4"><strong>答案：</strong>首先将森林中的每棵树分别转换为二叉树，然后将这些二叉树的根节点<span class="highlight">用右指针连成一条链</span>。第一棵树的根作为整个二叉树的根，其余树的根作为它的右兄弟。
+                </div></div><div class="quiz-item"><div class="quiz-question" onclick="toggleAnswer(5)"><span>5. 转换后的二叉树有什么特殊性质？</span><span class="toggle-icon" id="icon5">🔽</span></div><div class="quiz-answer" id="answer5"><strong>答案：</strong>转换后的二叉树有一个重要性质：<span class="highlight">没有节点同时有左孩子和右孩子</span>，除非原树中对应节点既有孩子又有兄弟。这种结构保证了原树信息的完整保存。
+                </div></div></div><div class="info-box"><h4>📚 进阶学习建议</h4><ol><li><strong>基础练习：</strong>手工绘制小规模树的转换过程</li><li><strong>编程实现：</strong>完成转换算法的三种语言实现</li><li><strong>综合应用：</strong>结合树的遍历算法，比较转换前后的遍历结果</li><li><strong>下一步学习：</strong>学习线索二叉树、平衡二叉树等高级树结构</li></ol></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="btn">
+            🏠 返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="btn btn-secondary">
+            🌌 探索CS宇宙
+        </a></div></div><script>let canvas, ctx; let currentStep = 0; let animationId; class Node { constructor(x, y, data, color = '#3b82f6') { this.x = x; this.y = y; this.data = data; this.color = color; this.children = []; this.parent = null; } draw() { ctx.beginPath(); ctx.arc(this.x, this.y, 20, 0, 2 * Math.PI); ctx.fillStyle = this.color; ctx.fill(); ctx.strokeStyle = '#1f2937'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'white'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(this.data, this.x, this.y); } drawLineTo(other, color = '#4b5563', dashed = false) { ctx.beginPath(); if (dashed) { ctx.setLineDash([5, 5]); } ctx.moveTo(this.x, this.y); ctx.lineTo(other.x, other.y); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke(); ctx.setLineDash([]); } } function initCanvas() { canvas = document.getElementById('conversionCanvas'); ctx = canvas.getContext('2d'); showOriginalTree(); } function showOriginalTree() { ctx.clearRect(0, 0, canvas.width, canvas.height); const nodeA = new Node(500, 80, 'A', '#f59e0b'); const nodeB = new Node(350, 180, 'B', '#3b82f6'); const nodeC = new Node(500, 180, 'C', '#3b82f6'); const nodeD = new Node(650, 180, 'D', '#3b82f6'); const nodeE = new Node(300, 280, 'E', '#10b981'); const nodeF = new Node(400, 280, 'F', '#10b981'); nodeA.drawLineTo(nodeB); nodeA.drawLineTo(nodeC); nodeA.drawLineTo(nodeD); nodeB.drawLineTo(nodeE); nodeB.drawLineTo(nodeF); [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF].forEach(node => node.draw()); ctx.fillStyle = '#374151'; ctx.font = '14px Arial'; ctx.textAlign = 'center'; ctx.fillText('原始树结构：A有三个孩子B、C、D，B有两个孩子E、F', 500, 350); document.getElementById('explanation').textContent = '这是一个典型的多叉树，节点A有3个孩子，节点B有2个孩子'; currentStep = 0; } function startConversion() { currentStep = 1; animateConversionStep(); } function animateConversionStep() { ctx.clearRect(0, 0, canvas.width, canvas.height); const originalNodes = { A: new Node(500, 80, 'A', '#f59e0b'), B: new Node(350, 180, 'B', '#3b82f6'), C: new Node(500, 180, 'C', '#3b82f6'), D: new Node(650, 180, 'D', '#3b82f6'), E: new Node(300, 280, 'E', '#10b981'), F: new Node(400, 280, 'F', '#10b981') }; const binaryNodes = { A: new Node(200, 80, 'A', '#f59e0b'), B: new Node(100, 180, 'B', '#3b82f6'), C: new Node(200, 280, 'C', '#3b82f6'), D: new Node(300, 380, 'D', '#3b82f6'), E: new Node(50, 280, 'E', '#10b981'), F: new Node(150, 380, 'F', '#10b981') }; ctx.fillStyle = '#374151'; ctx.font = '14px Arial'; ctx.textAlign = 'left'; ctx.fillText('转换规则：', 450, 100); ctx.fillText('1. 左指针 → 第一个孩子', 450, 130); ctx.fillText('2. 右指针 → 下一个兄弟', 450, 160); switch(currentStep) { case 1: originalNodes.A.drawLineTo(originalNodes.B, '#cccccc'); originalNodes.A.drawLineTo(originalNodes.C, '#cccccc'); originalNodes.A.drawLineTo(originalNodes.D, '#cccccc'); originalNodes.B.drawLineTo(originalNodes.E, '#cccccc'); originalNodes.B.drawLineTo(originalNodes.F, '#cccccc'); Object.values(originalNodes).forEach(node => node.draw()); ctx.fillStyle = '#dc2626'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('准备开始转换...', 500, 350); document.getElementById('explanation').textContent = '步骤1：显示原始树结构，准备应用转换规则'; setTimeout(() => { currentStep++; animateConversionStep(); }, 2000); break; case 2: binaryNodes.A.draw(); binaryNodes.B.draw(); binaryNodes.A.drawLineTo(binaryNodes.B, '#3b82f6'); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 4; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(binaryNodes.B.x, binaryNodes.B.y, 30, 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#dc2626'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('A的第一个孩子B → A的左孩子', 200, 350); document.getElementById('explanation').textContent = '步骤2：将A的第一个孩子B设置为A的左孩子'; setTimeout(() => { currentStep++; animateConversionStep(); }, 2000); break; case 3: binaryNodes.A.draw(); binaryNodes.B.draw(); binaryNodes.C.draw(); binaryNodes.A.drawLineTo(binaryNodes.B, '#3b82f6'); binaryNodes.B.drawLineTo(binaryNodes.C, '#ef4444'); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 4; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(binaryNodes.C.x, binaryNodes.C.y, 30, 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#dc2626'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('B的兄弟C → B的右兄弟', 200, 350); document.getElementById('explanation').textContent = '步骤3：将B的兄弟C连接为B的右兄弟'; setTimeout(() => { currentStep++; animateConversionStep(); }, 2000); break; case 4: binaryNodes.A.draw(); binaryNodes.B.draw(); binaryNodes.C.draw(); binaryNodes.D.draw(); binaryNodes.A.drawLineTo(binaryNodes.B, '#3b82f6'); binaryNodes.B.drawLineTo(binaryNodes.C, '#ef4444'); binaryNodes.C.drawLineTo(binaryNodes.D, '#ef4444'); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 4; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(binaryNodes.D.x, binaryNodes.D.y, 30, 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#dc2626'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('C的兄弟D → C的右兄弟', 200, 350); document.getElementById('explanation').textContent = '步骤4：将C的兄弟D连接为C的右兄弟'; setTimeout(() => { currentStep++; animateConversionStep(); }, 2000); break; case 5: binaryNodes.A.draw(); binaryNodes.B.draw(); binaryNodes.C.draw(); binaryNodes.D.draw(); binaryNodes.E.draw(); binaryNodes.A.drawLineTo(binaryNodes.B, '#3b82f6'); binaryNodes.B.drawLineTo(binaryNodes.C, '#ef4444'); binaryNodes.C.drawLineTo(binaryNodes.D, '#ef4444'); binaryNodes.B.drawLineTo(binaryNodes.E, '#3b82f6'); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 4; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(binaryNodes.E.x, binaryNodes.E.y, 30, 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#dc2626'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('B的第一个孩子E → B的左孩子', 200, 350); document.getElementById('explanation').textContent = '步骤5：将B的第一个孩子E设置为B的左孩子'; setTimeout(() => { currentStep++; animateConversionStep(); }, 2000); break; case 6: binaryNodes.A.draw(); binaryNodes.B.draw(); binaryNodes.C.draw(); binaryNodes.D.draw(); binaryNodes.E.draw(); binaryNodes.F.draw(); binaryNodes.A.drawLineTo(binaryNodes.B, '#3b82f6'); binaryNodes.B.drawLineTo(binaryNodes.C, '#ef4444'); binaryNodes.C.drawLineTo(binaryNodes.D, '#ef4444'); binaryNodes.B.drawLineTo(binaryNodes.E, '#3b82f6'); binaryNodes.E.drawLineTo(binaryNodes.F, '#ef4444'); ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 4; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.arc(binaryNodes.F.x, binaryNodes.F.y, 30, 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#dc2626'; ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillText('E的兄弟F → E的右兄弟', 200, 350); document.getElementById('explanation').textContent = '步骤6：将E的兄弟F连接为E的右兄弟'; setTimeout(() => { currentStep++; animateConversionStep(); }, 2000); break; case 7: Object.values(binaryNodes).forEach(node => node.draw()); binaryNodes.A.drawLineTo(binaryNodes.B, '#3b82f6'); binaryNodes.B.drawLineTo(binaryNodes.C, '#ef4444'); binaryNodes.C.drawLineTo(binaryNodes.D, '#ef4444'); binaryNodes.B.drawLineTo(binaryNodes.E, '#3b82f6'); binaryNodes.E.drawLineTo(binaryNodes.F, '#ef4444'); drawArrow(450, 200, 500, 200, '#3b82f6'); ctx.fillStyle = '#3b82f6'; ctx.textAlign = 'left'; ctx.fillText('左孩子', 510, 205); drawArrow(450, 230, 500, 230, '#ef4444'); ctx.fillStyle = '#ef4444'; ctx.fillText('右兄弟', 510, 235); ctx.fillStyle = '#10b981'; ctx.font = '18px Arial'; ctx.textAlign = 'center'; ctx.fillText('🎉 转换完成！', 200, 350); document.getElementById('explanation').textContent = '转换完成！多叉树已成功转换为二叉树，保持了所有的结构关系'; break; } } function showResult() { currentStep = 7; ctx.clearRect(0, 0, canvas.width, canvas.height); const nodeA = new Node(200, 80, 'A', '#f59e0b'); const nodeB = new Node(100, 180, 'B', '#3b82f6'); const nodeC = new Node(200, 280, 'C', '#3b82f6'); const nodeD = new Node(300, 380, 'D', '#3b82f6'); const nodeE = new Node(50, 280, 'E', '#10b981'); const nodeF = new Node(150, 380, 'F', '#10b981'); nodeA.drawLineTo(nodeB, '#3b82f6', false); nodeB.drawLineTo(nodeC, '#ef4444', false); nodeC.drawLineTo(nodeD, '#ef4444', false); nodeB.drawLineTo(nodeE, '#3b82f6', false); nodeE.drawLineTo(nodeF, '#ef4444', false); [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF].forEach(node => node.draw()); ctx.fillStyle = '#374151'; ctx.font = '14px Arial'; ctx.textAlign = 'left'; ctx.fillText('图例：', 450, 200); drawArrow(450, 220, 500, 220, '#3b82f6'); ctx.fillStyle = '#3b82f6'; ctx.fillText('左孩子关系', 510, 225); drawArrow(450, 250, 500, 250, '#ef4444'); ctx.fillStyle = '#ef4444'; ctx.fillText('右兄弟关系', 510, 255); ctx.fillStyle = '#10b981'; ctx.font = '18px Arial'; ctx.textAlign = 'center'; ctx.fillText('🎉 转换完成！', 500, 50); ctx.font = '14px Arial'; ctx.fillStyle = '#374151'; ctx.fillText('原多叉树已成功转换为二叉树，所有结构关系得到保持', 500, 350); document.getElementById('explanation').textContent = '最终结果：转换完成！现在可以用二叉树的算法来处理原来的多叉树了'; } function resetDemo() { currentStep = 0; if (animationId) { cancelAnimationFrame(animationId); } ctx.clearRect(0, 0, canvas.width, canvas.height); showOriginalTree(); } function drawArrow(x1, y1, x2, y2, color) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = color; ctx.lineWidth = 2; ctx.stroke(); const angle = Math.atan2(y2 - y1, x2 - x1); ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - 10 * Math.cos(angle - Math.PI / 6), y2 - 10 * Math.sin(angle - Math.PI / 6)); ctx.moveTo(x2, y2); ctx.lineTo(x2 - 10 * Math.cos(angle + Math.PI / 6), y2 - 10 * Math.sin(angle + Math.PI / 6)); ctx.stroke(); } function showCode(language) { document.querySelectorAll('.code-block').forEach(block => { block.classList.remove('active'); }); document.querySelectorAll('.code-tab').forEach(tab => { tab.classList.remove('active'); }); const targetCodeBlock = document.getElementById(language + '-code'); const targetTab = document.querySelector(`[onclick="showCode('${language}')"]`); if (targetCodeBlock) { targetCodeBlock.classList.add('active'); } if (targetTab) { targetTab.classList.add('active'); } } function copyCode() { const activeCodeBlock = document.querySelector('.code-block.active'); if (!activeCodeBlock) return; const codeElement = activeCodeBlock.querySelector('code') || activeCodeBlock.querySelector('pre'); const text = codeElement ? codeElement.textContent : activeCodeBlock.textContent; navigator.clipboard.writeText(text).then(() => { const btn = document.querySelector('.copy-btn'); const originalText = btn.textContent; btn.textContent = '✅ 已复制'; btn.style.background = '#10b981'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#4b5563'; }, 2000); }).catch(() => { const textArea = document.createElement('textarea'); textArea.value = text; document.body.appendChild(textArea); textArea.select(); document.execCommand('copy'); document.body.removeChild(textArea); const btn = document.querySelector('.copy-btn'); const originalText = btn.textContent; btn.textContent = '✅ 已复制'; btn.style.background = '#10b981'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#4b5563'; }, 2000); }); } function toggleAnswer(questionId) { const answer = document.getElementById('answer' + questionId); const icon = document.getElementById('icon' + questionId); if (answer.style.display === 'none' || answer.style.display === '') { answer.style.display = 'block'; icon.classList.add('active'); icon.textContent = '🔼'; } else { answer.style.display = 'none'; icon.classList.remove('active'); icon.textContent = '🔽'; } } document.addEventListener('DOMContentLoaded', function() { initCanvas(); });</script>
+
+{% endblock %}

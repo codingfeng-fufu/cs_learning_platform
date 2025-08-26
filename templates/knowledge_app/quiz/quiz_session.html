@@ -1,0 +1,76 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+{% load quiz_extras %}
+
+{% block title %}练习中 - {{ session.session_name }} - {{ block.super }}{% endblock %}
+
+{% block quiz_breadcrumb %}
+<div class="quiz-breadcrumb"><a href="{% url 'knowledge_app:quiz_dashboard' %}">🏠 个人题库</a><span class="quiz-breadcrumb-separator">></span><span>🎯 {{ session.session_name }}</span></div>
+{% endblock %}
+
+{% block quiz_content %}
+<div class="quiz-card"><!-- 进度条 --><div style="background: var(--quiz-gray-100); padding: 1rem; border-radius: var(--quiz-radius-xl) var(--quiz-radius-xl) 0 0;"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><h2 style="margin: 0; color: black !important;">{{ session.session_name }}</h2><span style="color: black !important; font-weight: 600;">
+                第 {{ current_index }} / {{ total_questions }} 题
+            </span></div><div class="quiz-progress"><div class="quiz-progress-bar" style="width: {{ progress }}%;"></div></div><div style="text-align: center; margin-top: 0.5rem; color: black !important; font-size: 0.9rem;">
+            进度: {{ progress }}%
+        </div></div><div class="quiz-card-body"><!-- 题目内容 --><div style="margin-bottom: 2rem;"><div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;"><h3 style="color: black !important; margin: 0; flex: 1;">{{ question.title }}</h3><div style="display: flex; gap: 0.5rem;"><span class="quiz-tag quiz-tag-primary">{{ question.get_question_type_display }}</span><span class="quiz-tag {% if question.difficulty == 1 %}quiz-tag-success{% elif question.difficulty == 2 %}quiz-tag-warning{% else %}quiz-tag-danger{% endif %}">
+                        {{ question.get_difficulty_display }}
+                    </span></div></div><div style="background: var(--quiz-gray-50); padding: 1.5rem; border-radius: var(--quiz-radius-lg); margin-bottom: 2rem; border-left: 4px solid var(--quiz-primary);"><p style="color: black !important; line-height: 1.6; margin: 0; white-space: pre-wrap;">{{ question.content }}</p><!-- 题目图片 -->
+                {% if question.question_image %}
+                <div style="margin-top: 1rem; text-align: center;"><img src="{{ question.question_image.url }}"
+                         style="max-width: 100%; max-height: 400px; border-radius: var(--quiz-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
+                         alt="题目图片"
+                         onclick="openImageModal(this.src)"></div>
+                {% endif %}
+            </div></div><!-- 答题区域 --><form id="answerForm" style="margin-bottom: 2rem;">
+            {% csrf_token %}
+            <input type="hidden" name="question_id" value="{{ question.id }}"><input type="hidden" id="timeSpent" name="time_spent" value="0">
+
+            {% if question.question_type == 'single_choice' %}
+            <!-- 单选题 --><div style="margin-bottom: 1.5rem;"><label style="color: black !important; font-weight: 600; margin-bottom: 1rem; display: block;">请选择一个答案：</label>
+                {% for key, value in question.options.items %}
+                <label style="display: flex; align-items: flex-start; padding: 1rem; margin-bottom: 0.5rem; background: white !important; border: 2px solid var(--quiz-gray-200); border-radius: var(--quiz-radius); cursor: pointer; transition: var(--quiz-transition); color: black !important;"
+                       onmouseover="this.style.borderColor='var(--quiz-primary)'"
+                       onmouseout="this.style.borderColor='var(--quiz-gray-200)'"><input type="radio" name="answer" value="{{ key }}" style="margin-right: 1rem; margin-top: 0.2rem;" onchange="this.parentElement.parentElement.querySelectorAll('label').forEach(l => {l.style.borderColor='var(--quiz-gray-200)'; l.style.background='white';}); this.parentElement.style.borderColor='var(--quiz-primary)'; this.parentElement.style.background='rgba(99, 102, 241, 0.1)';"><div style="flex: 1;"><span style="color: black !important;"><strong>{{ key }}.</strong> {{ value }}</span><!-- 选项图片 -->
+                        {% if question.option_images and question.option_images|get_item:key %}
+                        <div style="margin-top: 0.5rem;"><img src="/media/{{ question.option_images|get_item:key }}"
+                                 style="max-width: 200px; max-height: 150px; border-radius: var(--quiz-radius); box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                 alt="选项{{ key }}图片"
+                                 onclick="openImageModal('/media/{{ question.option_images|get_item:key }}')"></div>
+                        {% endif %}
+                    </div></label>
+                {% endfor %}
+            </div>
+
+            {% elif question.question_type == 'multiple_choice' %}
+            <!-- 多选题 --><div style="margin-bottom: 1.5rem;"><label style="color: black !important; font-weight: 600; margin-bottom: 1rem; display: block;">请选择所有正确答案：</label>
+                {% for key, value in question.options.items %}
+                <label style="display: flex; align-items: flex-start; padding: 1rem; margin-bottom: 0.5rem; background: white !important; border: 2px solid var(--quiz-gray-200); border-radius: var(--quiz-radius); cursor: pointer; transition: var(--quiz-transition); color: black !important;"
+                       onmouseover="this.style.borderColor='var(--quiz-primary)'"
+                       onmouseout="if(!this.querySelector('input').checked) this.style.borderColor='var(--quiz-gray-200)'"><input type="checkbox" name="answer" value="{{ key }}" style="margin-right: 1rem; margin-top: 0.2rem;" onchange="if(this.checked) { this.parentElement.style.borderColor='var(--quiz-primary)'; this.parentElement.style.background='rgba(99, 102, 241, 0.1)'; } else { this.parentElement.style.borderColor='var(--quiz-gray-200)'; this.parentElement.style.background='white'; }"><div style="flex: 1;"><span style="color: black !important;"><strong>{{ key }}.</strong> {{ value }}</span><!-- 选项图片 -->
+                        {% if question.option_images and question.option_images|get_item:key %}
+                        <div style="margin-top: 0.5rem;"><img src="/media/{{ question.option_images|get_item:key }}"
+                                 style="max-width: 200px; max-height: 150px; border-radius: var(--quiz-radius); box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+                                 alt="选项{{ key }}图片"
+                                 onclick="openImageModal('/media/{{ question.option_images|get_item:key }}')"></div>
+                        {% endif %}
+                    </div></label>
+                {% endfor %}
+            </div>
+
+            {% elif question.question_type == 'fill_blank' %}
+            <!-- 填空题 --><div style="margin-bottom: 1.5rem;"><label for="answer" style="color: black !important; font-weight: 600; margin-bottom: 1rem; display: block;">请填入答案：</label><input type="text" name="answer" id="answer" class="quiz-form-control" placeholder="输入你的答案..." style="font-size: 1.1rem; padding: 1rem;"></div>
+
+            {% elif question.question_type == 'short_answer' %}
+            <!-- 简答题 --><div style="margin-bottom: 1.5rem;"><label for="answer" style="color: black !important; font-weight: 600; margin-bottom: 1rem; display: block;">请输入你的答案：</label><textarea name="answer" id="answer" class="quiz-form-control" rows="5" placeholder="请详细回答..." style="font-size: 1rem; padding: 1rem;"></textarea></div>
+            {% endif %}
+
+            <!-- 提交按钮 --><div style="text-align: center;"><button type="submit" class="quiz-btn quiz-btn-primary" style="font-size: 1.1rem; padding: 1rem 2rem; color: white;"><span>✅</span><span>提交答案</span></button></div></form><!-- 题目标签 -->
+        {% if question.tags.all %}
+        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--quiz-gray-200);"><div style="color: var(--quiz-gray-600); font-size: 0.9rem; margin-bottom: 0.5rem;">相关标签：</div><div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {% for tag in question.tags.all %}
+                <span class="quiz-tag">{{ tag.name }}</span>
+                {% endfor %}
+            </div></div>
+        {% endif %}
+    </div></div><!-- 答案结果模态框 --><div id="resultModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;"><div style="background: white; border-radius: var(--quiz-radius-xl); max-width: 600px; width: 90%; padding: 2rem;"><div id="resultContent"><!-- 结果内容将通过JavaScript填充 --></div><div style="text-align: center; margin-top: 2rem;"><button class="quiz-btn quiz-btn-primary" onclick="nextQuestion()" style="color: white;"><span>➡️</span><span>下一题</span></button></div></div></div><!-- 图片模态框 --><div id="imageModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); cursor: pointer;" onclick="closeImageModal()"><div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); max-width: 90%; max-height: 90%;"><img id="modalImage" style="max-width: 100%; max-height: 100%; border-radius: var(--quiz-radius);" alt="放大图片"><div style="position: absolute; top: -40px; right: 0; color: white; font-size: 2rem; cursor: pointer;" onclick="closeImageModal()">&times;</div></div></div><script>let startTime = Date.now(); let timerInterval; function startTimer() { timerInterval = setInterval(function() { const elapsed = Math.floor((Date.now() - startTime) / 1000); document.getElementById('timeSpent').value = elapsed; }, 1000); } document.getElementById('answerForm').addEventListener('submit', function(e) { e.preventDefault(); const formData = new FormData(this); if ('{{ question.question_type }}' === 'multiple_choice') { const checkedBoxes = document.querySelectorAll('input[name="answer"]:checked'); const answers = Array.from(checkedBoxes).map(cb => cb.value); formData.set('answer', answers.join(',')); } clearInterval(timerInterval); fetch('{% url "knowledge_app:quiz_submit_answer" session.id %}', { method: 'POST', body: formData, headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value } }) .then(response => response.json()) .then(data => { showResult(data); }) .catch(error => { console.error('提交失败:', error); alert('提交失败，请重试'); }); }); function showResult(data) { const modal = document.getElementById('resultModal'); const content = document.getElementById('resultContent'); const isCorrect = data.is_correct; const icon = isCorrect ? '✅' : '❌'; const color = isCorrect ? 'var(--quiz-success)' : 'var(--quiz-danger)'; const title = isCorrect ? '回答正确！' : '回答错误'; content.innerHTML = ` <div style="text-align: center; margin-bottom: 2rem;"><div style="font-size: 4rem; margin-bottom: 1rem;">${icon}</div><h2 style="color: ${color}; margin-bottom: 1rem;">${title}</h2></div><div style="background: var(--quiz-gray-50); padding: 1.5rem; border-radius: var(--quiz-radius-lg); margin-bottom: 1rem;"><h4 style="color: var(--quiz-gray-800); margin-bottom: 0.5rem;">正确答案：</h4><p style="color: var(--quiz-gray-700); margin: 0;">${data.correct_answer}</p></div> ${data.explanation ? ` <div style="background: rgba(99, 102, 241, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg);"><h4 style="color: var(--quiz-primary); margin-bottom: 0.5rem;">答案解析：</h4><p style="color: var(--quiz-gray-700); margin: 0; line-height: 1.6;">${data.explanation}</p></div> ` : ''} `; modal.style.display = 'flex'; } function nextQuestion() { window.location.reload(); } document.addEventListener('DOMContentLoaded', function() { startTimer(); }); window.addEventListener('beforeunload', function() { clearInterval(timerInterval); }); function openImageModal(imageSrc) { const modal = document.getElementById('imageModal'); const modalImage = document.getElementById('modalImage'); modalImage.src = imageSrc; modal.style.display = 'block'; document.body.style.overflow = 'hidden'; } function closeImageModal() { const modal = document.getElementById('imageModal'); modal.style.display = 'none'; document.body.style.overflow = 'auto'; } document.addEventListener('keydown', function(event) { if (event.key === 'Escape') { closeImageModal(); } });</script>
+{% endblock %}

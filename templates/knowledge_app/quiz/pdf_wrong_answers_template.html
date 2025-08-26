@@ -1,0 +1,58 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>{{ user.username }} - 错题集</title><style>@page {size:A4;margin:2cm}body {font-family:"Microsoft YaHei", "SimHei", "黑体", sans-serif;font-size:12pt;line-height:1.6;color:#000;background:#fff}.header {text-align:center;margin-bottom:30px;border-bottom:2px solid #d32f2f;padding-bottom:20px}.title {font-size:24pt;font-weight:bold;margin-bottom:10px;color:#d32f2f}.info-table {width:100%;border-collapse:collapse;margin-bottom:30px}.info-table td {padding:8px;border:1px solid #333;vertical-align:top}.info-table .label {background-color:#ffebee;font-weight:bold;width:25%;text-align:right}.wrong-question {margin-bottom:25px;page-break-inside:avoid;border:2px solid #ffcdd2;padding:15px;border-radius:5px;background-color:#fafafa}.question-title {font-size:14pt;font-weight:bold;margin-bottom:10px;color:#000}.question-content {margin-bottom:15px;line-height:1.8}.options {margin-left:20px;margin-bottom:15px}.option {margin-bottom:5px;line-height:1.5}.answer-comparison {display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px}.wrong-answer {background-color:#ffebee;border:1px solid #f44336;padding:10px;border-radius:5px}.wrong-answer .label {color:#d32f2f;font-weight:bold;margin-bottom:5px}.correct-answer {background-color:#e8f5e8;border:1px solid #4caf50;padding:10px;border-radius:5px}.correct-answer .label {color:#2e7d32;font-weight:bold;margin-bottom:5px}.error-info {background-color:#fff3e0;padding:8px;border-radius:3px;font-size:10pt;color:#e65100;margin-bottom:10px}.explanation {background-color:#e3f2fd;padding:10px;border-left:4px solid #2196f3;margin-bottom:10px;font-size:11pt;line-height:1.6}.ai-analysis {background-color:#f3e5f5;padding:10px;border-left:4px solid #9c27b0;margin-bottom:10px;font-size:11pt;line-height:1.6}.study-suggestion {background-color:#e8f5e8;padding:10px;border-left:4px solid #4caf50;margin-bottom:10px;font-size:11pt;line-height:1.6}.separator {border-bottom:1px solid #ccc;margin:20px 0}.tags {margin-top:10px;font-size:10pt;color:#666}.tag {background-color:#e0e0e0;padding:2px 6px;border-radius:3px;margin-right:5px}</style></head><body><div class="header"><div class="title">{{ user.username }} - 错题集</div><div>生成时间：{{ generated_time|date:"Y-m-d H:i:s" }}</div></div><table class="info-table"><tr><td class="label">用户名：</td><td>{{ user.username }}</td></tr><tr><td class="label">错题数量：</td><td>{{ total_wrong_answers }} 道</td></tr><tr><td class="label">生成时间：</td><td>{{ generated_time|date:"Y-m-d H:i:s" }}</td></tr></table>
+
+    {% for wrong_answer in wrong_answers %}
+    <div class="wrong-question"><div class="question-title">{{ forloop.counter }}. {{ wrong_answer.question.title }}</div><div class="question-content">{{ wrong_answer.question.content }}</div>
+        
+        {% if wrong_answer.question.question_image %}
+        <div style="margin: 10px 0;"><img src="{{ wrong_answer.question.question_image.url }}" style="max-width: 400px; max-height: 300px;" alt="题目图片"></div>
+        {% endif %}
+        
+        {% if wrong_answer.question.question_type in 'single_choice,multiple_choice' %}
+        <div class="options">
+            {% for key, value in wrong_answer.question.options.items %}
+            <div class="option"><strong>{{ key }}.</strong> {{ value }}
+                {% if wrong_answer.question.option_images and key in wrong_answer.question.option_images %}
+                <br><img src="{{ wrong_answer.question.option_images.key }}" style="max-width: 200px; max-height: 150px; margin-left: 20px;" alt="选项图片">
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <div class="answer-comparison"><div class="wrong-answer"><div class="label">❌ 你的答案：</div><div>{{ wrong_answer.wrong_answer }}</div></div><div class="correct-answer"><div class="label">✅ 正确答案：</div><div>{{ wrong_answer.correct_answer }}</div></div></div><div class="error-info"><strong>错误次数：</strong>{{ wrong_answer.wrong_count }} 次 | 
+            <strong>最近错误：</strong>{{ wrong_answer.last_wrong_at|date:"Y-m-d H:i" }}
+        </div>
+        
+        {% if wrong_answer.question.explanation %}
+        <div class="explanation"><strong>💡 答案解析：</strong>{{ wrong_answer.question.explanation }}
+        </div>
+        {% endif %}
+        
+        {% if wrong_answer.ai_analysis %}
+        <div class="ai-analysis"><strong>🤖 AI分析：</strong>{{ wrong_answer.ai_analysis }}
+        </div>
+        {% endif %}
+        
+        {% if wrong_answer.study_suggestion %}
+        <div class="study-suggestion"><strong>📚 学习建议：</strong>{{ wrong_answer.study_suggestion }}
+        </div>
+        {% endif %}
+        
+        {% if wrong_answer.question.tags.all %}
+        <div class="tags"><strong>标签：</strong>
+            {% for tag in wrong_answer.question.tags.all %}
+            <span class="tag">{{ tag.name }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    
+    {% if not forloop.last %}
+    <div class="separator"></div>
+    {% endif %}
+    {% endfor %}
+
+    <div style="text-align: center; margin-top: 30px; font-size: 10pt; color: #666;">
+        — 错题集导出完成 —<br>
+        共 {{ total_wrong_answers }} 道错题，请重点复习
+    </div></body></html>

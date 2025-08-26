@@ -1,0 +1,768 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}稀疏矩阵——十字链表法 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>稀疏矩阵——十字链表法</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🔗</span>
+            稀疏矩阵——十字链表法
+        </h1><p>链式存储的高效稀疏矩阵表示法，每个非零元素同时属于行链和列链</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📋</span>
+                知识点概述
+            </h2><div class="info-box info-box-info"><span class="info-icon">💡</span><strong>核心概念：</strong>十字链表法将稀疏矩阵的每个非零元素用一个节点表示，每个节点既属于一个行链表，又属于一个列链表，通过行头指针数组和列头指针数组组织，形成十字交叉的链式结构。
+            </div><div class="unified-grid unified-grid-2" style="margin-top: 20px;"><div class="grid-card"><span class="card-icon">📚</span><h4 class="card-title">关键术语</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>五元组节点：</strong>包含行、列、值、右指针、下指针</li><li><strong>行头指针数组：</strong>存储各行链表的首节点指针</li><li><strong>列头指针数组：</strong>存储各列链表的首节点指针</li><li><strong>right指针：</strong>指向同一行的下一个非零元素</li><li><strong>down指针：</strong>指向同一列的下一个非零元素</li></ul></div><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">学习信息</h4><ul style="text-align: left; margin: 10px 0;"><li><strong>难度等级：</strong>⭐⭐⭐⭐ 高级</li><li><strong>前置知识：</strong>链表、指针、稀疏矩阵基础</li><li><strong>学习时间：</strong>90-120分钟</li><li><strong>核心优势：</strong>支持高效矩阵运算</li></ul></div></div></div></div><!-- 📝 概念详解 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📝</span>
+                概念详解
+            </h2><div class="concept-explanation"><h3>🏙️ 生活类比：城市道路网格系统</h3><p>想象一个城市的道路网格，每个<strong>路口</strong>（非零元素）都同时属于一条<strong>东西向道路</strong>（行链表）和一条<strong>南北向道路</strong>（列链表）。通过<strong>道路起点标志牌</strong>（行头、列头指针），你可以沿着任意一条道路找到该路上的所有路口，也可以换到垂直的道路继续探索。</p><div class="structure-detailed"><h3>🗂️ 标准节点结构（教材版）</h3><div style="text-align: center; margin: 30px 0;"><div class="standard-node"><div class="node-field field-row">row</div><div class="node-field field-col">col</div><div class="node-field field-value">value</div><div class="node-field field-right">right</div><div class="node-field field-down">down</div></div><p style="margin: 15px 0; color: #666; font-size: 14px;">
+                            标准的五域节点结构：行号 + 列号 + 元素值 + 行链指针 + 列链指针
+                        </p></div><div class="structure-explained"><div class="field-explanation"><span class="field-demo field-row">row</span><span class="explanation">非零元素在矩阵中的行下标</span></div><div class="field-explanation"><span class="field-demo field-col">col</span><span class="explanation">非零元素在矩阵中的列下标</span></div><div class="field-explanation"><span class="field-demo field-value">value</span><span class="explanation">非零元素的值</span></div><div class="field-explanation"><span class="field-demo field-right">right</span><span class="explanation">指向同一行中下一个非零元素的指针</span></div><div class="field-explanation"><span class="field-demo field-down">down</span><span class="explanation">指向同一列中下一个非零元素的指针</span></div></div></div><div class="comparison-detailed"><h3>🆚 与三元组表示法的核心差异</h3><div class="unified-grid unified-grid-2" style="margin: 20px 0;"><div class="comparison-card"><h4>📦 三元组表示法</h4><div class="pros-cons"><div class="pros"><strong>✅ 优点：</strong><ul><li>结构简单，易于理解</li><li>存储空间紧凑</li><li>适合静态存储</li></ul></div><div class="cons"><strong>❌ 缺点：</strong><ul><li>随机访问慢 O(k)</li><li>插入删除需要移动大量元素</li><li>矩阵运算效率低</li></ul></div></div></div><div class="comparison-card"><h4>🔗 十字链表法</h4><div class="pros-cons"><div class="pros"><strong>✅ 优点：</strong><ul><li>快速按行/列遍历 O(该行/列元素数)</li><li>插入删除高效 O(1)</li><li>支持高效矩阵运算</li><li>便于并行处理</li></ul></div><div class="cons"><strong>❌ 缺点：</strong><ul><li>结构复杂，实现难度高</li><li>每个节点需要额外指针空间</li><li>指针维护容易出错</li></ul></div></div></div></div></div><div class="info-box info-box-warning"><span class="info-icon">⚠️</span><strong>关键理解：</strong>十字链表的精髓在于"一个节点，两个身份"——每个非零元素节点既是行链表的成员，也是列链表的成员，这种双重身份使得行列遍历都变得高效。
+                </div></div></div></div><!-- 📊 可视化展示 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">📊</span>
+                可视化展示
+            </h2><!-- 静态结构图 --><div class="visualization-container"><h3>🎯 教材标准十字链表结构图</h3><div class="textbook-style-demo"><div class="matrix-section"><h4>稀疏矩阵</h4><div class="matrix-display"><table class="source-matrix"><tr><td class="nonzero">3</td><td class="zero">0</td><td class="zero">0</td><td class="nonzero">5</td></tr><tr><td class="zero">0</td><td class="nonzero">-1</td><td class="zero">0</td><td class="zero">0</td></tr><tr><td class="nonzero">2</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr></table><p class="matrix-info">3×4矩阵，4个非零元素</p></div></div><div class="arrow-section"><div class="transform-arrow">→</div></div><div class="crosslist-section"><h4>十字链表表示</h4><div class="textbook-crosslist"><!-- 列头指针数组 --><div class="chead-array"><div class="array-label">chead</div><div class="head-pointers"><div class="head-cell">0</div><div class="head-cell">1</div><div class="head-cell">2</div><div class="head-cell">3</div></div></div><!-- 主体结构 --><div class="main-structure"><!-- 行头指针数组 --><div class="rhead-array"><div class="array-label">rhead</div><div class="row-pointers"><div class="head-cell">0</div><div class="head-cell">1</div><div class="head-cell">2</div></div></div><!-- 节点网络 --><div class="node-network"><!-- 第0行节点 --><div class="node-row"><div class="cross-node node-1"><div class="node-field">0</div><div class="node-field">0</div><div class="node-field">3</div><div class="node-field">→</div><div class="node-field">↓</div></div><div class="horizontal-link">→</div><div class="cross-node node-2"><div class="node-field">0</div><div class="node-field">3</div><div class="node-field">5</div><div class="node-field">∧</div><div class="node-field">∧</div></div></div><!-- 第1行节点 --><div class="node-row"><div class="cross-node node-3"><div class="node-field">1</div><div class="node-field">1</div><div class="node-field">-1</div><div class="node-field">∧</div><div class="node-field">∧</div></div></div><!-- 第2行节点 --><div class="node-row"><div class="cross-node node-4"><div class="node-field">2</div><div class="node-field">0</div><div class="node-field">2</div><div class="node-field">∧</div><div class="node-field">∧</div></div></div><!-- 垂直连接线 --><div class="vertical-links"><div class="vertical-link" style="left: 50px; top: 0;">↓</div><div class="vertical-link" style="left: 250px; top: 0;">↓</div></div></div></div></div></div></div><div class="structure-explanation"><h4>📋 结构说明</h4><div class="unified-grid unified-grid-2"><div class="explanation-item"><strong>🏠 头指针数组：</strong><ul><li><strong>rhead[3]：</strong>行头指针数组，指向各行的第一个非零元素</li><li><strong>chead[4]：</strong>列头指针数组，指向各列的第一个非零元素</li></ul></div><div class="explanation-item"><strong>🔗 节点结构：</strong><ul><li><strong>五元组：</strong>row | col | value | right | down</li><li><strong>→：</strong>指向同一行的下一个非零元素</li><li><strong>↓：</strong>指向同一列的下一个非零元素</li><li><strong>∧：</strong>表示空指针(NULL)</li></ul></div></div></div><div class="traversal-demo"><h4>🔄 遍历路径演示</h4><div class="unified-grid unified-grid-2"><div class="path-demo"><strong>按行遍历第0行：</strong><div class="path-trace">
+                                rhead[0] → (0,0,3) → (0,3,5) → NULL
+                            </div></div><div class="path-demo"><strong>按列遍历第0列：</strong><div class="path-trace">
+                                chead[0] → (0,0,3) → (2,0,2) → NULL
+                            </div></div></div></div></div><!-- 动态操作演示 --><div class="animation-container"><h3>🎬 动态操作演示</h3><div class="matrix-display"><h4>原始稀疏矩阵 (3×4)</h4><table class="source-matrix"><tr><td class="nonzero">3</td><td class="zero">0</td><td class="zero">0</td><td class="nonzero">5</td></tr><tr><td class="zero">0</td><td class="nonzero">-1</td><td class="zero">0</td><td class="zero">0</td></tr><tr><td class="nonzero">2</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr></table><p style="color: #666; font-size: 14px;">4个非零元素，稀疏度: 66.67%</p></div><canvas id="crosslistCanvas" width="1000" height="600" style="border: 2px solid #dee2e6; border-radius: 8px; width: 100%; max-width: 1000px; display: block; margin: 20px auto; background: white;"></canvas><div style="text-align: center; margin: 20px 0;"><button onclick="startCreateDemo()" class="demo-btn demo-btn-primary">构建过程</button><button onclick="startTraverseRowDemo()" class="demo-btn demo-btn-success">行遍历</button><button onclick="startTraverseColDemo()" class="demo-btn demo-btn-info">列遍历</button><button onclick="startInsertDemo()" class="demo-btn demo-btn-warning">插入操作</button><button onclick="resetAnimation()" class="demo-btn demo-btn-secondary">重置</button></div><div id="animationInfo" class="animation-info">点击上方按钮开始演示十字链表操作</div></div></div></div><!-- 💻 代码实现 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">💻</span>
+                代码实现
+            </h2><div class="code-tabs"><div class="tab-buttons"><button class="tab-btn active" onclick="showCode('cpp')">C++</button><button class="tab-btn" onclick="showCode('java')">Java</button><button class="tab-btn" onclick="showCode('python')">Python</button></div><div id="cpp-code" class="code-content active"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><h4>C++ 实现</h4><button onclick="copyCode('cpp', this)" class="copy-btn">📋 复制代码</button></div><pre><code id="cpp-source">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+// 十字链表节点结构
+struct OLNode {
+    int row, col;        // 行号和列号
+    int value;           // 元素值
+    OLNode* right;       // 指向同一行的下一个非零元素
+    OLNode* down;        // 指向同一列的下一个非零元素
+
+    OLNode(int r, int c, int v) :
+        row(r), col(c), value(v), right(nullptr), down(nullptr) {}
+};
+
+// 稀疏矩阵的十字链表表示
+class CrossList {
+private:
+    vector&lt;OLNode*&gt; rhead;  // 行头指针数组
+    vector&lt;OLNode*&gt; chead;  // 列头指针数组
+    int rows, cols, nums;   // 矩阵行数、列数、非零元素个数
+
+public:
+    CrossList(int m, int n) : rows(m), cols(n), nums(0) {
+        rhead.resize(m, nullptr);
+        chead.resize(n, nullptr);
+    }
+
+    ~CrossList() {
+        // 按行释放所有节点
+        for (int i = 0; i &lt; rows; i++) {
+            OLNode* current = rhead[i];
+            while (current) {
+                OLNode* temp = current;
+                current = current-&gt;right;
+                delete temp;
+            }
+        }
+    }
+
+    // 插入非零元素
+    void insert(int row, int col, int value) {
+        if (value == 0 || row &lt; 0 || row &gt;= rows || col &lt; 0 || col &gt;= cols) {
+            return;
+        }
+
+        // 创建新节点
+        OLNode* newNode = new OLNode(row, col, value);
+
+        // 插入到行链表中（按列号递增顺序）
+        insertToRowList(newNode);
+
+        // 插入到列链表中（按行号递增顺序）
+        insertToColList(newNode);
+
+        nums++;
+    }
+
+private:
+    void insertToRowList(OLNode* newNode) {
+        int row = newNode-&gt;row;
+        int col = newNode-&gt;col;
+
+        if (!rhead[row] || rhead[row]-&gt;col &gt; col) {
+            // 插入到行链表头部
+            newNode-&gt;right = rhead[row];
+            rhead[row] = newNode;
+        } else {
+            // 找到插入位置
+            OLNode* prev = rhead[row];
+            while (prev-&gt;right && prev-&gt;right-&gt;col &lt; col) {
+                prev = prev-&gt;right;
+            }
+            newNode-&gt;right = prev-&gt;right;
+            prev-&gt;right = newNode;
+        }
+    }
+
+    void insertToColList(OLNode* newNode) {
+        int row = newNode-&gt;row;
+        int col = newNode-&gt;col;
+
+        if (!chead[col] || chead[col]-&gt;row &gt; row) {
+            // 插入到列链表头部
+            newNode-&gt;down = chead[col];
+            chead[col] = newNode;
+        } else {
+            // 找到插入位置
+            OLNode* prev = chead[col];
+            while (prev-&gt;down && prev-&gt;down-&gt;row &lt; row) {
+                prev = prev-&gt;down;
+            }
+            newNode-&gt;down = prev-&gt;down;
+            prev-&gt;down = newNode;
+        }
+    }
+
+public:
+    // 获取指定位置的元素值
+    int getValue(int row, int col) {
+        if (row &lt; 0 || row &gt;= rows || col &lt; 0 || col &gt;= cols) {
+            return 0;
+        }
+
+        OLNode* current = rhead[row];
+        while (current) {
+            if (current-&gt;col == col) {
+                return current-&gt;value;
+            } else if (current-&gt;col &gt; col) {
+                break;
+            }
+            current = current-&gt;right;
+        }
+        return 0;
+    }
+
+    // 按行遍历矩阵
+    void traverseByRow() {
+        cout &lt;&lt; "按行遍历稀疏矩阵：\n";
+        for (int i = 0; i &lt; rows; i++) {
+            cout &lt;&lt; "第" &lt;&lt; i &lt;&lt; "行: ";
+            OLNode* current = rhead[i];
+            while (current) {
+                cout &lt;&lt; "(" &lt;&lt; current-&gt;row &lt;&lt; ","
+                     &lt;&lt; current-&gt;col &lt;&lt; ","
+                     &lt;&lt; current-&gt;value &lt;&lt; ") ";
+                current = current-&gt;right;
+            }
+            cout &lt;&lt; "\n";
+        }
+    }
+
+    // 按列遍历矩阵
+    void traverseByCol() {
+        cout &lt;&lt; "按列遍历稀疏矩阵：\n";
+        for (int j = 0; j &lt; cols; j++) {
+            cout &lt;&lt; "第" &lt;&lt; j &lt;&lt; "列: ";
+            OLNode* current = chead[j];
+            while (current) {
+                cout &lt;&lt; "(" &lt;&lt; current-&gt;row &lt;&lt; ","
+                     &lt;&lt; current-&gt;col &lt;&lt; ","
+                     &lt;&lt; current-&gt;value &lt;&lt; ") ";
+                current = current-&gt;down;
+            }
+            cout &lt;&lt; "\n";
+        }
+    }
+
+    // 矩阵转置
+    CrossList* transpose() {
+        CrossList* result = new CrossList(cols, rows);
+
+        // 遍历所有非零元素，交换行列坐标插入到新矩阵
+        for (int i = 0; i &lt; rows; i++) {
+            OLNode* current = rhead[i];
+            while (current) {
+                result-&gt;insert(current-&gt;col, current-&gt;row, current-&gt;value);
+                current = current-&gt;right;
+            }
+        }
+
+        return result;
+    }
+
+    // 矩阵加法
+    CrossList* add(const CrossList& other) {
+        if (rows != other.rows || cols != other.cols) {
+            cout &lt;&lt; "矩阵维度不匹配，无法相加！\n";
+            return nullptr;
+        }
+
+        CrossList* result = new CrossList(rows, cols);
+
+        // 遍历第一个矩阵的所有元素
+        for (int i = 0; i &lt; rows; i++) {
+            OLNode* current = rhead[i];
+            while (current) {
+                result-&gt;insert(current-&gt;row, current-&gt;col, current-&gt;value);
+                current = current-&gt;right;
+            }
+        }
+
+        // 遍历第二个矩阵的所有元素
+        for (int i = 0; i &lt; other.rows; i++) {
+            OLNode* current = other.rhead[i];
+            while (current) {
+                int existingValue = result-&gt;getValue(current-&gt;row, current-&gt;col);
+                int newValue = existingValue + current-&gt;value;
+
+                if (newValue != 0) {
+                    // 简化处理：删除后重新插入
+                    result-&gt;deleteElement(current-&gt;row, current-&gt;col);
+                    result-&gt;insert(current-&gt;row, current-&gt;col, newValue);
+                } else {
+                    result-&gt;deleteElement(current-&gt;row, current-&gt;col);
+                }
+                current = current-&gt;right;
+            }
+        }
+
+        return result;
+    }
+
+    // 删除元素（简化版本）
+    void deleteElement(int row, int col) {
+        // 实现删除逻辑...
+        // 需要同时从行链表和列链表中删除节点
+    }
+
+    // 输出矩阵信息
+    void printInfo() {
+        cout &lt;&lt; "矩阵大小: " &lt;&lt; rows &lt;&lt; "×" &lt;&lt; cols
+             &lt;&lt; ", 非零元素: " &lt;&lt; nums
+             &lt;&lt; ", 稀疏度: " &lt;&lt; (double)(rows*cols - nums)/(rows*cols)*100
+             &lt;&lt; "%\n";
+    }
+};</code></pre></div><div id="java-code" class="code-content"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><h4>Java 实现</h4><button onclick="copyCode('java', this)" class="copy-btn">📋 复制代码</button></div><pre><code id="java-source">// 十字链表节点类
+class OLNode {
+    int row, col;        // 行号和列号
+    int value;           // 元素值
+    OLNode right;        // 指向同一行的下一个非零元素
+    OLNode down;         // 指向同一列的下一个非零元素
+
+    public OLNode(int row, int col, int value) {
+        this.row = row;
+        this.col = col;
+        this.value = value;
+        this.right = null;
+        this.down = null;
+    }
+}
+
+// 稀疏矩阵的十字链表表示
+public class CrossList {
+    private OLNode[] rhead;     // 行头指针数组
+    private OLNode[] chead;     // 列头指针数组
+    private int rows, cols;     // 矩阵行数和列数
+    private int nums;           // 非零元素个数
+
+    public CrossList(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        this.nums = 0;
+        this.rhead = new OLNode[rows];
+        this.chead = new OLNode[cols];
+    }
+
+    // 插入非零元素
+    public void insert(int row, int col, int value) {
+        if (value == 0 || row < 0 || row >= rows || col < 0 || col >= cols) {
+            return;
+        }
+
+        // 创建新节点
+        OLNode newNode = new OLNode(row, col, value);
+
+        // 插入到行链表中
+        insertToRowList(newNode);
+
+        // 插入到列链表中
+        insertToColList(newNode);
+
+        nums++;
+    }
+
+    private void insertToRowList(OLNode newNode) {
+        int row = newNode.row;
+        int col = newNode.col;
+
+        if (rhead[row] == null || rhead[row].col > col) {
+            // 插入到行链表头部
+            newNode.right = rhead[row];
+            rhead[row] = newNode;
+        } else {
+            // 找到插入位置
+            OLNode prev = rhead[row];
+            while (prev.right != null && prev.right.col < col) {
+                prev = prev.right;
+            }
+            newNode.right = prev.right;
+            prev.right = newNode;
+        }
+    }
+
+    private void insertToColList(OLNode newNode) {
+        int row = newNode.row;
+        int col = newNode.col;
+
+        if (chead[col] == null || chead[col].row > row) {
+            // 插入到列链表头部
+            newNode.down = chead[col];
+            chead[col] = newNode;
+        } else {
+            // 找到插入位置
+            OLNode prev = chead[col];
+            while (prev.down != null && prev.down.row < row) {
+                prev = prev.down;
+            }
+            newNode.down = prev.down;
+            prev.down = newNode;
+        }
+    }
+
+    // 获取指定位置的元素值
+    public int getValue(int row, int col) {
+        if (row < 0 || row >= rows || col < 0 || col >= cols) {
+            return 0;
+        }
+
+        OLNode current = rhead[row];
+        while (current != null) {
+            if (current.col == col) {
+                return current.value;
+            } else if (current.col > col) {
+                break;
+            }
+            current = current.right;
+        }
+        return 0;
+    }
+
+    // 按行遍历矩阵
+    public void traverseByRow() {
+        System.out.println("按行遍历稀疏矩阵：");
+        for (int i = 0; i < rows; i++) {
+            System.out.print("第" + i + "行: ");
+            OLNode current = rhead[i];
+            while (current != null) {
+                System.out.print("(" + current.row + "," +
+                               current.col + "," +
+                               current.value + ") ");
+                current = current.right;
+            }
+            System.out.println();
+        }
+    }
+
+    // 按列遍历矩阵
+    public void traverseByCol() {
+        System.out.println("按列遍历稀疏矩阵：");
+        for (int j = 0; j < cols; j++) {
+            System.out.print("第" + j + "列: ");
+            OLNode current = chead[j];
+            while (current != null) {
+                System.out.print("(" + current.row + "," +
+                               current.col + "," +
+                               current.value + ") ");
+                current = current.down;
+            }
+            System.out.println();
+        }
+    }
+
+    // 矩阵转置
+    public CrossList transpose() {
+        CrossList result = new CrossList(cols, rows);
+
+        // 遍历所有非零元素，交换行列坐标插入到新矩阵
+        for (int i = 0; i < rows; i++) {
+            OLNode current = rhead[i];
+            while (current != null) {
+                result.insert(current.col, current.row, current.value);
+                current = current.right;
+            }
+        }
+
+        return result;
+    }
+
+    // 矩阵加法
+    public CrossList add(CrossList other) {
+        if (this.rows != other.rows || this.cols != other.cols) {
+            System.out.println("矩阵维度不匹配，无法相加！");
+            return null;
+        }
+
+        CrossList result = new CrossList(rows, cols);
+
+        // 遍历第一个矩阵的所有元素
+        for (int i = 0; i < rows; i++) {
+            OLNode current = rhead[i];
+            while (current != null) {
+                result.insert(current.row, current.col, current.value);
+                current = current.right;
+            }
+        }
+
+        // 遍历第二个矩阵的所有元素
+        for (int i = 0; i < other.rows; i++) {
+            OLNode current = other.rhead[i];
+            while (current != null) {
+                int existingValue = result.getValue(current.row, current.col);
+                int newValue = existingValue + current.value;
+
+                if (newValue != 0) {
+                    // 简化处理：删除后重新插入
+                    result.deleteElement(current.row, current.col);
+                    result.insert(current.row, current.col, newValue);
+                } else {
+                    result.deleteElement(current.row, current.col);
+                }
+                current = current.right;
+            }
+        }
+
+        return result;
+    }
+
+    // 删除元素（需要完整实现）
+    public void deleteElement(int row, int col) {
+        // 实现删除逻辑...
+        // 需要同时从行链表和列链表中删除节点
+    }
+
+    // 输出矩阵信息
+    public void printInfo() {
+        System.out.println("矩阵大小: " + rows + "×" + cols +
+                          ", 非零元素: " + nums +
+                          ", 稀疏度: " +
+                          String.format("%.2f", (double)(rows*cols - nums)/(rows*cols)*100) + "%");
+    }
+
+    // 转换为普通二维数组（用于显示）
+    public int[][] toDenseMatrix() {
+        int[][] matrix = new int[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            OLNode current = rhead[i];
+            while (current != null) {
+                matrix[current.row][current.col] = current.value;
+                current = current.right;
+            }
+        }
+
+        return matrix;
+    }
+}</code></pre></div><div id="python-code" class="code-content"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;"><h4>Python 实现</h4><button onclick="copyCode('python', this)" class="copy-btn">📋 复制代码</button></div><pre><code id="python-source">class OLNode:
+    """十字链表节点类"""
+    def __init__(self, row, col, value):
+        self.row = row      # 行号
+        self.col = col      # 列号
+        self.value = value  # 元素值
+        self.right = None   # 指向同一行的下一个非零元素
+        self.down = None    # 指向同一列的下一个非零元素
+
+class CrossList:
+    """稀疏矩阵的十字链表表示"""
+
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.nums = 0                    # 非零元素个数
+        self.rhead = [None] * rows       # 行头指针数组
+        self.chead = [None] * cols       # 列头指针数组
+
+    def insert(self, row, col, value):
+        """插入非零元素"""
+        if value == 0 or row < 0 or row >= self.rows or col < 0 or col >= self.cols:
+            return
+
+        # 创建新节点
+        new_node = OLNode(row, col, value)
+
+        # 插入到行链表中（按列号递增顺序）
+        self._insert_to_row_list(new_node)
+
+        # 插入到列链表中（按行号递增顺序）
+        self._insert_to_col_list(new_node)
+
+        self.nums += 1
+
+    def _insert_to_row_list(self, new_node):
+        """插入节点到行链表中的正确位置"""
+        row = new_node.row
+        col = new_node.col
+
+        if not self.rhead[row] or self.rhead[row].col > col:
+            # 插入到行链表头部
+            new_node.right = self.rhead[row]
+            self.rhead[row] = new_node
+        else:
+            # 找到插入位置
+            prev = self.rhead[row]
+            while prev.right and prev.right.col < col:
+                prev = prev.right
+            new_node.right = prev.right
+            prev.right = new_node
+
+    def _insert_to_col_list(self, new_node):
+        """插入节点到列链表中的正确位置"""
+        row = new_node.row
+        col = new_node.col
+
+        if not self.chead[col] or self.chead[col].row > row:
+            # 插入到列链表头部
+            new_node.down = self.chead[col]
+            self.chead[col] = new_node
+        else:
+            # 找到插入位置
+            prev = self.chead[col]
+            while prev.down and prev.down.row < row:
+                prev = prev.down
+            new_node.down = prev.down
+            prev.down = new_node
+
+    def get_value(self, row, col):
+        """获取指定位置的元素值"""
+        if row < 0 or row >= self.rows or col < 0 or col >= self.cols:
+            return 0
+
+        current = self.rhead[row]
+        while current:
+            if current.col == col:
+                return current.value
+            elif current.col > col:
+                break
+            current = current.right
+        return 0
+
+    def traverse_by_row(self):
+        """按行遍历矩阵"""
+        print("按行遍历稀疏矩阵：")
+        for i in range(self.rows):
+            print(f"第{i}行: ", end="")
+            current = self.rhead[i]
+            while current:
+                print(f"({current.row},{current.col},{current.value}) ", end="")
+                current = current.right
+            print()
+
+    def traverse_by_col(self):
+        """按列遍历矩阵"""
+        print("按列遍历稀疏矩阵：")
+        for j in range(self.cols):
+            print(f"第{j}列: ", end="")
+            current = self.chead[j]
+            while current:
+                print(f"({current.row},{current.col},{current.value}) ", end="")
+                current = current.down
+            print()
+
+    def transpose(self):
+        """矩阵转置"""
+        result = CrossList(self.cols, self.rows)
+
+        # 遍历所有非零元素，交换行列坐标插入到新矩阵
+        for i in range(self.rows):
+            current = self.rhead[i]
+            while current:
+                result.insert(current.col, current.row, current.value)
+                current = current.right
+
+        return result
+
+    def add(self, other):
+        """矩阵加法"""
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("矩阵维度不匹配，无法相加！")
+
+        result = CrossList(self.rows, self.cols)
+
+        # 遍历第一个矩阵的所有元素
+        for i in range(self.rows):
+            current = self.rhead[i]
+            while current:
+                result.insert(current.row, current.col, current.value)
+                current = current.right
+
+        # 遍历第二个矩阵的所有元素
+        for i in range(other.rows):
+            current = other.rhead[i]
+            while current:
+                existing_value = result.get_value(current.row, current.col)
+                new_value = existing_value + current.value
+
+                if new_value != 0:
+                    # 简化处理：删除后重新插入
+                    result.delete_element(current.row, current.col)
+                    result.insert(current.row, current.col, new_value)
+                else:
+                    result.delete_element(current.row, current.col)
+                current = current.right
+
+        return result
+
+    def delete_element(self, row, col):
+        """删除指定位置的元素"""
+        # 从行链表中删除
+        if self.rhead[row] and self.rhead[row].col == col:
+            node_to_delete = self.rhead[row]
+            self.rhead[row] = self.rhead[row].right
+        else:
+            current = self.rhead[row]
+            while current and current.right:
+                if current.right.col == col:
+                    node_to_delete = current.right
+                    current.right = current.right.right
+                    break
+                current = current.right
+            else:
+                return  # 元素不存在
+
+        # 从列链表中删除
+        if self.chead[col] and self.chead[col].row == row:
+            self.chead[col] = self.chead[col].down
+        else:
+            current = self.chead[col]
+            while current and current.down:
+                if current.down.row == row:
+                    current.down = current.down.down
+                    break
+                current = current.down
+
+        self.nums -= 1
+
+    def to_dense_matrix(self):
+        """转换为普通二维数组"""
+        matrix = [[0 for _ in range(self.cols)] for _ in range(self.rows)]
+
+        for i in range(self.rows):
+            current = self.rhead[i]
+            while current:
+                matrix[current.row][current.col] = current.value
+                current = current.right
+
+        return matrix
+
+    def print_info(self):
+        """输出矩阵信息"""
+        sparsity = (self.rows * self.cols - self.nums) / (self.rows * self.cols) * 100
+        print(f"矩阵大小: {self.rows}×{self.cols}, "
+              f"非零元素: {self.nums}, "
+              f"稀疏度: {sparsity:.2f}%")
+
+    def print_matrix(self):
+        """以矩阵形式打印"""
+        dense = self.to_dense_matrix()
+        for row in dense:
+            print('\t'.join(map(str, row)))
+
+# 使用示例
+if __name__ == "__main__":
+    # 创建3×4稀疏矩阵
+    matrix = CrossList(3, 4)
+
+    # 插入非零元素
+    matrix.insert(0, 0, 3)
+    matrix.insert(0, 3, 5)
+    matrix.insert(1, 1, -1)
+    matrix.insert(2, 0, 2)
+
+    # 输出矩阵信息
+    matrix.print_info()
+    print()
+
+    # 按行和按列遍历
+    matrix.traverse_by_row()
+    print()
+    matrix.traverse_by_col()
+    print()
+
+    # 输出矩阵
+    print("矩阵形式:")
+    matrix.print_matrix()
+    print()
+
+    # 矩阵转置
+    transposed = matrix.transpose()
+    print("转置后:")
+    transposed.print_matrix()
+    print()
+
+    # 矩阵加法示例
+    matrix2 = CrossList(4, 4)
+    matrix2.insert(0, 0, 1)
+    matrix2.insert(1, 1, 2)
+    matrix2.insert(2, 2, 3)
+
+    result = matrix.add(matrix2)
+    print("矩阵加法结果:")
+    result.print_matrix()</code></pre></div></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">🌟</span>
+                实际应用
+            </h2><div class="unified-grid unified-grid-3"><div class="application-card"><span class="app-icon">🧮</span><h4>有限元分析</h4><p>工程结构分析中的刚度矩阵通常具有带状稀疏特性，十字链表支持高效的矩阵分解和求解算法。</p><div class="example-box"><strong>优势：</strong>支持大规模矩阵的LU分解、Cholesky分解等数值算法。
+                    </div></div><div class="application-card"><span class="app-icon">🎮</span><h4>图像处理</h4><p>图像的拉普拉斯算子、边缘检测滤波器等操作产生大量稀疏矩阵，十字链表便于并行处理。</p><div class="example-box"><strong>优势：</strong>快速访问像素邻域，支持GPU并行计算。
+                    </div></div><div class="application-card"><span class="app-icon">🤖</span><h4>机器学习</h4><p>神经网络的权重矩阵、特征-词汇矩阵等都是高度稀疏的，十字链表减少内存占用和计算时间。</p><div class="example-box"><strong>优势：</strong>稀疏矩阵乘法、梯度计算效率显著提升。
+                    </div></div></div><div class="case-study" style="margin-top: 30px;"><h3>🔍 深度案例：大规模推荐系统</h3><div class="case-content"><p><strong>场景描述：</strong>Netflix、Amazon等推荐系统需要处理用户-物品评分矩阵，通常包含百万用户和数万物品，但平均每用户只评价过不到1%的物品。</p><div class="unified-grid unified-grid-2" style="margin: 20px 0;"><div class="metric-box challenge-box"><h4>📊 挑战规模</h4><ul><li><strong>矩阵规模：</strong>1,000,000 × 100,000</li><li><strong>理论存储：</strong>100TB（完整矩阵）</li><li><strong>实际非零：</strong>< 1%（高度稀疏）</li><li><strong>计算需求：</strong>实时推荐、协同过滤</li></ul></div><div class="metric-box solution-box"><h4>🎯 十字链表方案</h4><ul><li><strong>存储优化：</strong>仅存储评分数据（~1GB）</li><li><strong>用户查询：</strong>O(用户评价数)时间复杂度</li><li><strong>物品推荐：</strong>快速计算相似度矩阵</li><li><strong>实时更新：</strong>新评分O(1)插入</li></ul></div></div><div class="algorithm-demo"><h4>🔄 核心算法流程</h4><div class="flow-steps"><div class="step-item"><span class="step-num">1</span><div class="step-desc"><strong>用户行为分析</strong><br>
+                                    通过行遍历快速获取用户历史评分
+                                </div></div><div class="step-item"><span class="step-num">2</span><div class="step-desc"><strong>物品相似计算</strong><br>
+                                    通过列遍历计算物品间协同过滤
+                                </div></div><div class="step-item"><span class="step-num">3</span><div class="step-desc"><strong>矩阵分解</strong><br>
+                                    使用稀疏SVD、NMF等降维技术
+                                </div></div><div class="step-item"><span class="step-num">4</span><div class="step-desc"><strong>实时推荐</strong><br>
+                                    基于稀疏矩阵乘法生成推荐列表
+                                </div></div></div></div><div class="info-box info-box-success"><span class="info-icon">💡</span><strong>关键价值：</strong>十字链表使得推荐系统能够在有限硬件上处理TB级数据，Netflix通过类似技术每年节省数百万美元的计算成本，同时提供毫秒级的实时推荐响应。
+                    </div></div></div></div></div><!-- ✅ 学习检验 --><div class="content-card"><div class="content-section"><h2 class="section-title"><span class="section-icon">✅</span>
+                学习检验
+            </h2><div class="quiz-container"><div class="quiz-question"><h4>🔍 问题1：结构理解</h4><p>十字链表中每个节点需要几个数据域和几个指针域？行头指针数组和列头指针数组的作用分别是什么？</p><button onclick="toggleAnswer(1)" class="answer-btn">点击查看答案</button><div id="answer1" class="answer-content"><strong>答案：</strong>每个节点需要3个数据域和2个指针域。<br><strong>详细解析：</strong><br>
+                        • <strong>数据域：</strong>row（行号）、col（列号）、value（元素值）<br>
+                        • <strong>指针域：</strong>right（指向同一行下个元素）、down（指向同一列下个元素）<br>
+                        • <strong>行头指针数组：</strong>存储每一行链表的首节点指针，支持按行快速遍历<br>
+                        • <strong>列头指针数组：</strong>存储每一列链表的首节点指针，支持按列快速遍历
+                    </div></div><div class="quiz-question"><h4>🔍 问题2：插入操作分析</h4><p>在十字链表中插入一个新的非零元素，需要执行哪些操作？时间复杂度如何分析？</p><button onclick="toggleAnswer(2)" class="answer-btn">点击查看答案</button><div id="answer2" class="answer-content"><strong>答案：</strong>需要执行两个插入操作，时间复杂度为O(该行元素数 + 该列元素数)。<br><strong>详细步骤：</strong><br>
+                        1. <strong>行链表插入：</strong>在对应行链表中按列号递增顺序找到正确位置插入<br>
+                        2. <strong>列链表插入：</strong>在对应列链表中按行号递增顺序找到正确位置插入<br><strong>时间复杂度分析：</strong><br>
+                        • 最好情况：O(1)（插入到头部）<br>
+                        • 平均情况：O(k)，k为该行或该列的非零元素数<br>
+                        • 相比三元组的O(n)插入，效率显著提升
+                    </div></div><div class="quiz-question"><h4>🔍 问题3：应用场景判断</h4><p>在什么情况下应该选择十字链表而不是三元组？请给出具体的应用场景和判断依据。</p><button onclick="toggleAnswer(3)" class="answer-btn">点击查看答案</button><div id="answer3" class="answer-content"><strong>答案：</strong>当需要频繁进行矩阵运算或按行/列访问时选择十字链表。<br><strong>适用场景：</strong><br>
+                        • <strong>科学计算：</strong>有限元分析、偏微分方程求解<br>
+                        • <strong>图像处理：</strong>卷积运算、滤波操作<br>
+                        • <strong>机器学习：</strong>特征矩阵操作、神经网络训练<br>
+                        • <strong>推荐系统：</strong>用户-物品矩阵的协同过滤<br><strong>判断依据：</strong><br>
+                        1. 是否需要频繁的矩阵运算（加法、乘法、转置）<br>
+                        2. 是否需要按行或按列快速遍历<br>
+                        3. 非零元素是否经常变化（插入、删除）<br>
+                        4. 内存是否充足（十字链表占用更多空间）
+                    </div></div><div class="quiz-question"><h4>🔍 问题4：算法设计</h4><p>如何设计两个稀疏矩阵的乘法算法？请述基于十字链表的矩阵乘法基本思路。</p><button onclick="toggleAnswer(4)" class="answer-btn">点击查看答案</button><div id="answer4" class="answer-content"><strong>答案：</strong>利用十字链表的行列遍历特性，设计高效的稀疏矩阵乘法。<br><strong>算法思路：</strong><br><strong>1. 基本策略：</strong><br>
+                        • 对于C = A × B，C[i][j] = Σ(A[i][k] × B[k][j])<br>
+                        • 只计算非零元素的乘积，跳过零元素<br><strong>2. 具体步骤：</strong><br>
+                        • 遍历矩阵A的每一行i<br>
+                        • 遍历矩阵B的每一列j<br>
+                        • 使用双指针技术同时遍历A的第i行和B的第j列<br>
+                        • 当行号和列号匹配时计算乘积并累加<br><strong>3. 优化技巧：</strong><br>
+                        • 预先转置矩阵B，将列遍历转换为行遍历<br>
+                        • 使用哈希表存储中间结果<br>
+                        • 并行化处理不同的行或列
+                    </div></div><div class="quiz-question"><h4>🔍 问题5：性能优化</h4><p>十字链表在实际应用中可能遇到哪些性能瓶颈？如何进行优化？</p><button onclick="toggleAnswer(5)" class="answer-btn">点击查看答案</button><div id="answer5" class="answer-content"><strong>答案：</strong>主要瓶颈包括内存访问局部性差和指针跳转开销，可通过多种策略优化。<br><strong>性能瓶颈：</strong><br>
+                        1. <strong>内存局部性：</strong>链表节点分散存储，缓存命中率低<br>
+                        2. <strong>指针开销：</strong>每个节点需要额外指针空间<br>
+                        3. <strong>随机访问：</strong>查找特定元素需要链表遍历<br><strong>优化策略：</strong><br><strong>1. 内存池技术：</strong><br>
+                        • 预分配连续内存块存储节点<br>
+                        • 减少内存碎片，提高缓存效率<br><strong>2. 混合存储：</strong><br>
+                        • 稠密行/列使用数组存储<br>
+                        • 稀疏行/列使用链表存储<br><strong>3. 压缩技术：</strong><br>
+                        • 使用CSR/CSC格式进行压缩<br>
+                        • 块稀疏矩阵优化<br><strong>4. 并行化：</strong><br>
+                        • 行级或列级并行处理<br>
+                        • GPU加速计算
+                    </div></div></div><div class="learning-path" style="margin-top: 30px;"><h3>🎯 进阶学习路径</h3><div class="unified-grid unified-grid-2"><div class="path-card"><span class="path-icon">📚</span><h4>巩固练习</h4><ul><li>实现完整的十字链表稀疏矩阵类</li><li>编写矩阵加法、乘法、转置算法</li><li>性能测试与内存分析</li><li>与其他稀疏矩阵格式对比</li></ul></div><div class="path-card"><span class="path-icon">🚀</span><h4>下一步学习</h4><ul><li>压缩稀疏行(CSR)格式详解</li><li>块稀疏矩阵(BSR)技术</li><li>稀疏矩阵的并行算法</li><li>高性能科学计算库（BLAS、LAPACK）</li></ul></div></div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><style>.page-container {max-width:1200px;margin:0 auto;padding:20px}.content-card {background:white;border-radius:12px;padding:30px;margin:20px 0;box-shadow:0 4px 6px rgba(0,0,0,0.1)}.section-title {font-size:24px;color:#2c3e50;margin-bottom:20px;display:flex;align-items:center;gap:10px}.section-icon {font-size:28px}.unified-grid {display:grid;gap:20px;margin:20px 0}.unified-grid-2 {grid-template-columns:repeat(auto-fit, minmax(300px, 1fr))}.unified-grid-3 {grid-template-columns:repeat(auto-fit, minmax(250px, 1fr))}.grid-card, .application-card, .path-card {background:#f8f9fa;padding:20px;border-radius:8px;text-align:center;border:1px solid #e9ecef}.card-icon, .app-icon, .path-icon {font-size:32px;display:block;margin-bottom:10px}.info-box {padding:15px;border-radius:8px;margin:15px 0;display:flex;align-items:center;gap:10px}.info-box-info {background:#d1ecf1;border:1px solid #bee5eb}.info-box-success {background:#d4edda;border:1px solid #c3e6cb}.info-box-warning {background:#fff3cd;border:1px solid #ffeaa7}.standard-node {display:inline-flex;border:3px solid #333;border-radius:8px;overflow:hidden;font-family:'Courier New', monospace;font-weight:bold;box-shadow:0 4px 8px rgba(0,0,0,0.1)}.node-field {padding:15px 20px;color:white;text-align:center;min-width:80px;font-size:14px}.field-row {background:#e74c3c}.field-col {background:#f39c12}.field-value {background:#27ae60}.field-right {background:#3498db}.field-down {background:#9b59b6}.structure-explained {margin:20px 0}.field-explanation {display:flex;align-items:center;margin:10px 0;padding:8px;background:#f8f9fa;border-radius:5px}.field-demo {display:inline-block;padding:5px 10px;color:white;border-radius:3px;font-family:'Courier New', monospace;font-weight:bold;min-width:60px;text-align:center;margin-right:15px}.explanation {flex:1;font-size:14px;color:#555}.comparison-card {background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px;padding:20px}.pros-cons {text-align:left}.pros, .cons {margin:10px 0}.pros ul, .cons ul {margin:5px 0;padding-left:20px}.pros ul li, .cons ul li {margin:3px 0;font-size:14px}.textbook-style-demo {display:flex;align-items:center;justify-content:center;gap:30px;margin:30px 0;padding:20px;background:#f8f9fa;border-radius:10px;border:2px solid #dee2e6}.matrix-section {text-align:center}.source-matrix {border-collapse:collapse;margin:15px auto;border:2px solid #333}.source-matrix td {border:1px solid #666;padding:12px 16px;font-weight:bold;font-size:16px;width:50px;text-align:center}.arrow-section {display:flex;align-items:center}.transform-arrow {font-size:32px;font-weight:bold;color:#007bff}.crosslist-section {text-align:center}.textbook-crosslist {position:relative;background:white;border:2px solid #333;border-radius:8px;padding:20px;min-width:400px}.chead-array {position:absolute;top:-40px;left:80px;display:flex;align-items:center;gap:5px}.array-label {font-weight:bold;color:#333;margin-right:10px;font-size:14px}.head-pointers {display:flex;gap:2px}.head-cell {background:#007bff;color:white;padding:6px 12px;border:1px solid #333;font-weight:bold;font-size:12px;min-width:20px;text-align:center}.main-structure {display:flex;gap:20px;align-items:flex-start}.rhead-array {display:flex;flex-direction:column;align-items:center;gap:5px}.row-pointers {display:flex;flex-direction:column;gap:2px}.row-pointers .head-cell {background:#28a745;min-height:25px;display:flex;align-items:center;justify-content:center}.node-network {position:relative;flex:1}.node-row {display:flex;align-items:center;gap:10px;margin:15px 0;min-height:40px}.cross-node {display:flex;border:2px solid #333;background:white;font-family:'Courier New', monospace;font-size:11px;font-weight:bold}.cross-node .node-field {border-right:1px solid #333;padding:4px 8px;min-width:20px;text-align:center;display:flex;align-items:center;justify-content:center;min-height:25px}.cross-node .node-field:last-child {border-right:none}.node-1 {background:#e3f2fd}.node-2 {background:#f3e5f5}.node-3 {background:#e8f5e8}.node-4 {background:#fff3e0}.horizontal-link {font-size:18px;font-weight:bold;color:#dc3545}.vertical-links {position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}.vertical-link {position:absolute;font-size:18px;font-weight:bold;color:#007bff;transform:translateX(-50%)}.matrix-display {text-align:center}.zero {background:#ffebee;color:#999}.nonzero {background:#c8e6c9;color:#2e7d32}.structure-explanation {margin:30px 0;padding:20px;background:#f8f9fa;border-radius:8px;border:1px solid #dee2e6}.explanation-item {background:white;padding:15px;border-radius:5px;border:1px solid #e9ecef}.explanation-item ul {margin:8px 0;padding-left:20px}.explanation-item li {margin:5px 0;font-size:14px}.traversal-demo {margin:30px 0;padding:20px;background:#e8f4f8;border-radius:8px;border:1px solid #bee5eb}.path-demo {background:white;padding:15px;border-radius:5px;border:1px solid #b3d9ff}.path-trace {font-family:'Courier New', monospace;background:#f8f9fa;padding:10px;border-radius:3px;font-weight:bold;color:#2c3e50;margin-top:8px;text-align:center}.animation-info {text-align:center;font-size:16px;color:#007bff;margin:15px 0;min-height:24px;font-weight:500;background:#f8f9fa;padding:12px;border-radius:6px;border:1px solid #dee2e6}.demo-btn {background:#007bff;color:white;border:none;padding:12px 24px;border-radius:6px;margin:5px;cursor:pointer;transition:all 0.3s;font-size:14px;font-weight:500}.demo-btn-primary {background:#007bff}.demo-btn-success {background:#28a745}.demo-btn-info {background:#17a2b8}.demo-btn-warning {background:#ffc107;color:#212529}.demo-btn-secondary {background:#6c757d}.demo-btn:hover {transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.2)}.code-tabs {margin:20px 0}.tab-buttons {display:flex;gap:5px;margin-bottom:15px}.tab-btn {padding:10px 20px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:5px 5px 0 0;cursor:pointer;transition:all 0.3s}.tab-btn.active {background:#007bff;color:white;border-color:#007bff}.code-content {display:none;background:#f8f9fa;padding:20px;border-radius:0 5px 5px 5px;border:1px solid #dee2e6}.code-content.active {display:block}.code-content pre {margin:0;background:#2d3748;color:#e2e8f0;padding:20px;border-radius:5px;overflow-x:auto;font-family:'Courier New', monospace;line-height:1.5}.copy-btn {background:#007bff;color:white;border:none;padding:5px 15px;border-radius:3px;cursor:pointer;transition:background 0.3s}.copy-btn:hover {background:#0056b3}.case-content {background:#fff;padding:20px;border-radius:8px;border:1px solid #e9ecef}.challenge-box {background:#fff3cd;border:1px solid #ffeaa7}.solution-box {background:#d1edff;border:1px solid #bee5eb}.algorithm-demo {margin:20px 0}.flow-steps {display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:20px;margin:20px 0}.step-item {display:flex;flex-direction:column;align-items:center;text-align:center}.step-num {background:#007bff;color:white;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:bold;margin-bottom:10px}.step-desc {font-size:14px}.quiz-question {background:#f8f9fa;padding:20px;border-radius:8px;margin:15px 0;border:1px solid #dee2e6}.answer-btn {background:#28a745;color:white;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;margin-top:10px;transition:background 0.3s}.answer-btn:hover {background:#1e7e34}.answer-content {display:none;background:#e8f5e8;padding:15px;border-radius:5px;margin-top:10px;border:1px solid #c3e6cb}.example-box, .metric-box {background:#e3f2fd;padding:10px;border-radius:5px;margin-top:10px;border:1px solid #bbdefb}.unified-btn {display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:500;margin:0 10px;transition:all 0.3s}.unified-btn-primary {background:#007bff;color:white;border:1px solid #007bff}.unified-btn-secondary {background:white;color:#6c757d;border:1px solid #dee2e6}.unified-btn:hover {transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.1)}@media (max-width:768px) {.unified-grid-2, .unified-grid-3 {grid-template-columns:1fr}.tab-buttons {flex-direction:column}canvas {width:100% !important;height:auto !important}.matrix-crosslist-demo {flex-direction:column}.flow-steps {grid-template-columns:1fr}.headers-section {flex-direction:column;gap:10px}.standard-node {flex-direction:column}.node-field {min-width:auto;width:100%}.textbook-style-demo {flex-direction:column;gap:15px}.transform-arrow {transform:rotate(90deg);font-size:24px}.textbook-crosslist {min-width:auto;overflow-x:auto}.chead-array {position:static;justify-content:center;margin-bottom:15px}.main-structure {flex-direction:column;gap:10px;align-items:center}.cross-node {flex-direction:column}.cross-node .node-field {border-right:none;border-bottom:1px solid #333;min-width:40px}.cross-node .node-field:last-child {border-bottom:none}}</style><script>let canvas, ctx; let animationStep = 0; let isAnimating = false; let currentDemo = ''; const matrixElements = [ {row: 0, col: 0, value: 3}, {row: 0, col: 3, value: 5}, {row: 1, col: 1, value: -1}, {row: 2, col: 0, value: 2} ]; const layout = { margin: {top: 80, left: 120, right: 80, bottom: 80}, grid: { nodeWidth: 100, nodeHeight: 50, rowSpacing: 120, colSpacing: 150 }, header: { width: 80, height: 35, rowHeaderX: 40, colHeaderY: 40 } }; document.addEventListener('DOMContentLoaded', function() { canvas = document.getElementById('crosslistCanvas'); if (canvas) { ctx = canvas.getContext('2d'); drawInitialState(); } }); function drawInitialState() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.font = '18px Arial'; ctx.fillStyle = '#666'; ctx.textAlign = 'center'; ctx.fillText('选择上方按钮开始演示十字链表操作', canvas.width/2, canvas.height/2 - 50); } function getNodePosition(row, col) { const baseX = layout.margin.left + layout.header.width + 50; const baseY = layout.margin.top + layout.header.height + 50; return { x: baseX + col * layout.grid.colSpacing, y: baseY + row * layout.grid.rowSpacing }; } function getRowHeaderPosition(row) { const baseY = layout.margin.top + layout.header.height + 50; return { x: layout.header.rowHeaderX, y: baseY + row * layout.grid.rowSpacing }; } function getColHeaderPosition(col) { const baseX = layout.margin.left + layout.header.width + 50; return { x: baseX + col * layout.grid.colSpacing, y: layout.header.colHeaderY }; } function drawBaseStructure() { ctx.font = '16px Arial'; ctx.textAlign = 'center'; ctx.fillStyle = '#2c3e50'; ctx.font = '14px Arial'; ctx.fillStyle = '#007bff'; ctx.textAlign = 'center'; ctx.fillText('rhead[]', layout.header.rowHeaderX, 75); ctx.fillStyle = '#28a745'; ctx.fillText('chead[]', layout.margin.left + 20, 75); for (let i = 0; i < 3; i++) { const pos = getRowHeaderPosition(i); drawHeaderPointer(pos.x, pos.y, `[${i}]`, '#007bff', 'row'); } for (let j = 0; j < 4; j++) { const pos = getColHeaderPosition(j); drawHeaderPointer(pos.x, pos.y, `[${j}]`, '#28a745', 'col'); } } function drawHeaderPointer(x, y, label, color, type) { const width = layout.header.width; const height = layout.header.height; ctx.fillStyle = color; ctx.fillRect(x - width/2, y - height/2, width, height); ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 2; ctx.strokeRect(x - width/2, y - height/2, width, height); ctx.fillStyle = 'white'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.fillText(label, x, y + 4); } function drawMatrixElement(element, isHighlighted) { const pos = getNodePosition(element.row, element.col); const width = layout.grid.nodeWidth; const height = layout.grid.nodeHeight; ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.fillRect(pos.x - width/2 + 3, pos.y - height/2 + 3, width, height); if (isHighlighted) { ctx.fillStyle = '#ff6b6b'; ctx.strokeStyle = '#ff4757'; ctx.lineWidth = 4; ctx.setLineDash([8, 8]); ctx.strokeRect(pos.x - width/2 - 5, pos.y - height/2 - 5, width + 10, height + 10); ctx.setLineDash([]); } else { ctx.fillStyle = '#74b9ff'; } ctx.fillRect(pos.x - width/2, pos.y - height/2, width, height); ctx.strokeStyle = '#2c3e50'; ctx.lineWidth = 2; ctx.strokeRect(pos.x - width/2, pos.y - height/2, width, height); ctx.fillStyle = '#2c3e50'; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.fillText(`(${element.row},${element.col})`, pos.x, pos.y - 8); ctx.fillText(`值: ${element.value}`, pos.x, pos.y + 8); } function drawConnection(fromElement, toElement, type, isHighlighted = false) { const fromPos = getNodePosition(fromElement.row, fromElement.col); const toPos = getNodePosition(toElement.row, toElement.col); let color = type === 'row' ? '#e74c3c' : '#3498db'; let label = type === 'row' ? 'RIGHT' : 'DOWN'; if (isHighlighted) { color = '#f39c12'; ctx.lineWidth = 6; } else { ctx.lineWidth = 3; } ctx.strokeStyle = color; ctx.setLineDash([]); if (type === 'row') { const y = fromPos.y - 15; ctx.beginPath(); ctx.moveTo(fromPos.x + layout.grid.nodeWidth/2, y); ctx.lineTo(toPos.x - layout.grid.nodeWidth/2, y); ctx.stroke(); ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(toPos.x - layout.grid.nodeWidth/2, y); ctx.lineTo(toPos.x - layout.grid.nodeWidth/2 - 12, y - 6); ctx.lineTo(toPos.x - layout.grid.nodeWidth/2 - 12, y + 6); ctx.closePath(); ctx.fill(); ctx.fillStyle = color; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.fillText(label, (fromPos.x + toPos.x) / 2, y - 20); } else { const x = fromPos.x + 15; ctx.beginPath(); ctx.moveTo(x, fromPos.y + layout.grid.nodeHeight/2); ctx.lineTo(x, toPos.y - layout.grid.nodeHeight/2); ctx.stroke(); ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(x, toPos.y - layout.grid.nodeHeight/2); ctx.lineTo(x - 6, toPos.y - layout.grid.nodeHeight/2 - 12); ctx.lineTo(x + 6, toPos.y - layout.grid.nodeHeight/2 - 12); ctx.closePath(); ctx.fill(); ctx.fillStyle = color; ctx.font = 'bold 12px Arial'; ctx.textAlign = 'center'; ctx.save(); ctx.translate(x - 25, (fromPos.y + toPos.y) / 2); ctx.rotate(-Math.PI / 2); ctx.fillText(label, 0, 0); ctx.restore(); } } function drawHeaderConnection(element, type, allElements = matrixElements) { const nodePos = getNodePosition(element.row, element.col); let isFirstInRowOrCol = false; if (type === 'row') { const rowElements = allElements.filter(e => e.row === element.row).sort((a, b) => a.col - b.col); isFirstInRowOrCol = rowElements.length > 0 && rowElements[0] === element; } else { const colElements = allElements.filter(e => e.col === element.col).sort((a, b) => a.row - b.row); isFirstInRowOrCol = colElements.length > 0 && colElements[0] === element; } if (!isFirstInRowOrCol) return; ctx.strokeStyle = '#95a5a6'; ctx.lineWidth = 3; ctx.setLineDash([8, 4]); if (type === 'row') { const headerPos = getRowHeaderPosition(element.row); const startX = headerPos.x + layout.header.width/2 + 25; const endX = nodePos.x - layout.grid.nodeWidth/2; ctx.beginPath(); ctx.moveTo(startX, headerPos.y); ctx.lineTo(endX, nodePos.y); ctx.stroke(); ctx.fillStyle = '#95a5a6'; ctx.beginPath(); ctx.moveTo(endX, nodePos.y); ctx.lineTo(endX - 12, nodePos.y - 6); ctx.lineTo(endX - 12, nodePos.y + 6); ctx.closePath(); ctx.fill(); } else { const headerPos = getColHeaderPosition(element.col); const startY = headerPos.y + layout.header.height/2 + 25; const endY = nodePos.y - layout.grid.nodeHeight/2; ctx.beginPath(); ctx.moveTo(headerPos.x, startY); ctx.lineTo(nodePos.x, endY); ctx.stroke(); ctx.fillStyle = '#95a5a6'; ctx.beginPath(); ctx.moveTo(nodePos.x, endY); ctx.lineTo(nodePos.x - 6, endY - 12); ctx.lineTo(nodePos.x + 6, endY - 12); ctx.closePath(); ctx.fill(); } ctx.setLineDash([]); } function startCreateDemo() { currentDemo = 'create'; animationStep = 0; isAnimating = true; animateCreate(); } function animateCreate() { ctx.clearRect(0, 0, canvas.width, canvas.height); drawBaseStructure(); for (let i = 0; i <= animationStep && i < matrixElements.length; i++) { const element = matrixElements[i]; const isHighlighted = i === animationStep; drawMatrixElement(element, isHighlighted); } for (let i = 0; i <= animationStep && i < matrixElements.length; i++) { const element = matrixElements[i]; drawHeaderConnection(element, 'row'); drawHeaderConnection(element, 'col'); } if (animationStep >= 2) { drawConnection(matrixElements[0], matrixElements[1], 'row'); } if (animationStep >= 4) { drawConnection(matrixElements[0], matrixElements[3], 'col'); } if (animationStep < matrixElements.length) { const current = matrixElements[animationStep]; updateAnimationInfo(`构建步骤 ${animationStep + 1}/${matrixElements.length}: 插入元素 (${current.row}, ${current.col}, ${current.value}) - rhead[${current.row}]和chead[${current.col}]指向对应节点`); animationStep++; if (isAnimating) { setTimeout(() => animateCreate(), 2500); } } else { updateAnimationInfo('十字链表构建完成：rhead[]指向各行首节点，chead[]指向各列首节点。'); isAnimating = false; } } function startTraverseRowDemo() { currentDemo = 'traverse-row'; animationStep = 0; isAnimating = true; animateTraverseRow(); } function animateTraverseRow() { ctx.clearRect(0, 0, canvas.width, canvas.height); drawBaseStructure(); const currentRow = Math.floor(animationStep / 2); matrixElements.forEach((element) => { const isHighlighted = element.row === currentRow; drawMatrixElement(element, isHighlighted); drawHeaderConnection(element, 'row'); drawHeaderConnection(element, 'col'); }); drawConnection(matrixElements[0], matrixElements[1], 'row', currentRow === 0); drawConnection(matrixElements[0], matrixElements[3], 'col'); if (currentRow < 3) { const rowElements = matrixElements.filter(e => e.row === currentRow); if (rowElements.length > 0) { updateAnimationInfo(`行遍历演示：正在遍历第${currentRow}行 - 找到${rowElements.length}个非零元素`); } else { updateAnimationInfo(`行遍历演示：第${currentRow}行为空行`); } animationStep++; if (isAnimating) { setTimeout(() => animateTraverseRow(), 2000); } } else { updateAnimationInfo('行遍历完成：通过行头指针和right指针可以快速访问每一行的所有非零元素。'); isAnimating = false; } } function startTraverseColDemo() { currentDemo = 'traverse-col'; animationStep = 0; isAnimating = true; animateTraverseCol(); } function animateTraverseCol() { ctx.clearRect(0, 0, canvas.width, canvas.height); drawBaseStructure(); const currentCol = Math.floor(animationStep / 2); matrixElements.forEach((element) => { const isHighlighted = element.col === currentCol; drawMatrixElement(element, isHighlighted); drawHeaderConnection(element, 'row'); drawHeaderConnection(element, 'col'); }); drawConnection(matrixElements[0], matrixElements[1], 'row'); drawConnection(matrixElements[0], matrixElements[3], 'col', currentCol === 0); if (currentCol < 4) { const colElements = matrixElements.filter(e => e.col === currentCol); if (colElements.length > 0) { updateAnimationInfo(`列遍历演示：正在遍历第${currentCol}列 - 找到${colElements.length}个非零元素`); } else { updateAnimationInfo(`列遍历演示：第${currentCol}列为空列`); } animationStep++; if (isAnimating) { setTimeout(() => animateTraverseCol(), 2000); } } else { updateAnimationInfo('列遍历完成：通过列头指针和down指针可以快速访问每一列的所有非零元素。'); isAnimating = false; } } function startInsertDemo() { currentDemo = 'insert'; animationStep = 0; isAnimating = true; animateInsert(); } function animateInsert() { ctx.clearRect(0, 0, canvas.width, canvas.height); drawBaseStructure(); const newElement = {row: 1, col: 2, value: 7}; const allElementsWithNew = [...matrixElements, newElement]; matrixElements.forEach(element => { drawMatrixElement(element, false); }); matrixElements.forEach(element => { drawHeaderConnection(element, 'row'); drawHeaderConnection(element, 'col'); }); drawConnection(matrixElements[0], matrixElements[1], 'row'); drawConnection(matrixElements[0], matrixElements[3], 'col'); if (animationStep === 0) { drawMatrixElement(newElement, true); updateAnimationInfo('步骤1: 准备插入新元素 (1,2,7)'); } else if (animationStep === 1) { drawMatrixElement(newElement, true); drawHeaderConnection(newElement, 'col', allElementsWithNew); updateAnimationInfo('步骤2: 建立 chead[2] → (1,2,7) 的连接（第2列的第一个节点）'); } else if (animationStep === 2) { drawMatrixElement(newElement, true); drawHeaderConnection(newElement, 'col', allElementsWithNew); drawConnection(matrixElements[2], newElement, 'row', true); updateAnimationInfo('步骤3: 建立行链表连接 (1,1,-1) → (1,2,7)'); } else { drawMatrixElement(newElement, false); drawHeaderConnection(newElement, 'col', allElementsWithNew); drawConnection(matrixElements[2], newElement, 'row'); updateAnimationInfo('插入完成：新节点已正确插入到第1行链表和第2列链表中'); isAnimating = false; return; } animationStep++; if (isAnimating) { setTimeout(() => animateInsert(), 2500); } } function resetAnimation() { isAnimating = false; animationStep = 0; currentDemo = ''; drawInitialState(); updateAnimationInfo('选择上方按钮开始演示十字链表操作'); } function updateAnimationInfo(text) { const infoElement = document.getElementById('animationInfo'); if (infoElement) { infoElement.textContent = text; } } function showCode(language) { document.querySelectorAll('.code-content').forEach(content => { content.classList.remove('active'); }); document.querySelectorAll('.tab-btn').forEach(btn => { btn.classList.remove('active'); }); document.getElementById(language + '-code').classList.add('active'); event.target.classList.add('active'); } function copyCode(language, button) { const codeElement = document.getElementById(language + '-source'); const text = codeElement.textContent || codeElement.innerText; const originalText = button.textContent; const originalBg = button.style.background; if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(() => { showCopySuccess(button, originalText, originalBg); }).catch(err => { console.warn('Clipboard API 失败，尝试备选方案:', err); fallbackCopyTextToClipboard(text, button, originalText, originalBg); }); } else { fallbackCopyTextToClipboard(text, button, originalText, originalBg); } } function fallbackCopyTextToClipboard(text, button, originalText, originalBg) { const textArea = document.createElement("textarea"); textArea.value = text; textArea.style.position = "fixed"; textArea.style.left = "-999999px"; textArea.style.top = "-999999px"; document.body.appendChild(textArea); textArea.focus(); textArea.select(); try { const successful = document.execCommand('copy'); if (successful) { showCopySuccess(button, originalText, originalBg); } else { showCopyError(button, originalText, originalBg); } } catch (err) { console.error('复制失败:', err); showCopyError(button, originalText, originalBg); } document.body.removeChild(textArea); } function showCopySuccess(button, originalText, originalBg) { button.textContent = '✅ 已复制'; button.style.background = '#28a745'; button.disabled = true; setTimeout(() => { button.textContent = originalText; button.style.background = originalBg || '#007bff'; button.disabled = false; }, 2000); } function showCopyError(button, originalText, originalBg) { button.textContent = '❌ 复制失败'; button.style.background = '#dc3545'; setTimeout(() => { button.textContent = originalText; button.style.background = originalBg || '#007bff'; }, 2000); alert('自动复制失败，请手动选择代码文本进行复制'); } function toggleAnswer(questionNumber) { const answer = document.getElementById('answer' + questionNumber); const button = event.target; if (answer.style.display === 'none' || answer.style.display === '') { answer.style.display = 'block'; button.textContent = '隐藏答案'; button.style.background = '#dc3545'; } else { answer.style.display = 'none'; button.textContent = '点击查看答案'; button.style.background = '#28a745'; } }</script>
+
+{% endblock %}

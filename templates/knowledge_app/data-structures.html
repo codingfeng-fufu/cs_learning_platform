@@ -1,0 +1,29 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}数据结构 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>计算机科学</span><span>></span><span>数据结构</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">🏗️</span>
+            数据结构
+        </h1><p>掌握数据的组织、存储和操作方式，构建高效算法的基石</p></div><!-- 领域概述 --><div class="content-card slide-in-right"><div class="content-section"><h2 class="section-title"><span class="section-icon">📖</span>
+                什么是数据结构
+            </h2><div class="section-content"><p>数据结构是计算机科学中用于组织和存储数据的方式，它定义了数据元素之间的逻辑关系和在计算机内存中的存储方式。选择合适的数据结构是编写高效程序的关键。</p><p>数据结构不仅影响程序的执行效率，还决定了算法的设计思路。掌握各种数据结构的特点和适用场景，是每个程序员必备的基本功。</p></div></div><!-- 核心概念 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🎯</span>
+                核心概念
+            </h2><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">📊</span><h4 class="card-title">逻辑结构</h4><p class="card-description">数据元素之间的逻辑关系，如线性结构、树形结构、图形结构等</p></div><div class="grid-card"><span class="card-icon">💾</span><h4 class="card-title">存储结构</h4><p class="card-description">数据在计算机内存中的物理存储方式，如顺序存储、链式存储等</p></div><div class="grid-card"><span class="card-icon">⚡</span><h4 class="card-title">操作效率</h4><p class="card-description">不同数据结构在插入、删除、查找等操作上的时间复杂度</p></div><div class="grid-card"><span class="card-icon">🎯</span><h4 class="card-title">应用场景</h4><p class="card-description">根据具体问题选择最适合的数据结构来优化解决方案</p></div></div></div><!-- 主要分类 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🗂️</span>
+                主要分类
+            </h2><div class="subsection-title"><span class="subsection-icon">📏</span>
+                线性结构
+            </div><div class="section-content"><p>数据元素之间存在一对一的线性关系，每个元素最多只有一个前驱和一个后继。</p><ul class="unified-list"><li><span class="list-icon">📋</span><strong>数组（Array）</strong>：连续存储的同类型元素集合，支持随机访问</li><li><span class="list-icon">🔗</span><strong>链表（Linked List）</strong>：通过指针连接的节点序列，动态分配内存</li><li><span class="list-icon">📚</span><strong>栈（Stack）</strong>：后进先出（LIFO）的数据结构，用于函数调用、表达式求值</li><li><span class="list-icon">🎫</span><strong>队列（Queue）</strong>：先进先出（FIFO）的数据结构，用于任务调度、缓冲区</li></ul></div><div class="subsection-title"><span class="subsection-icon">🌳</span>
+                树形结构
+            </div><div class="section-content"><p>数据元素之间存在一对多的层次关系，具有明确的根节点和父子关系。</p><ul class="unified-list"><li><span class="list-icon">🌲</span><strong>二叉树（Binary Tree）</strong>：每个节点最多有两个子节点的树结构</li><li><span class="list-icon">🔍</span><strong>二叉搜索树（BST）</strong>：支持高效查找、插入、删除的有序二叉树</li><li><span class="list-icon">⚖️</span><strong>平衡树（AVL、红黑树）</strong>：自动保持平衡的二叉搜索树</li><li><span class="list-icon">🗂️</span><strong>堆（Heap）</strong>：完全二叉树实现的优先队列</li></ul></div><div class="subsection-title"><span class="subsection-icon">🕸️</span>
+                图形结构
+            </div><div class="section-content"><p>数据元素之间存在多对多的复杂关系，可以表示网络、社交关系等复杂系统。</p><ul class="unified-list"><li><span class="list-icon">🌐</span><strong>无向图</strong>：边没有方向的图，表示对称关系</li><li><span class="list-icon">➡️</span><strong>有向图</strong>：边有方向的图，表示单向关系</li><li><span class="list-icon">🏷️</span><strong>带权图</strong>：边带有权值的图，用于最短路径等问题</li></ul></div></div><!-- 学习路径 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🛤️</span>
+                学习路径建议
+            </h2><div class="unified-grid unified-grid-3"><div class="grid-card"><span class="card-icon">1️⃣</span><h4 class="card-title">基础阶段</h4><p class="card-description">掌握数组、链表、栈、队列等基本线性结构</p></div><div class="grid-card"><span class="card-icon">2️⃣</span><h4 class="card-title">进阶阶段</h4><p class="card-description">学习树、堆、哈希表等非线性结构</p></div><div class="grid-card"><span class="card-icon">3️⃣</span><h4 class="card-title">高级阶段</h4><p class="card-description">深入图结构、平衡树、高级数据结构</p></div></div></div><!-- 实际应用 --><div class="content-section"><h2 class="section-title"><span class="section-icon">🚀</span>
+                实际应用
+            </h2><div class="section-content"><div class="unified-grid unified-grid-2"><div class="grid-card"><span class="card-icon">💻</span><h4 class="card-title">操作系统</h4><p class="card-description">进程调度队列、内存管理、文件系统树结构</p></div><div class="grid-card"><span class="card-icon">🌐</span><h4 class="card-title">网络协议</h4><p class="card-description">路由表、网络拓扑图、数据包缓冲区</p></div><div class="grid-card"><span class="card-icon">🗄️</span><h4 class="card-title">数据库</h4><p class="card-description">B+树索引、哈希索引、查询优化</p></div><div class="grid-card"><span class="card-icon">🎮</span><h4 class="card-title">游戏开发</h4><p class="card-description">场景图、碰撞检测、AI决策树</p></div></div></div></div><!-- 返回按钮 --><div class="content-section"><div class="action-buttons"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+                    返回首页
+                </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+                    知识宇宙
+                </a></div></div></div></div><style>.action-buttons {display:flex;gap:15px;justify-content:center;flex-wrap:wrap;margin-top:30px}@media (max-width:768px) {.action-buttons {flex-direction:column;align-items:center}.unified-btn {width:200px}}</style>
+{% endblock %}

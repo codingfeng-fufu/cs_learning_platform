@@ -1,0 +1,75 @@
+{% extends 'knowledge_app/quiz/base_quiz.html' %}
+
+{% block title %}练习结果 - {{ session.session_name }} - {{ block.super }}{% endblock %}
+
+{% block quiz_breadcrumb %}
+<div class="quiz-breadcrumb"><a href="{% url 'knowledge_app:quiz_dashboard' %}">🏠 个人题库</a><span class="quiz-breadcrumb-separator">></span><span>📊 练习结果</span></div>
+{% endblock %}
+
+{% block quiz_content %}
+<!-- 结果总览 --><div class="quiz-card"><div class="quiz-card-header"><h1 class="quiz-card-title">🎉 练习完成！</h1><p class="quiz-card-subtitle">{{ session.session_name }}</p></div><div class="quiz-card-body"><!-- 成绩统计 --><div class="quiz-grid quiz-grid-4"><div class="quiz-stat-card"><span class="quiz-stat-icon">📝</span><div class="quiz-stat-value">{{ total_questions }}</div><div class="quiz-stat-label">总题数</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">✅</span><div class="quiz-stat-value">{{ correct_answers }}</div><div class="quiz-stat-label">正确数</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">❌</span><div class="quiz-stat-value">{{ wrong_answers }}</div><div class="quiz-stat-label">错误数</div></div><div class="quiz-stat-card"><span class="quiz-stat-icon">📊</span><div class="quiz-stat-value">{{ accuracy }}%</div><div class="quiz-stat-label">正确率</div></div></div><!-- 成绩评价 --><div style="text-align: center; margin: 2rem 0;">
+            {% if accuracy >= 90 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div><h2 style="color: var(--quiz-success) !important; margin-bottom: 0.5rem;">优秀！</h2><p style="color: black !important;">你的表现非常出色，继续保持！</p>
+            {% elif accuracy >= 80 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎯</div><h2 style="color: var(--quiz-primary) !important; margin-bottom: 0.5rem;">良好！</h2><p style="color: black !important;">你的基础很扎实，再接再厉！</p>
+            {% elif accuracy >= 60 %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📚</div><h2 style="color: var(--quiz-warning) !important; margin-bottom: 0.5rem;">及格！</h2><p style="color: black !important;">还有提升空间，建议多加练习。</p>
+            {% else %}
+            <div style="font-size: 4rem; margin-bottom: 1rem;">💪</div><h2 style="color: var(--quiz-danger) !important; margin-bottom: 0.5rem;">需要努力！</h2><p style="color: black !important;">不要气馁，多练习一定会进步的！</p>
+            {% endif %}
+        </div><!-- 快速操作 --><div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            {% if session.library %}
+            <a href="{% url 'knowledge_app:quiz_start' session.library.id %}" class="quiz-btn quiz-btn-primary" style="color: white;"><span>🔄</span><span>再次练习</span></a>
+            {% endif %}
+            {% if wrong_answers > 0 %}
+            <a href="{% url 'knowledge_app:quiz_wrong_answers' %}" class="quiz-btn quiz-btn-warning" style="color: white;"><span>❌</span><span>查看错题</span></a>
+            {% endif %}
+            <a href="{% url 'knowledge_app:quiz_dashboard' %}" class="quiz-btn quiz-btn-outline" style="color: var(--quiz-primary);"><span>🏠</span><span>返回首页</span></a></div></div></div><!-- 题型统计 -->
+{% if type_stats %}
+<div class="quiz-card"><div class="quiz-card-body"><h2 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800);">📊 题型表现</h2><div class="quiz-grid quiz-grid-2">
+            {% for type_name, stats in type_stats.items %}
+            <div style="padding: 1.5rem; border: 1px solid var(--quiz-gray-200); border-radius: var(--quiz-radius-lg); background: var(--quiz-gray-50);"><div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"><h3 style="color: var(--quiz-gray-800); margin: 0;">{{ type_name }}</h3><span class="quiz-tag {% if stats.accuracy >= 80 %}quiz-tag-success{% elif stats.accuracy >= 60 %}quiz-tag-warning{% else %}quiz-tag-danger{% endif %}">
+                        {{ stats.accuracy }}%
+                    </span></div><div style="display: flex; justify-content: space-between; color: var(--quiz-gray-600); font-size: 0.9rem;"><span>正确: {{ stats.correct }}</span><span>总数: {{ stats.total }}</span></div><div class="quiz-progress" style="margin-top: 1rem;"><div class="quiz-progress-bar" style="width: {{ stats.accuracy }}%;"></div></div></div>
+            {% endfor %}
+        </div></div></div>
+{% endif %}
+
+<!-- 详细答题记录 --><div class="quiz-card"><div class="quiz-card-body"><h2 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800);">📋 答题详情</h2><div style="display: flex; flex-direction: column; gap: 1rem;">
+            {% for answer in answers %}
+            <div style="border: 1px solid {% if answer.is_correct %}var(--quiz-success){% else %}var(--quiz-danger){% endif %}; border-radius: var(--quiz-radius-lg); padding: 1.5rem; background: {% if answer.is_correct %}rgba(16, 185, 129, 0.05){% else %}rgba(239, 68, 68, 0.05){% endif %};"><div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;"><div style="flex: 1;"><h4 style="color: var(--quiz-gray-800); margin: 0 0 0.5rem 0;">
+                            {% if answer.is_correct %}✅{% else %}❌{% endif %}
+                            {{ answer.question.title }}
+                        </h4><p style="color: var(--quiz-gray-600); margin: 0; font-size: 0.9rem;">
+                            {{ answer.question.content|truncatechars:100 }}
+                        </p></div><div style="display: flex; gap: 0.5rem;"><span class="quiz-tag quiz-tag-primary">{{ answer.question.get_question_type_display }}</span><span class="quiz-tag {% if answer.question.difficulty == 1 %}quiz-tag-success{% elif answer.question.difficulty == 2 %}quiz-tag-warning{% else %}quiz-tag-danger{% endif %}">
+                            {{ answer.question.get_difficulty_display }}
+                        </span></div></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;"><div><div style="color: var(--quiz-gray-700); font-weight: 600; margin-bottom: 0.5rem;">你的答案：</div><div style="color: {% if answer.is_correct %}var(--quiz-success){% else %}var(--quiz-danger){% endif %}; font-weight: 500;">
+                            {{ answer.user_answer }}
+                        </div></div><div><div style="color: var(--quiz-gray-700); font-weight: 600; margin-bottom: 0.5rem;">正确答案：</div><div style="color: var(--quiz-success); font-weight: 500;">
+                            {{ answer.question.correct_answer }}
+                        </div></div></div>
+                
+                {% if answer.question.explanation %}
+                <div style="margin-top: 1rem; padding: 1rem; background: rgba(99, 102, 241, 0.1); border-radius: var(--quiz-radius);"><div style="color: var(--quiz-primary); font-weight: 600; margin-bottom: 0.5rem;">解析：</div><div style="color: var(--quiz-gray-700); line-height: 1.5;">{{ answer.question.explanation }}</div></div>
+                {% endif %}
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--quiz-gray-200);"><div style="display: flex; gap: 0.5rem;">
+                        {% for tag in answer.question.tags.all %}
+                        <span class="quiz-tag">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div><div style="color: var(--quiz-gray-500); font-size: 0.9rem;">
+                        用时: {{ answer.time_spent }}秒
+                    </div></div></div>
+            {% endfor %}
+        </div></div></div><!-- 学习建议 --><div class="quiz-card"><div class="quiz-card-body"><h2 style="margin-bottom: 1.5rem; color: var(--quiz-gray-800); text-align: center;">💡 学习建议</h2><div class="quiz-grid quiz-grid-2">
+            {% if wrong_answers > 0 %}
+            <div style="text-align: center; padding: 2rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">❌</div><h3 style="color: var(--quiz-gray-800); margin-bottom: 1rem;">复习错题</h3><p style="color: var(--quiz-gray-600); margin-bottom: 1.5rem;">
+                    你有 {{ wrong_answers }} 道题答错了，建议重点复习这些知识点
+                </p><a href="{% url 'knowledge_app:quiz_wrong_answers' %}" class="quiz-btn quiz-btn-warning" style="color: white;"><span>📖</span><span>查看错题本</span></a></div>
+            {% endif %}
+            
+            <div style="text-align: center; padding: 2rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div><h3 style="color: var(--quiz-gray-800); margin-bottom: 1rem;">AI分析</h3><p style="color: var(--quiz-gray-600); margin-bottom: 1.5rem;">
+                    使用AI分析功能，获得个性化的学习建议和改进方案
+                </p><button class="quiz-btn quiz-btn-primary" onclick="getAIAnalysis()" style="color: white;"><span>🧠</span><span>获取AI建议</span></button></div></div></div></div><!-- AI分析结果模态框 --><div id="aiModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;"><div style="background: white; border-radius: var(--quiz-radius-xl); max-width: 600px; width: 90%; padding: 2rem;"><h3 style="color: var(--quiz-gray-800); margin-bottom: 1.5rem; text-align: center;">🤖 AI学习分析</h3><div id="aiContent"><div style="text-align: center; padding: 2rem;"><div style="font-size: 2rem; margin-bottom: 1rem;">⏳</div><p style="color: var(--quiz-gray-600);">AI正在分析你的学习情况...</p></div></div><div style="text-align: center; margin-top: 2rem;"><button class="quiz-btn quiz-btn-outline" onclick="closeAIModal()" style="color: var(--quiz-primary);">关闭</button></div></div></div><script>function getAIAnalysis() { const modal = document.getElementById('aiModal'); modal.style.display = 'flex'; const analysisData = { total_questions: {{ total_questions }}, correct_answers: {{ correct_answers }}, accuracy: {{ accuracy }}, session_id: {{ session.id }} }; fetch('{% url "knowledge_app:quiz_analyze_session" session.id %}', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value || getCookie('csrftoken') }, body: JSON.stringify(analysisData) }) .then(response => response.json()) .then(data => { const content = document.getElementById('aiContent'); if (data.success) { const strengthsList = data.strengths.map(s => `<li style="color: var(--quiz-gray-700);">${s}</li>`).join(''); const weaknessesList = data.weaknesses.map(w => `<li style="color: var(--quiz-gray-700);">${w}</li>`).join(''); const suggestionsList = data.suggestions.map(s => `<li style="color: var(--quiz-gray-700);">${s}</li>`).join(''); const nextStepsList = data.next_steps.map(n => `<li style="color: var(--quiz-gray-700);">${n}</li>`).join(''); content.innerHTML = ` <div style="text-align: left;"><div style="background: rgba(99, 102, 241, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg); margin-bottom: 1rem;"><h4 style="color: var(--quiz-primary); margin-bottom: 1rem;">📊 整体评价</h4><p style="color: var(--quiz-gray-700); line-height: 1.6; margin: 0;">${data.overall_analysis}</p></div><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;"><div style="background: rgba(16, 185, 129, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg);"><h4 style="color: var(--quiz-success); margin-bottom: 1rem;">✅ 优势领域</h4><ul style="margin: 0; padding-left: 1.5rem;">${strengthsList || '<li style="color: var(--quiz-gray-500);">暂无明显优势</li>'}</ul></div><div style="background: rgba(245, 158, 11, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg);"><h4 style="color: var(--quiz-warning); margin-bottom: 1rem;">⚠️ 薄弱环节</h4><ul style="margin: 0; padding-left: 1.5rem;">${weaknessesList || '<li style="color: var(--quiz-gray-500);">暂无明显薄弱点</li>'}</ul></div></div><div style="background: rgba(139, 92, 246, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg); margin-bottom: 1rem;"><h4 style="color: #8b5cf6; margin-bottom: 1rem;">💡 学习建议</h4><ul style="margin: 0; padding-left: 1.5rem;">${suggestionsList}</ul></div><div style="background: rgba(6, 182, 212, 0.1); padding: 1.5rem; border-radius: var(--quiz-radius-lg);"><h4 style="color: #06b6d4; margin-bottom: 1rem;">🎯 下一步计划</h4><ul style="margin: 0; padding-left: 1.5rem;">${nextStepsList}</ul></div></div> `; } else { content.innerHTML = ` <div style="text-align: center; padding: 2rem;"><div style="font-size: 2rem; margin-bottom: 1rem;">😅</div><p style="color: var(--quiz-gray-600);">AI分析暂时不可用，请稍后再试。</p></div> `; } }) .catch(error => { console.error('AI分析失败:', error); const content = document.getElementById('aiContent'); content.innerHTML = ` <div style="text-align: center; padding: 2rem;"><div style="font-size: 2rem; margin-bottom: 1rem;">❌</div><p style="color: var(--quiz-gray-600);">分析失败，请检查网络连接。</p></div> `; }); } function closeAIModal() { document.getElementById('aiModal').style.display = 'none'; } function getCookie(name) { let cookieValue = null; if (document.cookie && document.cookie !== '') { const cookies = document.cookie.split(';'); for (let i = 0; i < cookies.length; i++) { const cookie = cookies[i].trim(); if (cookie.substring(0, name.length + 1) === (name + '=')) { cookieValue = decodeURIComponent(cookie.substring(name.length + 1)); break; } } } return cookieValue; } document.getElementById('aiModal').addEventListener('click', function(e) { if (e.target === this) { closeAIModal(); } });</script>
+{% endblock %}

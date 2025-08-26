@@ -1,0 +1,606 @@
+/* 练习题管理后台样式 */
+
+/* 主容器 */
+.exercise-admin-wrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+}
+
+/* 自定义组件样式 */
+.options-widget,
+.hints-widget {
+    width: 100%;
+    min-height: 120px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    background: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.options-widget:focus,
+.hints-widget:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+/* 字段帮助文本样式 */
+.help {
+    color: #6c757d;
+    font-size: 0.875em;
+    margin-top: 5px;
+    line-height: 1.4;
+}
+
+/* 字段集样式增强 */
+.form-row {
+    margin-bottom: 20px;
+}
+
+.form-row label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* JSON编辑器提示 */
+.json-editor-hint {
+    background: #e3f2fd;
+    border: 1px solid #bbdefb;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 0.875em;
+    color: #1565c0;
+}
+
+.json-editor-hint::before {
+    content: '💡 ';
+    margin-right: 5px;
+}
+
+/* 顶部工具栏 */
+.exercise-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+    padding: 15px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.toolbar-left h2 {
+    margin: 0;
+    color: #495057;
+    font-size: 1.5em;
+}
+
+.exercise-type-badge {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    margin-left: 10px;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 10px;
+}
+
+.toolbar-right .button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.9em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.preview-btn {
+    background: #28a745;
+    color: white;
+}
+
+.test-btn {
+    background: #17a2b8;
+    color: white;
+}
+
+.help-btn {
+    background: #ffc107;
+    color: #212529;
+}
+
+.toolbar-right .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 欢迎向导 */
+.welcome-wizard {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.welcome-wizard h2 {
+    font-size: 2.2em;
+    margin-bottom: 15px;
+}
+
+.wizard-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.step {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.1);
+    padding: 20px;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.step-content h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+}
+
+.step-content p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.9em;
+}
+
+.wizard-actions {
+    margin-top: 30px;
+}
+
+.wizard-actions .button {
+    padding: 12px 24px;
+    margin: 0 10px;
+    border-radius: 8px;
+    font-size: 1em;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wizard-actions .button.primary {
+    background: #fff;
+    color: #667eea;
+    font-weight: bold;
+}
+
+.wizard-actions .button:not(.primary) {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+}
+
+/* 模板选择器 */
+.template-selector {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.template-selector > div {
+    background: white;
+    border-radius: 12px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.template-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.template-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.close-template {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 30px;
+}
+
+.template-card {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.template-card:hover {
+    border-color: #007bff;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,123,255,0.15);
+}
+
+.template-icon {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.template-card h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+}
+
+.template-card p {
+    color: #6c757d;
+    margin: 0 0 15px 0;
+    font-size: 0.9em;
+}
+
+.template-example {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.85em;
+    color: #495057;
+    font-style: italic;
+}
+
+/* 进度指示器 */
+.progress-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    padding: 20px 0;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    max-width: 150px;
+}
+
+.progress-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 60%;
+    right: -40%;
+    height: 2px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.progress-step.active:not(:last-child)::after {
+    background: #007bff;
+}
+
+.progress-step .step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+    position: relative;
+    z-index: 2;
+}
+
+.progress-step.active .step-number {
+    background: #007bff;
+    color: white;
+}
+
+.progress-step .step-label {
+    font-size: 0.85em;
+    color: #6c757d;
+    text-align: center;
+}
+
+.progress-step.active .step-label {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* 实时预览面板 */
+.preview-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 999;
+    overflow-y: auto;
+}
+
+.preview-panel.active {
+    right: 0;
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e9ecef;
+    background: #f8f9fa;
+}
+
+.preview-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.close-preview {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.preview-content {
+    padding: 20px;
+}
+
+.preview-placeholder {
+    text-align: center;
+    color: #6c757d;
+    padding: 40px 20px;
+}
+
+.preview-exercise {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    background: #f8f9fa;
+}
+
+.preview-exercise h4 {
+    margin: 0 0 10px 0;
+    color: #495057;
+}
+
+.question-type-badge {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75em;
+    margin-bottom: 15px;
+}
+
+.question-content {
+    color: #495057;
+    line-height: 1.6;
+}
+
+/* 浮动操作按钮 */
+.floating-actions {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 998;
+}
+
+.fab {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.preview-fab {
+    background: #17a2b8;
+    color: white;
+}
+
+.save-fab {
+    background: #28a745;
+    color: white;
+}
+
+.floating-help {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 998;
+}
+
+.help-fab {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #ffc107;
+    color: #212529;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.help-fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* 帮助面板 */
+.help-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.help-panel > div {
+    background: white;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.help-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.help-header h3 {
+    margin: 0;
+    color: #495057;
+}
+
+.close-help {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    cursor: pointer;
+    color: #6c757d;
+}
+
+.help-content {
+    padding: 30px;
+}
+
+.help-section {
+    margin-bottom: 30px;
+}
+
+.help-section h4 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.help-section ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.help-section li {
+    margin-bottom: 8px;
+    color: #6c757d;
+    line-height: 1.5;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .exercise-toolbar {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .wizard-steps {
+        grid-template-columns: 1fr;
+    }
+    
+    .template-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .preview-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .floating-actions {
+        bottom: 20px;
+        right: 20px;
+    }
+    
+    .floating-help {
+        bottom: 20px;
+        left: 20px;
+    }
+}

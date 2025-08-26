@@ -1,0 +1,390 @@
+/* 主题切换系统 - CSS变量定义 */
+
+/* 默认主题（科技蓝） */
+:root {
+    /* 主色调 */
+    --primary-color: #667eea;
+    --secondary-color: #764ba2;
+    --accent-color: #4ecdc4;
+    
+    /* 背景色 */
+    --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --bg-secondary: rgba(255, 255, 255, 0.95);
+    --bg-card: rgba(255, 255, 255, 0.9);
+    --bg-overlay: rgba(255, 255, 255, 0.1);
+    
+    /* 文字颜色 */
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    --text-inverse: #ffffff;
+    
+    /* 边框和阴影 */
+    --border-color: #e2e8f0;
+    --border-light: rgba(255, 255, 255, 0.2);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.2);
+    
+    /* 状态颜色 */
+    --success-color: #48bb78;
+    --warning-color: #ed8936;
+    --error-color: #f56565;
+    --info-color: #4299e1;
+    
+    /* 交互效果 */
+    --hover-opacity: 0.8;
+    --transition: all 0.3s ease;
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --border-radius-lg: 20px;
+}
+
+/* 深色主题 */
+[data-theme="dark"] {
+    /* 主色调 */
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --accent-color: #06b6d4;
+    
+    /* 背景色 */
+    --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    --bg-secondary: #1f2937;
+    --bg-card: #374151;
+    --bg-overlay: rgba(0, 0, 0, 0.3);
+    
+    /* 文字颜色 */
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --text-muted: #9ca3af;
+    --text-inverse: #1f2937;
+    
+    /* 边框和阴影 */
+    --border-color: #4b5563;
+    --border-light: rgba(255, 255, 255, 0.1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* 护眼主题（绿色） */
+[data-theme="green"] {
+    /* 主色调 */
+    --primary-color: #10b981;
+    --secondary-color: #059669;
+    --accent-color: #34d399;
+    
+    /* 背景色 */
+    --bg-primary: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+    --bg-secondary: #f0fdf4;
+    --bg-card: rgba(240, 253, 244, 0.9);
+    --bg-overlay: rgba(16, 185, 129, 0.1);
+    
+    /* 文字颜色 */
+    --text-primary: #064e3b;
+    --text-secondary: #065f46;
+    --text-muted: #6b7280;
+    --text-inverse: #ffffff;
+    
+    /* 边框和阴影 */
+    --border-color: #d1fae5;
+    --border-light: rgba(16, 185, 129, 0.2);
+    --shadow-sm: 0 2px 4px rgba(16, 185, 129, 0.1);
+    --shadow-md: 0 4px 12px rgba(16, 185, 129, 0.15);
+    --shadow-lg: 0 8px 25px rgba(16, 185, 129, 0.2);
+}
+
+/* 温暖主题（橙色） */
+[data-theme="warm"] {
+    /* 主色调 */
+    --primary-color: #f59e0b;
+    --secondary-color: #d97706;
+    --accent-color: #fbbf24;
+    
+    /* 背景色 */
+    --bg-primary: linear-gradient(135deg, #92400e 0%, #b45309 100%);
+    --bg-secondary: #fffbeb;
+    --bg-card: rgba(255, 251, 235, 0.9);
+    --bg-overlay: rgba(245, 158, 11, 0.1);
+    
+    /* 文字颜色 */
+    --text-primary: #92400e;
+    --text-secondary: #b45309;
+    --text-muted: #6b7280;
+    --text-inverse: #ffffff;
+    
+    /* 边框和阴影 */
+    --border-color: #fed7aa;
+    --border-light: rgba(245, 158, 11, 0.2);
+    --shadow-sm: 0 2px 4px rgba(245, 158, 11, 0.1);
+    --shadow-md: 0 4px 12px rgba(245, 158, 11, 0.15);
+    --shadow-lg: 0 8px 25px rgba(245, 158, 11, 0.2);
+}
+
+/* 紫色主题 */
+[data-theme="purple"] {
+    /* 主色调 */
+    --primary-color: #8b5cf6;
+    --secondary-color: #7c3aed;
+    --accent-color: #a78bfa;
+    
+    /* 背景色 */
+    --bg-primary: linear-gradient(135deg, #581c87 0%, #6b21a8 100%);
+    --bg-secondary: #faf5ff;
+    --bg-card: rgba(250, 245, 255, 0.9);
+    --bg-overlay: rgba(139, 92, 246, 0.1);
+    
+    /* 文字颜色 */
+    --text-primary: #581c87;
+    --text-secondary: #6b21a8;
+    --text-muted: #6b7280;
+    --text-inverse: #ffffff;
+    
+    /* 边框和阴影 */
+    --border-color: #e9d5ff;
+    --border-light: rgba(139, 92, 246, 0.2);
+    --shadow-sm: 0 2px 4px rgba(139, 92, 246, 0.1);
+    --shadow-md: 0 4px 12px rgba(139, 92, 246, 0.15);
+    --shadow-lg: 0 8px 25px rgba(139, 92, 246, 0.2);
+}
+
+/* 粉色主题 */
+[data-theme="pink"] {
+    /* 主色调 */
+    --primary-color: #ec4899;
+    --secondary-color: #db2777;
+    --accent-color: #f472b6;
+    
+    /* 背景色 */
+    --bg-primary: linear-gradient(135deg, #9d174d 0%, #be185d 100%);
+    --bg-secondary: #fdf2f8;
+    --bg-card: rgba(253, 242, 248, 0.9);
+    --bg-overlay: rgba(236, 72, 153, 0.1);
+    
+    /* 文字颜色 */
+    --text-primary: #9d174d;
+    --text-secondary: #be185d;
+    --text-muted: #6b7280;
+    --text-inverse: #ffffff;
+    
+    /* 边框和阴影 */
+    --border-color: #fbcfe8;
+    --border-light: rgba(236, 72, 153, 0.2);
+    --shadow-sm: 0 2px 4px rgba(236, 72, 153, 0.1);
+    --shadow-md: 0 4px 12px rgba(236, 72, 153, 0.15);
+    --shadow-lg: 0 8px 25px rgba(236, 72, 153, 0.2);
+}
+
+/* 高对比度主题（无障碍） */
+[data-theme="contrast"] {
+    /* 主色调 */
+    --primary-color: #000000;
+    --secondary-color: #333333;
+    --accent-color: #0066cc;
+    
+    /* 背景色 */
+    --bg-primary: #ffffff;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-overlay: rgba(0, 0, 0, 0.1);
+    
+    /* 文字颜色 */
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --text-muted: #666666;
+    --text-inverse: #ffffff;
+    
+    /* 边框和阴影 */
+    --border-color: #000000;
+    --border-light: #333333;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* 主题切换按钮样式 */
+.theme-switcher {
+    position: fixed;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    z-index: 10000;
+    background: var(--bg-card);
+    border-radius: var(--border-radius-lg);
+    padding: 15px;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-light);
+    transition: var(--transition);
+}
+
+.theme-switcher:hover {
+    transform: translateY(-50%) scale(1.05);
+}
+
+.theme-switcher-toggle {
+    background: var(--primary-color);
+    color: var(--text-inverse);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-switcher-toggle:hover {
+    opacity: var(--hover-opacity);
+    transform: rotate(180deg);
+}
+
+.theme-options {
+    position: absolute;
+    right: 70px;
+    top: 0;
+    background: var(--bg-card);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(20px);
+    transition: var(--transition);
+}
+
+.theme-options.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.theme-option {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.theme-option:hover {
+    background: var(--bg-overlay);
+}
+
+.theme-option.active {
+    background: var(--primary-color);
+    color: var(--text-inverse);
+}
+
+.theme-preview {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 10px;
+    border: 2px solid var(--border-color);
+}
+
+.theme-preview.default {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+}
+
+.theme-preview.dark {
+    background: linear-gradient(45deg, #1a1a2e, #16213e);
+}
+
+.theme-preview.green {
+    background: linear-gradient(45deg, #10b981, #059669);
+}
+
+.theme-preview.warm {
+    background: linear-gradient(45deg, #f59e0b, #d97706);
+}
+
+.theme-preview.purple {
+    background: linear-gradient(45deg, #8b5cf6, #7c3aed);
+}
+
+.theme-preview.pink {
+    background: linear-gradient(45deg, #ec4899, #db2777);
+}
+
+.theme-preview.contrast {
+    background: linear-gradient(45deg, #000000, #333333);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .theme-switcher {
+        right: 10px;
+        padding: 10px;
+    }
+    
+    .theme-switcher-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .theme-options {
+        right: 60px;
+        min-width: 180px;
+    }
+}
+
+/* 主题切换动画 */
+* {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease, 
+                box-shadow 0.3s ease !important;
+}
+
+/* 确保所有元素都能响应主题变化 */
+body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.navbar {
+    background: var(--bg-overlay);
+    border-bottom-color: var(--border-light);
+}
+
+.card, .section {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-md);
+    border-color: var(--border-color);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--text-inverse);
+}
+
+.btn-secondary {
+    background: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: var(--text-inverse);
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.border {
+    border-color: var(--border-color) !important;
+}

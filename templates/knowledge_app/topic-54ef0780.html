@@ -1,0 +1,2223 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}A*启发式搜索算法 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>
+    .visualization-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .concept-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 15px 0;
+        border-left: 4px solid #ff6b6b;
+    }
+
+    .key-term {
+        display: inline-block;
+        background: #ffe0e0;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin: 2px;
+        font-weight: 600;
+    }
+
+    .difficulty-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .difficulty-hard {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    .code-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .code-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #f5f5f5;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.3s;
+    }
+
+    .code-tab.active {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    .code-content {
+        display: none;
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 0 8px 8px 8px;
+        position: relative;
+        font-family: 'Courier New', monospace;
+        overflow-x: auto;
+    }
+
+    .code-content.active {
+        display: block;
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .copy-btn:hover {
+        background: #ff5252;
+    }
+
+    #astarCanvas {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        margin: 20px auto;
+        display: block;
+        background: white;
+        cursor: pointer;
+    }
+
+    .control-panel {
+        text-align: center;
+        margin: 20px 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .control-btn {
+        padding: 10px 20px;
+        background: #ff6b6b;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .control-btn:hover {
+        background: #ff5252;
+        transform: translateY(-2px);
+    }
+
+    .control-btn.secondary {
+        background: #4ecdc4;
+    }
+
+    .control-btn.secondary:hover {
+        background: #45b7aa;
+    }
+
+    .control-btn.danger {
+        background: #dc3545;
+    }
+
+    .control-btn.danger:hover {
+        background: #c82333;
+    }
+
+    .mode-selector {
+        display: inline-flex;
+        gap: 5px;
+        padding: 5px;
+        background: #f0f0f0;
+        border-radius: 6px;
+        margin: 0 10px;
+    }
+
+    .mode-btn {
+        padding: 8px 16px;
+        background: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .mode-btn.active {
+        background: #ff6b6b;
+        color: white;
+    }
+
+    .stats-panel {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff6b6b;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #666;
+        margin-top: 5px;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+        margin: 20px 0;
+        padding: 15px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .legend-color {
+        width: 20px;
+        height: 20px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+    }
+
+    .heuristic-selector {
+        margin: 15px 0;
+        text-align: center;
+    }
+
+    .heuristic-selector select {
+        padding: 8px 16px;
+        border: 2px solid #ff6b6b;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .speed-control {
+        display: inline-block;
+        margin: 0 15px;
+    }
+
+    .speed-control label {
+        margin-right: 10px;
+        font-weight: 600;
+    }
+
+    .quiz-item {
+        background: #f8f9fa;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+    }
+
+    .quiz-question {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .show-answer-btn {
+        padding: 8px 16px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .quiz-answer {
+        display: none;
+        background: #d4edda;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 10px;
+        border-left: 4px solid #28a745;
+    }
+
+    .analogy-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .application-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .app-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .app-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .highlight {
+        background: #ffeb3b;
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+
+    .formula-box {
+        background: #f0f0f0;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 18px;
+        margin: 20px 0;
+        font-family: 'Courier New', monospace;
+    }
+
+    .algorithm-step {
+        background: #f8f9fa;
+        padding: 15px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border-left: 4px solid #ff6b6b;
+    }
+
+    .step-number {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        background: #ff6b6b;
+        color: white;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        margin-right: 10px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>算法</span>
+        <span>></span>
+        <span>A*搜索算法</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">⭐</span>
+            A*启发式搜索算法
+        </h1>
+        <p>智能寻路的黄金标准 - 用启发函数指引最短路径</p>
+    </div>
+
+    <!-- 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <h2 class="section-title">
+            <span class="section-icon">📋</span>
+            知识点概述
+        </h2>
+
+        <div class="concept-card">
+            <p style="font-size: 18px; line-height: 1.6;">
+                <strong>核心概念：</strong>A*算法就像一个<span class="highlight">智能导航员</span>，它不仅知道已走的路程，还能估计到目标的距离，总是选择"最有希望"的方向前进，既保证找到最短路径，又比盲目搜索快得多！
+            </p>
+
+            <div style="margin: 20px 0;">
+                <h4>🔤 关键术语：</h4>
+                <span class="key-term">启发函数 h(n)</span> - 估计当前节点到目标的代价<br>
+                <span class="key-term">实际代价 g(n)</span> - 从起点到当前节点的实际代价<br>
+                <span class="key-term">评估函数 f(n)</span> - f(n) = g(n) + h(n)，总代价估计<br>
+                <span class="key-term">开放列表</span> - 待探索的节点集合<br>
+                <span class="key-term">关闭列表</span> - 已探索的节点集合<br>
+                <span class="key-term">可采纳性</span> - 启发函数不高估实际代价
+            </div>
+
+            <div class="difficulty-badge difficulty-hard">
+                📊 学习难度：高级
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>前置知识：</strong>图搜索、Dijkstra算法、优先队列、启发式方法
+            </div>
+        </div>
+    </div>
+
+    <!-- 概念详解 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">🔍</span>
+            概念详解
+        </h2>
+
+        <div class="analogy-box">
+            <h3>🗺️ 生活类比：寻宝游戏</h3>
+            <p>想象你在一个大型公园里寻宝：</p>
+            <ul style="list-style: none; padding-left: 0;">
+                <li>📍 你知道自己走了多远（g(n) - 实际代价）</li>
+                <li>🧭 指南针显示宝藏的直线方向（h(n) - 启发估计）</li>
+                <li>🎯 你选择"已走距离+预估距离"最小的路线（f(n) = g(n) + h(n)）</li>
+                <li>🚶 这样既不会走冤枉路，又能快速接近目标</li>
+                <li>⚡ 比没有指南针（Dijkstra）快得多</li>
+                <li>✅ 如果估计不过分乐观，一定能找到最短路径</li>
+            </ul>
+        </div>
+
+        <div class="concept-card">
+            <h4>1️⃣ 核心公式：f(n) = g(n) + h(n)</h4>
+
+            <div class="formula-box">
+                <strong>f(n) = g(n) + h(n)</strong><br>
+                总代价 = 已知代价 + 估计代价
+            </div>
+
+            <ul>
+                <li><strong>g(n)：</strong>从起点到节点n的实际代价（已知）</li>
+                <li><strong>h(n)：</strong>从节点n到目标的估计代价（启发函数）</li>
+                <li><strong>f(n)：</strong>经过节点n的路径总代价估计</li>
+            </ul>
+
+            <p><strong>关键洞察：</strong>优先探索f(n)最小的节点，平衡了"走得近"和"方向对"</p>
+        </div>
+
+        <div class="concept-card">
+            <h4>2️⃣ 常用启发函数</h4>
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr style="background: #f0f0f0;">
+                    <th style="padding: 10px; border: 1px solid #ddd;">启发函数</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">公式</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">适用场景</th>
+                    <th style="padding: 10px; border: 1px solid #ddd;">特点</th>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">曼哈顿距离</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">|x₁-x₂| + |y₁-y₂|</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">网格，4方向移动</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">最常用，计算快</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">欧几里得距离</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">√((x₁-x₂)² + (y₁-y₂)²)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">任意方向移动</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">更准确，计算慢</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">切比雪夫距离</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">max(|x₁-x₂|, |y₁-y₂|)</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">8方向移动</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">对角线=直线</td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">零启发（h=0）</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">0</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">退化为Dijkstra</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">保证最优，效率低</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="concept-card">
+            <h4>3️⃣ 算法执行步骤</h4>
+            <div class="algorithm-step">
+                <span class="step-number">1</span>
+                初始化：起点加入开放列表，f(start) = h(start)
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">2</span>
+                选择开放列表中f值最小的节点current
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">3</span>
+                如果current是目标，重建路径并返回
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">4</span>
+                将current从开放列表移到关闭列表
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">5</span>
+                对current的每个邻居：计算g、h、f值，更新或加入开放列表
+            </div>
+            <div class="algorithm-step">
+                <span class="step-number">6</span>
+                重复2-5直到找到目标或开放列表为空
+            </div>
+        </div>
+
+        <div class="concept-card" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h4>⚠️ 初学者易混淆点</h4>
+            <ul>
+                <li>A*不是贪心算法，它考虑了完整路径代价</li>
+                <li>启发函数必须<strong>可采纳</strong>（不高估）才能保证最优</li>
+                <li>启发函数越精确，搜索越快，但计算成本可能更高</li>
+                <li>A*的效率高度依赖启发函数的质量</li>
+                <li>在最坏情况下（h=0），A*退化为Dijkstra</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 可视化展示 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">📊</span>
+            可视化展示
+        </h2>
+
+        <div class="visualization-container">
+            <h3 style="text-align: center;">🎯 A*算法路径搜索演示</h3>
+
+            <div class="heuristic-selector">
+                <label><strong>启发函数：</strong></label>
+                <select id="heuristicSelect" onchange="changeHeuristic()">
+                    <option value="manhattan">曼哈顿距离（4方向）</option>
+                    <option value="euclidean">欧几里得距离（任意方向）</option>
+                    <option value="chebyshev">切比雪夫距离（8方向）</option>
+                    <option value="zero">零启发（Dijkstra）</option>
+                </select>
+            </div>
+
+            <canvas id="astarCanvas" width="600" height="600"></canvas>
+
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #4CAF50;"></div>
+                    <span>起点</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f44336;"></div>
+                    <span>终点</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #333;"></div>
+                    <span>障碍物</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #87CEEB;"></div>
+                    <span>开放列表</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #FFD700;"></div>
+                    <span>关闭列表</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #9C27B0;"></div>
+                    <span>最短路径</span>
+                </div>
+            </div>
+
+            <div class="control-panel">
+                <div class="mode-selector">
+                    <button class="mode-btn active" onclick="setMode('wall')">🧱 墙壁</button>
+                    <button class="mode-btn" onclick="setMode('start')">🟢 起点</button>
+                    <button class="mode-btn" onclick="setMode('end')">🔴 终点</button>
+                </div>
+
+                <button class="control-btn" onclick="startSearch()">▶️ 开始搜索</button>
+                <button class="control-btn" onclick="stepSearch()">⏭️ 单步执行</button>
+                <button class="control-btn secondary" onclick="resetGrid()">🔄 重置路径</button>
+                <button class="control-btn secondary" onclick="generateMaze()">🎲 随机迷宫</button>
+                <button class="control-btn danger" onclick="clearGrid()">🗑️ 清空网格</button>
+
+                <div class="speed-control">
+                    <label for="speedSlider">速度：</label>
+                    <input type="range" id="speedSlider" min="10" max="500" value="50" step="10">
+                    <span id="speedValue">50ms</span>
+                </div>
+            </div>
+
+            <div class="stats-panel">
+                <div class="stat-card">
+                    <div class="stat-value" id="pathLength">0</div>
+                    <div class="stat-label">路径长度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="nodesExpanded">0</div>
+                    <div class="stat-label">扩展节点</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="nodesInOpen">0</div>
+                    <div class="stat-label">开放列表</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="timeElapsed">0ms</div>
+                    <div class="stat-label">搜索时间</div>
+                </div>
+            </div>
+
+            <div id="operationLog" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; min-height: 60px;">
+                <strong>操作日志：</strong><span id="logText">点击网格设置墙壁，或使用"随机迷宫"生成地图</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 代码示例 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">💻</span>
+            代码实现
+        </h2>
+
+        <div class="code-tabs">
+            <button class="code-tab active" onclick="switchCode('python', event)">Python</button>
+            <button class="code-tab" onclick="switchCode('cpp', event)">C++</button>
+            <button class="code-tab" onclick="switchCode('java', event)">Java</button>
+        </div>
+
+        <div id="python-code" class="code-content active">
+            <button class="copy-btn" onclick="copyCode('python', event)">📋 复制代码</button>
+            <pre><code>import heapq
+import math
+from typing import List, Tuple, Optional, Set
+
+class Node:
+    """A*算法的节点类"""
+    def __init__(self, position: Tuple[int, int], parent=None):
+        self.position = position
+        self.parent = parent
+
+        self.g = 0  # 从起点到当前节点的实际代价
+        self.h = 0  # 从当前节点到终点的估计代价（启发值）
+        self.f = 0  # 总代价 f = g + h
+
+    def __lt__(self, other):
+        """用于优先队列比较"""
+        return self.f < other.f
+
+    def __eq__(self, other):
+        return self.position == other.position
+
+    def __hash__(self):
+        return hash(self.position)
+
+class AStar:
+    """A*寻路算法实现"""
+
+    def __init__(self, grid: List[List[int]]):
+        """
+        初始化A*算法
+        Args:
+            grid: 二维网格，0表示可通行，1表示障碍物
+        """
+        self.grid = grid
+        self.rows = len(grid)
+        self.cols = len(grid[0]) if grid else 0
+
+    def heuristic(self, pos1: Tuple[int, int], pos2: Tuple[int, int],
+                  method: str = 'manhattan') -> float:
+        """
+        计算启发函数值
+        Args:
+            pos1: 当前位置
+            pos2: 目标位置
+            method: 启发函数类型
+        """
+        x1, y1 = pos1
+        x2, y2 = pos2
+
+        if method == 'manhattan':
+            # 曼哈顿距离（4方向移动）
+            return abs(x1 - x2) + abs(y1 - y2)
+        elif method == 'euclidean':
+            # 欧几里得距离（任意方向）
+            return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+        elif method == 'chebyshev':
+            # 切比雪夫距离（8方向移动）
+            return max(abs(x1 - x2), abs(y1 - y2))
+        else:
+            # 零启发（退化为Dijkstra）
+            return 0
+
+    def get_neighbors(self, node: Node, allow_diagonal: bool = False) -> List[Node]:
+        """
+        获取节点的邻居
+        Args:
+            node: 当前节点
+            allow_diagonal: 是否允许对角移动
+        """
+        neighbors = []
+        x, y = node.position
+
+        # 4方向移动
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+
+        # 8方向移动（包括对角）
+        if allow_diagonal:
+            directions += [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        for dx, dy in directions:
+            new_x, new_y = x + dx, y + dy
+
+            # 检查边界
+            if 0 <= new_x < self.rows and 0 <= new_y < self.cols:
+                # 检查是否是障碍物
+                if self.grid[new_x][new_y] == 0:
+                    neighbors.append(Node((new_x, new_y), node))
+
+        return neighbors
+
+    def reconstruct_path(self, node: Node) -> List[Tuple[int, int]]:
+        """
+        重建路径
+        Args:
+            node: 终点节点
+        Returns:
+            路径坐标列表
+        """
+        path = []
+        current = node
+
+        while current:
+            path.append(current.position)
+            current = current.parent
+
+        return path[::-1]  # 反转路径
+
+    def search(self, start: Tuple[int, int], end: Tuple[int, int],
+               heuristic_method: str = 'manhattan',
+               allow_diagonal: bool = False) -> Optional[List[Tuple[int, int]]]:
+        """
+        执行A*搜索
+        Args:
+            start: 起点坐标
+            end: 终点坐标
+            heuristic_method: 启发函数类型
+            allow_diagonal: 是否允许对角移动
+        Returns:
+            找到的路径，如果不存在则返回None
+        """
+        # 创建起点和终点节点
+        start_node = Node(start)
+        end_node = Node(end)
+
+        # 开放列表（使用优先队列）
+        open_list = []
+        heapq.heappush(open_list, start_node)
+
+        # 关闭列表（使用集合提高查找效率）
+        closed_set = set()
+
+        # 记录已在开放列表中的节点
+        open_dict = {start: start_node}
+
+        # 统计信息
+        nodes_expanded = 0
+
+        while open_list:
+            # 取出f值最小的节点
+            current_node = heapq.heappop(open_list)
+            open_dict.pop(current_node.position, None)
+
+            # 检查是否到达终点
+            if current_node.position == end:
+                print(f"路径找到！扩展节点数：{nodes_expanded}")
+                return self.reconstruct_path(current_node)
+
+            # 加入关闭列表
+            closed_set.add(current_node.position)
+            nodes_expanded += 1
+
+            # 检查所有邻居
+            for neighbor in self.get_neighbors(current_node, allow_diagonal):
+                # 跳过已在关闭列表中的节点
+                if neighbor.position in closed_set:
+                    continue
+
+                # 计算g值（实际代价）
+                if allow_diagonal and \
+                   abs(neighbor.position[0] - current_node.position[0]) + \
+                   abs(neighbor.position[1] - current_node.position[1]) == 2:
+                    # 对角移动，代价为√2
+                    move_cost = 1.414
+                else:
+                    # 直线移动，代价为1
+                    move_cost = 1
+
+                tentative_g = current_node.g + move_cost
+
+                # 如果邻居已在开放列表中
+                if neighbor.position in open_dict:
+                    existing_node = open_dict[neighbor.position]
+                    # 如果新路径更短，更新
+                    if tentative_g < existing_node.g:
+                        existing_node.g = tentative_g
+                        existing_node.f = existing_node.g + existing_node.h
+                        existing_node.parent = current_node
+                else:
+                    # 新节点，计算f值并加入开放列表
+                    neighbor.g = tentative_g
+                    neighbor.h = self.heuristic(neighbor.position, end,
+                                               heuristic_method)
+                    neighbor.f = neighbor.g + neighbor.h
+                    neighbor.parent = current_node
+
+                    heapq.heappush(open_list, neighbor)
+                    open_dict[neighbor.position] = neighbor
+
+        print(f"未找到路径！扩展节点数：{nodes_expanded}")
+        return None
+
+    def print_path(self, path: List[Tuple[int, int]]):
+        """打印路径可视化"""
+        if not path:
+            print("没有找到路径")
+            return
+
+        # 创建显示网格
+        display = [['□' if cell == 0 else '■'
+                   for cell in row] for row in self.grid]
+
+        # 标记路径
+        for x, y in path:
+            if (x, y) == path[0]:
+                display[x][y] = 'S'  # 起点
+            elif (x, y) == path[-1]:
+                display[x][y] = 'E'  # 终点
+            else:
+                display[x][y] = '◆'  # 路径
+
+        # 打印网格
+        for row in display:
+            print(' '.join(row))
+
+        print(f"\n路径长度: {len(path) - 1}")
+
+
+# 使用示例
+def example():
+    """A*算法使用示例"""
+
+    # 创建地图（0: 可通行, 1: 障碍物）
+    grid = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 1, 1, 1, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+        [0, 1, 1, 0, 0, 0, 0, 0, 1, 0],
+        [0, 0, 0, 0, 1, 1, 1, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
+        [0, 1, 1, 1, 1, 1, 1, 0, 1, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+
+    astar = AStar(grid)
+
+    # 设置起点和终点
+    start = (0, 0)
+    end = (9, 9)
+
+    print("=== A*算法寻路示例 ===\n")
+    print("地图（■表示障碍物）：")
+    astar.print_path([])
+
+    # 测试不同的启发函数
+    heuristics = ['manhattan', 'euclidean', 'chebyshev', 'zero']
+
+    for h_method in heuristics:
+        print(f"\n--- 使用{h_method}启发函数 ---")
+        path = astar.search(start, end, h_method,
+                           allow_diagonal=(h_method != 'manhattan'))
+
+        if path:
+            print("\n找到的路径：")
+            astar.print_path(path)
+
+    # 比较有无启发的差异
+    print("\n=== 性能比较 ===")
+    print("启发式搜索（A*）通常比无启发搜索（Dijkstra）扩展更少的节点")
+
+
+class AStarWithVisualization(AStar):
+    """带可视化的A*算法"""
+
+    def search_with_steps(self, start: Tuple[int, int], end: Tuple[int, int],
+                          heuristic_method: str = 'manhattan'):
+        """
+        返回搜索的每一步状态，用于可视化
+        """
+        steps = []
+        start_node = Node(start)
+        end_node = Node(end)
+
+        open_list = []
+        heapq.heappush(open_list, start_node)
+        closed_set = set()
+        open_dict = {start: start_node}
+
+        while open_list:
+            # 记录当前步骤
+            step_info = {
+                'open_list': [node.position for node in open_list],
+                'closed_list': list(closed_set),
+                'current': None,
+                'path': None
+            }
+
+            current_node = heapq.heappop(open_list)
+            open_dict.pop(current_node.position, None)
+            step_info['current'] = current_node.position
+
+            if current_node.position == end:
+                step_info['path'] = self.reconstruct_path(current_node)
+                steps.append(step_info)
+                return steps
+
+            closed_set.add(current_node.position)
+
+            for neighbor in self.get_neighbors(current_node):
+                if neighbor.position in closed_set:
+                    continue
+
+                tentative_g = current_node.g + 1
+
+                if neighbor.position in open_dict:
+                    existing_node = open_dict[neighbor.position]
+                    if tentative_g < existing_node.g:
+                        existing_node.g = tentative_g
+                        existing_node.f = existing_node.g + existing_node.h
+                        existing_node.parent = current_node
+                else:
+                    neighbor.g = tentative_g
+                    neighbor.h = self.heuristic(neighbor.position, end,
+                                               heuristic_method)
+                    neighbor.f = neighbor.g + neighbor.h
+                    neighbor.parent = current_node
+
+                    heapq.heappush(open_list, neighbor)
+                    open_dict[neighbor.position] = neighbor
+
+            steps.append(step_info)
+
+        return steps
+
+
+if __name__ == "__main__":
+    example()</code></pre>
+        </div>
+
+        <div id="cpp-code" class="code-content">
+            <button class="copy-btn" onclick="copyCode('cpp', event)">📋 复制代码</button>
+            <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;queue&gt;
+#include &lt;unordered_set&gt;
+#include &lt;unordered_map&gt;
+#include &lt;cmath&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+// 节点结构
+struct Node {
+    int x, y;           // 位置
+    double g, h, f;     // 代价值
+    Node* parent;       // 父节点
+
+    Node(int x, int y) : x(x), y(y), g(0), h(0), f(0), parent(nullptr) {}
+
+    // 用于优先队列比较
+    bool operator>(const Node& other) const {
+        return f > other.f;
+    }
+};
+
+// 位置哈希函数
+struct PositionHash {
+    size_t operator()(const pair&lt;int, int&gt;& p) const {
+        return hash&lt;int&gt;()(p.first) ^ (hash&lt;int&gt;()(p.second) &lt;&lt; 1);
+    }
+};
+
+class AStar {
+private:
+    vector&lt;vector&lt;int&gt;&gt; grid;
+    int rows, cols;
+
+    // 启发函数
+    double heuristic(int x1, int y1, int x2, int y2, const string& method) {
+        if (method == "manhattan") {
+            return abs(x1 - x2) + abs(y1 - y2);
+        } else if (method == "euclidean") {
+            return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+        } else if (method == "chebyshev") {
+            return max(abs(x1 - x2), abs(y1 - y2));
+        } else {
+            return 0;  // Dijkstra
+        }
+    }
+
+    // 获取邻居节点
+    vector&lt;pair&lt;int, int&gt;&gt; getNeighbors(int x, int y, bool allowDiagonal) {
+        vector&lt;pair&lt;int, int&gt;&gt; neighbors;
+
+        // 4方向
+        int dx[] = {0, 1, 0, -1};
+        int dy[] = {1, 0, -1, 0};
+
+        for (int i = 0; i &lt; 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+
+            if (nx &gt;= 0 && nx &lt; rows && ny &gt;= 0 && ny &lt; cols && grid[nx][ny] == 0) {
+                neighbors.push_back({nx, ny});
+            }
+        }
+
+        // 8方向（对角）
+        if (allowDiagonal) {
+            int dx2[] = {1, 1, -1, -1};
+            int dy2[] = {1, -1, 1, -1};
+
+            for (int i = 0; i &lt; 4; i++) {
+                int nx = x + dx2[i];
+                int ny = y + dy2[i];
+
+                if (nx &gt;= 0 && nx &lt; rows && ny &gt;= 0 && ny &lt; cols && grid[nx][ny] == 0) {
+                    // 检查对角移动是否被阻挡
+                    if (grid[x + dx2[i]][y] == 0 || grid[x][y + dy2[i]] == 0) {
+                        neighbors.push_back({nx, ny});
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    // 重建路径
+    vector&lt;pair&lt;int, int&gt;&gt; reconstructPath(Node* node) {
+        vector&lt;pair&lt;int, int&gt;&gt; path;
+
+        while (node != nullptr) {
+            path.push_back({node-&gt;x, node-&gt;y});
+            node = node-&gt;parent;
+        }
+
+        reverse(path.begin(), path.end());
+        return path;
+    }
+
+public:
+    AStar(const vector&lt;vector&lt;int&gt;&gt;& grid) : grid(grid) {
+        rows = grid.size();
+        cols = grid[0].size();
+    }
+
+    // A*搜索
+    vector&lt;pair&lt;int, int&gt;&gt; search(pair&lt;int, int&gt; start, pair&lt;int, int&gt; end,
+                                   const string& heuristicMethod = "manhattan",
+                                   bool allowDiagonal = false) {
+        // 优先队列（小顶堆）
+        priority_queue&lt;Node*, vector&lt;Node*&gt;, function&lt;bool(Node*, Node*)&gt;&gt; openList(
+            [](Node* a, Node* b) { return a-&gt;f &gt; b-&gt;f; }
+        );
+
+        // 记录已处理的节点
+        unordered_set&lt;pair&lt;int, int&gt;, PositionHash&gt; closedSet;
+
+        // 记录在开放列表中的节点
+        unordered_map&lt;pair&lt;int, int&gt;, Node*, PositionHash&gt; openMap;
+
+        // 创建起点
+        Node* startNode = new Node(start.first, start.second);
+        startNode-&gt;h = heuristic(start.first, start.second, end.first, end.second, heuristicMethod);
+        startNode-&gt;f = startNode-&gt;h;
+
+        openList.push(startNode);
+        openMap[start] = startNode;
+
+        int nodesExpanded = 0;
+
+        while (!openList.empty()) {
+            // 取出f值最小的节点
+            Node* current = openList.top();
+            openList.pop();
+
+            pair&lt;int, int&gt; currentPos = {current-&gt;x, current-&gt;y};
+            openMap.erase(currentPos);
+
+            // 检查是否到达终点
+            if (currentPos == end) {
+                cout &lt;&lt; "找到路径！扩展节点数：" &lt;&lt; nodesExpanded &lt;&lt; endl;
+                return reconstructPath(current);
+            }
+
+            // 加入关闭列表
+            closedSet.insert(currentPos);
+            nodesExpanded++;
+
+            // 检查所有邻居
+            for (auto& neighborPos : getNeighbors(current-&gt;x, current-&gt;y, allowDiagonal)) {
+                // 跳过已处理的节点
+                if (closedSet.find(neighborPos) != closedSet.end()) {
+                    continue;
+                }
+
+                // 计算移动代价
+                double moveCost = 1.0;
+                if (allowDiagonal &&
+                    abs(neighborPos.first - current-&gt;x) + abs(neighborPos.second - current-&gt;y) == 2) {
+                    moveCost = 1.414;  // 对角移动
+                }
+
+                double tentativeG = current-&gt;g + moveCost;
+
+                // 检查是否已在开放列表中
+                auto it = openMap.find(neighborPos);
+                if (it != openMap.end()) {
+                    Node* existingNode = it-&gt;second;
+                    // 如果新路径更短，更新
+                    if (tentativeG &lt; existingNode-&gt;g) {
+                        existingNode-&gt;g = tentativeG;
+                        existingNode-&gt;f = existingNode-&gt;g + existingNode-&gt;h;
+                        existingNode-&gt;parent = current;
+                    }
+                } else {
+                    // 创建新节点
+                    Node* neighbor = new Node(neighborPos.first, neighborPos.second);
+                    neighbor-&gt;g = tentativeG;
+                    neighbor-&gt;h = heuristic(neighborPos.first, neighborPos.second,
+                                          end.first, end.second, heuristicMethod);
+                    neighbor-&gt;f = neighbor-&gt;g + neighbor-&gt;h;
+                    neighbor-&gt;parent = current;
+
+                    openList.push(neighbor);
+                    openMap[neighborPos] = neighbor;
+                }
+            }
+        }
+
+        cout &lt;&lt; "未找到路径！扩展节点数：" &lt;&lt; nodesExpanded &lt;&lt; endl;
+        return {};
+    }
+
+    // 打印路径
+    void printPath(const vector&lt;pair&lt;int, int&gt;&gt;& path) {
+        if (path.empty()) {
+            cout &lt;&lt; "没有找到路径" &lt;&lt; endl;
+            return;
+        }
+
+        // 创建显示网格
+        vector&lt;vector&lt;char&gt;&gt; display(rows, vector&lt;char&gt;(cols));
+        for (int i = 0; i &lt; rows; i++) {
+            for (int j = 0; j &lt; cols; j++) {
+                display[i][j] = (grid[i][j] == 0) ? '.' : '#';
+            }
+        }
+
+        // 标记路径
+        for (size_t i = 0; i &lt; path.size(); i++) {
+            int x = path[i].first;
+            int y = path[i].second;
+
+            if (i == 0) {
+                display[x][y] = 'S';  // 起点
+            } else if (i == path.size() - 1) {
+                display[x][y] = 'E';  // 终点
+            } else {
+                display[x][y] = '*';  // 路径
+            }
+        }
+
+        // 打印网格
+        for (const auto& row : display) {
+            for (char cell : row) {
+                cout &lt;&lt; cell &lt;&lt; ' ';
+            }
+            cout &lt;&lt; endl;
+        }
+
+        cout &lt;&lt; "路径长度: " &lt;&lt; path.size() - 1 &lt;&lt; endl;
+    }
+};
+
+int main() {
+    // 创建地图（0: 可通行, 1: 障碍物）
+    vector&lt;vector&lt;int&gt;&gt; grid = {
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 1, 1, 1, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0, 1, 0},
+        {0, 1, 1, 0, 0, 0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 1, 1, 1, 0, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+        {0, 1, 1, 1, 1, 1, 1, 0, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+    };
+
+    AStar astar(grid);
+
+    // 设置起点和终点
+    pair&lt;int, int&gt; start = {0, 0};
+    pair&lt;int, int&gt; end = {9, 9};
+
+    cout &lt;&lt; "=== A*算法寻路示例 ===" &lt;&lt; endl;
+
+    // 测试不同的启发函数
+    vector&lt;string&gt; heuristics = {"manhattan", "euclidean", "chebyshev"};
+
+    for (const auto& method : heuristics) {
+        cout &lt;&lt; "\n使用 " &lt;&lt; method &lt;&lt; " 启发函数：" &lt;&lt; endl;
+
+        auto path = astar.search(start, end, method, method != "manhattan");
+        astar.printPath(path);
+    }
+
+    return 0;
+}</code></pre>
+        </div>
+
+        <div id="java-code" class="code-content">
+            <button class="copy-btn" onclick="copyCode('java', event)">📋 复制代码</button>
+            <pre><code>import java.util.*;
+
+public class AStar {
+
+    // 节点类
+    static class Node implements Comparable&lt;Node&gt; {
+        int x, y;
+        double g, h, f;
+        Node parent;
+
+        public Node(int x, int y) {
+            this.x = x;
+            this.y = y;
+            this.g = 0;
+            this.h = 0;
+            this.f = 0;
+            this.parent = null;
+        }
+
+        @Override
+        public int compareTo(Node other) {
+            return Double.compare(this.f, other.f);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null || getClass() != obj.getClass()) return false;
+            Node node = (Node) obj;
+            return x == node.x && y == node.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+    }
+
+    private int[][] grid;
+    private int rows;
+    private int cols;
+
+    public AStar(int[][] grid) {
+        this.grid = grid;
+        this.rows = grid.length;
+        this.cols = grid[0].length;
+    }
+
+    // 启发函数
+    private double heuristic(int x1, int y1, int x2, int y2, String method) {
+        switch (method) {
+            case "manhattan":
+                return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+            case "euclidean":
+                return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+            case "chebyshev":
+                return Math.max(Math.abs(x1 - x2), Math.abs(y1 - y2));
+            default:
+                return 0; // Dijkstra
+        }
+    }
+
+    // 获取邻居节点
+    private List&lt;Node&gt; getNeighbors(Node node, boolean allowDiagonal) {
+        List&lt;Node&gt; neighbors = new ArrayList&lt;&gt;();
+        int x = node.x;
+        int y = node.y;
+
+        // 4方向
+        int[][] directions = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+
+        for (int[] dir : directions) {
+            int nx = x + dir[0];
+            int ny = y + dir[1];
+
+            if (nx &gt;= 0 && nx &lt; rows && ny &gt;= 0 && ny &lt; cols && grid[nx][ny] == 0) {
+                neighbors.add(new Node(nx, ny));
+            }
+        }
+
+        // 8方向（对角）
+        if (allowDiagonal) {
+            int[][] diagonals = { {1, 1}, {1, -1}, {-1, 1}, {-1, -1} };
+
+            for (int[] dir : diagonals) {
+                int nx = x + dir[0];
+                int ny = y + dir[1];
+
+                if (nx &gt;= 0 && nx &lt; rows && ny &gt;= 0 && ny &lt; cols && grid[nx][ny] == 0) {
+                    // 检查对角移动是否被阻挡
+                    if (grid[x + dir[0]][y] == 0 || grid[x][y + dir[1]] == 0) {
+                        neighbors.add(new Node(nx, ny));
+                    }
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    // 重建路径
+    private List&lt;int[]&gt; reconstructPath(Node node) {
+        List&lt;int[]&gt; path = new ArrayList&lt;&gt;();
+
+        while (node != null) {
+            path.add(new int[]{node.x, node.y});
+            node = node.parent;
+        }
+
+        Collections.reverse(path);
+        return path;
+    }
+
+    // A*搜索
+    public List&lt;int[]&gt; search(int[] start, int[] end, String heuristicMethod, boolean allowDiagonal) {
+        PriorityQueue&lt;Node&gt; openList = new PriorityQueue&lt;&gt;();
+        Set&lt;Node&gt; closedSet = new HashSet&lt;&gt;();
+        Map&lt;String, Node&gt; openMap = new HashMap&lt;&gt;();
+
+        // 创建起点
+        Node startNode = new Node(start[0], start[1]);
+        startNode.h = heuristic(start[0], start[1], end[0], end[1], heuristicMethod);
+        startNode.f = startNode.h;
+
+        openList.offer(startNode);
+        openMap.put(startNode.x + "," + startNode.y, startNode);
+
+        int nodesExpanded = 0;
+
+        while (!openList.isEmpty()) {
+            // 取出f值最小的节点
+            Node current = openList.poll();
+            String currentKey = current.x + "," + current.y;
+            openMap.remove(currentKey);
+
+            // 检查是否到达终点
+            if (current.x == end[0] && current.y == end[1]) {
+                System.out.println("找到路径！扩展节点数：" + nodesExpanded);
+                return reconstructPath(current);
+            }
+
+            // 加入关闭列表
+            closedSet.add(current);
+            nodesExpanded++;
+
+            // 检查所有邻居
+            for (Node neighbor : getNeighbors(current, allowDiagonal)) {
+                // 跳过已处理的节点
+                if (closedSet.contains(neighbor)) {
+                    continue;
+                }
+
+                // 计算移动代价
+                double moveCost = 1.0;
+                if (allowDiagonal &&
+                    Math.abs(neighbor.x - current.x) + Math.abs(neighbor.y - current.y) == 2) {
+                    moveCost = 1.414; // 对角移动
+                }
+
+                double tentativeG = current.g + moveCost;
+
+                // 检查是否已在开放列表中
+                String neighborKey = neighbor.x + "," + neighbor.y;
+                Node existingNode = openMap.get(neighborKey);
+
+                if (existingNode != null) {
+                    // 如果新路径更短，更新
+                    if (tentativeG &lt; existingNode.g) {
+                        existingNode.g = tentativeG;
+                        existingNode.f = existingNode.g + existingNode.h;
+                        existingNode.parent = current;
+
+                        // 重新排序优先队列
+                        openList.remove(existingNode);
+                        openList.offer(existingNode);
+                    }
+                } else {
+                    // 创建新节点
+                    neighbor.g = tentativeG;
+                    neighbor.h = heuristic(neighbor.x, neighbor.y, end[0], end[1], heuristicMethod);
+                    neighbor.f = neighbor.g + neighbor.h;
+                    neighbor.parent = current;
+
+                    openList.offer(neighbor);
+                    openMap.put(neighborKey, neighbor);
+                }
+            }
+        }
+
+        System.out.println("未找到路径！扩展节点数：" + nodesExpanded);
+        return null;
+    }
+
+    // 打印路径
+    public void printPath(List&lt;int[]&gt; path) {
+        if (path == null || path.isEmpty()) {
+            System.out.println("没有找到路径");
+            return;
+        }
+
+        // 创建显示网格
+        char[][] display = new char[rows][cols];
+        for (int i = 0; i &lt; rows; i++) {
+            for (int j = 0; j &lt; cols; j++) {
+                display[i][j] = (grid[i][j] == 0) ? '.' : '#';
+            }
+        }
+
+        // 标记路径
+        for (int i = 0; i &lt; path.size(); i++) {
+            int x = path.get(i)[0];
+            int y = path.get(i)[1];
+
+            if (i == 0) {
+                display[x][y] = 'S'; // 起点
+            } else if (i == path.size() - 1) {
+                display[x][y] = 'E'; // 终点
+            } else {
+                display[x][y] = '*'; // 路径
+            }
+        }
+
+        // 打印网格
+        for (char[] row : display) {
+            for (char cell : row) {
+                System.out.print(cell + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("路径长度: " + (path.size() - 1));
+    }
+
+    public static void main(String[] args) {
+        // 创建地图（0: 可通行, 1: 障碍物）
+        int[][] grid = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 1, 1, 1, 1, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 1, 0, 1, 1, 1, 0},
+            {0, 0, 0, 0, 1, 0, 0, 0, 1, 0},
+            {0, 1, 1, 0, 0, 0, 0, 0, 1, 0},
+            {0, 0, 0, 0, 1, 1, 1, 0, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 1, 0},
+            {0, 1, 1, 1, 1, 1, 1, 0, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
+
+        AStar astar = new AStar(grid);
+
+        // 设置起点和终点
+        int[] start = {0, 0};
+        int[] end = {9, 9};
+
+        System.out.println("=== A*算法寻路示例 ===\n");
+
+        // 测试不同的启发函数
+        String[] heuristics = {"manhattan", "euclidean", "chebyshev"};
+
+        for (String method : heuristics) {
+            System.out.println("\n使用 " + method + " 启发函数：");
+
+            List&lt;int[]&gt; path = astar.search(start, end, method, !method.equals("manhattan"));
+            astar.printPath(path);
+        }
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <!-- 实际应用 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">🌟</span>
+            实际应用
+        </h2>
+
+        <div class="application-grid">
+            <div class="app-card">
+                <h3>🎮 游戏AI寻路</h3>
+                <p>几乎所有RTS、MOBA游戏都使用A*算法进行单位移动，如星际争霸、英雄联盟</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🤖 机器人导航</h3>
+                <p>扫地机器人、无人机、自动驾驶汽车的路径规划核心算法</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🗺️ GPS导航</h3>
+                <p>结合实时路况的A*变种算法，为司机规划最优路线</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🏭 物流规划</h3>
+                <p>仓库机器人路径规划、配送路线优化</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🧩 拼图求解</h3>
+                <p>八数码、十五数码等滑动拼图游戏的自动求解</p>
+            </div>
+
+            <div class="app-card">
+                <h3>📡 网络路由</h3>
+                <p>计算机网络中的QoS路由，考虑带宽、延迟等多个因素</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 学习检验 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">✅</span>
+            学习检验
+        </h2>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题1：为什么A*算法能保证找到最优解？需要什么条件？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(1, event)">查看答案</button>
+            <div id="answer1" class="quiz-answer">
+                <strong>答案：</strong>A*算法在启发函数满足<strong>可采纳性</strong>条件时保证最优。
+
+                <p><strong>可采纳性条件：</strong>h(n) ≤ h*(n)</p>
+                <ul>
+                    <li>h(n)：启发函数的估计值</li>
+                    <li>h*(n)：实际最短距离</li>
+                    <li>即：启发函数不能高估实际代价</li>
+                </ul>
+
+                <p><strong>证明思路：</strong></p>
+                <ol>
+                    <li>假设存在非最优路径P先被找到</li>
+                    <li>最优路径P*上必有节点n在开放列表中</li>
+                    <li>因为h(n)不高估，f(n) ≤ f*(终点)</li>
+                    <li>而P的f值 > f*(终点)</li>
+                    <li>所以n会先于P被探索，矛盾</li>
+                </ol>
+
+                <p><strong>常见可采纳启发函数：</strong></p>
+                <ul>
+                    <li>曼哈顿距离（网格4方向）</li>
+                    <li>欧几里得距离（任意方向）</li>
+                    <li>零启发（退化为Dijkstra）</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题2：A*、Dijkstra、贪心最佳优先搜索有什么区别？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(2, event)">查看答案</button>
+            <div id="answer2" class="quiz-answer">
+                <strong>答案：</strong>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #f0f0f0;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">算法</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">评估函数</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">特点</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">最优性</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>A*</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">f = g + h</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">平衡已走和预估</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">✅ 最优（h可采纳）</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>Dijkstra</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">f = g</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">只看已走距离</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">✅ 最优</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;"><strong>贪心最佳优先</strong></td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">f = h</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">只看预估距离</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">❌ 不保证最优</td>
+                    </tr>
+                </table>
+
+                <p><strong>效率对比：</strong></p>
+                <ul>
+                    <li>贪心最快但可能错过最优解</li>
+                    <li>Dijkstra最慢但保证最优</li>
+                    <li>A*在保证最优的前提下尽可能快</li>
+                </ul>
+
+                <p><strong>搜索范围：</strong></p>
+                <ul>
+                    <li>Dijkstra：圆形扩散</li>
+                    <li>贪心：直奔目标</li>
+                    <li>A*：椭圆形，偏向目标</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题3：如何优化A*算法的性能？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(3, event)">查看答案</button>
+            <div id="answer3" class="quiz-answer">
+                <strong>答案：</strong>A*算法有多种优化方法：
+
+                <p><strong>1. 数据结构优化：</strong></p>
+                <ul>
+                    <li>使用二叉堆/斐波那契堆优化优先队列</li>
+                    <li>使用哈希表加速查找</li>
+                    <li>位运算优化状态表示</li>
+                </ul>
+
+                <p><strong>2. 启发函数优化：</strong></p>
+                <ul>
+                    <li>使用更精确的启发函数（但不能高估）</li>
+                    <li>预计算启发值（如模式数据库）</li>
+                    <li>动态权重：w*A*算法，f = g + w*h</li>
+                </ul>
+
+                <p><strong>3. 搜索策略优化：</strong></p>
+                <ul>
+                    <li><strong>双向A*：</strong>从起点和终点同时搜索</li>
+                    <li><strong>IDA*：</strong>迭代加深A*，节省内存</li>
+                    <li><strong>Jump Point Search：</strong>跳过对称路径</li>
+                    <li><strong>分层路径规划：</strong>先粗略后精细</li>
+                </ul>
+
+                <p><strong>4. 剪枝优化：</strong></p>
+                <ul>
+                    <li>设置搜索边界</li>
+                    <li>提前终止（找到足够好的解）</li>
+                    <li>路径平滑后处理</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题4：A*算法在什么情况下会退化？如何处理？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(4, event)">查看答案</button>
+            <div id="answer4" class="quiz-answer">
+                <strong>答案：</strong>
+
+                <p><strong>退化情况：</strong></p>
+                <ol>
+                    <li><strong>h = 0：</strong>退化为Dijkstra算法
+                        <ul>
+                            <li>搜索范围呈圆形扩散</li>
+                            <li>保证最优但效率低</li>
+                        </ul>
+                    </li>
+                    <li><strong>h >> g：</strong>退化为贪心最佳优先
+                        <ul>
+                            <li>过度依赖启发函数</li>
+                            <li>可能错过最优解</li>
+                        </ul>
+                    </li>
+                    <li><strong>h高估实际代价：</strong>失去最优性保证
+                        <ul>
+                            <li>可能找到次优解</li>
+                            <li>但搜索速度可能更快</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <p><strong>处理方法：</strong></p>
+                <ul>
+                    <li><strong>选择合适的启发函数：</strong>
+                        <ul>
+                            <li>网格用曼哈顿/切比雪夫</li>
+                            <li>自由空间用欧几里得</li>
+                        </ul>
+                    </li>
+                    <li><strong>动态调整权重：</strong>
+                        <ul>
+                            <li>开始时增大h权重快速接近</li>
+                            <li>接近目标时减小h权重保证精度</li>
+                        </ul>
+                    </li>
+                    <li><strong>混合策略：</strong>
+                        <ul>
+                            <li>远距离用A*</li>
+                            <li>近距离用Dijkstra</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+            <h4>📚 进阶学习建议</h4>
+            <ol>
+                <li><strong>实现变种：</strong>IDA*、双向A*、D*算法</li>
+                <li><strong>优化技术：</strong>Jump Point Search、Theta*</li>
+                <li><strong>应用场景：</strong>多智能体寻路、动态环境寻路</li>
+                <li><strong>下一步学习：</strong>RRT、人工势场法、强化学习路径规划</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- 返回导航 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<script>
+// Canvas相关代码
+const canvas = document.getElementById('astarCanvas');
+const ctx = canvas.getContext('2d');
+
+// 网格配置
+const GRID_SIZE = 20;  // 网格大小 20x20
+const CELL_SIZE = 30;  // 每个格子的像素大小
+
+// 网格类
+class Grid {
+    constructor() {
+        this.cells = [];
+        this.start = null;
+        this.end = null;
+        this.path = [];
+        this.openList = [];
+        this.closedList = [];
+        this.init();
+    }
+
+    init() {
+        // 初始化网格
+        for (let i = 0; i < GRID_SIZE; i++) {
+            this.cells[i] = [];
+            for (let j = 0; j < GRID_SIZE; j++) {
+                this.cells[i][j] = {
+                    x: i,
+                    y: j,
+                    wall: false,
+                    g: 0,
+                    h: 0,
+                    f: 0,
+                    parent: null
+                };
+            }
+        }
+
+        // 设置默认起点和终点
+        this.setStart(1, 1);
+        this.setEnd(GRID_SIZE - 2, GRID_SIZE - 2);
+    }
+
+    setStart(x, y) {
+        if (this.cells[x][y].wall) return false;
+        this.start = { x, y };
+        return true;
+    }
+
+    setEnd(x, y) {
+        if (this.cells[x][y].wall) return false;
+        this.end = { x, y };
+        return true;
+    }
+
+    toggleWall(x, y) {
+        if ((x === this.start.x && y === this.start.y) ||
+            (x === this.end.x && y === this.end.y)) {
+            return false;
+        }
+        this.cells[x][y].wall = !this.cells[x][y].wall;
+        return true;
+    }
+
+    reset() {
+        this.path = [];
+        this.openList = [];
+        this.closedList = [];
+
+        for (let i = 0; i < GRID_SIZE; i++) {
+            for (let j = 0; j < GRID_SIZE; j++) {
+                const cell = this.cells[i][j];
+                cell.g = 0;
+                cell.h = 0;
+                cell.f = 0;
+                cell.parent = null;
+            }
+        }
+    }
+
+    clear() {
+        this.init();
+    }
+}
+
+// A*算法实现
+class AStarAlgorithm {
+    constructor(grid) {
+        this.grid = grid;
+        this.heuristicMethod = 'manhattan';
+        this.animationRunning = false;
+        this.startTime = 0;
+    }
+
+    heuristic(pos1, pos2) {
+        const dx = Math.abs(pos1.x - pos2.x);
+        const dy = Math.abs(pos1.y - pos2.y);
+
+        switch (this.heuristicMethod) {
+            case 'manhattan':
+                return dx + dy;
+            case 'euclidean':
+                return Math.sqrt(dx * dx + dy * dy);
+            case 'chebyshev':
+                return Math.max(dx, dy);
+            case 'zero':
+                return 0;
+            default:
+                return dx + dy;
+        }
+    }
+
+    getNeighbors(node) {
+        const neighbors = [];
+        const x = node.x;
+        const y = node.y;
+
+        // 4方向
+        const directions = [
+            { dx: 0, dy: 1 },
+            { dx: 1, dy: 0 },
+            { dx: 0, dy: -1 },
+            { dx: -1, dy: 0 }
+        ];
+
+        // 如果不是曼哈顿距离，添加对角方向
+        if (this.heuristicMethod !== 'manhattan') {
+            directions.push(
+                { dx: 1, dy: 1 },
+                { dx: 1, dy: -1 },
+                { dx: -1, dy: 1 },
+                { dx: -1, dy: -1 }
+            );
+        }
+
+        for (let dir of directions) {
+            const nx = x + dir.dx;
+            const ny = y + dir.dy;
+
+            if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+                if (!this.grid.cells[nx][ny].wall) {
+                    neighbors.push(this.grid.cells[nx][ny]);
+                }
+            }
+        }
+
+        return neighbors;
+    }
+
+    async search() {
+        this.grid.reset();
+        this.animationRunning = true;
+        this.startTime = Date.now();
+
+        const start = this.grid.cells[this.grid.start.x][this.grid.start.y];
+        const end = this.grid.cells[this.grid.end.x][this.grid.end.y];
+
+        const openList = [start];
+        const closedList = [];
+
+        start.h = this.heuristic(start, end);
+        start.f = start.h;
+
+        while (openList.length > 0 && this.animationRunning) {
+            // 找到f值最小的节点
+            let current = openList[0];
+            let currentIndex = 0;
+
+            for (let i = 1; i < openList.length; i++) {
+                if (openList[i].f < current.f) {
+                    current = openList[i];
+                    currentIndex = i;
+                }
+            }
+
+            // 从开放列表移除
+            openList.splice(currentIndex, 1);
+            closedList.push(current);
+
+            // 更新可视化
+            this.grid.openList = openList.map(n => ({ x: n.x, y: n.y }));
+            this.grid.closedList = closedList.map(n => ({ x: n.x, y: n.y }));
+
+            // 检查是否到达终点
+            if (current.x === end.x && current.y === end.y) {
+                // 重建路径
+                const path = [];
+                let temp = current;
+                while (temp) {
+                    path.push({ x: temp.x, y: temp.y });
+                    temp = temp.parent;
+                }
+                this.grid.path = path.reverse();
+
+                const timeElapsed = Date.now() - this.startTime;
+                updateStats(path.length - 1, closedList.length, openList.length, timeElapsed);
+                updateLog(`✅ 找到路径！长度：${path.length - 1}，扩展节点：${closedList.length}`);
+
+                this.animationRunning = false;
+                return true;
+            }
+
+            // 检查邻居
+            const neighbors = this.getNeighbors(current);
+
+            for (let neighbor of neighbors) {
+                if (closedList.includes(neighbor)) continue;
+
+                const isDiagonal = Math.abs(neighbor.x - current.x) +
+                                  Math.abs(neighbor.y - current.y) === 2;
+                const moveCost = isDiagonal ? 1.414 : 1;
+                const tentativeG = current.g + moveCost;
+
+                if (!openList.includes(neighbor)) {
+                    openList.push(neighbor);
+                } else if (tentativeG >= neighbor.g) {
+                    continue;
+                }
+
+                neighbor.parent = current;
+                neighbor.g = tentativeG;
+                neighbor.h = this.heuristic(neighbor, end);
+                neighbor.f = neighbor.g + neighbor.h;
+            }
+
+            drawGrid();
+            await sleep(animationSpeed);
+        }
+
+        const timeElapsed = Date.now() - this.startTime;
+        updateStats(0, closedList.length, openList.length, timeElapsed);
+        updateLog('❌ 未找到路径！');
+        this.animationRunning = false;
+        return false;
+    }
+
+    step() {
+        // 单步执行（简化版）
+        // 实际实现需要保存状态
+        updateLog('单步执行功能开发中...');
+    }
+}
+
+// 全局变量
+const grid = new Grid();
+const astar = new AStarAlgorithm(grid);
+let animationSpeed = 50;
+let currentMode = 'wall';
+
+// 绘制网格
+function drawGrid() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制网格线
+    ctx.strokeStyle = '#ddd';
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= GRID_SIZE; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * CELL_SIZE, 0);
+        ctx.lineTo(i * CELL_SIZE, GRID_SIZE * CELL_SIZE);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(0, i * CELL_SIZE);
+        ctx.lineTo(GRID_SIZE * CELL_SIZE, i * CELL_SIZE);
+        ctx.stroke();
+    }
+
+    // 绘制单元格
+    for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+            const cell = grid.cells[i][j];
+            let color = '#fff';
+
+            // 确定颜色
+            if (cell.wall) {
+                color = '#333';
+            } else if (grid.start && i === grid.start.x && j === grid.start.y) {
+                color = '#4CAF50';
+            } else if (grid.end && i === grid.end.x && j === grid.end.y) {
+                color = '#f44336';
+            } else if (grid.path.some(p => p.x === i && p.y === j)) {
+                color = '#9C27B0';
+            } else if (grid.closedList.some(p => p.x === i && p.y === j)) {
+                color = '#FFD700';
+            } else if (grid.openList.some(p => p.x === i && p.y === j)) {
+                color = '#87CEEB';
+            }
+
+            // 填充颜色
+            if (color !== '#fff') {
+                ctx.fillStyle = color;
+                ctx.fillRect(i * CELL_SIZE + 1, j * CELL_SIZE + 1,
+                           CELL_SIZE - 2, CELL_SIZE - 2);
+            }
+
+            // 显示f值（调试用）
+            if (cell.f > 0 && !cell.wall) {
+                ctx.fillStyle = '#666';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(Math.round(cell.f),
+                           i * CELL_SIZE + CELL_SIZE/2,
+                           j * CELL_SIZE + CELL_SIZE/2);
+            }
+        }
+    }
+}
+
+// Canvas点击事件
+canvas.addEventListener('click', (e) => {
+    if (astar.animationRunning) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = Math.floor((e.clientX - rect.left) / CELL_SIZE);
+    const y = Math.floor((e.clientY - rect.top) / CELL_SIZE);
+
+    if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) return;
+
+    switch (currentMode) {
+        case 'wall':
+            grid.toggleWall(x, y);
+            break;
+        case 'start':
+            if (grid.setStart(x, y)) {
+                updateLog(`🟢 起点设置为 (${x}, ${y})`);
+            }
+            break;
+        case 'end':
+            if (grid.setEnd(x, y)) {
+                updateLog(`🔴 终点设置为 (${x}, ${y})`);
+            }
+            break;
+    }
+
+    grid.reset();
+    drawGrid();
+});
+
+// 控制函数
+function setMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function startSearch() {
+    if (astar.animationRunning) return;
+    astar.search();
+}
+
+function stepSearch() {
+    if (astar.animationRunning) return;
+    astar.step();
+}
+
+function resetGrid() {
+    astar.animationRunning = false;
+    grid.reset();
+    drawGrid();
+    updateStats(0, 0, 0, 0);
+    updateLog('🔄 路径已重置');
+}
+
+function clearGrid() {
+    astar.animationRunning = false;
+    grid.clear();
+    drawGrid();
+    updateStats(0, 0, 0, 0);
+    updateLog('🗑️ 网格已清空');
+}
+
+function generateMaze() {
+    astar.animationRunning = false;
+    grid.clear();
+
+    // 随机生成障碍物
+    for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+            if (Math.random() < 0.3) {  // 30%概率生成墙
+                grid.toggleWall(i, j);
+            }
+        }
+    }
+
+    drawGrid();
+    updateLog('🎲 随机迷宫已生成');
+}
+
+function changeHeuristic() {
+    const select = document.getElementById('heuristicSelect');
+    astar.heuristicMethod = select.value;
+    updateLog(`🔧 启发函数切换为：${select.options[select.selectedIndex].text}`);
+}
+
+// 辅助函数
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function updateLog(message) {
+    document.getElementById('logText').innerHTML = message;
+}
+
+function updateStats(pathLength, expanded, inOpen, time) {
+    document.getElementById('pathLength').textContent = pathLength;
+    document.getElementById('nodesExpanded').textContent = expanded;
+    document.getElementById('nodesInOpen').textContent = inOpen;
+    document.getElementById('timeElapsed').textContent = time + 'ms';
+}
+
+// 代码切换
+function switchCode(lang, event) {
+    document.querySelectorAll('.code-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.code-content').forEach(content => content.classList.remove('active'));
+
+    event.target.classList.add('active');
+    document.getElementById(`${lang}-code`).classList.add('active');
+}
+
+// 复制代码
+function copyCode(lang, event) {
+    const codeElement = document.getElementById(`${lang}-code`).querySelector('code');
+    const text = codeElement.textContent;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✅ 已复制！';
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 2000);
+    }).catch(err => {
+        // 降级方案
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 已复制！';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        } catch (err) {
+            alert('复制失败，请手动复制代码');
+        }
+
+        document.body.removeChild(textArea);
+    });
+}
+
+// 显示/隐藏答案
+function toggleAnswer(num, event) {
+    const answer = document.getElementById(`answer${num}`);
+    const btn = event.target;
+
+    if (answer.style.display === 'block') {
+        answer.style.display = 'none';
+        btn.textContent = '查看答案';
+    } else {
+        answer.style.display = 'block';
+        btn.textContent = '隐藏答案';
+    }
+}
+
+// 速度控制
+document.getElementById('speedSlider').addEventListener('input', (e) => {
+    animationSpeed = parseInt(e.target.value);
+    document.getElementById('speedValue').textContent = `${animationSpeed}ms`;
+});
+
+// 初始化
+drawGrid();
+updateStats(0, 0, 0, 0);
+</script>
+
+{% endblock %}

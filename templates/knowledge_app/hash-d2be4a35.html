@@ -1,0 +1,1066 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}哈希表 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>
+    .visualization-container {
+        background: #f8f9fa;
+        border-radius: 12px;
+        padding: 30px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .concept-card {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 15px 0;
+        border-left: 4px solid #007bff;
+    }
+
+    .key-term {
+        display: inline-block;
+        background: #e3f2fd;
+        padding: 4px 8px;
+        border-radius: 4px;
+        margin: 2px;
+        font-weight: 600;
+    }
+
+    .difficulty-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+
+    .difficulty-medium {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .code-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+
+    .code-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        background: #f5f5f5;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.3s;
+    }
+
+    .code-tab.active {
+        background: #007bff;
+        color: white;
+    }
+
+    .code-content {
+        display: none;
+        background: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 0 8px 8px 8px;
+        position: relative;
+        font-family: 'Courier New', monospace;
+        overflow-x: auto;
+    }
+
+    .code-content.active {
+        display: block;
+    }
+
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 6px 12px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .copy-btn:hover {
+        background: #0056b3;
+    }
+
+    #hashCanvas {
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        margin: 20px auto;
+        display: block;
+        background: white;
+    }
+
+    .control-panel {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    .control-btn {
+        padding: 10px 20px;
+        margin: 0 5px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+    }
+
+    .control-btn:hover {
+        background: #218838;
+        transform: translateY(-2px);
+    }
+
+    .input-field {
+        padding: 8px 12px;
+        margin: 0 5px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .quiz-item {
+        background: #f8f9fa;
+        padding: 20px;
+        margin: 15px 0;
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+    }
+
+    .quiz-question {
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .show-answer-btn {
+        padding: 8px 16px;
+        background: #17a2b8;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .quiz-answer {
+        display: none;
+        background: #d4edda;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 10px;
+        border-left: 4px solid #28a745;
+    }
+
+    .analogy-box {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin: 20px 0;
+    }
+
+    .application-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 20px 0;
+    }
+
+    .app-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.3s;
+    }
+
+    .app-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .highlight {
+        background: #ffeb3b;
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+</style>
+
+<div class="page-container fade-in">
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+        <a href="{% url 'knowledge_app:index' %}">首页</a>
+        <span>></span>
+        <span>数据结构</span>
+        <span>></span>
+        <span>哈希表</span>
+    </div>
+
+    <!-- 页面头部 -->
+    <div class="page-header slide-in-left">
+        <h1>
+            <span class="page-icon">🔑</span>
+            哈希表（Hash Table）
+        </h1>
+        <p>高效查找的魔法数据结构 - 让查找像查字典一样快速</p>
+    </div>
+
+    <!-- 知识点概述 -->
+    <div class="content-card slide-in-right">
+        <h2 class="section-title">
+            <span class="section-icon">📋</span>
+            知识点概述
+        </h2>
+
+        <div class="concept-card">
+            <p style="font-size: 18px; line-height: 1.6;">
+                <strong>核心概念：</strong>哈希表就像一个<span class="highlight">智能储物柜</span>，你给它一个钥匙（key），它能瞬间找到对应的储物格（value），查找速度接近O(1)！
+            </p>
+
+            <div style="margin: 20px 0;">
+                <h4>🔤 关键术语：</h4>
+                <span class="key-term">哈希函数</span> - 将钥匙转换成储物格编号的"翻译器"<br>
+                <span class="key-term">桶(Bucket)</span> - 存储数据的"储物格"<br>
+                <span class="key-term">哈希冲突</span> - 两个不同的钥匙算出了同一个储物格编号<br>
+                <span class="key-term">链地址法</span> - 解决冲突的方法，让一个格子能存多个物品<br>
+                <span class="key-term">负载因子</span> - 已用格子数/总格子数，衡量拥挤程度
+            </div>
+
+            <div class="difficulty-badge difficulty-medium">
+                📊 学习难度：进阶
+            </div>
+
+            <div style="margin-top: 15px;">
+                <strong>前置知识：</strong>数组、链表、基础算法复杂度分析
+            </div>
+        </div>
+    </div>
+
+    <!-- 概念详解 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">🔍</span>
+            概念详解
+        </h2>
+
+        <div class="analogy-box">
+            <h3>🏫 生活类比：图书馆找书系统</h3>
+            <p>想象一个图书馆：</p>
+            <ul style="list-style: none; padding-left: 0;">
+                <li>📚 每本书都有ISBN号（Key）</li>
+                <li>🗂️ 通过ISBN的前几位，确定书在哪个书架（哈希函数）</li>
+                <li>📍 直接去对应书架找书（O(1)查找）</li>
+                <li>🔄 如果多本书被分到同一书架，就按顺序摆放（处理冲突）</li>
+            </ul>
+        </div>
+
+        <div class="concept-card">
+            <h4>1️⃣ 哈希函数的魔法</h4>
+            <p>哈希函数就像一个数学魔术师，把任意长度的输入变成固定范围的数字。</p>
+            <p><strong>常见方法：</strong></p>
+            <ul>
+                <li>除法散列：<code>index = key % tableSize</code></li>
+                <li>乘法散列：<code>index = (key * A) % tableSize</code></li>
+                <li>字符串哈希：把每个字符的ASCII值加起来</li>
+            </ul>
+        </div>
+
+        <div class="concept-card">
+            <h4>2️⃣ 冲突解决策略</h4>
+            <p>当两个钥匙指向同一个格子时，我们需要解决冲突：</p>
+            <ul>
+                <li><strong>链地址法：</strong>在每个格子后面接一个链表</li>
+                <li><strong>开放地址法：</strong>找下一个空格子</li>
+                <li><strong>再哈希法：</strong>用另一个哈希函数重新计算</li>
+            </ul>
+        </div>
+
+        <div class="concept-card" style="background: #fff3cd; border-left-color: #ffc107;">
+            <h4>⚠️ 初学者易混淆点</h4>
+            <ul>
+                <li>哈希表 ≠ 哈希函数（哈希表包含哈希函数）</li>
+                <li>O(1)是平均情况，最坏情况可能是O(n)</li>
+                <li>负载因子过高会严重影响性能</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 可视化展示 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">📊</span>
+            可视化展示
+        </h2>
+
+        <div class="visualization-container">
+            <h3 style="text-align: center;">🎯 哈希表动态操作演示</h3>
+
+            <canvas id="hashCanvas" width="800" height="480"></canvas>
+
+            <div class="control-panel">
+                <input type="text" id="keyInput" class="input-field" placeholder="输入键(如: Apple)">
+                <input type="text" id="valueInput" class="input-field" placeholder="输入值(如: 红色水果)">
+                <button class="control-btn" onclick="insertItem()">➕ 插入</button>
+                <button class="control-btn" onclick="searchItem()">🔍 查找</button>
+                <button class="control-btn" onclick="deleteItem()">❌ 删除</button>
+                <button class="control-btn" onclick="clearTable()">🗑️ 清空</button>
+            </div>
+
+            <div id="operationLog" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; min-height: 60px;">
+                <strong>操作日志：</strong><span id="logText">等待操作...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 代码示例 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">💻</span>
+            代码实现
+        </h2>
+
+        <div class="code-tabs">
+            <button class="code-tab active" onclick="switchCode('cpp', event)">C++</button>
+            <button class="code-tab" onclick="switchCode('java', event)">Java</button>
+            <button class="code-tab" onclick="switchCode('python', event)">Python</button>
+        </div>
+
+        <div id="cpp-code" class="code-content active">
+            <button class="copy-btn" onclick="copyCode('cpp', event)">📋 复制代码</button>
+            <pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;list&gt;
+using namespace std;
+
+class HashTable {
+private:
+    static const int TABLE_SIZE = 10;
+    vector&lt;list&lt;pair&lt;string, string&gt;&gt;&gt; table;
+
+    int hashFunction(string key) {
+        int hash = 0;
+        for (char c : key) {
+            hash += c;
+        }
+        return hash % TABLE_SIZE;
+    }
+
+public:
+    HashTable() : table(TABLE_SIZE) {}
+
+    void insert(string key, string value) {
+        int index = hashFunction(key);
+
+        // 检查是否已存在
+        for (auto& pair : table[index]) {
+            if (pair.first == key) {
+                pair.second = value;  // 更新值
+                return;
+            }
+        }
+
+        // 不存在则添加
+        table[index].push_back({key, value});
+        cout &lt;&lt; "插入成功: " &lt;&lt; key &lt;&lt; " -> " &lt;&lt; value &lt;&lt; endl;
+    }
+
+    string search(string key) {
+        int index = hashFunction(key);
+
+        for (auto& pair : table[index]) {
+            if (pair.first == key) {
+                return pair.second;
+            }
+        }
+
+        return "未找到";
+    }
+
+    void remove(string key) {
+        int index = hashFunction(key);
+
+        table[index].remove_if([key](auto& pair) {
+            return pair.first == key;
+        });
+
+        cout &lt;&lt; "删除成功: " &lt;&lt; key &lt;&lt; endl;
+    }
+};
+
+int main() {
+    HashTable ht;
+
+    ht.insert("apple", "苹果");
+    ht.insert("banana", "香蕉");
+    ht.insert("orange", "橙子");
+
+    cout &lt;&lt; "查找apple: " &lt;&lt; ht.search("apple") &lt;&lt; endl;
+    cout &lt;&lt; "查找grape: " &lt;&lt; ht.search("grape") &lt;&lt; endl;
+
+    ht.remove("banana");
+
+    return 0;
+}</code></pre>
+        </div>
+
+        <div id="java-code" class="code-content">
+            <button class="copy-btn" onclick="copyCode('java', event)">📋 复制代码</button>
+            <pre><code>import java.util.*;
+
+public class HashTable {
+    private static final int TABLE_SIZE = 10;
+    private LinkedList&lt;Entry&gt;[] table;
+
+    class Entry {
+        String key;
+        String value;
+
+        Entry(String key, String value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public HashTable() {
+        table = new LinkedList[TABLE_SIZE];
+        for (int i = 0; i &lt; TABLE_SIZE; i++) {
+            table[i] = new LinkedList&lt;&gt;();
+        }
+    }
+
+    private int hashFunction(String key) {
+        int hash = 0;
+        for (char c : key.toCharArray()) {
+            hash += c;
+        }
+        return hash % TABLE_SIZE;
+    }
+
+    public void insert(String key, String value) {
+        int index = hashFunction(key);
+
+        // 检查是否已存在
+        for (Entry entry : table[index]) {
+            if (entry.key.equals(key)) {
+                entry.value = value;  // 更新值
+                return;
+            }
+        }
+
+        // 不存在则添加
+        table[index].add(new Entry(key, value));
+        System.out.println("插入成功: " + key + " -> " + value);
+    }
+
+    public String search(String key) {
+        int index = hashFunction(key);
+
+        for (Entry entry : table[index]) {
+            if (entry.key.equals(key)) {
+                return entry.value;
+            }
+        }
+
+        return "未找到";
+    }
+
+    public void remove(String key) {
+        int index = hashFunction(key);
+
+        table[index].removeIf(entry -> entry.key.equals(key));
+        System.out.println("删除成功: " + key);
+    }
+
+    public static void main(String[] args) {
+        HashTable ht = new HashTable();
+
+        ht.insert("apple", "苹果");
+        ht.insert("banana", "香蕉");
+        ht.insert("orange", "橙子");
+
+        System.out.println("查找apple: " + ht.search("apple"));
+        System.out.println("查找grape: " + ht.search("grape"));
+
+        ht.remove("banana");
+    }
+}</code></pre>
+        </div>
+
+        <div id="python-code" class="code-content">
+            <button class="copy-btn" onclick="copyCode('python', event)">📋 复制代码</button>
+            <pre><code>class HashTable:
+    def __init__(self, size=10):
+        self.size = size
+        self.table = [[] for _ in range(size)]
+
+    def _hash_function(self, key):
+        """简单的哈希函数：字符ASCII值之和取模"""
+        return sum(ord(c) for c in str(key)) % self.size
+
+    def insert(self, key, value):
+        """插入键值对"""
+        index = self._hash_function(key)
+
+        # 检查是否已存在，存在则更新
+        for i, (k, v) in enumerate(self.table[index]):
+            if k == key:
+                self.table[index][i] = (key, value)
+                print(f"更新成功: {key} -> {value}")
+                return
+
+        # 不存在则添加
+        self.table[index].append((key, value))
+        print(f"插入成功: {key} -> {value}")
+
+    def search(self, key):
+        """查找键对应的值"""
+        index = self._hash_function(key)
+
+        for k, v in self.table[index]:
+            if k == key:
+                return v
+
+        return "未找到"
+
+    def delete(self, key):
+        """删除键值对"""
+        index = self._hash_function(key)
+
+        for i, (k, v) in enumerate(self.table[index]):
+            if k == key:
+                del self.table[index][i]
+                print(f"删除成功: {key}")
+                return
+
+        print(f"删除失败: 键 {key} 不存在")
+
+    def display(self):
+        """显示哈希表内容"""
+        print("\n哈希表内容：")
+        for i, bucket in enumerate(self.table):
+            if bucket:
+                print(f"桶[{i}]: {bucket}")
+
+# 使用示例
+if __name__ == "__main__":
+    ht = HashTable()
+
+    # 插入数据
+    ht.insert("apple", "苹果")
+    ht.insert("banana", "香蕉")
+    ht.insert("orange", "橙子")
+    ht.insert("grape", "葡萄")
+
+    # 查找数据
+    print(f"\n查找'apple': {ht.search('apple')}")
+    print(f"查找'watermelon': {ht.search('watermelon')}")
+
+    # 显示哈希表
+    ht.display()
+
+    # 删除数据
+    ht.delete("banana")
+
+    # 再次显示
+    ht.display()</code></pre>
+        </div>
+    </div>
+
+    <!-- 实际应用 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">🌟</span>
+            实际应用
+        </h2>
+
+        <div class="application-grid">
+            <div class="app-card">
+                <h3>🗄️ 数据库索引</h3>
+                <p>MySQL、PostgreSQL等数据库使用哈希索引加速查询，特别是等值查询（WHERE id = 123）</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🌐 缓存系统</h3>
+                <p>Redis、Memcached等缓存系统核心就是哈希表，实现毫秒级的数据存取</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🔐 密码存储</h3>
+                <p>网站不直接存储密码，而是存储密码的哈希值，保证即使数据泄露也无法还原密码</p>
+            </div>
+
+            <div class="app-card">
+                <h3>📝 编译器符号表</h3>
+                <p>编程语言编译器用哈希表存储变量名和内存地址的对应关系</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🎯 负载均衡</h3>
+                <p>一致性哈希算法用于分布式系统中的负载均衡，如CDN节点选择</p>
+            </div>
+
+            <div class="app-card">
+                <h3>🔍 去重算法</h3>
+                <p>判断元素是否重复，如网络爬虫URL去重、大数据处理中的去重</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 学习检验 -->
+    <div class="content-card">
+        <h2 class="section-title">
+            <span class="section-icon">✅</span>
+            学习检验
+        </h2>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题1：为什么哈希表的平均查找时间复杂度是O(1)？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(1, event)">查看答案</button>
+            <div id="answer1" class="quiz-answer">
+                <strong>答案：</strong>因为哈希函数可以直接计算出数据存储的位置（数组下标），不需要遍历查找。具体过程：
+                <ol>
+                    <li>通过哈希函数计算key的哈希值：O(1)</li>
+                    <li>用哈希值定位到数组位置：O(1)</li>
+                    <li>如果没有冲突，直接返回：O(1)</li>
+                </ol>
+                即使有冲突，在负载因子合理的情况下，链表长度很短，仍可视为O(1)。
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题2：什么情况下哈希表的性能会退化到O(n)？如何避免？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(2, event)">查看答案</button>
+            <div id="answer2" class="quiz-answer">
+                <strong>答案：</strong>
+                <p><strong>退化情况：</strong></p>
+                <ul>
+                    <li>哈希函数设计不当，导致大量冲突</li>
+                    <li>负载因子过高（>0.75），冲突激增</li>
+                    <li>恶意攻击（哈希碰撞攻击）</li>
+                </ul>
+                <p><strong>避免方法：</strong></p>
+                <ul>
+                    <li>使用好的哈希函数（如MurmurHash）</li>
+                    <li>动态扩容：当负载因子超过阈值时，扩大数组并重新哈希</li>
+                    <li>使用红黑树代替链表（Java 8的HashMap）</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题3：哈希表和数组、链表相比，各有什么优缺点？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(3, event)">查看答案</button>
+            <div id="answer3" class="quiz-answer">
+                <strong>答案：</strong>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #f0f0f0;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">数据结构</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">查找</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">插入</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">删除</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">优点</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">缺点</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">数组</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(n)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(1)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(n)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">连续存储，缓存友好</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">大小固定，插入删除慢</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">链表</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(n)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(1)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(1)*</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">动态大小，插入删除快</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">查找慢，额外空间</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd;">哈希表</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(1)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(1)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">O(1)</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">极快的查找速度</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">无序，空间开销大</td>
+                    </tr>
+                </table>
+                <p>*链表的O(1)删除需要已知节点位置</p>
+            </div>
+        </div>
+
+        <div class="quiz-item">
+            <div class="quiz-question">
+                ❓ 问题4：实现一个LRU缓存需要用到哪些数据结构？
+            </div>
+            <button class="show-answer-btn" onclick="toggleAnswer(4, event)">查看答案</button>
+            <div id="answer4" class="quiz-answer">
+                <strong>答案：</strong>哈希表 + 双向链表
+                <ul>
+                    <li><strong>哈希表：</strong>实现O(1)的查找，存储key到链表节点的映射</li>
+                    <li><strong>双向链表：</strong>维护访问顺序，最近访问的在头部，最久未访问的在尾部</li>
+                </ul>
+                <p><strong>工作原理：</strong></p>
+                <ol>
+                    <li>访问数据时，通过哈希表O(1)找到节点</li>
+                    <li>将该节点移到链表头部</li>
+                    <li>缓存满时，删除链表尾部节点</li>
+                </ol>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+            <h4>📚 进阶学习建议</h4>
+            <ol>
+                <li><strong>练习实现：</strong>自己实现一个完整的哈希表，包括动态扩容</li>
+                <li><strong>深入研究：</strong>学习不同的哈希函数（MD5、SHA、MurmurHash）</li>
+                <li><strong>性能优化：</strong>了解布隆过滤器、一致性哈希等高级应用</li>
+                <li><strong>下一步学习：</strong>红黑树、B+树等更复杂的数据结构</li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- 返回导航 -->
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary">
+            <span>🏠</span>
+            返回首页
+        </a>
+        <a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary">
+            <span>🌌</span>
+            探索CS宇宙
+        </a>
+    </div>
+</div>
+
+<script>
+// Canvas动画相关代码
+const canvas = document.getElementById('hashCanvas');
+const ctx = canvas.getContext('2d');
+
+// 哈希表数据结构
+class VisualHashTable {
+    constructor() {
+        this.size = 8;
+        this.table = Array(this.size).fill(null).map(() => []);
+        this.animationQueue = [];
+    }
+
+    hash(key) {
+        let hash = 0;
+        for (let char of key) {
+            hash += char.charCodeAt(0);
+        }
+        return hash % this.size;
+    }
+
+    insert(key, value) {
+        const index = this.hash(key);
+
+        // 检查是否已存在
+        for (let item of this.table[index]) {
+            if (item.key === key) {
+                item.value = value;
+                return { type: 'update', index, key, value };
+            }
+        }
+
+        this.table[index].push({ key, value });
+        return { type: 'insert', index, key, value };
+    }
+
+    search(key) {
+        const index = this.hash(key);
+        for (let item of this.table[index]) {
+            if (item.key === key) {
+                return { found: true, index, value: item.value };
+            }
+        }
+        return { found: false, index };
+    }
+
+    delete(key) {
+        const index = this.hash(key);
+        const initialLength = this.table[index].length;
+        this.table[index] = this.table[index].filter(item => item.key !== key);
+        return {
+            success: this.table[index].length < initialLength,
+            index
+        };
+    }
+
+    clear() {
+        this.table = Array(this.size).fill(null).map(() => []);
+    }
+}
+
+const hashTable = new VisualHashTable();
+let highlightedIndex = -1;
+let animationFrame = 0;
+
+// 绘制哈希表
+function drawHashTable() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const bucketWidth = 80;
+    const bucketHeight = 40;
+    const startX = 50;
+    const startY = 60;  // 增加顶部空间
+    const bucketSpacing = 50;  // 增加桶之间的间距
+
+    // 绘制标题
+    ctx.font = '18px Arial';
+    ctx.fillStyle = '#333';
+    ctx.fillText('哈希表可视化', canvas.width / 2 - 50, 30);
+
+    // 绘制桶
+    for (let i = 0; i < hashTable.size; i++) {
+        const x = startX;
+        const y = startY + i * bucketSpacing;
+
+        // 绘制桶的索引
+        ctx.font = '14px Arial';
+        ctx.fillStyle = '#666';
+        ctx.fillText(`[${i}]`, x - 25, y + 25);
+
+        // 绘制桶
+        ctx.strokeStyle = highlightedIndex === i ? '#ff6b6b' : '#007bff';
+        ctx.lineWidth = highlightedIndex === i ? 3 : 2;
+        ctx.strokeRect(x, y, bucketWidth, bucketHeight);
+
+        // 填充颜色
+        if (highlightedIndex === i) {
+            ctx.fillStyle = 'rgba(255, 107, 107, 0.1)';
+            ctx.fillRect(x, y, bucketWidth, bucketHeight);
+        }
+
+        // 绘制链表
+        let nodeX = x + bucketWidth + 20;
+        for (let j = 0; j < hashTable.table[i].length; j++) {
+            const item = hashTable.table[i][j];
+
+            // 绘制箭头
+            if (j === 0) {
+                drawArrow(x + bucketWidth, y + bucketHeight / 2, nodeX, y + bucketHeight / 2);
+            }
+
+            // 绘制节点
+            ctx.fillStyle = '#e3f2fd';
+            ctx.fillRect(nodeX, y, 100, bucketHeight);
+            ctx.strokeStyle = '#007bff';
+            ctx.strokeRect(nodeX, y, 100, bucketHeight);
+
+            // 绘制键值
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#333';
+            ctx.fillText(`${item.key}:${item.value}`, nodeX + 5, y + 25);
+
+            // 下一个节点
+            if (j < hashTable.table[i].length - 1) {
+                drawArrow(nodeX + 100, y + bucketHeight / 2, nodeX + 120, y + bucketHeight / 2);
+            }
+
+            nodeX += 120;
+        }
+    }
+}
+
+// 绘制箭头
+function drawArrow(fromX, fromY, toX, toY) {
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // 箭头头部
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    ctx.beginPath();
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(toX - 8 * Math.cos(angle - Math.PI / 6), toY - 8 * Math.sin(angle - Math.PI / 6));
+    ctx.lineTo(toX - 8 * Math.cos(angle + Math.PI / 6), toY - 8 * Math.sin(angle + Math.PI / 6));
+    ctx.closePath();
+    ctx.fill();
+}
+
+// 动画循环
+function animate() {
+    drawHashTable();
+
+    if (highlightedIndex >= 0) {
+        animationFrame++;
+        if (animationFrame > 60) {
+            highlightedIndex = -1;
+            animationFrame = 0;
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+// 操作函数
+function insertItem() {
+    const key = document.getElementById('keyInput').value.trim();
+    const value = document.getElementById('valueInput').value.trim();
+
+    if (!key || !value) {
+        updateLog('❌ 请输入键和值！');
+        return;
+    }
+
+    const result = hashTable.insert(key, value);
+    highlightedIndex = result.index;
+    animationFrame = 0;
+
+    if (result.type === 'insert') {
+        updateLog(`✅ 插入成功！键"${key}"被哈希到索引[${result.index}]`);
+    } else {
+        updateLog(`🔄 更新成功！键"${key}"的值已更新`);
+    }
+
+    document.getElementById('keyInput').value = '';
+    document.getElementById('valueInput').value = '';
+}
+
+function searchItem() {
+    const key = document.getElementById('keyInput').value.trim();
+
+    if (!key) {
+        updateLog('❌ 请输入要查找的键！');
+        return;
+    }
+
+    const result = hashTable.search(key);
+    highlightedIndex = result.index;
+    animationFrame = 0;
+
+    if (result.found) {
+        updateLog(`🔍 查找成功！键"${key}"的值为："${result.value}"`);
+    } else {
+        updateLog(`❓ 未找到键"${key}"`);
+    }
+}
+
+function deleteItem() {
+    const key = document.getElementById('keyInput').value.trim();
+
+    if (!key) {
+        updateLog('❌ 请输入要删除的键！');
+        return;
+    }
+
+    const result = hashTable.delete(key);
+    highlightedIndex = result.index;
+    animationFrame = 0;
+
+    if (result.success) {
+        updateLog(`🗑️ 删除成功！键"${key}"已被移除`);
+    } else {
+        updateLog(`❓ 删除失败！键"${key}"不存在`);
+    }
+}
+
+function clearTable() {
+    hashTable.clear();
+    updateLog('🧹 哈希表已清空！');
+}
+
+function updateLog(message) {
+    document.getElementById('logText').innerHTML = message;
+}
+
+// 代码切换
+function switchCode(lang, event) {
+    document.querySelectorAll('.code-tab').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.code-content').forEach(content => content.classList.remove('active'));
+
+    event.target.classList.add('active');
+    document.getElementById(`${lang}-code`).classList.add('active');
+}
+
+// 复制代码
+function copyCode(lang, event) {
+    const codeElement = document.getElementById(`${lang}-code`).querySelector('code');
+    const text = codeElement.textContent;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✅ 已复制！';
+        setTimeout(() => {
+            btn.textContent = originalText;
+        }, 2000);
+    }).catch(err => {
+        // 降级方案：使用传统的复制方法
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+
+        try {
+            document.execCommand('copy');
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ 已复制！';
+            setTimeout(() => {
+                btn.textContent = originalText;
+            }, 2000);
+        } catch (err) {
+            alert('复制失败，请手动复制代码');
+        }
+
+        document.body.removeChild(textArea);
+    });
+}
+
+// 显示/隐藏答案
+function toggleAnswer(num, event) {
+    const answer = document.getElementById(`answer${num}`);
+    const btn = event.target;
+
+    if (answer.style.display === 'block') {
+        answer.style.display = 'none';
+        btn.textContent = '查看答案';
+    } else {
+        answer.style.display = 'block';
+        btn.textContent = '隐藏答案';
+    }
+}
+
+// 启动动画
+animate();
+
+// 添加一些初始数据
+hashTable.insert('Apple', '苹果');
+hashTable.insert('Book', '书籍');
+hashTable.insert('Cat', '猫咪');
+updateLog('📊 已加载示例数据：Apple, Book, Cat');
+</script>
+
+{% endblock %}

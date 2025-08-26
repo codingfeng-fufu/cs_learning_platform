@@ -1,0 +1,108 @@
+{% extends 'knowledge_app/base.html' %}
+
+{% block title %}栈——函数调用 - 计算机科学学习平台{% endblock %}
+
+{% block content %}
+<style>.content-card {margin-bottom:30px;padding:30px;background:white;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1)}.section-title {color:#2c3e50;font-size:1.8rem;margin-bottom:20px;display:flex;align-items:center;gap:12px}.section-icon {font-size:1.6rem}.difficulty-badge {padding:6px 12px;border-radius:20px;font-size:0.9rem;font-weight:bold;margin-left:15px}.difficulty-beginner {background:#e8f5e8;color:#2e7d32}.key-terms {display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:15px;margin:20px 0}.term-card {background:#f8f9fa;padding:15px;border-radius:8px;border-left:4px solid #3498db}.term-title {font-weight:bold;color:#2c3e50;margin-bottom:5px}.concept-box {background:#fff3cd;border:1px solid #ffeaa7;border-radius:8px;padding:20px;margin:15px 0}.analogy-box {background:#e8f4fd;border:1px solid #74b9ff;border-radius:8px;padding:20px;margin:15px 0}.analogy-title {font-weight:bold;color:#0984e3;margin-bottom:10px}.visualization-container {background:#f8f9fa;border-radius:12px;padding:30px;margin:20px 0;text-align:center}.canvas-container {position:relative;background:white;border:2px solid #ddd;border-radius:8px;margin:20px auto;display:inline-block}.control-panel {margin:20px 0;display:flex;justify-content:center;gap:15px;flex-wrap:wrap}.control-btn {padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:bold;transition:all 0.3s}.btn-primary {background:#3498db;color:white}.btn-success {background:#27ae60;color:white}.btn-warning {background:#f39c12;color:white}.control-btn:hover {transform:translateY(-2px);box-shadow:0 4px 8px rgba(0,0,0,0.2)}.code-container {margin:20px 0}.code-tabs {display:flex;background:#f1f2f6;border-radius:8px 8px 0 0;overflow:hidden}.code-tab {padding:12px 24px;cursor:pointer;border:none;background:transparent;font-weight:bold;transition:all 0.3s}.code-tab.active {background:#2c3e50;color:white}.code-tab:hover:not(.active) {background:#ddd}.code-content {background:#2c3e50;color:#ecf0f1;padding:20px;border-radius:0 0 8px 8px;position:relative;overflow-x:auto}.copy-btn {position:absolute;top:10px;right:10px;background:#3498db;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:0.8rem}.copy-btn:hover {background:#2980b9}.quiz-container {margin:20px 0}.quiz-item {background:#f8f9fa;border-radius:8px;padding:20px;margin:15px 0;border-left:4px solid #3498db}.quiz-question {font-weight:bold;color:#2c3e50;margin-bottom:15px}.answer-btn {background:#e74c3c;color:white;border:none;padding:8px 16px;border-radius:4px;cursor:pointer;margin-bottom:10px}.answer-btn:hover {background:#c0392b}.quiz-answer {display:none;background:#d5f4e6;border:1px solid #27ae60;border-radius:4px;padding:15px;margin-top:10px}.quiz-answer.show {display:block}.step-indicator {margin:15px 0;font-weight:bold;color:#2c3e50}pre {font-family:'Courier New', monospace;white-space:pre-wrap;margin:0}.fade-in {animation:fadeIn 0.8s ease-out}.slide-in-left {animation:slideInLeft 0.6s ease-out}.slide-in-right {animation:slideInRight 0.6s ease-out}@keyframes fadeIn {from {opacity:0}to {opacity:1}}@keyframes slideInLeft {from {transform:translateX(-50px);opacity:0}to {transform:translateX(0);opacity:1}}@keyframes slideInRight {from {transform:translateX(50px);opacity:0}to {transform:translateX(0);opacity:1}}</style><div class="page-container fade-in"><!-- 面包屑导航 --><div class="breadcrumb"><a href="{% url 'knowledge_app:index' %}">首页</a><span>></span><span>数据结构</span><span>></span><span>栈——函数调用</span></div><!-- 页面头部 --><div class="page-header slide-in-left"><h1><span class="page-icon">📚</span>
+            栈——函数调用
+            <span class="difficulty-badge difficulty-beginner">入门级</span></h1><p>深入理解函数调用栈的工作原理，掌握程序执行的核心机制</p></div><!-- 📋 知识点概述 --><div class="content-card slide-in-right"><h2 class="section-title"><span class="section-icon">📋</span>
+            知识点概述
+        </h2><div class="concept-box"><h3>核心概念</h3><p><strong>函数调用栈</strong>是计算机程序执行时用来跟踪函数调用关系的内存区域。当函数被调用时，相关信息会被推入栈中；函数执行完毕后，这些信息会从栈中弹出，实现函数的有序执行和返回。</p></div><div class="key-terms"><div class="term-card"><div class="term-title">栈帧 (Stack Frame)</div><div>每次函数调用在栈中占用的内存区域，包含局部变量、参数、返回地址等</div></div><div class="term-card"><div class="term-title">调用栈 (Call Stack)</div><div>程序运行时维护的函数调用序列，采用后进先出(LIFO)的原则</div></div><div class="term-card"><div class="term-title">栈指针 (Stack Pointer)</div><div>指向当前栈顶位置的指针，随着函数调用和返回而移动</div></div><div class="term-card"><div class="term-title">返回地址 (Return Address)</div><div>函数执行完毕后需要返回的代码位置</div></div></div><div style="margin-top: 20px;"><strong>前置知识：</strong>基本的函数概念、内存布局、指针基础
+        </div></div><!-- 🔍 概念详解 --><div class="content-card"><h2 class="section-title"><span class="section-icon">🔍</span>
+            概念详解
+        </h2><div class="analogy-box"><div class="analogy-title">生活类比：餐厅后厨的盘子堆</div><p>想象餐厅后厨洗完的盘子堆叠起来：</p><ul><li><strong>盘子 = 函数</strong>：每个盘子代表一个函数调用</li><li><strong>堆叠 = 调用关系</strong>：后放的盘子在上面，需要先拿走</li><li><strong>最上面的盘子 = 当前执行的函数</strong>：只能操作栈顶的盘子</li><li><strong>拿走盘子 = 函数返回</strong>：拿走后露出下面的盘子继续使用</li></ul></div><h3>1. 栈帧的组成</h3><p>每个栈帧包含：</p><ul><li><strong>局部变量</strong>：函数内部定义的变量</li><li><strong>函数参数</strong>：传递给函数的参数值</li><li><strong>返回地址</strong>：函数结束后返回的位置</li><li><strong>保存的寄存器</strong>：调用前需要保存的CPU状态</li></ul><h3>2. 函数调用过程</h3><p>函数调用遵循严格的步骤：</p><ol><li><strong>准备参数</strong>：将参数值压入栈中</li><li><strong>保存返回地址</strong>：记录调用结束后的返回位置</li><li><strong>跳转执行</strong>：程序控制权转移到被调用函数</li><li><strong>分配局部变量</strong>：为函数内变量分配栈空间</li></ol><h3>3. 函数返回过程</h3><p>函数返回时需要：</p><ol><li><strong>准备返回值</strong>：将结果放入指定位置</li><li><strong>清理栈帧</strong>：释放局部变量占用的空间</li><li><strong>恢复现场</strong>：还原调用前的CPU状态</li><li><strong>返回调用者</strong>：根据返回地址继续执行</li></ol><div class="concept-box"><h3>⚠️ 容易混淆的地方</h3><ul><li><strong>栈的增长方向</strong>：在大多数系统中，栈向低地址增长（看起来是"向下"的）</li><li><strong>递归与栈</strong>：递归调用会不断创建新栈帧，可能导致栈溢出</li><li><strong>参数传递</strong>：不同语言和编译器对参数压栈顺序可能不同</li></ul></div></div><!-- 📊 可视化展示 --><div class="content-card"><h2 class="section-title"><span class="section-icon">📊</span>
+            可视化展示
+        </h2><div class="visualization-container"><h3>函数调用栈动态演示</h3><p>观察函数 main() → funcA() → funcB() 的调用过程</p><div class="canvas-container"><canvas id="stackCanvas" width="600" height="400"></canvas></div><div class="control-panel"><button class="control-btn btn-primary" onclick="resetAnimation()">重置</button><button class="control-btn btn-success" onclick="stepForward()">下一步</button><button class="control-btn btn-warning" onclick="stepBackward()">上一步</button></div><div class="step-indicator" id="stepIndicator">
+                第 1 步：程序开始，main()函数入栈
+            </div></div><div class="code-container"><h3>演示代码</h3><div class="code-tabs"><button class="code-tab active" onclick="showCode('cpp')">C++</button><button class="code-tab" onclick="showCode('java')">Java</button><button class="code-tab" onclick="showCode('python')">Python</button></div><div id="cppCode" class="code-content"><button class="copy-btn" onclick="copyCode('cpp')">复制代码</button><pre>#include &lt;iostream&gt;
+using namespace std;
+
+int funcB(int x) {
+    int result = x * 2;
+    cout &lt;&lt; "在funcB中，x = " &lt;&lt; x &lt;&lt; ", result = " &lt;&lt; result &lt;&lt; endl;
+    return result;  // 返回到funcA
+}
+
+int funcA(int a, int b) {
+    int sum = a + b;
+    cout &lt;&lt; "在funcA中，sum = " &lt;&lt; sum &lt;&lt; endl;
+    int doubled = funcB(sum);  // 调用funcB
+    return doubled;  // 返回到main
+}
+
+int main() {
+    cout &lt;&lt; "程序开始执行" &lt;&lt; endl;
+    int result = funcA(3, 5);  // 调用funcA
+    cout &lt;&lt; "最终结果：" &lt;&lt; result &lt;&lt; endl;
+    return 0;  // 程序结束
+}</pre></div><div id="javaCode" class="code-content" style="display: none;"><button class="copy-btn" onclick="copyCode('java')">复制代码</button><pre>public class FunctionCallDemo {
+    public static int funcB(int x) {
+        int result = x * 2;
+        System.out.println("在funcB中，x = " + x + ", result = " + result);
+        return result;  // 返回到funcA
+    }
+
+    public static int funcA(int a, int b) {
+        int sum = a + b;
+        System.out.println("在funcA中，sum = " + sum);
+        int doubled = funcB(sum);  // 调用funcB
+        return doubled;  // 返回到main
+    }
+
+    public static void main(String[] args) {
+        System.out.println("程序开始执行");
+        int result = funcA(3, 5);  // 调用funcA
+        System.out.println("最终结果：" + result);
+        // 程序结束
+    }
+}</pre></div><div id="pythonCode" class="code-content" style="display: none;"><button class="copy-btn" onclick="copyCode('python')">复制代码</button><pre>def funcB(x):
+    result = x * 2
+    print(f"在funcB中，x = {x}, result = {result}")
+    return result  # 返回到funcA
+
+def funcA(a, b):
+    sum_val = a + b
+    print(f"在funcA中，sum = {sum_val}")
+    doubled = funcB(sum_val)  # 调用funcB
+    return doubled  # 返回到main
+
+def main():
+    print("程序开始执行")
+    result = funcA(3, 5)  # 调用funcA
+    print(f"最终结果：{result}")
+    # 程序结束
+
+if __name__ == "__main__":
+    main()</pre></div></div></div><!-- 🌟 实际应用 --><div class="content-card"><h2 class="section-title"><span class="section-icon">🌟</span>
+            实际应用
+        </h2><h3>1. 递归算法</h3><p>函数调用栈是递归算法实现的基础，每次递归调用都会创建新的栈帧：</p><div class="analogy-box"><strong>应用场景：</strong>阶乘计算、斐波那契数列、树的遍历、快速排序等
+        </div><h3>2. 程序调试</h3><p>调试器通过分析调用栈帮助开发者定位问题：</p><ul><li><strong>堆栈跟踪</strong>：显示函数调用的完整路径</li><li><strong>断点调试</strong>：在特定函数处暂停程序执行</li><li><strong>变量查看</strong>：检查不同栈帧中的局部变量</li></ul><h3>3. 内存管理</h3><p>理解调用栈有助于：</p><ul><li><strong>避免栈溢出</strong>：控制递归深度和局部变量大小</li><li><strong>优化性能</strong>：减少不必要的函数调用开销</li><li><strong>内存布局设计</strong>：合理设计程序的内存使用</li></ul><div class="concept-box"><h3>推荐学习工具</h3><ul><li><strong>在线可视化工具</strong>：Python Tutor、VisuAlgo</li><li><strong>调试器</strong>：GDB、IDE集成调试器</li><li><strong>性能分析工具</strong>：Valgrind、Profiler</li></ul></div></div><!-- ✅ 学习检验 --><div class="content-card"><h2 class="section-title"><span class="section-icon">✅</span>
+            学习检验
+        </h2><div class="quiz-container"><div class="quiz-item"><div class="quiz-question">
+                    1. 下面哪个选项正确描述了函数调用栈的特点？
+                </div><button class="answer-btn" onclick="toggleAnswer('answer1')">查看答案</button><div id="answer1" class="quiz-answer"><strong>答案：</strong>函数调用栈遵循LIFO(后进先出)原则。最后调用的函数最先返回，这确保了程序能够正确地回到调用点继续执行。每个函数调用都会在栈顶创建新的栈帧，函数返回时从栈顶移除栈帧。
+                </div></div><div class="quiz-item"><div class="quiz-question">
+                    2. 如果一个递归函数没有正确的终止条件，会发生什么？
+                </div><button class="answer-btn" onclick="toggleAnswer('answer2')">查看答案</button><div id="answer2" class="quiz-answer"><strong>答案：</strong>会发生栈溢出(Stack Overflow)。因为每次递归调用都会创建新的栈帧，如果没有终止条件，栈帧会无限增长，最终超出系统分配给程序的栈内存限制，导致程序崩溃。
+                </div></div><div class="quiz-item"><div class="quiz-question">
+                    3. 栈帧中通常包含哪些信息？
+                </div><button class="answer-btn" onclick="toggleAnswer('answer3')">查看答案</button><div id="answer3" class="quiz-answer"><strong>答案：</strong>栈帧通常包含：(1)函数的局部变量 (2)函数参数 (3)返回地址 (4)保存的寄存器值 (5)其他控制信息。这些信息确保函数能够正确执行并在完成后返回到正确的位置。
+                </div></div><div class="quiz-item"><div class="quiz-question">
+                    4. 为什么理解函数调用栈对程序调试很重要？
+                </div><button class="answer-btn" onclick="toggleAnswer('answer4')">查看答案</button><div id="answer4" class="quiz-answer"><strong>答案：</strong>调用栈提供了程序执行的完整路径，帮助开发者：(1)追踪错误发生的位置和调用链 (2)理解程序的执行流程 (3)检查不同函数中的变量值 (4)定位性能瓶颈 (5)分析内存使用情况。
+                </div></div><div class="quiz-item"><div class="quiz-question">
+                    5. 在下面的调用序列中，栈的状态是如何变化的？main() → funcA(10) → funcB(5) → return 15
+                </div><button class="answer-btn" onclick="toggleAnswer('answer5')">查看答案</button><div id="answer5" class="quiz-answer"><strong>答案：</strong>栈变化过程：<br>
+                    1. 初始：[main栈帧]<br>
+                    2. 调用funcA：[main栈帧, funcA栈帧(参数10)]<br>
+                    3. 调用funcB：[main栈帧, funcA栈帧, funcB栈帧(参数5)]<br>
+                    4. funcB返回：[main栈帧, funcA栈帧] (funcB栈帧被移除)<br>
+                    5. funcA返回：[main栈帧] (funcA栈帧被移除)<br>
+                    6. main结束：[] (程序结束)
+                </div></div></div></div><!-- 导航按钮 --><div style="text-align: center; margin-top: 40px;"><a href="{% url 'knowledge_app:index' %}" class="unified-btn unified-btn-primary"><span>🏠</span>
+            返回首页
+        </a><a href="{% url 'knowledge_app:cs_universe' %}" class="unified-btn unified-btn-secondary"><span>🌌</span>
+            探索CS宇宙
+        </a></div></div><script>let currentStep = 0; let canvas, ctx; const animationSteps = [ { step: 1, description: "程序开始，main()函数入栈", stack: [ { name: "main()", vars: ["result"], color: "#3498db" } ] }, { step: 2, description: "main()调用funcA(3, 5)，funcA入栈", stack: [ { name: "main()", vars: ["result"], color: "#3498db" }, { name: "funcA(3, 5)", vars: ["a=3", "b=5", "sum"], color: "#e74c3c" } ] }, { step: 3, description: "funcA计算sum=8，准备调用funcB", stack: [ { name: "main()", vars: ["result"], color: "#3498db" }, { name: "funcA(3, 5)", vars: ["a=3", "b=5", "sum=8"], color: "#e74c3c" } ] }, { step: 4, description: "funcA调用funcB(8)，funcB入栈", stack: [ { name: "main()", vars: ["result"], color: "#3498db" }, { name: "funcA(3, 5)", vars: ["a=3", "b=5", "sum=8"], color: "#e74c3c" }, { name: "funcB(8)", vars: ["x=8", "result"], color: "#27ae60" } ] }, { step: 5, description: "funcB计算result=16，准备返回", stack: [ { name: "main()", vars: ["result"], color: "#3498db" }, { name: "funcA(3, 5)", vars: ["a=3", "b=5", "sum=8"], color: "#e74c3c" }, { name: "funcB(8)", vars: ["x=8", "result=16"], color: "#27ae60" } ] }, { step: 6, description: "funcB返回16，funcB出栈", stack: [ { name: "main()", vars: ["result"], color: "#3498db" }, { name: "funcA(3, 5)", vars: ["a=3", "b=5", "doubled=16"], color: "#e74c3c" } ] }, { step: 7, description: "funcA返回16，funcA出栈", stack: [ { name: "main()", vars: ["result=16"], color: "#3498db" } ] }, { step: 8, description: "程序执行完毕，main()出栈", stack: [] } ]; document.addEventListener('DOMContentLoaded', function() { canvas = document.getElementById('stackCanvas'); ctx = canvas.getContext('2d'); drawStack(); }); function drawStack() { ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.strokeStyle = "#2c3e50"; ctx.lineWidth = 2; ctx.strokeRect(50, 50, 300, 300); ctx.fillStyle = "#2c3e50"; ctx.font = "16px Arial"; ctx.fillText("函数调用栈", 50, 30); ctx.fillText("(栈顶)", 370, 70); ctx.fillText("(栈底)", 370, 340); const currentStack = animationSteps[currentStep].stack; const frameHeight = 60; const startY = 320; for (let i = 0; i < currentStack.length; i++) { const frame = currentStack[i]; const y = startY - (i * frameHeight); ctx.fillStyle = frame.color; ctx.fillRect(60, y - frameHeight + 10, 280, frameHeight - 10); ctx.strokeStyle = "#2c3e50"; ctx.strokeRect(60, y - frameHeight + 10, 280, frameHeight - 10); ctx.fillStyle = "white"; ctx.font = "bold 14px Arial"; ctx.fillText(frame.name, 70, y - frameHeight + 30); ctx.font = "12px Arial"; const vars = frame.vars.join(", "); ctx.fillText("变量: " + vars, 70, y - frameHeight + 50); if (i === currentStack.length - 1) { ctx.fillStyle = "#f39c12"; ctx.beginPath(); ctx.moveTo(360, y - frameHeight/2); ctx.lineTo(350, y - frameHeight/2 - 5); ctx.lineTo(350, y - frameHeight/2 + 5); ctx.fill(); } } if (currentStack.length === 0) { ctx.fillStyle = "#95a5a6"; ctx.font = "16px Arial"; ctx.fillText("栈为空", 150, 200); } } function resetAnimation() { currentStep = 0; updateStepIndicator(); drawStack(); } function stepForward() { if (currentStep < animationSteps.length - 1) { currentStep++; updateStepIndicator(); drawStack(); } } function stepBackward() { if (currentStep > 0) { currentStep--; updateStepIndicator(); drawStack(); } } function updateStepIndicator() { const indicator = document.getElementById('stepIndicator'); indicator.textContent = `第 ${animationSteps[currentStep].step} 步：${animationSteps[currentStep].description}`; } function showCode(language) { const codes = ['cpp', 'java', 'python']; codes.forEach(code => { document.getElementById(code + 'Code').style.display = 'none'; }); document.getElementById(language + 'Code').style.display = 'block'; document.querySelectorAll('.code-tab').forEach(tab => { tab.classList.remove('active'); }); event.target.classList.add('active'); } function copyCode(language) { const codeElement = document.querySelector(`#${language}Code pre`); const text = codeElement.textContent; navigator.clipboard.writeText(text).then(() => { const btn = event.target; const originalText = btn.textContent; btn.textContent = '已复制!'; btn.style.background = '#27ae60'; setTimeout(() => { btn.textContent = originalText; btn.style.background = '#3498db'; }, 2000); }); } function toggleAnswer(answerId) { const answer = document.getElementById(answerId); answer.classList.toggle('show'); }</script>
+
+{% endblock %}
